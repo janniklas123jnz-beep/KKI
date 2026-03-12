@@ -44,6 +44,7 @@ Die Simulationen basieren auf wiederholten Interaktionen im Stil des Gefangenend
 | `schwarm_invasive_netzwerke.py` | Vergleichsstudie zu adaptiven Netzwerken unter Invasions- und Stoerungsszenarien |
 | `schwarm_commitment_resilienz.py` | Vergleichsstudie zu adaptiven Netzwerken unter Manipulations- und Commitment-Angriffen |
 | `schwarm_vertrauens_benchmark.py` | Benchmark fuer Vertrauensstrategien wie Reputation, Commitment, Meinung und hybride Mischungen |
+| `schwarm_grossstudie.py` | Kombinierte Grossstudie ueber Polarisierung, Invasion und Commitment-Angriffe auf gemeinsamer Agenten-Grund-DNA |
 | `commitment_protokoll.py` | Commit-Reveal-Verify-Protokoll gegen Manipulation |
 
 ## Features
@@ -118,6 +119,7 @@ python3 schwarm_adaptive_netzwerke.py
 python3 schwarm_invasive_netzwerke.py
 python3 schwarm_commitment_resilienz.py
 python3 schwarm_vertrauens_benchmark.py
+python3 schwarm_grossstudie.py
 python3 commitment_protokoll.py
 ```
 
@@ -193,6 +195,21 @@ Der neue Vertrauens-Benchmark vergleicht mehrere adaptive Strategien direkt gege
 python3 schwarm_vertrauens_benchmark.py
 ```
 
+Die kombinierte Grossstudie fuehrt Polarisierung, Invasion und Commitment-Angriffe unter einer gemeinsamen Agenten-Grundkonfiguration zusammen:
+
+```bash
+python3 schwarm_grossstudie.py
+```
+
+Optional lassen sich Wiederholungen und gemeinsame Basisparameter anpassen:
+
+```bash
+KKI_MEGASTUDY_REPETITIONS=2 \
+KKI_MEGASTUDY_AGENT_COUNT=60 \
+KKI_MEGASTUDY_STRESS_ROUND=90 \
+python3 schwarm_grossstudie.py
+```
+
 Optional lassen sich Wiederholungen und Angriffsdruck anpassen:
 
 ```bash
@@ -221,6 +238,7 @@ Die folgenden Skripte erzeugen die im Repository abgelegten PNG-Dateien:
 | `schwarm_invasive_netzwerke.py` | `kki_invasive_netzwerke.png` | `KKI_SEED=42 python3 schwarm_invasive_netzwerke.py` |
 | `schwarm_commitment_resilienz.py` | `kki_commitment_resilienz.png` | `KKI_SEED=42 python3 schwarm_commitment_resilienz.py` |
 | `schwarm_vertrauens_benchmark.py` | `kki_vertrauens_benchmark.png` | `KKI_SEED=42 python3 schwarm_vertrauens_benchmark.py` |
+| `schwarm_grossstudie.py` | `kki_grossstudie.png` | `KKI_SEED=42 python3 schwarm_grossstudie.py` |
 | `commitment_protokoll.py` | `kki_commitment_protokoll.png` | `KKI_SEED=42 python3 commitment_protokoll.py` |
 
 Hinweise zur Reproduktion:
@@ -232,6 +250,7 @@ Hinweise zur Reproduktion:
 - das Invasions-Experiment nutzt zusaetzlich `KKI_INVASION_AGENT_COUNT`, `KKI_INVASION_REP_THRESHOLDS` und `KKI_INVASION_PROXIMITY_WEIGHTS`
 - das Commitment-Experiment nutzt zusaetzlich `KKI_COMMITMENT_ATTACK_STRENGTH`, `KKI_COMMITMENT_REP_THRESHOLDS` und `KKI_COMMITMENT_TRUST_THRESHOLDS`
 - der Vertrauens-Benchmark nutzt zusaetzlich `KKI_BENCHMARK_REPETITIONS` und vergleicht statische, reputationsbasierte, commitment-basierte, meinungsbasierte und hybride Strategien
+- die Grossstudie nutzt zusaetzlich `KKI_MEGASTUDY_REPETITIONS`, `KKI_MEGASTUDY_AGENT_COUNT` und `KKI_MEGASTUDY_STRESS_ROUND` fuer eine gemeinsame Grundlagenkonfiguration
 
 Beispiel für eine reproduzierbare, headless Erzeugung:
 
@@ -279,6 +298,10 @@ Die Smoke-Tests starten ausgewählte Kernskripte im verkürzten headless Testmod
 
 ![KKI Vertrauens-Benchmark](kki_vertrauens_benchmark.png)
 
+### Kombinierte Grossstudie
+
+![KKI Grossstudie](kki_grossstudie.png)
+
 ## Zentrale Beobachtungen
 
 Die bisherigen Simulationen illustrieren wiederkehrende Muster:
@@ -291,6 +314,7 @@ Die bisherigen Simulationen illustrieren wiederkehrende Muster:
 - Commitment-Mechanismen erschweren oder verhindern strategische Täuschung
 - adaptive Netzwerke koennen Commitment-Brueche zusaetzlich in schnelle soziale Isolation manipulativer Agenten uebersetzen
 - unterschiedliche Vertrauenssignale lassen sich nun direkt benchmarken, statt nur einzeln in getrennten Experimenten zu betrachten
+- die neue Grossstudie verbindet diese Einzelbefunde zu einer gemeinsamen Grundlage fuer spaetere Agenten mit einheitlicher DNA und gruppenspezifischen Zusatzfaehigkeiten
 
 ## Projektstruktur und Ausrichtung
 

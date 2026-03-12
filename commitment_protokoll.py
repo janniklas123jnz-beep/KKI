@@ -17,11 +17,27 @@ from collections import defaultdict
 from dataclasses import dataclass
 from typing import Optional, Tuple
 
+from kki_runtime import (
+    apply_test_overrides,
+    configure_matplotlib,
+    initialize_runtime,
+    save_and_maybe_show,
+)
+
+configure_matplotlib(plt)
+
 # === KONFIGURATION ===
 ANZAHL_AGENTEN = 50
 ANZAHL_MANIPULATOREN = 8  # Agenten die versuchen zu betrügen
 RUNDEN = 200
 INTERAKTIONEN_PRO_RUNDE = 100
+TEST_OVERRIDES = apply_test_overrides({
+    'RUNDEN': RUNDEN,
+    'INTERAKTIONEN_PRO_RUNDE': INTERAKTIONEN_PRO_RUNDE,
+})
+RUNDEN = TEST_OVERRIDES['RUNDEN']
+INTERAKTIONEN_PRO_RUNDE = TEST_OVERRIDES['INTERAKTIONEN_PRO_RUNDE']
+SEED = initialize_runtime(np)
 
 PAYOFFS = {
     ('C', 'C'): 3,
@@ -432,9 +448,7 @@ def simulation():
                 bbox=dict(boxstyle='round', facecolor='#2ECC71', alpha=0.8))
     
     plt.tight_layout()
-    plt.savefig('kki_commitment_protokoll.png', dpi=150)
-    print("\nGraph gespeichert: kki_commitment_protokoll.png")
-    plt.show()
+    save_and_maybe_show(plt, 'kki_commitment_protokoll.png', dpi=150)
 
 
 if __name__ == "__main__":

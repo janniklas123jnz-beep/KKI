@@ -9,11 +9,27 @@ import random
 import matplotlib.pyplot as plt
 import numpy as np
 
+from kki_runtime import (
+    apply_test_overrides,
+    configure_matplotlib,
+    initialize_runtime,
+    save_and_maybe_show,
+)
+
+configure_matplotlib(plt)
+
 # === KONFIGURATION ===
 ANZAHL_AGENTEN = 10
 RUNDEN = 150
 LERNRATE = 0.1
 INTERAKTIONEN_PRO_RUNDE = 15  # Wie viele zufällige Begegnungen pro Runde
+TEST_OVERRIDES = apply_test_overrides({
+    'RUNDEN': RUNDEN,
+    'INTERAKTIONEN_PRO_RUNDE': INTERAKTIONEN_PRO_RUNDE,
+})
+RUNDEN = TEST_OVERRIDES['RUNDEN']
+INTERAKTIONEN_PRO_RUNDE = TEST_OVERRIDES['INTERAKTIONEN_PRO_RUNDE']
+SEED = initialize_runtime(np)
 
 # Payoff-Matrix
 PAYOFFS = {
@@ -240,9 +256,7 @@ def schwarm_simulation():
     ax4.grid(True, alpha=0.3, axis='y')
     
     plt.tight_layout()
-    plt.savefig('kki_schwarm_simulation.png', dpi=150)
-    print("\nGraph gespeichert: kki_schwarm_simulation.png")
-    plt.show()
+    save_and_maybe_show(plt, 'kki_schwarm_simulation.png', dpi=150)
 
 
 if __name__ == "__main__":

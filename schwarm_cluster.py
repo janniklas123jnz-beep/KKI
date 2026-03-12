@@ -9,12 +9,28 @@ import matplotlib.pyplot as plt
 import numpy as np
 from collections import defaultdict
 
+from kki_runtime import (
+    apply_test_overrides,
+    configure_matplotlib,
+    initialize_runtime,
+    save_and_maybe_show,
+)
+
+configure_matplotlib(plt)
+
 # === KONFIGURATION ===
 ANZAHL_AGENTEN = 50
 ANZAHL_DEFEKTOREN = 8  # 16% Defektoren
 RUNDEN = 200
 VERBINDUNGEN_PRO_AGENT = 6  # Jeder kennt ~6 andere (Small World)
 INTERAKTIONEN_PRO_RUNDE = 75
+TEST_OVERRIDES = apply_test_overrides({
+    'RUNDEN': RUNDEN,
+    'INTERAKTIONEN_PRO_RUNDE': INTERAKTIONEN_PRO_RUNDE,
+})
+RUNDEN = TEST_OVERRIDES['RUNDEN']
+INTERAKTIONEN_PRO_RUNDE = TEST_OVERRIDES['INTERAKTIONEN_PRO_RUNDE']
+SEED = initialize_runtime(np)
 
 # Payoff-Matrix
 PAYOFFS = {
@@ -333,9 +349,7 @@ def simulation():
              ha='center', fontsize=9, color='#E74C3C')
     
     plt.tight_layout()
-    plt.savefig('kki_cluster_simulation.png', dpi=150)
-    print("\nGraph gespeichert: kki_cluster_simulation.png")
-    plt.show()
+    save_and_maybe_show(plt, 'kki_cluster_simulation.png', dpi=150)
 
 
 if __name__ == "__main__":

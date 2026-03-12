@@ -9,12 +9,28 @@ import matplotlib.pyplot as plt
 import numpy as np
 from collections import defaultdict
 
+from kki_runtime import (
+    apply_test_overrides,
+    configure_matplotlib,
+    initialize_runtime,
+    save_and_maybe_show,
+)
+
+configure_matplotlib(plt)
+
 # === KONFIGURATION ===
 ANZAHL_AGENTEN = 100
 ANZAHL_DEFEKTOREN = 15  # 15% Defektoren
 RUNDEN = 250
 VERBINDUNGEN_PRO_AGENT = 8  # Etwas mehr Verbindungen bei größerem Netzwerk
 INTERAKTIONEN_PRO_RUNDE = 150  # Mehr Interaktionen
+TEST_OVERRIDES = apply_test_overrides({
+    'RUNDEN': RUNDEN,
+    'INTERAKTIONEN_PRO_RUNDE': INTERAKTIONEN_PRO_RUNDE,
+})
+RUNDEN = TEST_OVERRIDES['RUNDEN']
+INTERAKTIONEN_PRO_RUNDE = TEST_OVERRIDES['INTERAKTIONEN_PRO_RUNDE']
+SEED = initialize_runtime(np)
 
 # Payoff-Matrix
 PAYOFFS = {
@@ -385,9 +401,7 @@ def simulation():
     ax6.grid(True, alpha=0.3)
     
     plt.tight_layout()
-    plt.savefig('kki_100_agenten.png', dpi=150)
-    print("\nGraph gespeichert: kki_100_agenten.png")
-    plt.show()
+    save_and_maybe_show(plt, 'kki_100_agenten.png', dpi=150)
 
 
 if __name__ == "__main__":

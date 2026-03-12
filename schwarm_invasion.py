@@ -9,6 +9,15 @@ import matplotlib.pyplot as plt
 import numpy as np
 from collections import defaultdict
 
+from kki_runtime import (
+    apply_test_overrides,
+    configure_matplotlib,
+    initialize_runtime,
+    save_and_maybe_show,
+)
+
+configure_matplotlib(plt)
+
 # === KONFIGURATION ===
 ANZAHL_AGENTEN_START = 80
 ANZAHL_INVASOREN = 20  # 20 neue Defektoren nach Stabilisierung
@@ -16,6 +25,15 @@ INVASION_RUNDE = 100   # Wann die Invasion startet
 RUNDEN_GESAMT = 300
 VERBINDUNGEN_PRO_AGENT = 8
 INTERAKTIONEN_PRO_RUNDE = 120
+TEST_OVERRIDES = apply_test_overrides({
+    'INVASION_RUNDE': INVASION_RUNDE,
+    'RUNDEN_GESAMT': RUNDEN_GESAMT,
+    'INTERAKTIONEN_PRO_RUNDE': INTERAKTIONEN_PRO_RUNDE,
+})
+INVASION_RUNDE = TEST_OVERRIDES['INVASION_RUNDE']
+RUNDEN_GESAMT = TEST_OVERRIDES['RUNDEN_GESAMT']
+INTERAKTIONEN_PRO_RUNDE = TEST_OVERRIDES['INTERAKTIONEN_PRO_RUNDE']
+SEED = initialize_runtime(np)
 
 PAYOFFS = {
     ('C', 'C'): 3,
@@ -428,9 +446,7 @@ def simulation():
     ax6.grid(True, alpha=0.3)
     
     plt.tight_layout()
-    plt.savefig('kki_invasion.png', dpi=150)
-    print("\nGraph gespeichert: kki_invasion.png")
-    plt.show()
+    save_and_maybe_show(plt, 'kki_invasion.png', dpi=150)
 
 
 if __name__ == "__main__":

@@ -7,9 +7,23 @@ Erweiterte Version mit matplotlib-Graphen
 import random
 import matplotlib.pyplot as plt
 
+from kki_runtime import (
+    apply_test_overrides,
+    configure_matplotlib,
+    initialize_runtime,
+    save_and_maybe_show,
+)
+
+configure_matplotlib(plt)
+
 # === KONFIGURATION ===
 RUNDEN = 100
 LERNRATE = 0.1
+TEST_OVERRIDES = apply_test_overrides({
+    'RUNDEN': RUNDEN,
+})
+RUNDEN = TEST_OVERRIDES['RUNDEN']
+SEED = initialize_runtime()
 
 # Payoff-Matrix (Gefangenendilemma)
 PAYOFFS = {
@@ -129,9 +143,7 @@ def simulation():
     plt.tight_layout()
     
     # Speichern und anzeigen
-    plt.savefig('kki_kooperation_graph.png', dpi=150)
-    print("Graph gespeichert: kki_kooperation_graph.png")
-    plt.show()
+    save_and_maybe_show(plt, 'kki_kooperation_graph.png', dpi=150)
     
     # Ergebnis
     print(f"\n=== ERGEBNIS ===")

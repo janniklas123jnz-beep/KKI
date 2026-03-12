@@ -62,6 +62,17 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
+## Reproduzierbare Seeds
+
+Alle Simulationsskripte unterstützen reproduzierbare Zufallszahlen über die Umgebungsvariable `KKI_SEED`.
+
+```bash
+KKI_SEED=42 python3 schwarm_simulation.py
+KKI_SEED=42 python3 commitment_protokoll.py
+```
+
+Ohne gesetzte Variable verwenden die Skripte standardmäßig den Seed `42` und geben den aktiven Seed beim Start aus.
+
 ## Schnellstart
 
 Kleinstes Beispiel:
@@ -93,6 +104,16 @@ python3 commitment_protokoll.py
 
 Die Visualisierungs-Skripte erzeugen PNG-Dateien direkt im Projektverzeichnis.
 Da die Simulationen Zufallselemente enthalten, können konkrete Zahlenwerte zwischen einzelnen Läufen variieren.
+
+## Smoke-Tests
+
+Für schnelle technische Prüfungen gibt es `smoke_tests.py`.
+
+```bash
+python3 smoke_tests.py
+```
+
+Die Smoke-Tests starten ausgewählte Kernskripte im verkürzten headless Testmodus.
 
 ## Beispiel-Visualisierungen
 

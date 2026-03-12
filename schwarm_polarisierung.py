@@ -57,6 +57,8 @@ DEFAULT_HANDOFF_PRIORITY_BONUS = 0.12
 DEFAULT_RESOURCE_BUDGET = 1.0
 DEFAULT_RESOURCE_SHARE_FACTOR = 0.20
 DEFAULT_CLUSTER_BUDGET_SKEW = 0.35
+DEFAULT_BOTTLENECK_THRESHOLD = 1.05
+DEFAULT_BOTTLENECK_TRIAGE_INTENSITY = 0.55
 MISSION_CONSENSUS = 'consensus_building'
 MISSION_KNOWLEDGE = 'knowledge_sharing'
 MISSION_DEFENSE = 'reputation_defense'
@@ -153,6 +155,9 @@ class Agent:
         self.cluster_coordination_bonus = 0.0
         self.cluster_resilience_bonus = 0.0
         self.cluster_output_total = 0.0
+        self.bottleneck_pressure = 0.0
+        self.bottleneck_relief_total = 0.0
+        self.resource_rerouted_total = 0.0
 
         self.meinung_history = [meinung]
         self.kooperation_history = [kooperations_neigung]
@@ -424,6 +429,14 @@ def build_runtime_config() -> tuple[dict[str, float | int | str], int]:
         'cluster_budget_skew': float(
             os.getenv('KKI_CLUSTER_BUDGET_SKEW', str(DEFAULT_CLUSTER_BUDGET_SKEW))
         ),
+        'enable_bottleneck_management': os.getenv('KKI_BOTTLENECK_MANAGEMENT_ENABLED', '').strip().lower()
+        in {'1', 'true', 'yes', 'on'},
+        'bottleneck_threshold': float(
+            os.getenv('KKI_BOTTLENECK_THRESHOLD', str(DEFAULT_BOTTLENECK_THRESHOLD))
+        ),
+        'bottleneck_triage_intensity': float(
+            os.getenv('KKI_BOTTLENECK_TRIAGE_INTENSITY', str(DEFAULT_BOTTLENECK_TRIAGE_INTENSITY))
+        ),
     }
     return config, seed
 
@@ -648,6 +661,9 @@ def initialisiere_faehigkeitscluster(agenten, config):
         agent.initial_capability_cluster = cluster
         agent.cluster_history = []
         agent.cluster_output_total = 0.0
+        agent.bottleneck_pressure = 0.0
+        agent.bottleneck_relief_total = 0.0
+        agent.resource_rerouted_total = 0.0
         setze_faehigkeitscluster(agent, cluster, config, runde=0)
 
 
@@ -711,7 +727,14 @@ def koordiniere_workflow_handoff(agent, partner, aktion_a, aktion_p, runde, conf
 
 def koordiniere_ressourcen(agenten, config):
     if not (config.get('enable_workflow_cells') and config.get('enable_resource_coordination')):
-        return {'shared': 0.0, 'active_cells': 0, 'effective_output': 0.0}
+        return {
+            'shared': 0.0,
+            'active_cells': 0,
+            'effective_output': 0.0,
+            'bottlenecks': 0,
+            'relief': 0.0,
+            'rerouted': 0.0,
+        }
 
     budget = max(0.0, float(config.get('resource_budget', DEFAULT_RESOURCE_BUDGET)))
     share_factor = max(0.0, float(config.get('resource_share_factor', DEFAULT_RESOURCE_SHARE_FACTOR)))
@@ -727,17 +750,89 @@ def koordiniere_ressourcen(agenten, config):
         ) * agent.cluster_demand_multiplier
         cell_demand[agent.workflow_cell] += demand
         agent.resource_credit *= 0.85
+        agent.bottleneck_pressure *= 0.75
 
     total_demand = sum(cell_demand.values())
     active_cells = sum(1 for demand in cell_demand.values() if demand > 0.0)
     if total_demand <= 0.0 or budget <= 0.0:
-        return {'shared': 0.0, 'active_cells': active_cells, 'effective_output': 0.0}
+        return {
+            'shared': 0.0,
+            'active_cells': active_cells,
+            'effective_output': 0.0,
+            'bottlenecks': 0,
+            'relief': 0.0,
+            'rerouted': 0.0,
+        }
+
+    cell_weighted_demand = {}
+    for cell, members in cell_members.items():
+        cluster_weight = 1.0
+        if config.get('enable_capability_clusters') and members:
+            cluster_weight = float(np.mean([agent.cluster_budget_weight for agent in members]))
+        cell_weighted_demand[cell] = cell_demand[cell] * cluster_weight
+    weighted_total = max(1e-9, sum(cell_weighted_demand.values()))
+
+    base_allocations = {
+        cell: budget * (weighted_demand / weighted_total)
+        for cell, weighted_demand in cell_weighted_demand.items()
+    }
+
+    threshold = float(config.get('bottleneck_threshold', DEFAULT_BOTTLENECK_THRESHOLD))
+    triage_intensity = max(0.0, min(1.0, float(
+        config.get('bottleneck_triage_intensity', DEFAULT_BOTTLENECK_TRIAGE_INTENSITY)
+    )))
+    cell_pressure = {}
+    for cell, demand in cell_demand.items():
+        pressure = demand / max(1e-9, base_allocations.get(cell, 0.0))
+        cell_pressure[cell] = pressure
+    mean_pressure = float(np.mean(list(cell_pressure.values()))) if cell_pressure else 0.0
+    bottleneck_limit = max(threshold, mean_pressure * 1.03)
+    donor_limit = mean_pressure * 0.97 if mean_pressure > 0.0 else threshold
+    bottleneck_cells = [cell for cell, pressure in cell_pressure.items() if pressure > bottleneck_limit]
+
+    rerouted_budget = 0.0
+    relief_total = 0.0
+    allocations = dict(base_allocations)
+    if config.get('enable_bottleneck_management') and bottleneck_cells:
+        donors = [
+            cell for cell, pressure in cell_pressure.items()
+            if cell not in bottleneck_cells and pressure <= donor_limit and allocations.get(cell, 0.0) > 0.0
+        ]
+        if not donors:
+            ordered_cells = sorted(cell_pressure.items(), key=lambda item: item[1])
+            donors = [cell for cell, _ in ordered_cells[: max(1, len(ordered_cells) // 2)] if cell not in bottleneck_cells]
+        donor_budget = sum(allocations.get(cell, 0.0) for cell in donors)
+        donor_capacity = min(donor_budget * 0.55, budget * 0.35)
+        triage_pool = donor_capacity * triage_intensity
+        if triage_pool > 0.0:
+            donor_total = sum(
+                max(0.15, mean_pressure - cell_pressure.get(cell, mean_pressure) + 0.25)
+                for cell in donors
+            )
+            for donor in donors:
+                donor_share = max(0.15, mean_pressure - cell_pressure.get(donor, mean_pressure) + 0.25)
+                transfer = triage_pool * (donor_share / max(1e-9, donor_total))
+                allocations[donor] = max(0.0, allocations[donor] - transfer)
+                rerouted_budget += transfer
+            bottleneck_total = sum(max(0.0, cell_pressure[cell] - mean_pressure) for cell in bottleneck_cells)
+            for cell in bottleneck_cells:
+                severity = max(0.0, cell_pressure[cell] - mean_pressure)
+                transfer = triage_pool * (severity / max(1e-9, bottleneck_total))
+                allocations[cell] += transfer
+                relief_total += transfer
 
     if not config.get('enable_parallel_workflow_cells'):
         dominant_cell = max(cell_demand, key=cell_demand.get)
         dominant_members = cell_members[dominant_cell]
         if not dominant_members:
-            return {'shared': 0.0, 'active_cells': 0, 'effective_output': 0.0}
+            return {
+                'shared': 0.0,
+                'active_cells': 0,
+                'effective_output': 0.0,
+                'bottlenecks': len(bottleneck_cells),
+                'relief': relief_total,
+                'rerouted': rerouted_budget,
+            }
         share_per_agent = budget / len(dominant_members)
         total_shared = 0.0
         total_output = 0.0
@@ -748,40 +843,52 @@ def koordiniere_ressourcen(agenten, config):
             agent.resource_shared_total += budget / len(agenten)
             output_gain = resource_bonus * agent.cluster_output_multiplier * (0.5 + agent.task_priority)
             agent.cluster_output_total += output_gain
+            agent.bottleneck_pressure = max(agent.bottleneck_pressure, cell_pressure.get(dominant_cell, 0.0))
             total_shared += resource_bonus
             total_output += output_gain
-        return {'shared': total_shared, 'active_cells': 1, 'effective_output': total_output}
+        return {
+            'shared': total_shared,
+            'active_cells': 1,
+            'effective_output': total_output,
+            'bottlenecks': len(bottleneck_cells),
+            'relief': relief_total,
+            'rerouted': rerouted_budget,
+        }
 
     total_shared = 0.0
     total_output = 0.0
     for cell, demand in cell_demand.items():
-        cluster_weight = 1.0
-        if config.get('enable_capability_clusters') and cell_members[cell]:
-            cluster_weight = float(np.mean([agent.cluster_budget_weight for agent in cell_members[cell]]))
-        allocation = budget * (demand * cluster_weight / max(1e-9, sum(
-            cell_demand[name]
-            * (
-                float(np.mean([agent.cluster_budget_weight for agent in members]))
-                if config.get('enable_capability_clusters') and members
-                else 1.0
-            )
-            for name, members in cell_members.items()
-        )))
         members = cell_members[cell]
         if not members:
             continue
+        allocation = allocations.get(cell, 0.0)
         share_per_agent = allocation / len(members)
+        triage_bonus = 1.0
+        if config.get('enable_bottleneck_management') and cell in bottleneck_cells and relief_total > 0.0:
+            triage_bonus += 0.25 + 0.35 * min(1.0, relief_total / max(1e-9, budget))
         for agent in members:
             resource_bonus = share_per_agent * share_factor
             agent.resource_credit = min(1.0, agent.resource_credit + resource_bonus)
             agent.resource_received_total += resource_bonus
             agent.resource_shared_total += allocation / len(agenten)
-            output_gain = resource_bonus * agent.cluster_output_multiplier * (0.5 + agent.task_priority)
+            output_gain = resource_bonus * agent.cluster_output_multiplier * (0.5 + agent.task_priority) * triage_bonus
             agent.cluster_output_total += output_gain
+            agent.bottleneck_pressure = max(agent.bottleneck_pressure, cell_pressure.get(cell, 0.0))
+            if cell in bottleneck_cells:
+                relief_share = relief_total / len(members)
+                agent.bottleneck_relief_total += relief_share
+                agent.resource_rerouted_total += rerouted_budget / max(1, len(agenten))
             total_shared += resource_bonus
             total_output += output_gain
 
-    return {'shared': total_shared, 'active_cells': active_cells, 'effective_output': total_output}
+    return {
+        'shared': total_shared,
+        'active_cells': active_cells,
+        'effective_output': total_output,
+        'bottlenecks': len(bottleneck_cells),
+        'relief': relief_total,
+        'rerouted': rerouted_budget,
+    }
 
 
 def missionskonflikt(mission_a, mission_b):
@@ -1510,6 +1617,9 @@ def run_polarization_experiment(
     config.setdefault('enable_capability_clusters', False)
     config.setdefault('enable_asymmetric_cluster_budgets', False)
     config.setdefault('cluster_budget_skew', DEFAULT_CLUSTER_BUDGET_SKEW)
+    config.setdefault('enable_bottleneck_management', False)
+    config.setdefault('bottleneck_threshold', DEFAULT_BOTTLENECK_THRESHOLD)
+    config.setdefault('bottleneck_triage_intensity', DEFAULT_BOTTLENECK_TRIAGE_INTENSITY)
     scenario = str(config['scenario'])
     rounds = int(config['rounds'])
     interactions_per_round = int(config['interactions_per_round'])
@@ -1591,6 +1701,11 @@ def run_polarization_experiment(
                         "Faehigkeitscluster: "
                         f"aktiv | asymmetrische Budgets={'an' if config.get('enable_asymmetric_cluster_budgets') else 'aus'}"
                     )
+                if config.get('enable_bottleneck_management'):
+                    print(
+                        "Bottleneck-Management: "
+                        f"aktiv | Schwelle={float(config.get('bottleneck_threshold', DEFAULT_BOTTLENECK_THRESHOLD)):.2f}"
+                    )
         print("Ziel: Beobachte, ob der Schwarm in Richtung Konsens oder in stabile Lager driftet.")
         print("\nSimulation läuft...\n")
 
@@ -1634,6 +1749,9 @@ def run_polarization_experiment(
     active_cell_history = []
     cluster_output_history = []
     capability_cluster_counts = defaultdict(int)
+    bottleneck_history = []
+    bottleneck_relief_history = []
+    rerouted_budget_history = []
 
     for runde in range(1, rounds + 1):
         gruppenuebergreifende_interaktionen = 0
@@ -1794,6 +1912,9 @@ def run_polarization_experiment(
             resource_sharing_history.append(resource_stats['shared'])
             active_cell_history.append(resource_stats['active_cells'])
             cluster_output_history.append(resource_stats['effective_output'])
+            bottleneck_history.append(resource_stats['bottlenecks'])
+            bottleneck_relief_history.append(resource_stats['relief'])
+            rerouted_budget_history.append(resource_stats['rerouted'])
         for alte_rolle, neue_rolle in switch_stats['transitions']:
             role_transition_counts[f'{alte_rolle}->{neue_rolle}'] += 1
         removed_edges_history.append(rewiring_stats['removed_edges'])
@@ -1829,6 +1950,8 @@ def run_polarization_experiment(
                 status += f", Ressourcen={resource_stats['shared']:.2f}"
             if config.get('enable_capability_clusters'):
                 status += f", Cluster-Output={resource_stats['effective_output']:.2f}"
+            if config.get('enable_bottleneck_management'):
+                status += f", Bottlenecks={resource_stats['bottlenecks']}"
             print(status)
 
     finale_pi = polarisierungs_history[-1]
@@ -1909,6 +2032,11 @@ def run_polarization_experiment(
         'resource_efficiency': float(sum(cluster_output_history) / max(1e-9, sum(resource_sharing_history)))
         if resource_sharing_history
         else 0.0,
+        'bottleneck_total': int(sum(bottleneck_history)),
+        'bottleneck_rate': float(np.mean(bottleneck_history)) if bottleneck_history else 0.0,
+        'bottleneck_relief_total': float(sum(bottleneck_relief_history)),
+        'bottleneck_relief_rate': float(np.mean(bottleneck_relief_history)) if bottleneck_relief_history else 0.0,
+        'rerouted_budget_total': float(sum(rerouted_budget_history)),
     }
 
     interpretation = "hybrid"
@@ -1967,6 +2095,9 @@ def run_polarization_experiment(
             if config.get('enable_capability_clusters'):
                 print(f"Cluster-Output gesamt:    {workflow_metrics['cluster_output_total']:.2f}")
                 print(f"Ressourcen-Effizienz:     {workflow_metrics['resource_efficiency']:.2f}")
+            if config.get('enable_bottleneck_management'):
+                print(f"Bottlenecks gesamt:       {workflow_metrics['bottleneck_total']}")
+                print(f"Entlastung gesamt:        {workflow_metrics['bottleneck_relief_total']:.2f}")
         if config.get('enable_dynamic_rewiring'):
             print(f"Ø Rewiring-Operationen/Runde: {durchschnitt_rewiring:.2f}")
             print(f"Finale Netzwerkdichte:       {finale_netzwerkmetriken['density']:.3f}")

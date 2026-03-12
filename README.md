@@ -56,6 +56,7 @@ Die Simulationen basieren auf wiederholten Interaktionen im Stil des Gefangenend
 | `schwarm_arbeitszellen.py` | Studie fuer spezialisierte Workflow-Zellen und Uebergabemechanismen im Schwarm |
 | `schwarm_arbeitszellen_parallel.py` | Studie fuer parallele Workflow-Zellen und koordinierte Ressourcenteilung im Schwarm |
 | `schwarm_faehigkeitscluster.py` | Studie fuer heterogene Faehigkeitscluster und asymmetrische Ressourcenbudgets im Schwarm |
+| `schwarm_engpassmanagement.py` | Studie fuer Bottleneck-Management und prioritaetsbasierte Ressourcen-Umlenkung zwischen Zellclustern |
 | `commitment_protokoll.py` | Commit-Reveal-Verify-Protokoll gegen Manipulation |
 
 ## Features
@@ -142,6 +143,7 @@ python3 schwarm_arbeitsketten.py
 python3 schwarm_arbeitszellen.py
 python3 schwarm_arbeitszellen_parallel.py
 python3 schwarm_faehigkeitscluster.py
+python3 schwarm_engpassmanagement.py
 python3 commitment_protokoll.py
 ```
 
@@ -384,6 +386,22 @@ KKI_CLUSTER_BUDGET_SKEW=0.35 \
 python3 schwarm_faehigkeitscluster.py
 ```
 
+Die Engpassmanagement-Studie legt auf diese Clusterarchitektur knappe Budgets und adaptive Ressourcen-Triage:
+
+```bash
+python3 schwarm_engpassmanagement.py
+```
+
+Optional lassen sich Engpass-Schwelle und Triage-Intensitaet anpassen:
+
+```bash
+KKI_BOTTLENECK_REPETITIONS=2 \
+KKI_BOTTLENECK_MANAGEMENT_ENABLED=true \
+KKI_BOTTLENECK_THRESHOLD=1.05 \
+KKI_BOTTLENECK_TRIAGE_INTENSITY=0.55 \
+python3 schwarm_engpassmanagement.py
+```
+
 Optional lassen sich Wiederholungen und gemeinsame Basisparameter anpassen:
 
 ```bash
@@ -442,6 +460,7 @@ Die folgenden Skripte erzeugen die im Repository abgelegten PNG-Dateien:
 | `schwarm_arbeitszellen.py` | `kki_arbeitszellen.png` | `KKI_SEED=42 python3 schwarm_arbeitszellen.py` |
 | `schwarm_arbeitszellen_parallel.py` | `kki_arbeitszellen_parallel.png` | `KKI_SEED=42 python3 schwarm_arbeitszellen_parallel.py` |
 | `schwarm_faehigkeitscluster.py` | `kki_faehigkeitscluster.png` | `KKI_SEED=42 python3 schwarm_faehigkeitscluster.py` |
+| `schwarm_engpassmanagement.py` | `kki_engpassmanagement.png` | `KKI_SEED=42 python3 schwarm_engpassmanagement.py` |
 | `commitment_protokoll.py` | `kki_commitment_protokoll.png` | `KKI_SEED=42 python3 commitment_protokoll.py` |
 
 Hinweise zur Reproduktion:
@@ -465,6 +484,7 @@ Hinweise zur Reproduktion:
 - die Arbeitszellen-Studie nutzt zusaetzlich `KKI_WORKFLOW_CELL_REPETITIONS`, `KKI_WORKFLOW_CELLS_ENABLED`, `KKI_HANDOFF_COORDINATION_ENABLED` und `KKI_HANDOFF_PRIORITY_BONUS`
 - die Parallel-Arbeitszellen-Studie nutzt zusaetzlich `KKI_PARALLEL_CELLS_REPETITIONS`, `KKI_PARALLEL_WORKFLOW_CELLS_ENABLED`, `KKI_RESOURCE_COORDINATION_ENABLED`, `KKI_RESOURCE_BUDGET` und `KKI_RESOURCE_SHARE_FACTOR`
 - die Faehigkeitscluster-Studie nutzt zusaetzlich `KKI_CAPABILITY_CLUSTER_REPETITIONS`, `KKI_CAPABILITY_CLUSTERS_ENABLED`, `KKI_ASYMMETRIC_CLUSTER_BUDGETS_ENABLED` und `KKI_CLUSTER_BUDGET_SKEW`
+- die Engpassmanagement-Studie nutzt zusaetzlich `KKI_BOTTLENECK_REPETITIONS`, `KKI_BOTTLENECK_MANAGEMENT_ENABLED`, `KKI_BOTTLENECK_THRESHOLD` und `KKI_BOTTLENECK_TRIAGE_INTENSITY`
 
 Beispiel für eine reproduzierbare, headless Erzeugung:
 
@@ -559,6 +579,10 @@ Die Smoke-Tests starten ausgewählte Kernskripte im verkürzten headless Testmod
 ### Faehigkeitscluster-Studie
 
 ![KKI Faehigkeitscluster](kki_faehigkeitscluster.png)
+
+### Engpassmanagement-Studie
+
+![KKI Engpassmanagement](kki_engpassmanagement.png)
 
 ## Zentrale Beobachtungen
 

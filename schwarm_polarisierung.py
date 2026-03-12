@@ -50,11 +50,20 @@ DEFAULT_ROLE_SWITCH_INTERVAL = 20
 DEFAULT_ROLE_SWITCH_MIN_TENURE = 20
 DEFAULT_ROLE_SWITCH_REPUTATION_COST = 0.02
 DEFAULT_MISSION_SWITCH_INTERVAL = 30
+DEFAULT_MISSION_CONFLICT_THRESHOLD = 0.45
+DEFAULT_MISSION_ARBITRATION_MARGIN = 0.08
 MISSION_CONSENSUS = 'consensus_building'
 MISSION_KNOWLEDGE = 'knowledge_sharing'
 MISSION_DEFENSE = 'reputation_defense'
 MISSION_STABILITY = 'network_stability'
 MISSION_SUPPORT = 'support'
+MISSION_TYPES = (
+    MISSION_CONSENSUS,
+    MISSION_KNOWLEDGE,
+    MISSION_DEFENSE,
+    MISSION_STABILITY,
+    MISSION_SUPPORT,
+)
 
 
 class Agent:
@@ -91,6 +100,9 @@ class Agent:
         self.initial_mission = MISSION_SUPPORT
         self.mission_tenure = 0
         self.mission_transition_history = []
+        self.mission_candidates = []
+        self.mission_last_fitness = {}
+        self.mission_arbitration_history = []
 
         self.meinung_history = [meinung]
         self.kooperation_history = [kooperations_neigung]
@@ -327,6 +339,14 @@ def build_runtime_config() -> tuple[dict[str, float | int | str], int]:
         'mission_switch_interval': int(
             os.getenv('KKI_MISSION_SWITCH_INTERVAL', str(DEFAULT_MISSION_SWITCH_INTERVAL))
         ),
+        'mission_arbitration_enabled': os.getenv('KKI_MISSION_ARBITRATION_ENABLED', '').strip().lower()
+        in {'1', 'true', 'yes', 'on'},
+        'mission_conflict_threshold': float(
+            os.getenv('KKI_MISSION_CONFLICT_THRESHOLD', str(DEFAULT_MISSION_CONFLICT_THRESHOLD))
+        ),
+        'mission_arbitration_margin': float(
+            os.getenv('KKI_MISSION_ARBITRATION_MARGIN', str(DEFAULT_MISSION_ARBITRATION_MARGIN))
+        ),
     }
     return config, seed
 
@@ -429,6 +449,163 @@ def mission_fuer_rolle(role):
     return MISSION_SUPPORT
 
 
+def missionskonflikt(mission_a, mission_b):
+    if mission_a == mission_b:
+        return 0.0
+
+    matrix = {
+        frozenset({MISSION_CONSENSUS, MISSION_DEFENSE}): 0.75,
+        frozenset({MISSION_CONSENSUS, MISSION_STABILITY}): 0.30,
+        frozenset({MISSION_CONSENSUS, MISSION_KNOWLEDGE}): 0.12,
+        frozenset({MISSION_KNOWLEDGE, MISSION_DEFENSE}): 0.45,
+        frozenset({MISSION_KNOWLEDGE, MISSION_STABILITY}): 0.40,
+        frozenset({MISSION_DEFENSE, MISSION_SUPPORT}): 0.35,
+        frozenset({MISSION_STABILITY, MISSION_SUPPORT}): 0.18,
+    }
+    return matrix.get(frozenset({mission_a, mission_b}), 0.10)
+
+
+def missions_rollenfit(role, mission):
+    basis = {
+        'generalist': {
+            MISSION_SUPPORT: 0.08,
+            MISSION_KNOWLEDGE: 0.05,
+            MISSION_CONSENSUS: 0.04,
+        },
+        'connector': {
+            MISSION_KNOWLEDGE: 0.12,
+            MISSION_CONSENSUS: 0.05,
+        },
+        'sentinel': {
+            MISSION_DEFENSE: 0.14,
+            MISSION_STABILITY: 0.04,
+        },
+        'mediator': {
+            MISSION_CONSENSUS: 0.14,
+            MISSION_KNOWLEDGE: 0.04,
+        },
+        'analyzer': {
+            MISSION_STABILITY: 0.12,
+            MISSION_DEFENSE: 0.05,
+        },
+    }
+    return basis.get(role, {}).get(mission, 0.0)
+
+
+def berechne_missionsfitness(agent, agenten_dict):
+    nachbarn = [agenten_dict[nachbar_id] for nachbar_id in agent.nachbarn if nachbar_id in agenten_dict]
+    if nachbarn:
+        cross_group_share = sum(1 for nachbar in nachbarn if nachbar.gruppe != agent.gruppe) / len(nachbarn)
+        mean_partner_reputation = float(
+            np.mean([agent.berechne_partner_reputation(nachbar.id) for nachbar in nachbarn])
+        )
+        mean_neighbor_distance = float(np.mean([abs(agent.meinung - nachbar.meinung) for nachbar in nachbarn]))
+    else:
+        cross_group_share = 0.0
+        mean_partner_reputation = 0.5
+        mean_neighbor_distance = 0.0
+
+    fitness = {
+        MISSION_CONSENSUS: (
+            missions_rollenfit(agent.role, MISSION_CONSENSUS)
+            + 0.18 * cross_group_share
+            + 0.08 * agent.kooperations_neigung
+            + 0.06 * max(0.0, 1.0 - abs(agent.meinung - 0.5) * 2.0)
+        ),
+        MISSION_KNOWLEDGE: (
+            missions_rollenfit(agent.role, MISSION_KNOWLEDGE)
+            + 0.16 * cross_group_share
+            + 0.05 * agent.intelligenz / 6.0
+            + 0.04 * mean_neighbor_distance
+        ),
+        MISSION_DEFENSE: (
+            missions_rollenfit(agent.role, MISSION_DEFENSE)
+            + 0.18 * max(0.0, 0.55 - mean_partner_reputation)
+            + 0.08 * agent.reputation
+            + 0.05 * (1.0 - agent.kooperations_neigung)
+        ),
+        MISSION_STABILITY: (
+            missions_rollenfit(agent.role, MISSION_STABILITY)
+            + 0.14 * max(0.0, 0.35 - mean_neighbor_distance)
+            + 0.06 * agent.reputation
+            + 0.04 * (1.0 - cross_group_share)
+        ),
+        MISSION_SUPPORT: (
+            missions_rollenfit(agent.role, MISSION_SUPPORT)
+            + 0.05 * agent.kooperations_neigung
+            + 0.04 * mean_partner_reputation
+        ),
+    }
+
+    if agent.mission in fitness:
+        fitness[agent.mission] += 0.03
+    return fitness
+
+
+def erkenne_missionskonflikte(fitness, config):
+    sortiert = sorted(fitness.items(), key=lambda item: item[1], reverse=True)
+    if len(sortiert) < 2:
+        return {'count': 0, 'top_conflict': 0.0, 'top_pair': None}
+
+    top_conflict = missionskonflikt(sortiert[0][0], sortiert[1][0])
+    threshold = float(config.get('mission_conflict_threshold', DEFAULT_MISSION_CONFLICT_THRESHOLD))
+    konflikt_count = 0
+    for index, (mission_a, score_a) in enumerate(sortiert):
+        for mission_b, score_b in sortiert[index + 1 :]:
+            if abs(score_a - score_b) <= 0.12 and missionskonflikt(mission_a, mission_b) >= threshold:
+                konflikt_count += 1
+
+    return {
+        'count': konflikt_count,
+        'top_conflict': top_conflict,
+        'top_pair': (sortiert[0][0], sortiert[1][0]),
+    }
+
+
+def arbitriere_mission(agent, fitness, conflict_info, config):
+    sortiert = sorted(fitness.items(), key=lambda item: item[1], reverse=True)
+    beste_mission, bester_score = sortiert[0]
+    if len(sortiert) == 1:
+        return {
+            'mission': beste_mission,
+            'activated': False,
+            'considered': False,
+            'fitness_gain': 0.0,
+            'conflicts': conflict_info['count'],
+        }
+
+    zweite_mission, zweiter_score = sortiert[1]
+    margin = float(config.get('mission_arbitration_margin', DEFAULT_MISSION_ARBITRATION_MARGIN))
+    role_default = mission_fuer_rolle(agent.role)
+    chosen_mission = beste_mission
+    activated = False
+    considered = False
+
+    if conflict_info['top_conflict'] >= float(
+        config.get('mission_conflict_threshold', DEFAULT_MISSION_CONFLICT_THRESHOLD)
+    ):
+        considered = True
+        if bester_score - zweiter_score <= margin:
+            if agent.mission in {beste_mission, zweite_mission}:
+                chosen_mission = agent.mission
+            elif role_default in {beste_mission, zweite_mission}:
+                chosen_mission = role_default
+            elif zweite_mission == MISSION_STABILITY and agent.reputation >= 0.58:
+                chosen_mission = zweite_mission
+            elif zweite_mission == MISSION_DEFENSE and agent.reputation < 0.5:
+                chosen_mission = zweite_mission
+            activated = chosen_mission != beste_mission
+
+    fitness_gain = fitness[chosen_mission] - fitness.get(role_default, 0.0)
+    return {
+        'mission': chosen_mission,
+        'activated': activated,
+        'considered': considered,
+        'fitness_gain': fitness_gain,
+        'conflicts': conflict_info['count'],
+    }
+
+
 def setze_mission(agent, mission, runde):
     if agent.mission != mission:
         agent.mission_transition_history.append((runde, agent.mission, mission))
@@ -443,30 +620,63 @@ def initialisiere_missionen(agenten):
         agent.initial_mission = mission
         agent.mission_tenure = 0
         agent.mission_transition_history = []
+        agent.mission_candidates = []
+        agent.mission_last_fitness = {}
+        agent.mission_arbitration_history = []
 
 
-def aktualisiere_missionen(agenten, config, runde):
+def aktualisiere_missionen(agenten, agenten_dict, config, runde):
     if not config.get('enable_missions'):
-        return {'switches': 0}
-    if config.get('mission_assignment') != 'adaptive':
-        return {'switches': 0}
+        return {'switches': 0, 'arbitrations': 0, 'conflicts': 0, 'fitness_gain': 0.0}
+
+    assignment = str(config.get('mission_assignment', 'static'))
+    if assignment not in {'adaptive', 'arbitrated'}:
+        return {'switches': 0, 'arbitrations': 0, 'conflicts': 0, 'fitness_gain': 0.0}
 
     interval = max(1, int(config.get('mission_switch_interval', DEFAULT_MISSION_SWITCH_INTERVAL)))
     if runde % interval != 0:
-        return {'switches': 0}
+        return {'switches': 0, 'arbitrations': 0, 'conflicts': 0, 'fitness_gain': 0.0}
 
     switches = 0
+    arbitrations = 0
+    conflicts = 0
+    fitness_gain = 0.0
     for agent in agenten:
-        neue_mission = mission_fuer_rolle(agent.role)
-        if agent.role == 'generalist':
-            if agent.reputation >= 0.62 and agent.kooperations_neigung >= 0.60:
-                neue_mission = MISSION_KNOWLEDGE
-            elif agent.reputation < 0.45:
-                neue_mission = MISSION_DEFENSE
+        if assignment == 'adaptive':
+            neue_mission = mission_fuer_rolle(agent.role)
+            if agent.role == 'generalist':
+                if agent.reputation >= 0.62 and agent.kooperations_neigung >= 0.60:
+                    neue_mission = MISSION_KNOWLEDGE
+                elif agent.reputation < 0.45:
+                    neue_mission = MISSION_DEFENSE
+        else:
+            fitness = berechne_missionsfitness(agent, agenten_dict)
+            conflict_info = erkenne_missionskonflikte(fitness, config)
+            arbitration = arbitriere_mission(agent, fitness, conflict_info, config)
+            agent.mission_candidates = sorted(fitness.items(), key=lambda item: item[1], reverse=True)
+            agent.mission_last_fitness = dict(fitness)
+            agent.mission_arbitration_history.append(
+                {
+                    'round': runde,
+                    'mission': arbitration['mission'],
+                    'activated': arbitration['activated'],
+                    'considered': arbitration['considered'],
+                    'conflicts': conflict_info['count'],
+                }
+            )
+            neue_mission = arbitration['mission']
+            arbitrations += int(arbitration['considered'])
+            conflicts += conflict_info['count']
+            fitness_gain += arbitration['fitness_gain']
         if agent.mission != neue_mission:
             setze_mission(agent, neue_mission, runde)
             switches += 1
-    return {'switches': switches}
+    return {
+        'switches': switches,
+        'arbitrations': arbitrations,
+        'conflicts': conflicts,
+        'fitness_gain': fitness_gain,
+    }
 
 
 def missions_bonus(agent, partner_reputation, partner, ist_cross_group):
@@ -918,6 +1128,9 @@ def run_polarization_experiment(
     config.setdefault('enable_missions', False)
     config.setdefault('mission_assignment', 'static')
     config.setdefault('mission_switch_interval', DEFAULT_MISSION_SWITCH_INTERVAL)
+    config.setdefault('mission_arbitration_enabled', False)
+    config.setdefault('mission_conflict_threshold', DEFAULT_MISSION_CONFLICT_THRESHOLD)
+    config.setdefault('mission_arbitration_margin', DEFAULT_MISSION_ARBITRATION_MARGIN)
     scenario = str(config['scenario'])
     rounds = int(config['rounds'])
     interactions_per_round = int(config['interactions_per_round'])
@@ -972,6 +1185,12 @@ def run_polarization_experiment(
                 f"aktiv | Zuweisung={config['mission_assignment']}, "
                 f"Intervall={int(config['mission_switch_interval'])}"
             )
+            if config.get('mission_arbitration_enabled') or config.get('mission_assignment') == 'arbitrated':
+                print(
+                    "Missions-Arbitration: "
+                    f"aktiv | Konflikt-Schwelle={float(config['mission_conflict_threshold']):.2f}, "
+                    f"Margin={float(config['mission_arbitration_margin']):.2f}"
+                )
         print("Ziel: Beobachte, ob der Schwarm in Richtung Konsens oder in stabile Lager driftet.")
         print("\nSimulation läuft...\n")
 
@@ -1003,6 +1222,9 @@ def run_polarization_experiment(
     mission_switch_history = []
     mission_contact_counts = defaultdict(int)
     mission_success_counts = defaultdict(int)
+    mission_arbitration_history = []
+    mission_conflict_history = []
+    mission_fitness_gain_history = []
 
     for runde in range(1, rounds + 1):
         gruppenuebergreifende_interaktionen = 0
@@ -1108,7 +1330,7 @@ def run_polarization_experiment(
             )
 
         switch_stats = aktualisiere_rollenwechsel(agenten, agenten_dict, config, runde)
-        mission_stats = aktualisiere_missionen(agenten, config, runde)
+        mission_stats = aktualisiere_missionen(agenten, agenten_dict, config, runde)
         rewiring_stats = aktualisiere_adaptives_netzwerk(agenten, agenten_dict, config)
         for agent in agenten:
             agent.role_tenure += 1
@@ -1137,6 +1359,9 @@ def run_polarization_experiment(
         center_zone_history.append(sum(1 for agent in agenten if ist_zentrist(agent.meinung, config)))
         role_switch_history.append(switch_stats['switches'])
         mission_switch_history.append(mission_stats['switches'])
+        mission_arbitration_history.append(mission_stats['arbitrations'])
+        mission_conflict_history.append(mission_stats['conflicts'])
+        mission_fitness_gain_history.append(mission_stats['fitness_gain'])
         for alte_rolle, neue_rolle in switch_stats['transitions']:
             role_transition_counts[f'{alte_rolle}->{neue_rolle}'] += 1
         removed_edges_history.append(rewiring_stats['removed_edges'])
@@ -1161,6 +1386,11 @@ def run_polarization_experiment(
                 status += f", Wechsel={switch_stats['switches']}"
             if config.get('enable_missions'):
                 status += f", Missionen={mission_stats['switches']}"
+                if config.get('mission_arbitration_enabled') or config.get('mission_assignment') == 'arbitrated':
+                    status += (
+                        f", Konflikte={mission_stats['conflicts']}, "
+                        f"Arb={mission_stats['arbitrations']}"
+                    )
             if config.get('enable_dynamic_rewiring'):
                 status += f", Rewiring={rewiring_stats['rewired_edges']}"
             print(status)
@@ -1208,13 +1438,7 @@ def run_polarization_experiment(
         role: role_cross_group_cooperations[role] / max(1, role_cross_group_contacts[role])
         for role in role_counts
     }
-    bekannte_missionen = (
-        MISSION_CONSENSUS,
-        MISSION_KNOWLEDGE,
-        MISSION_DEFENSE,
-        MISSION_STABILITY,
-        MISSION_SUPPORT,
-    )
+    bekannte_missionen = MISSION_TYPES
     initial_mission_counts = {
         mission: sum(1 for agent in agenten if agent.initial_mission == mission) for mission in bekannte_missionen
     }
@@ -1223,6 +1447,10 @@ def run_polarization_experiment(
         mission: mission_success_counts[mission] / max(1, mission_contact_counts[mission])
         for mission in bekannte_missionen
     }
+    mission_conflict_total = int(sum(mission_conflict_history))
+    mission_arbitration_total = int(sum(mission_arbitration_history))
+    mission_arbitration_mean_gain = float(np.mean(mission_fitness_gain_history))
+    mission_switch_stability = float(np.std(mission_switch_history) / max(1.0, np.mean(mission_switch_history)))
 
     interpretation = "hybrid"
     if finale_pi > 0.22 and finaler_abstand > 0.35:
@@ -1264,6 +1492,10 @@ def run_polarization_experiment(
                 f"Support={mission_success_rates[MISSION_SUPPORT]:.1%}"
             )
             print(f"Ø Missionswechsel/Runde:     {float(np.mean(mission_switch_history)):.2f}")
+            if config.get('mission_arbitration_enabled') or config.get('mission_assignment') == 'arbitrated':
+                print(f"Ø Konflikte/Runde:           {float(np.mean(mission_conflict_history)):.2f}")
+                print(f"Ø Arbitrierungen/Runde:      {float(np.mean(mission_arbitration_history)):.2f}")
+                print(f"Ø Fitnessgewinn/Arbitration: {mission_arbitration_mean_gain:.3f}")
         if config.get('enable_dynamic_rewiring'):
             print(f"Ø Rewiring-Operationen/Runde: {durchschnitt_rewiring:.2f}")
             print(f"Finale Netzwerkdichte:       {finale_netzwerkmetriken['density']:.3f}")
@@ -1293,6 +1525,9 @@ def run_polarization_experiment(
         'role_switch_enabled': bool(config.get('enable_role_switching')),
         'missions_enabled': bool(config.get('enable_missions')),
         'mission_assignment': str(config.get('mission_assignment', 'static')),
+        'mission_arbitration_enabled': bool(
+            config.get('mission_arbitration_enabled') or config.get('mission_assignment') == 'arbitrated'
+        ),
         'initial_role_counts': initial_role_counts,
         'role_counts': role_counts,
         'role_mean_intelligence': role_mean_intelligence,
@@ -1307,6 +1542,12 @@ def run_polarization_experiment(
         'mission_success_rates': mission_success_rates,
         'mission_switch_history': mission_switch_history,
         'mission_switch_total': int(sum(mission_switch_history)),
+        'mission_conflict_history': mission_conflict_history,
+        'mission_conflict_total': mission_conflict_total,
+        'mission_arbitration_history': mission_arbitration_history,
+        'mission_arbitration_total': mission_arbitration_total,
+        'mission_arbitration_mean_gain': mission_arbitration_mean_gain,
+        'mission_switch_stability': mission_switch_stability,
         'group_1_mean_opinion': mean_group_a,
         'group_2_mean_opinion': mean_group_b,
         'interpretation': interpretation,

@@ -51,6 +51,7 @@ Die Simulationen basieren auf wiederholten Interaktionen im Stil des Gefangenend
 | `schwarm_rollenlernen.py` | Verfeinerte Lernprofilstudie fuer Vermittler, Analytiker und adaptive Rollenprofile |
 | `schwarm_rollenwechsel.py` | Studie fuer dynamische Rollenwechsel und adaptive Aufgabenverteilung im Schwarm |
 | `schwarm_missionsziele.py` | Studie fuer explizite Teamaufgaben wie Konsensbildung, Wissensaustausch und Abwehr |
+| `schwarm_missionskonflikte.py` | Studie fuer Arbitration und Zielkonflikte zwischen konkurrierenden Missionen |
 | `commitment_protokoll.py` | Commit-Reveal-Verify-Protokoll gegen Manipulation |
 
 ## Features
@@ -132,6 +133,7 @@ python3 schwarm_rollenspezialisierung.py
 python3 schwarm_rollenlernen.py
 python3 schwarm_rollenwechsel.py
 python3 schwarm_missionsziele.py
+python3 schwarm_missionskonflikte.py
 python3 commitment_protokoll.py
 ```
 
@@ -295,6 +297,21 @@ KKI_MISSION_SWITCH_INTERVAL=20 \
 python3 schwarm_missionsziele.py
 ```
 
+Die Missionskonflikt-Studie untersucht anschliessend, ob adaptive Missionen durch explizite Arbitration unter konkurrierenden Zielen besser werden:
+
+```bash
+python3 schwarm_missionskonflikte.py
+```
+
+Optional lassen sich Wiederholungen sowie Konflikt- und Arbitration-Parameter anpassen:
+
+```bash
+KKI_MISSION_ARBITRATION_REPETITIONS=2 \
+KKI_MISSION_CONFLICT_THRESHOLD=0.45 \
+KKI_MISSION_ARBITRATION_MARGIN=0.08 \
+python3 schwarm_missionskonflikte.py
+```
+
 Optional lassen sich Wiederholungen und gemeinsame Basisparameter anpassen:
 
 ```bash
@@ -348,6 +365,7 @@ Die folgenden Skripte erzeugen die im Repository abgelegten PNG-Dateien:
 | `schwarm_rollenlernen.py` | `kki_rollenlernen.png` | `KKI_SEED=42 python3 schwarm_rollenlernen.py` |
 | `schwarm_rollenwechsel.py` | `kki_rollenwechsel.png` | `KKI_SEED=42 python3 schwarm_rollenwechsel.py` |
 | `schwarm_missionsziele.py` | `kki_missionsziele.png` | `KKI_SEED=42 python3 schwarm_missionsziele.py` |
+| `schwarm_missionskonflikte.py` | `kki_missionskonflikte.png` | `KKI_SEED=42 python3 schwarm_missionskonflikte.py` |
 | `commitment_protokoll.py` | `kki_commitment_protokoll.png` | `KKI_SEED=42 python3 commitment_protokoll.py` |
 
 Hinweise zur Reproduktion:
@@ -366,6 +384,7 @@ Hinweise zur Reproduktion:
 - die Rollenlern-Studie nutzt zusaetzlich `KKI_ROLLENLERNEN_REPETITIONS`, `KKI_MEDIATOR_SHARE`, `KKI_ANALYZER_SHARE` sowie die Lernparameter fuer Connector, Sentinel, Vermittler und Analytiker
 - die Rollenwechsel-Studie nutzt zusaetzlich `KKI_ROLLENWECHSEL_REPETITIONS`, `KKI_ENABLE_ROLE_SWITCHING`, `KKI_ROLE_SWITCH_INTERVAL` und `KKI_ROLE_SWITCH_MIN_TENURE`
 - die Missionsziel-Studie nutzt zusaetzlich `KKI_MISSION_REPETITIONS`, `KKI_MISSION_SWITCH_INTERVAL` und die Missionsschalter `KKI_MISSIONS_ENABLED` sowie `KKI_MISSION_ASSIGNMENT`
+- die Missionskonflikt-Studie nutzt zusaetzlich `KKI_MISSION_ARBITRATION_REPETITIONS`, `KKI_MISSION_CONFLICT_THRESHOLD`, `KKI_MISSION_ARBITRATION_MARGIN` sowie `KKI_MISSION_ARBITRATION_ENABLED`
 
 Beispiel für eine reproduzierbare, headless Erzeugung:
 
@@ -441,6 +460,10 @@ Die Smoke-Tests starten ausgewählte Kernskripte im verkürzten headless Testmod
 
 ![KKI Missionsziele](kki_missionsziele.png)
 
+### Missionskonflikt-Studie
+
+![KKI Missionskonflikte](kki_missionskonflikte.png)
+
 ## Zentrale Beobachtungen
 
 Die bisherigen Simulationen illustrieren wiederkehrende Muster:
@@ -460,6 +483,7 @@ Die bisherigen Simulationen illustrieren wiederkehrende Muster:
 - die Rollenlern-Studie untersucht nun, ob aus diesen Rollen auch verfeinerte Lernprofile wie Vermittler und Analytiker mit eigenstaendigen Staerken ableitbar sind
 - die Rollenwechsel-Studie untersucht nun, ob stabile Spezialrollen bereits genuegen oder ob ein dynamischer Wechsel zwischen Aufgaben im Schwarm zusaetzliche Vorteile bringt
 - die Missionsziel-Studie untersucht nun, ob dieselben Rollen durch explizite Teamaufgaben noch fokussierter auf Konsens, Wissensaustausch und Abwehr ausgerichtet werden koennen
+- die Missionskonflikt-Studie untersucht nun, ob adaptive Missionen besser werden, wenn der Schwarm Zielkonflikte explizit erkennt und konkurrierende Aufgaben arbitriert
 
 ## Projektstruktur und Ausrichtung
 

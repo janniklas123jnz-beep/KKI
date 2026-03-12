@@ -22,6 +22,13 @@ DEFAULT_CONNECTIONS_PER_AGENT = 6
 DEFAULT_INTERACTIONS_PER_ROUND = 90
 DEFAULT_RANDOM_EDGE_CHANCE = 0.1
 VALID_SCENARIOS = {'polarization', 'consensus'}
+DEFAULT_REWIRE_MIN_INTERACTIONS = 3
+DEFAULT_REWIRE_REPUTATION_THRESHOLD = 0.35
+DEFAULT_REWIRE_OPINION_DISTANCE_THRESHOLD = 0.55
+DEFAULT_REWIRE_PROXIMITY_WEIGHT = 0.45
+DEFAULT_REWIRE_REMOVAL_PROBABILITY = 0.35
+DEFAULT_REWIRE_ADDITION_PROBABILITY = 0.75
+DEFAULT_REWIRE_CROSS_GROUP_BONUS = 0.08
 
 
 class Agent:
@@ -46,6 +53,10 @@ class Agent:
     def verbinde(self, anderer):
         self.nachbarn.add(anderer.id)
         anderer.nachbarn.add(self.id)
+
+    def trenne(self, anderer):
+        self.nachbarn.discard(anderer.id)
+        anderer.nachbarn.discard(self.id)
 
     def berechne_partner_reputation(self, partner_id):
         history = self.interaktions_history.get(partner_id, [])
@@ -142,6 +153,8 @@ def build_runtime_config() -> tuple[dict[str, float | int | str], int]:
     )
 
     scenario = resolve_scenario(os.getenv('KKI_POLARIZATION_SCENARIO', 'polarization'))
+    rewiring_enabled = os.getenv('KKI_REWIRING_ENABLED', '').strip().lower() in {'1', 'true', 'yes', 'on'}
+    target_degree = int(os.getenv('KKI_REWIRE_TARGET_DEGREE', str(DEFAULT_CONNECTIONS_PER_AGENT)))
     config = {
         'scenario': scenario,
         'agent_count': int(os.getenv('KKI_POLARIZATION_AGENT_COUNT', str(DEFAULT_AGENT_COUNT))),
@@ -156,6 +169,29 @@ def build_runtime_config() -> tuple[dict[str, float | int | str], int]:
         'random_edge_chance': float(
             os.getenv('KKI_RANDOM_EDGE_CHANCE', str(DEFAULT_RANDOM_EDGE_CHANCE))
         ),
+        'enable_dynamic_rewiring': rewiring_enabled,
+        'rewire_min_interactions': int(
+            os.getenv('KKI_REWIRE_MIN_INTERACTIONS', str(DEFAULT_REWIRE_MIN_INTERACTIONS))
+        ),
+        'rewire_reputation_threshold': float(
+            os.getenv('KKI_REWIRE_REP_THRESHOLD', str(DEFAULT_REWIRE_REPUTATION_THRESHOLD))
+        ),
+        'rewire_opinion_distance_threshold': float(
+            os.getenv('KKI_REWIRE_OPINION_THRESHOLD', str(DEFAULT_REWIRE_OPINION_DISTANCE_THRESHOLD))
+        ),
+        'rewire_proximity_weight': float(
+            os.getenv('KKI_REWIRE_PROXIMITY_WEIGHT', str(DEFAULT_REWIRE_PROXIMITY_WEIGHT))
+        ),
+        'rewire_removal_probability': float(
+            os.getenv('KKI_REWIRE_REMOVAL_PROB', str(DEFAULT_REWIRE_REMOVAL_PROBABILITY))
+        ),
+        'rewire_addition_probability': float(
+            os.getenv('KKI_REWIRE_ADDITION_PROB', str(DEFAULT_REWIRE_ADDITION_PROBABILITY))
+        ),
+        'rewire_cross_group_bonus': float(
+            os.getenv('KKI_REWIRE_CROSS_GROUP_BONUS', str(DEFAULT_REWIRE_CROSS_GROUP_BONUS))
+        ),
+        'rewire_target_degree': target_degree,
     }
     return config, seed
 
@@ -243,6 +279,141 @@ def berechne_gruppenabstand(agenten):
     return abs(np.mean(gruppe_links) - np.mean(gruppe_rechts))
 
 
+def berechne_netzwerkmetriken(agenten, agenten_dict):
+    kanten = set()
+    nachbarschaftsdistanzen = []
+    gruppenuebergreifende_kanten = 0
+
+    for agent in agenten:
+        for nachbar_id in agent.nachbarn:
+            kante = tuple(sorted((agent.id, nachbar_id)))
+            if kante in kanten:
+                continue
+            kanten.add(kante)
+            nachbar = agenten_dict[nachbar_id]
+            nachbarschaftsdistanzen.append(abs(agent.meinung - nachbar.meinung))
+            if agent.gruppe != nachbar.gruppe:
+                gruppenuebergreifende_kanten += 1
+
+    kantenanzahl = len(kanten)
+    agentenzahl = len(agenten)
+    moegliche_kanten = agentenzahl * (agentenzahl - 1) / 2
+
+    return {
+        'edge_count': kantenanzahl,
+        'density': kantenanzahl / moegliche_kanten if moegliche_kanten else 0.0,
+        'mean_degree': float(np.mean([len(agent.nachbarn) for agent in agenten])) if agenten else 0.0,
+        'mean_neighbor_opinion_distance': (
+            float(np.mean(nachbarschaftsdistanzen)) if nachbarschaftsdistanzen else 0.0
+        ),
+        'cross_group_edge_share': (
+            gruppenuebergreifende_kanten / kantenanzahl if kantenanzahl else 0.0
+        ),
+    }
+
+
+def finde_neuen_nachbarn(agent, agenten, config):
+    proximity_weight = float(config['rewire_proximity_weight'])
+    opinion_threshold = float(config['rewire_opinion_distance_threshold'])
+    cross_group_bonus = float(config['rewire_cross_group_bonus'])
+
+    bester_score = None
+    beste_kandidaten = []
+
+    for kandidat in agenten:
+        if kandidat.id == agent.id or kandidat.id in agent.nachbarn:
+            continue
+
+        distanz = abs(agent.meinung - kandidat.meinung)
+        if distanz > opinion_threshold + 0.25:
+            continue
+
+        aehnlichkeit = 1.0 - distanz
+        score = (1.0 - proximity_weight) * kandidat.reputation + proximity_weight * aehnlichkeit
+        if distanz > opinion_threshold:
+            score -= (distanz - opinion_threshold) * 0.6
+        if kandidat.gruppe != agent.gruppe:
+            score += cross_group_bonus
+
+        if bester_score is None or score > bester_score + 1e-9:
+            bester_score = score
+            beste_kandidaten = [kandidat]
+        elif abs(score - bester_score) <= 1e-9:
+            beste_kandidaten.append(kandidat)
+
+    if not beste_kandidaten:
+        return None
+    return random.choice(beste_kandidaten)
+
+
+def aktualisiere_adaptives_netzwerk(agenten, agenten_dict, config):
+    if not config.get('enable_dynamic_rewiring'):
+        return {
+            'removed_edges': 0,
+            'added_edges': 0,
+            'rewired_edges': 0,
+            'removed_for_reputation': 0,
+            'removed_for_distance': 0,
+        }
+
+    min_interactions = int(config['rewire_min_interactions'])
+    rep_threshold = float(config['rewire_reputation_threshold'])
+    opinion_threshold = float(config['rewire_opinion_distance_threshold'])
+    removal_probability = float(config['rewire_removal_probability'])
+    addition_probability = float(config['rewire_addition_probability'])
+    target_degree = max(1, int(config['rewire_target_degree']))
+
+    removed_edges = 0
+    added_edges = 0
+    removed_for_reputation = 0
+    removed_for_distance = 0
+
+    for agent in agenten:
+        zu_trennen = []
+        for nachbar_id in list(agent.nachbarn):
+            history = agent.interaktions_history.get(nachbar_id, [])
+            if len(history) < min_interactions:
+                continue
+
+            nachbar = agenten_dict[nachbar_id]
+            schwache_reputation = agent.berechne_partner_reputation(nachbar_id) < rep_threshold
+            grosse_distanz = abs(agent.meinung - nachbar.meinung) > opinion_threshold
+            if (schwache_reputation or grosse_distanz) and random.random() < removal_probability:
+                zu_trennen.append((nachbar, schwache_reputation, grosse_distanz))
+
+        for nachbar, schwache_reputation, grosse_distanz in zu_trennen:
+            if nachbar.id not in agent.nachbarn:
+                continue
+            agent.trenne(nachbar)
+            removed_edges += 1
+            if schwache_reputation:
+                removed_for_reputation += 1
+            else:
+                removed_for_distance += 1
+
+    for agent in agenten:
+        additions_versucht = 0
+        while len(agent.nachbarn) < target_degree and additions_versucht < 2:
+            additions_versucht += 1
+            if random.random() > addition_probability:
+                break
+
+            kandidat = finde_neuen_nachbarn(agent, agenten, config)
+            if kandidat is None or kandidat.id in agent.nachbarn:
+                break
+
+            agent.verbinde(kandidat)
+            added_edges += 1
+
+    return {
+        'removed_edges': removed_edges,
+        'added_edges': added_edges,
+        'rewired_edges': removed_edges + added_edges,
+        'removed_for_reputation': removed_for_reputation,
+        'removed_for_distance': removed_for_distance,
+    }
+
+
 def run_polarization_experiment(
     config,
     *,
@@ -274,6 +445,13 @@ def run_polarization_experiment(
             f"Cross-Group={float(config['cross_group_chance']):.2f}, "
             f"Shortcut={float(config['random_edge_chance']):.2f}"
         )
+        if config.get('enable_dynamic_rewiring'):
+            print(
+                "Adaptives Rewiring: "
+                f"aktiv | Rep-Schwelle={float(config['rewire_reputation_threshold']):.2f}, "
+                f"Meinungs-Schwelle={float(config['rewire_opinion_distance_threshold']):.2f}, "
+                f"Zielgrad={int(config['rewire_target_degree'])}"
+            )
         print("Ziel: Beobachte, ob der Schwarm in Richtung Konsens oder in stabile Lager driftet.")
         print("\nSimulation läuft...\n")
 
@@ -286,6 +464,15 @@ def run_polarization_experiment(
     gruppe_a_intelligenz = []
     gruppe_b_intelligenz = []
     cross_group_history = []
+    removed_edges_history = []
+    added_edges_history = []
+    rewired_edges_history = []
+    removed_reputation_history = []
+    removed_distance_history = []
+    density_history = []
+    mean_degree_history = []
+    neighbor_distance_history = []
+    cross_group_edge_share_history = []
 
     for runde in range(1, rounds + 1):
         gruppenuebergreifende_interaktionen = 0
@@ -320,12 +507,14 @@ def run_polarization_experiment(
                 agent.gruppe == partner.gruppe,
             )
 
+        rewiring_stats = aktualisiere_adaptives_netzwerk(agenten, agenten_dict, config)
         for agent in agenten:
             agent.runde_beenden()
 
         polarisierungs_index = berechne_polarisierungs_index(agenten)
         konsens_score = berechne_konsens_score(agenten)
         gruppenabstand = berechne_gruppenabstand(agenten)
+        netzwerkmetriken = berechne_netzwerkmetriken(agenten, agenten_dict)
         links, mitte, rechts = berechne_lager(agenten)
 
         polarisierungs_history.append(polarisierungs_index)
@@ -337,13 +526,25 @@ def run_polarization_experiment(
         gruppe_a_intelligenz.append(np.mean([agent.intelligenz for agent in agenten if agent.gruppe == 0]))
         gruppe_b_intelligenz.append(np.mean([agent.intelligenz for agent in agenten if agent.gruppe == 1]))
         cross_group_history.append(gruppenuebergreifende_interaktionen / interactions_per_round)
+        removed_edges_history.append(rewiring_stats['removed_edges'])
+        added_edges_history.append(rewiring_stats['added_edges'])
+        rewired_edges_history.append(rewiring_stats['rewired_edges'])
+        removed_reputation_history.append(rewiring_stats['removed_for_reputation'])
+        removed_distance_history.append(rewiring_stats['removed_for_distance'])
+        density_history.append(netzwerkmetriken['density'])
+        mean_degree_history.append(netzwerkmetriken['mean_degree'])
+        neighbor_distance_history.append(netzwerkmetriken['mean_neighbor_opinion_distance'])
+        cross_group_edge_share_history.append(netzwerkmetriken['cross_group_edge_share'])
 
         if print_summary and runde % 30 == 0:
-            print(
+            status = (
                 f"Runde {runde:3d}: PI={polarisierungs_index:.3f}, "
                 f"Konsens={konsens_score:.3f}, Gruppenabstand={gruppenabstand:.3f}, "
                 f"Links/Mitte/Rechts={links}/{mitte}/{rechts}"
             )
+            if config.get('enable_dynamic_rewiring'):
+                status += f", Rewiring={rewiring_stats['rewired_edges']}"
+            print(status)
 
     finale_pi = polarisierungs_history[-1]
     finaler_konsens = konsens_history[-1]
@@ -352,6 +553,8 @@ def run_polarization_experiment(
     cross_group_rate = float(np.mean(cross_group_history))
     mean_group_a = float(np.mean([agent.meinung for agent in agenten if agent.gruppe == 0]))
     mean_group_b = float(np.mean([agent.meinung for agent in agenten if agent.gruppe == 1]))
+    finale_netzwerkmetriken = berechne_netzwerkmetriken(agenten, agenten_dict)
+    durchschnitt_rewiring = float(np.mean(rewired_edges_history)) if rewired_edges_history else 0.0
 
     interpretation = "hybrid"
     if finale_pi > 0.22 and finaler_abstand > 0.35:
@@ -368,6 +571,11 @@ def run_polarization_experiment(
         print(f"Finaler Gruppenabstand:      {finaler_abstand:.3f}")
         print(f"Lagerverteilung:             Links={links}, Mitte={mitte}, Rechts={rechts}")
         print(f"Ø gruppenübergreifende Interaktionen: {cross_group_rate:.1%}")
+        if config.get('enable_dynamic_rewiring'):
+            print(f"Ø Rewiring-Operationen/Runde: {durchschnitt_rewiring:.2f}")
+            print(f"Finale Netzwerkdichte:       {finale_netzwerkmetriken['density']:.3f}")
+            print(f"Finaler mittlerer Grad:      {finale_netzwerkmetriken['mean_degree']:.2f}")
+            print(f"Anteil gruppenübergreifender Kanten: {finale_netzwerkmetriken['cross_group_edge_share']:.1%}")
         print(f"\nØ Meinung Gruppe 1: {mean_group_a:.3f}")
         print(f"Ø Meinung Gruppe 2: {mean_group_b:.3f}")
 
@@ -391,6 +599,7 @@ def run_polarization_experiment(
         'group_1_mean_opinion': mean_group_a,
         'group_2_mean_opinion': mean_group_b,
         'interpretation': interpretation,
+        'rewiring_enabled': bool(config.get('enable_dynamic_rewiring')),
         'polarization_history': polarisierungs_history,
         'consensus_history': konsens_history,
         'group_distance_history': gruppenabstand_history,
@@ -400,17 +609,32 @@ def run_polarization_experiment(
         'group_a_intelligence_history': gruppe_a_intelligenz,
         'group_b_intelligence_history': gruppe_b_intelligenz,
         'cross_group_history': cross_group_history,
+        'removed_edges_history': removed_edges_history,
+        'added_edges_history': added_edges_history,
+        'rewired_edges_history': rewired_edges_history,
+        'removed_reputation_history': removed_reputation_history,
+        'removed_distance_history': removed_distance_history,
+        'network_density_history': density_history,
+        'mean_degree_history': mean_degree_history,
+        'neighbor_opinion_distance_history': neighbor_distance_history,
+        'cross_group_edge_share_history': cross_group_edge_share_history,
+        'average_rewired_edges_per_round': durchschnitt_rewiring,
+        'final_network_density': finale_netzwerkmetriken['density'],
+        'final_mean_degree': finale_netzwerkmetriken['mean_degree'],
+        'final_cross_group_edge_share': finale_netzwerkmetriken['cross_group_edge_share'],
+        'final_neighbor_opinion_distance': finale_netzwerkmetriken['mean_neighbor_opinion_distance'],
         'agents': agenten,
     }
 
     if make_plot:
-        fig = plt.figure(figsize=(18, 12))
-        ax1 = fig.add_subplot(2, 3, 1)
-        ax2 = fig.add_subplot(2, 3, 2)
-        ax3 = fig.add_subplot(2, 3, 3)
-        ax4 = fig.add_subplot(2, 3, 4)
-        ax5 = fig.add_subplot(2, 3, 5)
-        ax6 = fig.add_subplot(2, 3, 6)
+        if config.get('enable_dynamic_rewiring'):
+            fig = plt.figure(figsize=(18, 16))
+            axes = [fig.add_subplot(3, 3, index + 1) for index in range(9)]
+            ax1, ax2, ax3, ax4, ax5, ax6, ax7, ax8, ax9 = axes
+        else:
+            fig = plt.figure(figsize=(18, 12))
+            axes = [fig.add_subplot(2, 3, index + 1) for index in range(6)]
+            ax1, ax2, ax3, ax4, ax5, ax6 = axes
 
         fig.suptitle(
             f'KKI Polarisierungs-Experiment: {scenario_title(scenario)}',
@@ -489,6 +713,56 @@ def run_polarization_experiment(
         ax6.axvline(x=np.mean(agenten_g2), color='#922B21', linestyle='--', linewidth=2)
         ax6.legend(loc='best', fontsize=8)
         ax6.grid(True, alpha=0.3)
+
+        if config.get('enable_dynamic_rewiring'):
+            runden = range(1, rounds + 1)
+
+            ax7.set_title('Adaptive Kanten pro Runde')
+            ax7.set_xlabel('Runde')
+            ax7.set_ylabel('Kantenänderungen')
+            ax7.plot(runden, added_edges_history, color='#27AE60', linewidth=2, label='Hinzugefügt')
+            ax7.plot(runden, removed_edges_history, color='#C0392B', linewidth=2, label='Entfernt')
+            ax7.plot(runden, rewired_edges_history, color='#8E44AD', linewidth=2, label='Gesamt')
+            ax7.legend(loc='best', fontsize=8)
+            ax7.grid(True, alpha=0.3)
+
+            ax8.set_title('Netzwerkdichte und mittlerer Grad')
+            ax8.set_xlabel('Runde')
+            ax8.set_ylabel('Dichte')
+            linie_dichte = ax8.plot(runden, density_history, color='#1F618D', linewidth=2, label='Dichte')[0]
+            ax8.set_ylim(0, max(0.05, max(density_history) * 1.2))
+            ax8.grid(True, alpha=0.3)
+            ax8_rechts = ax8.twinx()
+            linie_grad = ax8_rechts.plot(
+                runden,
+                mean_degree_history,
+                color='#F39C12',
+                linewidth=2,
+                label='Ø Grad',
+            )[0]
+            ax8_rechts.set_ylabel('Ø Grad')
+            ax8.legend([linie_dichte, linie_grad], ['Dichte', 'Ø Grad'], loc='best', fontsize=8)
+
+            ax9.set_title('Brücken und Nachbarschaftsabstand')
+            ax9.set_xlabel('Runde')
+            ax9.set_ylabel('Anteil / Distanz')
+            ax9.plot(
+                runden,
+                cross_group_edge_share_history,
+                color='#16A085',
+                linewidth=2,
+                label='Cross-Group-Kantenanteil',
+            )
+            ax9.plot(
+                runden,
+                neighbor_distance_history,
+                color='#7F8C8D',
+                linewidth=2,
+                label='Ø Nachbarschaftsdistanz',
+            )
+            ax9.set_ylim(0, 1)
+            ax9.legend(loc='best', fontsize=8)
+            ax9.grid(True, alpha=0.3)
 
         plt.tight_layout()
         save_and_maybe_show(plt, output_filename, dpi=150)

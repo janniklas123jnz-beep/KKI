@@ -40,6 +40,7 @@ Die Simulationen basieren auf wiederholten Interaktionen im Stil des Gefangenend
 | `schwarm_invasion.py` | Resilienz-Test gegen spätere Invasion durch Defektoren |
 | `schwarm_polarisierung.py` | Experiment zu Polarisierung, Konsensbildung und Lagerdynamik |
 | `schwarm_parameterstudie.py` | Vergleichsstudie zu Netzwerkparametern gegen Polarisierung |
+| `schwarm_adaptive_netzwerke.py` | Vergleichsstudie zu adaptivem Rewiring auf Basis von Reputation und Meinungsnähe |
 | `commitment_protokoll.py` | Commit-Reveal-Verify-Protokoll gegen Manipulation |
 
 ## Features
@@ -48,6 +49,7 @@ Die Simulationen basieren auf wiederholten Interaktionen im Stil des Gefangenend
 - Lernregeln für Kooperation, Defektion und Intelligenzentwicklung
 - Visualisierung mit `matplotlib`
 - Experimente mit Schwarmverhalten, Reputation und Netzwerkstrukturen
+- adaptive Netzwerkumbauten durch Rewiring auf Basis von Reputation und Meinungsnähe
 - kryptografische Absicherung von Verhaltenszusagen über Commitments
 
 ## Voraussetzungen
@@ -109,6 +111,7 @@ python3 schwarm_cluster.py
 python3 schwarm_invasion.py
 python3 schwarm_polarisierung.py
 python3 schwarm_parameterstudie.py
+python3 schwarm_adaptive_netzwerke.py
 python3 commitment_protokoll.py
 ```
 
@@ -123,6 +126,29 @@ Für die Netzwerk-Parameterstudie kann zusätzlich ein Grid über Umgebungsvaria
 
 ```bash
 KKI_STUDY_DEGREES=4,6,8 KKI_STUDY_CROSS_GROUPS=0.05,0.15,0.25 python3 schwarm_parameterstudie.py
+```
+
+Für adaptive Netzwerke kann Rewiring im Polarisierungsmodell direkt aktiviert werden:
+
+```bash
+KKI_REWIRING_ENABLED=true \
+KKI_REWIRE_REP_THRESHOLD=0.30 \
+KKI_REWIRE_PROXIMITY_WEIGHT=0.35 \
+python3 schwarm_polarisierung.py
+```
+
+Die neue Adaptive-Netzwerk-Studie vergleicht mehrere Rewiring-Konfigurationen gegen ein statisches Basisnetz:
+
+```bash
+python3 schwarm_adaptive_netzwerke.py
+```
+
+Optional kann das Rewiring-Grid angepasst werden:
+
+```bash
+KKI_ADAPTIVE_REP_THRESHOLDS=0.25,0.35,0.45 \
+KKI_ADAPTIVE_PROXIMITY_WEIGHTS=0.25,0.45,0.65 \
+python3 schwarm_adaptive_netzwerke.py
 ```
 
 Die Visualisierungs-Skripte erzeugen PNG-Dateien direkt im Projektverzeichnis.
@@ -141,6 +167,7 @@ Die folgenden Skripte erzeugen die im Repository abgelegten PNG-Dateien:
 | `schwarm_invasion.py` | `kki_invasion.png` | `KKI_SEED=42 python3 schwarm_invasion.py` |
 | `schwarm_polarisierung.py` | `kki_polarisierung.png` | `KKI_SEED=42 KKI_POLARIZATION_SCENARIO=polarization python3 schwarm_polarisierung.py` |
 | `schwarm_parameterstudie.py` | `kki_netzwerk_parameterstudie.png` | `KKI_SEED=42 python3 schwarm_parameterstudie.py` |
+| `schwarm_adaptive_netzwerke.py` | `kki_adaptive_netzwerke.png` | `KKI_SEED=42 python3 schwarm_adaptive_netzwerke.py` |
 | `commitment_protokoll.py` | `kki_commitment_protokoll.png` | `KKI_SEED=42 python3 commitment_protokoll.py` |
 
 Hinweise zur Reproduktion:
@@ -148,6 +175,7 @@ Hinweise zur Reproduktion:
 - `KKI_SEED=42` sorgt für denselben Zufallsstart bei wiederholten Läufen.
 - `KKI_OUTPUT_DIR=artefakte` schreibt PNG-Dateien in ein separates Verzeichnis statt ins Projektwurzelverzeichnis.
 - für schnelle technische Prüfungen ohne GUI kann zusätzlich `KKI_TEST_MODE=1` gesetzt werden
+- adaptive Netzwerke lassen sich u. a. mit `KKI_REWIRING_ENABLED`, `KKI_REWIRE_REP_THRESHOLD` und `KKI_REWIRE_PROXIMITY_WEIGHT` steuern
 
 Beispiel für eine reproduzierbare, headless Erzeugung:
 
@@ -179,6 +207,10 @@ Die Smoke-Tests starten ausgewählte Kernskripte im verkürzten headless Testmod
 
 ![KKI Polarisierungs-Experiment](kki_polarisierung.png)
 
+### Adaptive Netzwerke und soziale Brücken
+
+![KKI Adaptive Netzwerk-Studie](kki_adaptive_netzwerke.png)
+
 ## Zentrale Beobachtungen
 
 Die bisherigen Simulationen illustrieren wiederkehrende Muster:
@@ -186,6 +218,7 @@ Die bisherigen Simulationen illustrieren wiederkehrende Muster:
 - kooperative Agenten stabilisieren und steigern ihre Intelligenz häufiger
 - Defektoren verlieren auf Dauer Anschluss an die leistungsfähigen Teile des Systems
 - Schwarmstrukturen können Kooperation auch gegen Störungen oder Invasionsversuche absichern
+- adaptive Rewiring-Regeln zeigen, wie stark soziale Brücken und Vertrauenssignale die Lagerbildung beeinflussen
 - Commitment-Mechanismen erschweren oder verhindern strategische Täuschung
 
 ## Projektstruktur und Ausrichtung

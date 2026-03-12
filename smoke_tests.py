@@ -15,7 +15,11 @@ PYTHON = sys.executable
 
 class SmokeTests(unittest.TestCase):
     def run_script(
-        self, script_name: str, output_dir: Path, seed: int = 42
+        self,
+        script_name: str,
+        output_dir: Path,
+        seed: int = 42,
+        extra_env: dict[str, str] | None = None,
     ) -> subprocess.CompletedProcess[str]:
         env = os.environ.copy()
         env.update(
@@ -30,6 +34,8 @@ class SmokeTests(unittest.TestCase):
                 "PYTHONUNBUFFERED": "1",
             }
         )
+        if extra_env:
+            env.update(extra_env)
         result = subprocess.run(
             [PYTHON, script_name],
             cwd=REPO_ROOT,
@@ -90,6 +96,23 @@ class SmokeTests(unittest.TestCase):
             self.assertTrue((output_dir / "kki_polarisierung.png").exists())
             self.assertIn("Polarisierungs-Index", result.stdout)
 
+    def test_schwarm_polarisierung_adaptiv_smoke(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:
+            output_dir = Path(tmpdir)
+            result = self.run_script(
+                "schwarm_polarisierung.py",
+                output_dir,
+                seed=19,
+                extra_env={
+                    "KKI_REWIRING_ENABLED": "true",
+                    "KKI_REWIRE_REP_THRESHOLD": "0.30",
+                    "KKI_REWIRE_PROXIMITY_WEIGHT": "0.35",
+                },
+            )
+            self.assert_successful_run(result)
+            self.assertTrue((output_dir / "kki_polarisierung.png").exists())
+            self.assertIn("Adaptives Rewiring: aktiv", result.stdout)
+
     def test_schwarm_parameterstudie_smoke(self) -> None:
         with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:
             output_dir = Path(tmpdir)
@@ -97,6 +120,19 @@ class SmokeTests(unittest.TestCase):
             self.assert_successful_run(result)
             self.assertTrue((output_dir / "kki_netzwerk_parameterstudie.png").exists())
             self.assertIn("Beste Konfiguration", result.stdout)
+
+    def test_schwarm_adaptive_netzwerke_smoke(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:
+            output_dir = Path(tmpdir)
+            result = self.run_script(
+                "schwarm_adaptive_netzwerke.py",
+                output_dir,
+                seed=29,
+                extra_env={"KKI_ADAPTIVE_REPETITIONS": "1"},
+            )
+            self.assert_successful_run(result)
+            self.assertTrue((output_dir / "kki_adaptive_netzwerke.png").exists())
+            self.assertIn("Beste adaptive Konfiguration", result.stdout)
 
 
 if __name__ == "__main__":

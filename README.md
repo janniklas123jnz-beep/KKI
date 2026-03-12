@@ -53,6 +53,7 @@ Die Simulationen basieren auf wiederholten Interaktionen im Stil des Gefangenend
 | `schwarm_missionsziele.py` | Studie fuer explizite Teamaufgaben wie Konsensbildung, Wissensaustausch und Abwehr |
 | `schwarm_missionskonflikte.py` | Studie fuer Arbitration und Zielkonflikte zwischen konkurrierenden Missionen |
 | `schwarm_arbeitsketten.py` | Studie fuer mehrstufige Teamaufgaben und Aufgabenabhaengigkeiten im Schwarm |
+| `schwarm_arbeitszellen.py` | Studie fuer spezialisierte Workflow-Zellen und Uebergabemechanismen im Schwarm |
 | `commitment_protokoll.py` | Commit-Reveal-Verify-Protokoll gegen Manipulation |
 
 ## Features
@@ -136,6 +137,7 @@ python3 schwarm_rollenwechsel.py
 python3 schwarm_missionsziele.py
 python3 schwarm_missionskonflikte.py
 python3 schwarm_arbeitsketten.py
+python3 schwarm_arbeitszellen.py
 python3 commitment_protokoll.py
 ```
 
@@ -329,6 +331,22 @@ KKI_WORKFLOW_STAGE_MIN_TENURE=2 \
 python3 schwarm_arbeitsketten.py
 ```
 
+Die Arbeitszellen-Studie erweitert diese Ketten um spezialisierte Teilteams und gezielte Uebergaben:
+
+```bash
+python3 schwarm_arbeitszellen.py
+```
+
+Optional lassen sich Wiederholungen und Handoff-Parameter anpassen:
+
+```bash
+KKI_WORKFLOW_CELL_REPETITIONS=2 \
+KKI_WORKFLOW_CELLS_ENABLED=true \
+KKI_HANDOFF_COORDINATION_ENABLED=true \
+KKI_HANDOFF_PRIORITY_BONUS=0.12 \
+python3 schwarm_arbeitszellen.py
+```
+
 Optional lassen sich Wiederholungen und gemeinsame Basisparameter anpassen:
 
 ```bash
@@ -384,6 +402,7 @@ Die folgenden Skripte erzeugen die im Repository abgelegten PNG-Dateien:
 | `schwarm_missionsziele.py` | `kki_missionsziele.png` | `KKI_SEED=42 python3 schwarm_missionsziele.py` |
 | `schwarm_missionskonflikte.py` | `kki_missionskonflikte.png` | `KKI_SEED=42 python3 schwarm_missionskonflikte.py` |
 | `schwarm_arbeitsketten.py` | `kki_arbeitsketten.png` | `KKI_SEED=42 python3 schwarm_arbeitsketten.py` |
+| `schwarm_arbeitszellen.py` | `kki_arbeitszellen.png` | `KKI_SEED=42 python3 schwarm_arbeitszellen.py` |
 | `commitment_protokoll.py` | `kki_commitment_protokoll.png` | `KKI_SEED=42 python3 commitment_protokoll.py` |
 
 Hinweise zur Reproduktion:
@@ -404,6 +423,7 @@ Hinweise zur Reproduktion:
 - die Missionsziel-Studie nutzt zusaetzlich `KKI_MISSION_REPETITIONS`, `KKI_MISSION_SWITCH_INTERVAL` und die Missionsschalter `KKI_MISSIONS_ENABLED` sowie `KKI_MISSION_ASSIGNMENT`
 - die Missionskonflikt-Studie nutzt zusaetzlich `KKI_MISSION_ARBITRATION_REPETITIONS`, `KKI_MISSION_CONFLICT_THRESHOLD`, `KKI_MISSION_ARBITRATION_MARGIN` sowie `KKI_MISSION_ARBITRATION_ENABLED`
 - die Arbeitsketten-Studie nutzt zusaetzlich `KKI_WORKFLOW_REPETITIONS`, `KKI_WORKFLOW_STAGE_MIN_TENURE` und `KKI_WORKFLOW_STAGES_ENABLED`
+- die Arbeitszellen-Studie nutzt zusaetzlich `KKI_WORKFLOW_CELL_REPETITIONS`, `KKI_WORKFLOW_CELLS_ENABLED`, `KKI_HANDOFF_COORDINATION_ENABLED` und `KKI_HANDOFF_PRIORITY_BONUS`
 
 Beispiel für eine reproduzierbare, headless Erzeugung:
 
@@ -487,6 +507,10 @@ Die Smoke-Tests starten ausgewählte Kernskripte im verkürzten headless Testmod
 
 ![KKI Arbeitsketten](kki_arbeitsketten.png)
 
+### Arbeitszellen-Studie
+
+![KKI Arbeitszellen](kki_arbeitszellen.png)
+
 ## Zentrale Beobachtungen
 
 Die bisherigen Simulationen illustrieren wiederkehrende Muster:
@@ -508,6 +532,7 @@ Die bisherigen Simulationen illustrieren wiederkehrende Muster:
 - die Missionsziel-Studie untersucht nun, ob dieselben Rollen durch explizite Teamaufgaben noch fokussierter auf Konsens, Wissensaustausch und Abwehr ausgerichtet werden koennen
 - die Missionskonflikt-Studie untersucht nun, ob adaptive Missionen besser werden, wenn der Schwarm Zielkonflikte explizit erkennt und konkurrierende Aufgaben arbitriert
 - die Arbeitsketten-Studie untersucht nun, ob aus diesen Missionen mehrstufige Arbeitsablaeufe mit Abhaengigkeiten entstehen koennen, statt nur einzelne Aufgaben zu optimieren
+- die Arbeitszellen-Studie untersucht nun, ob spezialisierte Teilteams mit expliziten Uebergaben die Arbeitsketten nochmals koordinierter und skalierbarer machen
 
 ## Projektstruktur und Ausrichtung
 

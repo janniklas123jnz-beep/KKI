@@ -53,6 +53,7 @@ DEFAULT_MISSION_SWITCH_INTERVAL = 30
 DEFAULT_MISSION_CONFLICT_THRESHOLD = 0.45
 DEFAULT_MISSION_ARBITRATION_MARGIN = 0.08
 DEFAULT_WORKFLOW_STAGE_MIN_TENURE = 2
+DEFAULT_HANDOFF_PRIORITY_BONUS = 0.12
 MISSION_CONSENSUS = 'consensus_building'
 MISSION_KNOWLEDGE = 'knowledge_sharing'
 MISSION_DEFENSE = 'reputation_defense'
@@ -72,6 +73,12 @@ WORKFLOW_STAGES = (
     'execution',
     'consolidation',
     'recovery',
+)
+WORKFLOW_CELLS = (
+    'interface_cell',
+    'analysis_cell',
+    'execution_cell',
+    'stability_cell',
 )
 
 
@@ -118,6 +125,13 @@ class Agent:
         self.task_priority = 0.5
         self.dependencies_met = True
         self.stage_tenure = 0
+        self.workflow_cell = 'analysis_cell'
+        self.initial_workflow_cell = 'analysis_cell'
+        self.workflow_cell_history = []
+        self.handoff_credit = 0.0
+        self.handoff_received = 0
+        self.handoff_given = 0
+        self.handoff_history = []
 
         self.meinung_history = [meinung]
         self.kooperation_history = [kooperations_neigung]
@@ -367,6 +381,13 @@ def build_runtime_config() -> tuple[dict[str, float | int | str], int]:
         'workflow_stage_min_tenure': int(
             os.getenv('KKI_WORKFLOW_STAGE_MIN_TENURE', str(DEFAULT_WORKFLOW_STAGE_MIN_TENURE))
         ),
+        'enable_workflow_cells': os.getenv('KKI_WORKFLOW_CELLS_ENABLED', '').strip().lower()
+        in {'1', 'true', 'yes', 'on'},
+        'enable_handoff_coordination': os.getenv('KKI_HANDOFF_COORDINATION_ENABLED', '').strip().lower()
+        in {'1', 'true', 'yes', 'on'},
+        'handoff_priority_bonus': float(
+            os.getenv('KKI_HANDOFF_PRIORITY_BONUS', str(DEFAULT_HANDOFF_PRIORITY_BONUS))
+        ),
     }
     return config, seed
 
@@ -480,6 +501,23 @@ def workflow_stufe_fuer_mission(mission):
     return mapping.get(mission, 'task_queue')
 
 
+def workflow_zelle_fuer_agent(agent):
+    if agent.role in {'connector', 'mediator'} or agent.workflow_stage == 'discovery':
+        return 'interface_cell'
+    if agent.role == 'analyzer' or agent.workflow_stage == 'preparation':
+        return 'analysis_cell'
+    if agent.role == 'sentinel' or agent.workflow_stage == 'execution':
+        return 'execution_cell'
+    return 'stability_cell'
+
+
+def setze_workflow_zelle(agent, cell, runde):
+    cell = cell if cell in WORKFLOW_CELLS else 'analysis_cell'
+    if agent.workflow_cell != cell:
+        agent.workflow_cell_history.append((runde, agent.workflow_cell, cell))
+    agent.workflow_cell = cell
+
+
 def setze_workflow_stufe(agent, stage, runde):
     stage = stage if stage in WORKFLOW_STAGES else 'task_queue'
     if agent.workflow_stage != stage:
@@ -497,6 +535,14 @@ def initialisiere_workflows(agenten):
         agent.task_priority = 0.5
         agent.dependencies_met = True
         agent.stage_tenure = 0
+        cell = workflow_zelle_fuer_agent(agent)
+        agent.workflow_cell = cell
+        agent.initial_workflow_cell = cell
+        agent.workflow_cell_history = []
+        agent.handoff_credit = 0.0
+        agent.handoff_received = 0
+        agent.handoff_given = 0
+        agent.handoff_history = []
 
 
 def workflow_voraussetzungen_erfuellt(agent, agenten_dict, config):
@@ -522,6 +568,39 @@ def workflow_voraussetzungen_erfuellt(agent, agenten_dict, config):
     if stage == 'consolidation':
         return agent.stage_tenure >= min_tenure and agent.reputation >= 0.5
     return True
+
+
+def workflow_handoff_erlaubt(quelle, ziel):
+    erlaubte_pfade = {
+        ('interface_cell', 'analysis_cell'),
+        ('analysis_cell', 'execution_cell'),
+        ('execution_cell', 'stability_cell'),
+        ('stability_cell', 'interface_cell'),
+    }
+    return (quelle, ziel) in erlaubte_pfade
+
+
+def koordiniere_workflow_handoff(agent, partner, aktion_a, aktion_p, runde, config):
+    if not (config.get('enable_workflow_cells') and config.get('enable_handoff_coordination')):
+        return []
+    if aktion_a != 'C' or aktion_p != 'C':
+        return []
+
+    handoffs = []
+    bonus = float(config.get('handoff_priority_bonus', DEFAULT_HANDOFF_PRIORITY_BONUS))
+    if workflow_handoff_erlaubt(agent.workflow_cell, partner.workflow_cell):
+        partner.handoff_credit = min(1.0, partner.handoff_credit + bonus)
+        partner.handoff_received += 1
+        agent.handoff_given += 1
+        agent.handoff_history.append((runde, agent.workflow_cell, partner.workflow_cell, partner.id))
+        handoffs.append((agent.id, partner.id))
+    if workflow_handoff_erlaubt(partner.workflow_cell, agent.workflow_cell):
+        agent.handoff_credit = min(1.0, agent.handoff_credit + bonus)
+        agent.handoff_received += 1
+        partner.handoff_given += 1
+        partner.handoff_history.append((runde, partner.workflow_cell, agent.workflow_cell, agent.id))
+        handoffs.append((partner.id, agent.id))
+    return handoffs
 
 
 def missionskonflikt(mission_a, mission_b):
@@ -586,29 +665,34 @@ def berechne_missionsfitness(agent, agenten_dict):
             + 0.18 * cross_group_share
             + 0.08 * agent.kooperations_neigung
             + 0.06 * max(0.0, 1.0 - abs(agent.meinung - 0.5) * 2.0)
+            + 0.05 * agent.handoff_credit
         ),
         MISSION_KNOWLEDGE: (
             missions_rollenfit(agent.role, MISSION_KNOWLEDGE)
             + 0.16 * cross_group_share
             + 0.05 * agent.intelligenz / 6.0
             + 0.04 * mean_neighbor_distance
+            + 0.06 * agent.handoff_credit
         ),
         MISSION_DEFENSE: (
             missions_rollenfit(agent.role, MISSION_DEFENSE)
             + 0.18 * max(0.0, 0.55 - mean_partner_reputation)
             + 0.08 * agent.reputation
             + 0.05 * (1.0 - agent.kooperations_neigung)
+            + 0.05 * agent.handoff_credit
         ),
         MISSION_STABILITY: (
             missions_rollenfit(agent.role, MISSION_STABILITY)
             + 0.14 * max(0.0, 0.35 - mean_neighbor_distance)
             + 0.06 * agent.reputation
             + 0.04 * (1.0 - cross_group_share)
+            + 0.04 * agent.handoff_credit
         ),
         MISSION_SUPPORT: (
             missions_rollenfit(agent.role, MISSION_SUPPORT)
             + 0.05 * agent.kooperations_neigung
             + 0.04 * mean_partner_reputation
+            + 0.03 * agent.handoff_credit
         ),
     }
 
@@ -754,6 +838,8 @@ def aktualisiere_missionen(agenten, agenten_dict, config, runde):
             agent.dependencies_met = workflow_voraussetzungen_erfuellt(agent, agenten_dict, config)
             if not agent.dependencies_met:
                 setze_workflow_stufe(agent, 'task_queue', runde)
+        if config.get('enable_workflow_cells'):
+            setze_workflow_zelle(agent, workflow_zelle_fuer_agent(agent), runde)
     return {
         'switches': switches,
         'arbitrations': arbitrations,
@@ -1216,6 +1302,9 @@ def run_polarization_experiment(
     config.setdefault('mission_arbitration_margin', DEFAULT_MISSION_ARBITRATION_MARGIN)
     config.setdefault('enable_workflow_stages', False)
     config.setdefault('workflow_stage_min_tenure', DEFAULT_WORKFLOW_STAGE_MIN_TENURE)
+    config.setdefault('enable_workflow_cells', False)
+    config.setdefault('enable_handoff_coordination', False)
+    config.setdefault('handoff_priority_bonus', DEFAULT_HANDOFF_PRIORITY_BONUS)
     scenario = str(config['scenario'])
     rounds = int(config['rounds'])
     interactions_per_round = int(config['interactions_per_round'])
@@ -1281,6 +1370,11 @@ def run_polarization_experiment(
                     "Workflow-Stufen: "
                     f"aktiv | Mindestdauer={int(config['workflow_stage_min_tenure'])}"
                 )
+            if config.get('enable_workflow_cells'):
+                print(
+                    "Workflow-Zellen: "
+                    f"aktiv | Handoffs={'an' if config.get('enable_handoff_coordination') else 'aus'}"
+                )
         print("Ziel: Beobachte, ob der Schwarm in Richtung Konsens oder in stabile Lager driftet.")
         print("\nSimulation läuft...\n")
 
@@ -1318,6 +1412,8 @@ def run_polarization_experiment(
     workflow_completion_history = []
     workflow_prerequisite_failures_history = []
     workflow_stage_counts = defaultdict(int)
+    handoff_history = []
+    workflow_cell_counts = defaultdict(int)
 
     for runde in range(1, rounds + 1):
         gruppenuebergreifende_interaktionen = 0
@@ -1403,6 +1499,10 @@ def run_polarization_experiment(
                 elif partner.mission == MISSION_SUPPORT and aktion_p == 'C':
                     mission_success_counts[partner.mission] += 1
 
+            if config.get('enable_workflow_cells'):
+                handoffs = koordiniere_workflow_handoff(agent, partner, aktion_a, aktion_p, runde, config)
+                handoff_history.append(len(handoffs))
+
             agent.lerne(
                 aktion_a,
                 aktion_p,
@@ -1465,6 +1565,9 @@ def run_polarization_experiment(
             )
             for agent in agenten:
                 workflow_stage_counts[agent.workflow_stage] += 1
+        if config.get('enable_workflow_cells'):
+            for agent in agenten:
+                workflow_cell_counts[agent.workflow_cell] += 1
         for alte_rolle, neue_rolle in switch_stats['transitions']:
             role_transition_counts[f'{alte_rolle}->{neue_rolle}'] += 1
         removed_edges_history.append(rewiring_stats['removed_edges'])
@@ -1559,6 +1662,10 @@ def run_polarization_experiment(
         'completion_rate': float(np.mean(workflow_completion_history)) if workflow_completion_history else 0.0,
         'prerequisite_failures': int(sum(workflow_prerequisite_failures_history)),
         'observed_stage_counts': dict(workflow_stage_counts),
+        'cell_distribution': {cell: sum(1 for agent in agenten if agent.workflow_cell == cell) for cell in WORKFLOW_CELLS},
+        'observed_cell_counts': dict(workflow_cell_counts),
+        'handoff_total': int(sum(handoff_history)),
+        'handoff_rate': float(np.mean(handoff_history)) if handoff_history else 0.0,
     }
 
     interpretation = "hybrid"
@@ -1608,6 +1715,9 @@ def run_polarization_experiment(
             if config.get('enable_workflow_stages'):
                 print(f"Workflow-Abschlussrate:      {workflow_metrics['completion_rate']:.1%}")
                 print(f"Workflow-Blockaden gesamt:   {workflow_metrics['prerequisite_failures']}")
+            if config.get('enable_workflow_cells'):
+                print(f"Handoffs gesamt:            {workflow_metrics['handoff_total']}")
+                print(f"Ø Handoffs/Runde:           {workflow_metrics['handoff_rate']:.2f}")
         if config.get('enable_dynamic_rewiring'):
             print(f"Ø Rewiring-Operationen/Runde: {durchschnitt_rewiring:.2f}")
             print(f"Finale Netzwerkdichte:       {finale_netzwerkmetriken['density']:.3f}")

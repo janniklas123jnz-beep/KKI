@@ -70,6 +70,10 @@ DEFAULT_QUARANTINE_COMPROMISE_THRESHOLD = 0.28
 DEFAULT_QUARANTINE_EXPOSURE_THRESHOLD = 0.34
 DEFAULT_QUARANTINE_DURATION = 4
 DEFAULT_TRUST_SHIELD_STRENGTH = 0.22
+DEFAULT_FAILURE_ROUND = 110
+DEFAULT_FAILURE_DURATION = 8
+DEFAULT_FAILURE_FRACTION = 0.22
+DEFAULT_RESYNC_STRENGTH = 0.24
 MISSION_CONSENSUS = 'consensus_building'
 MISSION_KNOWLEDGE = 'knowledge_sharing'
 MISSION_DEFENSE = 'reputation_defense'
@@ -195,6 +199,16 @@ class Agent:
         self.trust_shield_score = 0.0
         self.shielding_actions_total = 0
         self.isolation_relief_total = 0.0
+        self.is_failed = False
+        self.failure_rounds = 0
+        self.failure_events = 0
+        self.restart_events = 0
+        self.resync_score = 0.0
+        self.resync_actions_total = 0
+        self.reconfiguration_shifts = 0
+        self.failure_source_cell = None
+        self.failure_source_cluster = None
+        self.recovered_from_failure_total = 0
 
         self.meinung_history = [meinung]
         self.kooperation_history = [kooperations_neigung]
@@ -524,6 +538,14 @@ def build_runtime_config() -> tuple[dict[str, float | int | str], int]:
         'trust_shield_strength': float(
             os.getenv('KKI_TRUST_SHIELD_STRENGTH', str(DEFAULT_TRUST_SHIELD_STRENGTH))
         ),
+        'enable_cluster_failures': os.getenv('KKI_CLUSTER_FAILURES_ENABLED', '').strip().lower()
+        in {'1', 'true', 'yes', 'on'},
+        'failure_round': int(os.getenv('KKI_FAILURE_ROUND', str(DEFAULT_FAILURE_ROUND))),
+        'failure_duration': int(os.getenv('KKI_FAILURE_DURATION', str(DEFAULT_FAILURE_DURATION))),
+        'failure_fraction': float(os.getenv('KKI_FAILURE_FRACTION', str(DEFAULT_FAILURE_FRACTION))),
+        'enable_restart_recovery': os.getenv('KKI_RESTART_RECOVERY_ENABLED', '').strip().lower()
+        in {'1', 'true', 'yes', 'on'},
+        'resync_strength': float(os.getenv('KKI_RESYNC_STRENGTH', str(DEFAULT_RESYNC_STRENGTH))),
     }
     return config, seed
 
@@ -829,6 +851,20 @@ def initialisiere_fehlerisolation(agenten):
         agent.isolation_relief_total = 0.0
 
 
+def initialisiere_wiederanlauf(agenten):
+    for agent in agenten:
+        agent.is_failed = False
+        agent.failure_rounds = 0
+        agent.failure_events = 0
+        agent.restart_events = 0
+        agent.resync_score = 0.0
+        agent.resync_actions_total = 0
+        agent.reconfiguration_shifts = 0
+        agent.failure_source_cell = None
+        agent.failure_source_cluster = None
+        agent.recovered_from_failure_total = 0
+
+
 def skill_scores(agent):
     return {
         'bridge_specialist': agent.bridge_skill,
@@ -1064,6 +1100,189 @@ def aktualisiere_fehlerisolation(agenten, agenten_dict, config, runde):
     }
 
 
+def wende_zellausfaelle_an(agenten, config, runde):
+    if not config.get('enable_cluster_failures'):
+        for agent in agenten:
+            agent.is_failed = False
+            agent.failure_rounds = 0
+        return {'events': 0, 'failed_agents': 0, 'failed_cells': 0, 'failed_clusters': 0}
+
+    failure_round = int(config.get('failure_round', DEFAULT_FAILURE_ROUND))
+    failure_duration = max(1, int(config.get('failure_duration', DEFAULT_FAILURE_DURATION)))
+    failure_fraction = max(0.05, min(0.75, float(config.get('failure_fraction', DEFAULT_FAILURE_FRACTION))))
+    if runde != failure_round or any(agent.failure_events > 0 for agent in agenten):
+        return {
+            'events': 0,
+            'failed_agents': sum(1 for agent in agenten if agent.is_failed),
+            'failed_cells': len({agent.failure_source_cell for agent in agenten if agent.is_failed}),
+            'failed_clusters': len({agent.failure_source_cluster for agent in agenten if agent.is_failed}),
+        }
+
+    cell_members = defaultdict(list)
+    for agent in agenten:
+        cell_members[agent.workflow_cell].append(agent)
+    if not cell_members:
+        return {'events': 0, 'failed_agents': 0, 'failed_cells': 0, 'failed_clusters': 0}
+
+    target_cell = max(
+        cell_members,
+        key=lambda cell: float(
+            np.mean(
+                [
+                    mitglied.cluster_compromise_level
+                    + mitglied.misinformation_exposure
+                    + 0.4 * mitglied.meta_signal_corruption
+                    + 0.25 * mitglied.bottleneck_pressure
+                    + 0.20 * mitglied.quarantine_events
+                    for mitglied in cell_members[cell]
+                ]
+            )
+        ),
+    )
+    target_cluster = faehigkeitscluster_fuer_agent(cell_members[target_cell][0])
+    candidates = sorted(
+        cell_members[target_cell],
+        key=lambda agent: (
+            agent.cluster_compromise_level
+            + agent.misinformation_exposure
+            + 0.5 * agent.meta_signal_corruption
+            + 0.3 * agent.bottleneck_pressure
+        ),
+        reverse=True,
+    )
+    failure_count = max(1, int(round(len(candidates) * failure_fraction)))
+    for agent in candidates[:failure_count]:
+        agent.is_failed = True
+        agent.failure_rounds = failure_duration
+        agent.failure_events += 1
+        agent.failure_source_cell = target_cell
+        agent.failure_source_cluster = target_cluster
+        agent.dependencies_met = False
+        agent.task_priority = max(0.08, agent.task_priority * 0.30)
+        agent.resource_credit *= 0.40
+        agent.meta_priority_score *= 0.55
+        setze_workflow_stufe(agent, 'recovery', runde)
+
+    return {
+        'events': failure_count,
+        'failed_agents': failure_count,
+        'failed_cells': 1,
+        'failed_clusters': 1,
+    }
+
+
+def aktualisiere_wiederanlauf(agenten, agenten_dict, config, runde):
+    if not (config.get('enable_cluster_failures') or config.get('enable_restart_recovery')):
+        for agent in agenten:
+            agent.resync_score *= 0.85
+        return {
+            'recoveries': 0,
+            'failed_agents': 0,
+            'failed_cells': 0,
+            'resync_actions': 0,
+            'reconfiguration_switches': 0,
+            'sync_mean': 0.0,
+        }
+
+    strength = max(0.0, float(config.get('resync_strength', DEFAULT_RESYNC_STRENGTH)))
+    recoveries = 0
+    resync_actions = 0
+    for agent in agenten:
+        if not agent.is_failed:
+            agent.resync_score *= 0.92
+            continue
+        support_neighbors = [
+            agenten_dict[nid]
+            for nid in agent.nachbarn
+            if nid in agenten_dict and not agenten_dict[nid].is_failed
+        ]
+        support_signal = (
+            sum(
+                nachbar.trust_shield_score
+                + 0.12 * (nachbar.emergent_skill in {'defense_specialist', 'recovery_specialist'})
+                + 0.10 * nachbar.cluster_resilience_bonus
+                for nachbar in support_neighbors
+            ) / max(1, len(support_neighbors))
+        )
+        agent.resync_score = min(
+            1.4,
+            agent.resync_score * 0.82
+            + strength
+            + 0.18 * support_signal
+            + 0.06 * agent.recovery_skill
+            + 0.05 * agent.meta_priority_score,
+        )
+        agent.failure_rounds = max(0, agent.failure_rounds - 1)
+        resync_actions += 1
+        agent.resync_actions_total += 1
+        if config.get('enable_restart_recovery') and (
+            agent.resync_score >= 1.0 or (agent.failure_rounds == 0 and support_signal >= 0.18)
+        ):
+            agent.is_failed = False
+            agent.restart_events += 1
+            agent.recovered_from_failure_total += 1
+            agent.dependencies_met = True
+            agent.resource_credit = min(1.0, agent.resource_credit + 0.14)
+            agent.meta_priority_score = min(1.0, agent.meta_priority_score + 0.12)
+            agent.cluster_compromise_level *= 0.78
+            agent.meta_signal_corruption *= 0.72
+            agent.misinformation_exposure *= 0.75
+            agent.task_priority = min(1.0, max(0.35, agent.task_priority + 0.18))
+            setze_workflow_stufe(agent, workflow_stufe_fuer_mission(agent.mission), runde)
+            if agent.failure_source_cell:
+                setze_workflow_zelle(agent, agent.failure_source_cell, runde)
+            if config.get('enable_capability_clusters') and agent.failure_source_cluster:
+                setze_faehigkeitscluster(agent, agent.failure_source_cluster, config, runde)
+            agent.failure_source_cell = None
+            agent.failure_source_cluster = None
+            recoveries += 1
+
+    reconfiguration_switches = 0
+    if config.get('enable_restart_recovery'):
+        active_agents = [agent for agent in agenten if not agent.is_failed]
+        active_cell_counts = defaultdict(int)
+        for agent in active_agents:
+            active_cell_counts[agent.workflow_cell] += 1
+        failed_cells = {agent.failure_source_cell for agent in agenten if agent.is_failed and agent.failure_source_cell}
+        for failed_cell in failed_cells:
+            if active_cell_counts.get(failed_cell, 0) >= 2:
+                continue
+            kandidaten = sorted(
+                [
+                    agent
+                    for agent in active_agents
+                    if not agent.is_quarantined and agent.workflow_cell != failed_cell
+                ],
+                key=lambda agent: (
+                    agent.recovery_skill
+                    + agent.trust_shield_score
+                    + agent.cluster_resilience_bonus
+                    + 0.08 * (agent.emergent_skill == 'recovery_specialist')
+                    + 0.06 * (agent.emergent_skill == 'defense_specialist')
+                ),
+                reverse=True,
+            )
+            if not kandidaten:
+                continue
+            kandidat = kandidaten[0]
+            setze_workflow_zelle(kandidat, failed_cell, runde)
+            if config.get('enable_capability_clusters'):
+                setze_faehigkeitscluster(kandidat, faehigkeitscluster_fuer_agent(kandidat), config, runde)
+            kandidat.task_priority = min(1.0, kandidat.task_priority + 0.12)
+            kandidat.reconfiguration_shifts += 1
+            reconfiguration_switches += 1
+            active_cell_counts[failed_cell] += 1
+
+    return {
+        'recoveries': recoveries,
+        'failed_agents': sum(1 for agent in agenten if agent.is_failed),
+        'failed_cells': len({agent.failure_source_cell for agent in agenten if agent.is_failed and agent.failure_source_cell}),
+        'resync_actions': resync_actions,
+        'reconfiguration_switches': reconfiguration_switches,
+        'sync_mean': float(np.mean([agent.resync_score for agent in agenten])) if agenten else 0.0,
+    }
+
+
 def weise_misinformation_quellen_zu(agenten, config):
     if not config.get('enable_prompt_injection'):
         return
@@ -1115,6 +1334,11 @@ def wende_promptinjektion_an(agenten, agenten_dict, config, runde):
     events = 0
     detections = 0
     for agent in agenten:
+        if agent.is_failed:
+            agent.cluster_compromise_level *= 0.92
+            agent.meta_signal_corruption *= 0.90
+            agent.misinformation_exposure *= 0.88
+            continue
         if not agent.ist_misinformation_source:
             agent.cluster_compromise_level *= 0.90
             agent.meta_signal_corruption *= 0.85
@@ -1323,6 +1547,10 @@ def koordiniere_ressourcen(agenten, config):
     cell_demand = defaultdict(float)
 
     for agent in agenten:
+        if agent.is_failed:
+            agent.resource_credit *= 0.80
+            agent.bottleneck_pressure *= 0.85
+            continue
         cell_members[agent.workflow_cell].append(agent)
         skill_focus = skill_fokus_fuer_cluster(agent.capability_cluster)
         skill_alignment = 1.0 if agent.emergent_skill == skill_focus else 0.0
@@ -1567,6 +1795,7 @@ def berechne_missionsfitness(agent, agenten_dict):
             + 0.05 * agent.meta_priority_score
             + skill_bonus_fuer_mission(agent, MISSION_CONSENSUS)
             + 0.04 * agent.trust_shield_score
+            - (0.14 if agent.is_failed else 0.0)
             - (0.05 if agent.is_quarantined else 0.0)
             - 0.05 * agent.cluster_compromise_level
         ),
@@ -1581,6 +1810,7 @@ def berechne_missionsfitness(agent, agenten_dict):
             + 0.06 * agent.meta_priority_score
             + skill_bonus_fuer_mission(agent, MISSION_KNOWLEDGE)
             + 0.05 * agent.trust_shield_score
+            - (0.12 if agent.is_failed else 0.0)
             - (0.04 if agent.is_quarantined else 0.0)
             - 0.04 * agent.cluster_compromise_level
         ),
@@ -1596,6 +1826,7 @@ def berechne_missionsfitness(agent, agenten_dict):
             + 0.04 * agent.misinformation_exposure
             + skill_bonus_fuer_mission(agent, MISSION_DEFENSE)
             + 0.06 * agent.trust_shield_score
+            - (0.10 if agent.is_failed else 0.0)
             - (0.01 if agent.is_quarantined else 0.0)
         ),
         MISSION_STABILITY: (
@@ -1610,6 +1841,7 @@ def berechne_missionsfitness(agent, agenten_dict):
             + 0.04 * agent.misinformation_exposure
             + skill_bonus_fuer_mission(agent, MISSION_STABILITY)
             + 0.06 * agent.trust_shield_score
+            - (0.08 if agent.is_failed else 0.0)
             - (0.01 if agent.is_quarantined else 0.0)
         ),
         MISSION_SUPPORT: (
@@ -1622,6 +1854,7 @@ def berechne_missionsfitness(agent, agenten_dict):
             + 0.04 * agent.meta_priority_score
             + skill_bonus_fuer_mission(agent, MISSION_SUPPORT)
             + 0.04 * agent.trust_shield_score
+            - (0.10 if agent.is_failed else 0.0)
             - (0.03 if agent.is_quarantined else 0.0)
             - 0.05 * agent.meta_signal_corruption
         ),
@@ -1732,6 +1965,8 @@ def initialisiere_missionen(agenten, config=None):
         initialisiere_emergente_faehigkeiten(agenten)
     if config and config.get('enable_fault_isolation'):
         initialisiere_fehlerisolation(agenten)
+    if config and (config.get('enable_cluster_failures') or config.get('enable_restart_recovery')):
+        initialisiere_wiederanlauf(agenten)
 
 
 def aktualisiere_missionen(agenten, agenten_dict, config, runde):
@@ -1820,6 +2055,9 @@ def missions_bonus(agent, partner_reputation, partner, ist_cross_group):
     cooperation_bonus += agent.meta_priority_score * (0.35 if ist_cross_group else 0.18)
     opinion_pull += agent.meta_priority_score * 0.08
     cooperation_bonus += agent.trust_shield_score * (0.14 if ist_cross_group else 0.06)
+    if agent.is_failed:
+        cooperation_bonus -= 0.16 if ist_cross_group else 0.08
+        opinion_pull -= 0.05
     if agent.is_quarantined:
         cooperation_bonus -= 0.06 if ist_cross_group else 0.02
         opinion_pull -= 0.02
@@ -1944,12 +2182,20 @@ def erstelle_netzwerk(agenten, config):
 
 
 def waehle_partner(agent, agenten, agenten_dict, config=None):
+    if getattr(agent, 'is_failed', False):
+        kandidaten = [
+            anderer for anderer in agenten if anderer.id != agent.id and not getattr(anderer, 'is_failed', False)
+        ]
+        if kandidaten:
+            return random.choice(kandidaten)
+        return random.choice([anderer for anderer in agenten if anderer.id != agent.id])
     if config and config.get('enable_fault_isolation'):
         if agent.is_quarantined:
             kandidaten = [
                 anderer
                 for anderer in agenten
                 if anderer.id != agent.id
+                and not getattr(anderer, 'is_failed', False)
                 and (anderer.is_quarantined or anderer.workflow_cell == agent.workflow_cell)
             ]
             if kandidaten:
@@ -1967,12 +2213,13 @@ def waehle_partner(agent, agenten, agenten_dict, config=None):
     if partner_bias_probability > 0.0 and random.random() < partner_bias_probability:
         bias_distance = getattr(agent, 'partner_bias_min_distance', 0.0)
         kandidaten = [
-            anderer
-            for anderer in agenten
-            if anderer.id != agent.id
-            and abs(anderer.meinung - agent.meinung) >= bias_distance
-            and (not config or not config.get('enable_fault_isolation') or not anderer.is_quarantined)
-        ]
+                anderer
+                for anderer in agenten
+                if anderer.id != agent.id
+                and abs(anderer.meinung - agent.meinung) >= bias_distance
+                and not getattr(anderer, 'is_failed', False)
+                and (not config or not config.get('enable_fault_isolation') or not anderer.is_quarantined)
+            ]
         if kandidaten:
             kandidaten.sort(key=lambda anderer: abs(anderer.meinung - agent.meinung), reverse=True)
             return kandidaten[0]
@@ -1984,6 +2231,7 @@ def waehle_partner(agent, agenten, agenten_dict, config=None):
                 for anderer in agenten
                 if anderer.id != agent.id
                 and abs(anderer.meinung - agent.meinung) > 0.30
+                and not getattr(anderer, 'is_failed', False)
                 and (not config or not config.get('enable_fault_isolation') or not anderer.is_quarantined)
             ]
             if kandidaten:
@@ -1992,13 +2240,19 @@ def waehle_partner(agent, agenten, agenten_dict, config=None):
         nachbar_ids = list(agent.nachbarn)
         if config and config.get('enable_fault_isolation'):
             sichere_ids = [nid for nid in nachbar_ids if nid in agenten_dict and not agenten_dict[nid].is_quarantined]
+            sichere_ids = [nid for nid in sichere_ids if not getattr(agenten_dict[nid], 'is_failed', False)]
             if sichere_ids:
                 return agenten_dict[random.choice(sichere_ids)]
-        return agenten_dict[random.choice(nachbar_ids)]
+        nachbar_ids = [
+            nid for nid in nachbar_ids if nid in agenten_dict and not getattr(agenten_dict[nid], 'is_failed', False)
+        ]
+        if nachbar_ids:
+            return agenten_dict[random.choice(nachbar_ids)]
     kandidaten = [
         anderer
         for anderer in agenten
         if anderer.id != agent.id
+        and not getattr(anderer, 'is_failed', False)
         and (not config or not config.get('enable_fault_isolation') or not anderer.is_quarantined)
     ]
     if not kandidaten:
@@ -2087,6 +2341,8 @@ def finde_neuen_nachbarn(agent, agenten, config):
 
     for kandidat in agenten:
         if kandidat.id == agent.id or kandidat.id in agent.nachbarn:
+            continue
+        if getattr(kandidat, 'is_failed', False):
             continue
         if config.get('enable_fault_isolation') and kandidat.is_quarantined:
             continue
@@ -2492,6 +2748,13 @@ def run_polarization_experiment(
     shielding_action_history = []
     shield_strength_history = []
     isolation_relief_history = []
+    failure_event_history = []
+    failed_agents_history = []
+    failed_cells_history = []
+    recovery_event_history = []
+    resync_action_history = []
+    reconfiguration_history = []
+    sync_strength_history = []
 
     for runde in range(1, rounds + 1):
         gruppenuebergreifende_interaktionen = 0
@@ -2499,10 +2762,17 @@ def run_polarization_experiment(
         bridge_ids = berechne_brueckenagenten(agenten, agenten_dict)
         manipulation_stats = wende_promptinjektion_an(agenten, agenten_dict, config, runde)
         isolation_stats = aktualisiere_fehlerisolation(agenten, agenten_dict, config, runde)
+        failure_stats = wende_zellausfaelle_an(agenten, config, runde)
+        recovery_stats = aktualisiere_wiederanlauf(agenten, agenten_dict, config, runde)
+        aktive_agenten = [agent for agent in agenten if not agent.is_failed]
+        if len(aktive_agenten) < 2:
+            aktive_agenten = list(agenten)
 
         for _ in range(interactions_per_round):
-            agent = random.choice(agenten)
+            agent = random.choice(aktive_agenten)
             partner = waehle_partner(agent, agenten, agenten_dict, config)
+            if partner.is_failed:
+                continue
 
             if agent.gruppe != partner.gruppe:
                 gruppenuebergreifende_interaktionen += 1
@@ -2682,6 +2952,13 @@ def run_polarization_experiment(
             shielding_action_history.append(isolation_stats['shielding_actions'])
             shield_strength_history.append(isolation_stats['shield_mean'])
             isolation_relief_history.append(isolation_stats['relief'])
+            failure_event_history.append(failure_stats['events'])
+            failed_agents_history.append(recovery_stats['failed_agents'])
+            failed_cells_history.append(recovery_stats['failed_cells'])
+            recovery_event_history.append(recovery_stats['recoveries'])
+            resync_action_history.append(recovery_stats['resync_actions'])
+            reconfiguration_history.append(recovery_stats['reconfiguration_switches'])
+            sync_strength_history.append(recovery_stats['sync_mean'])
             if meta_stats['priority_mission'] is not None:
                 meta_mission_focus_counts[meta_stats['priority_mission']] += 1
             if meta_stats['priority_cluster'] is not None:
@@ -2731,6 +3008,8 @@ def run_polarization_experiment(
                 status += f", Skills={learning_stats['alignment_rate']:.2f}"
             if config.get('enable_fault_isolation'):
                 status += f", Quar={isolation_stats['quarantined_agents']}"
+            if config.get('enable_cluster_failures') or config.get('enable_restart_recovery'):
+                status += f", Ausfall={recovery_stats['failed_agents']}, Sync={recovery_stats['sync_mean']:.2f}"
             print(status)
 
     finale_pi = polarisierungs_history[-1]
@@ -2840,6 +3119,13 @@ def run_polarization_experiment(
         'trust_shield_mean': float(np.mean(shield_strength_history)) if shield_strength_history else 0.0,
         'isolation_relief_total': float(sum(isolation_relief_history)),
         'isolation_relief_rate': float(np.mean(isolation_relief_history)) if isolation_relief_history else 0.0,
+        'failure_events_total': int(sum(failure_event_history)),
+        'failed_agents_mean': float(np.mean(failed_agents_history)) if failed_agents_history else 0.0,
+        'failed_cells_mean': float(np.mean(failed_cells_history)) if failed_cells_history else 0.0,
+        'recovery_events_total': int(sum(recovery_event_history)),
+        'resync_actions_total': int(sum(resync_action_history)),
+        'reconfiguration_switch_total': int(sum(reconfiguration_history)),
+        'sync_strength_mean': float(np.mean(sync_strength_history)) if sync_strength_history else 0.0,
         'emergent_skill_distribution': {
             skill: sum(1 for agent in agenten if agent.emergent_skill == skill)
             for skill in (
@@ -2928,6 +3214,12 @@ def run_polarization_experiment(
                 print(f"Ø quarant. Agenten:       {workflow_metrics['quarantined_agents_mean']:.2f}")
                 print(f"Abschirmaktionen gesamt:  {workflow_metrics['shielding_actions_total']}")
                 print(f"Abschirmniveau:           {workflow_metrics['trust_shield_mean']:.2f}")
+            if config.get('enable_cluster_failures') or config.get('enable_restart_recovery'):
+                print(f"Ausfaelle gesamt:         {workflow_metrics['failure_events_total']}")
+                print(f"Ø ausgefallene Agenten:   {workflow_metrics['failed_agents_mean']:.2f}")
+                print(f"Wiederanlaeufe gesamt:    {workflow_metrics['recovery_events_total']}")
+                print(f"Rekonfigurationen:        {workflow_metrics['reconfiguration_switch_total']}")
+                print(f"Resync-Niveau:            {workflow_metrics['sync_strength_mean']:.2f}")
             if config.get('enable_emergent_skills'):
                 print(f"Skill-Wechsel gesamt:     {workflow_metrics['skill_switch_total']}")
                 print(f"Skill-Ausrichtung:        {workflow_metrics['skill_alignment_rate']:.1%}")

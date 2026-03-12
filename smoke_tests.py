@@ -82,6 +82,14 @@ class SmokeTests(unittest.TestCase):
             self.assertTrue((output_dir / "kki_commitment_protokoll.png").exists())
             self.assertIn("COMMITMENT-PROTOKOLL", result.stdout)
 
+    def test_schwarm_polarisierung_smoke(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:
+            output_dir = Path(tmpdir)
+            result = self.run_script("schwarm_polarisierung.py", output_dir, seed=17)
+            self.assert_successful_run(result)
+            self.assertTrue((output_dir / "kki_polarisierung.png").exists())
+            self.assertIn("Polarisierungs-Index", result.stdout)
+
 
 if __name__ == "__main__":
     unittest.main()

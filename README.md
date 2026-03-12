@@ -38,6 +38,7 @@ Die Simulationen basieren auf wiederholten Interaktionen im Stil des Gefangenend
 | `schwarm_100.py` | Skalierung auf 100 Agenten |
 | `schwarm_cluster.py` | Simulation mit Cluster- und Netzwerkdynamik |
 | `schwarm_invasion.py` | Resilienz-Test gegen spätere Invasion durch Defektoren |
+| `schwarm_polarisierung.py` | Experiment zu Polarisierung, Konsensbildung und Lagerdynamik |
 | `commitment_protokoll.py` | Commit-Reveal-Verify-Protokoll gegen Manipulation |
 
 ## Features
@@ -105,7 +106,15 @@ Weitere Experimente:
 python3 schwarm_100.py
 python3 schwarm_cluster.py
 python3 schwarm_invasion.py
+python3 schwarm_polarisierung.py
 python3 commitment_protokoll.py
+```
+
+Für das neue Polarisierungs-Experiment kann das Szenario zusätzlich per Umgebungsvariable gewählt werden:
+
+```bash
+KKI_POLARIZATION_SCENARIO=polarization python3 schwarm_polarisierung.py
+KKI_POLARIZATION_SCENARIO=consensus python3 schwarm_polarisierung.py
 ```
 
 Die Visualisierungs-Skripte erzeugen PNG-Dateien direkt im Projektverzeichnis.
@@ -122,6 +131,7 @@ Die folgenden Skripte erzeugen die im Repository abgelegten PNG-Dateien:
 | `schwarm_100.py` | `kki_100_agenten.png` | `KKI_SEED=42 python3 schwarm_100.py` |
 | `schwarm_cluster.py` | `kki_cluster_simulation.png` | `KKI_SEED=42 python3 schwarm_cluster.py` |
 | `schwarm_invasion.py` | `kki_invasion.png` | `KKI_SEED=42 python3 schwarm_invasion.py` |
+| `schwarm_polarisierung.py` | `kki_polarisierung.png` | `KKI_SEED=42 KKI_POLARIZATION_SCENARIO=polarization python3 schwarm_polarisierung.py` |
 | `commitment_protokoll.py` | `kki_commitment_protokoll.png` | `KKI_SEED=42 python3 commitment_protokoll.py` |
 
 Hinweise zur Reproduktion:
@@ -155,6 +165,10 @@ Die Smoke-Tests starten ausgewählte Kernskripte im verkürzten headless Testmod
 ### Schwarm-Simulation
 
 ![KKI Schwarm-Simulation](kki_schwarm_simulation.png)
+
+### Polarisierung und Konsensbildung
+
+![KKI Polarisierungs-Experiment](kki_polarisierung.png)
 
 ## Zentrale Beobachtungen
 

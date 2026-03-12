@@ -29,6 +29,8 @@ DEFAULT_REWIRE_PROXIMITY_WEIGHT = 0.45
 DEFAULT_REWIRE_REMOVAL_PROBABILITY = 0.35
 DEFAULT_REWIRE_ADDITION_PROBABILITY = 0.75
 DEFAULT_REWIRE_CROSS_GROUP_BONUS = 0.08
+DEFAULT_CENTER_MIN = 0.35
+DEFAULT_CENTER_MAX = 0.65
 
 
 class Agent:
@@ -64,12 +66,13 @@ class Agent:
             return 0.5
         return sum(1 for aktion in history[-10:] if aktion == 'C') / len(history[-10:])
 
-    def waehle_aktion(self, partner_reputation, partner_meinung):
+    def waehle_aktion(self, partner_reputation, partner_meinung, cooperation_bonus=0.0):
         meinungs_distanz = abs(self.meinung - partner_meinung)
         aehnlichkeit = 1.0 - meinungs_distanz
         effektive_neigung = self.kooperations_neigung
         effektive_neigung *= 0.55 + 0.45 * partner_reputation
         effektive_neigung *= 0.35 + 0.65 * aehnlichkeit
+        effektive_neigung += cooperation_bonus
         effektive_neigung = max(0.05, min(0.95, effektive_neigung))
 
         if random.random() < effektive_neigung:
@@ -84,6 +87,7 @@ class Agent:
         partner_intelligenz,
         partner_meinung,
         gleiche_gruppe,
+        opinion_pull=0.0,
     ):
         self.interaktions_history[partner_id].append(andere_aktion)
         meinungs_distanz = abs(self.meinung - partner_meinung)
@@ -95,6 +99,7 @@ class Agent:
             self.kooperations_neigung += 0.006 * (0.5 + aehnlichkeit)
             self.reputation += 0.012
             zugkraft = 0.12 if gleiche_gruppe else 0.08
+            zugkraft += opinion_pull
             self.meinung += (partner_meinung - self.meinung) * zugkraft * beweglichkeit
 
         elif meine_aktion == 'C' and andere_aktion == 'D':
@@ -192,6 +197,14 @@ def build_runtime_config() -> tuple[dict[str, float | int | str], int]:
             os.getenv('KKI_REWIRE_CROSS_GROUP_BONUS', str(DEFAULT_REWIRE_CROSS_GROUP_BONUS))
         ),
         'rewire_target_degree': target_degree,
+        'enable_bridge_mechanism': os.getenv('KKI_BRIDGE_MECHANISM', '').strip().lower() in {'1', 'true', 'yes', 'on'},
+        'bridge_cooperation_bonus': float(os.getenv('KKI_BRIDGE_COOPERATION_BONUS', '0.08')),
+        'enable_centrist_moderation': os.getenv('KKI_CENTRIST_MODERATION', '').strip().lower() in {'1', 'true', 'yes', 'on'},
+        'centrist_pull_strength': float(os.getenv('KKI_CENTRIST_PULL', '0.08')),
+        'enable_mediator_encouragement': os.getenv('KKI_MEDIATOR_MODE', '').strip().lower() in {'1', 'true', 'yes', 'on'},
+        'mediator_contact_bias': float(os.getenv('KKI_MEDIATOR_CONTACT_BIAS', '0.60')),
+        'center_zone_min': float(os.getenv('KKI_CENTER_ZONE_MIN', str(DEFAULT_CENTER_MIN))),
+        'center_zone_max': float(os.getenv('KKI_CENTER_ZONE_MAX', str(DEFAULT_CENTER_MAX))),
     }
     return config, seed
 
@@ -249,7 +262,17 @@ def erstelle_netzwerk(agenten, config):
                 agent.verbinde(random.choice(moegliche))
 
 
-def waehle_partner(agent, agenten, agenten_dict):
+def waehle_partner(agent, agenten, agenten_dict, config=None):
+    if config and config.get('enable_mediator_encouragement') and ist_zentrist(agent.meinung, config):
+        bias = float(config['mediator_contact_bias'])
+        if random.random() < bias:
+            kandidaten = [
+                anderer
+                for anderer in agenten
+                if anderer.id != agent.id and abs(anderer.meinung - agent.meinung) > 0.30
+            ]
+            if kandidaten:
+                return random.choice(kandidaten)
     if agent.nachbarn and random.random() < 0.9:
         return agenten_dict[random.choice(list(agent.nachbarn))]
     kandidaten = [anderer for anderer in agenten if anderer.id != agent.id]
@@ -277,6 +300,21 @@ def berechne_gruppenabstand(agenten):
     gruppe_links = [agent.meinung for agent in agenten if agent.gruppe == 0]
     gruppe_rechts = [agent.meinung for agent in agenten if agent.gruppe == 1]
     return abs(np.mean(gruppe_links) - np.mean(gruppe_rechts))
+
+
+def ist_zentrist(meinung, config):
+    center_min = float(config.get('center_zone_min', DEFAULT_CENTER_MIN))
+    center_max = float(config.get('center_zone_max', DEFAULT_CENTER_MAX))
+    return center_min <= meinung <= center_max
+
+
+def berechne_brueckenagenten(agenten, agenten_dict):
+    bridge_ids = set()
+    for agent in agenten:
+        gruppen = {agenten_dict[nachbar_id].gruppe for nachbar_id in agent.nachbarn if nachbar_id in agenten_dict}
+        if 0 in gruppen and 1 in gruppen:
+            bridge_ids.add(agent.id)
+    return bridge_ids
 
 
 def berechne_netzwerkmetriken(agenten, agenten_dict):
@@ -421,6 +459,15 @@ def run_polarization_experiment(
     output_filename='kki_polarisierung.png',
     print_summary=True,
 ):
+    config = dict(config)
+    config.setdefault('center_zone_min', DEFAULT_CENTER_MIN)
+    config.setdefault('center_zone_max', DEFAULT_CENTER_MAX)
+    config.setdefault('enable_bridge_mechanism', False)
+    config.setdefault('enable_centrist_moderation', False)
+    config.setdefault('enable_mediator_encouragement', False)
+    config.setdefault('bridge_cooperation_bonus', 0.08)
+    config.setdefault('centrist_pull_strength', 0.08)
+    config.setdefault('mediator_contact_bias', 0.60)
     scenario = str(config['scenario'])
     rounds = int(config['rounds'])
     interactions_per_round = int(config['interactions_per_round'])
@@ -464,6 +511,9 @@ def run_polarization_experiment(
     gruppe_a_intelligenz = []
     gruppe_b_intelligenz = []
     cross_group_history = []
+    cross_group_cooperation_history = []
+    bridge_count_history = []
+    center_zone_history = []
     removed_edges_history = []
     added_edges_history = []
     rewired_edges_history = []
@@ -476,10 +526,12 @@ def run_polarization_experiment(
 
     for runde in range(1, rounds + 1):
         gruppenuebergreifende_interaktionen = 0
+        gruppenuebergreifende_kooperationen = 0
+        bridge_ids = berechne_brueckenagenten(agenten, agenten_dict)
 
         for _ in range(interactions_per_round):
             agent = random.choice(agenten)
-            partner = waehle_partner(agent, agenten, agenten_dict)
+            partner = waehle_partner(agent, agenten, agenten_dict, config)
 
             if agent.gruppe != partner.gruppe:
                 gruppenuebergreifende_interaktionen += 1
@@ -487,8 +539,30 @@ def run_polarization_experiment(
             partner_rep_aus_agent_sicht = agent.berechne_partner_reputation(partner.id)
             agent_rep_aus_partner_sicht = partner.berechne_partner_reputation(agent.id)
 
-            aktion_a = agent.waehle_aktion(partner_rep_aus_agent_sicht, partner.meinung)
-            aktion_p = partner.waehle_aktion(agent_rep_aus_partner_sicht, agent.meinung)
+            cooperation_bonus_a = 0.0
+            cooperation_bonus_p = 0.0
+            if agent.gruppe != partner.gruppe and config.get('enable_bridge_mechanism'):
+                if agent.id in bridge_ids:
+                    cooperation_bonus_a += float(config['bridge_cooperation_bonus'])
+                if partner.id in bridge_ids:
+                    cooperation_bonus_p += float(config['bridge_cooperation_bonus'])
+            if agent.gruppe != partner.gruppe and config.get('enable_centrist_moderation'):
+                if ist_zentrist(agent.meinung, config):
+                    cooperation_bonus_a += 0.04
+                if ist_zentrist(partner.meinung, config):
+                    cooperation_bonus_p += 0.04
+
+            aktion_a = agent.waehle_aktion(partner_rep_aus_agent_sicht, partner.meinung, cooperation_bonus_a)
+            aktion_p = partner.waehle_aktion(agent_rep_aus_partner_sicht, agent.meinung, cooperation_bonus_p)
+            if agent.gruppe != partner.gruppe and aktion_a == 'C' and aktion_p == 'C':
+                gruppenuebergreifende_kooperationen += 1
+
+            opinion_pull_a = 0.0
+            opinion_pull_p = 0.0
+            if config.get('enable_centrist_moderation') and agent.gruppe != partner.gruppe:
+                if ist_zentrist(agent.meinung, config) or ist_zentrist(partner.meinung, config):
+                    opinion_pull_a += float(config['centrist_pull_strength'])
+                    opinion_pull_p += float(config['centrist_pull_strength'])
 
             agent.lerne(
                 aktion_a,
@@ -497,6 +571,7 @@ def run_polarization_experiment(
                 partner.intelligenz,
                 partner.meinung,
                 agent.gruppe == partner.gruppe,
+                opinion_pull=opinion_pull_a,
             )
             partner.lerne(
                 aktion_p,
@@ -505,6 +580,7 @@ def run_polarization_experiment(
                 agent.intelligenz,
                 agent.meinung,
                 agent.gruppe == partner.gruppe,
+                opinion_pull=opinion_pull_p,
             )
 
         rewiring_stats = aktualisiere_adaptives_netzwerk(agenten, agenten_dict, config)
@@ -526,6 +602,11 @@ def run_polarization_experiment(
         gruppe_a_intelligenz.append(np.mean([agent.intelligenz for agent in agenten if agent.gruppe == 0]))
         gruppe_b_intelligenz.append(np.mean([agent.intelligenz for agent in agenten if agent.gruppe == 1]))
         cross_group_history.append(gruppenuebergreifende_interaktionen / interactions_per_round)
+        cross_group_cooperation_history.append(
+            gruppenuebergreifende_kooperationen / max(1, gruppenuebergreifende_interaktionen)
+        )
+        bridge_count_history.append(len(bridge_ids))
+        center_zone_history.append(sum(1 for agent in agenten if ist_zentrist(agent.meinung, config)))
         removed_edges_history.append(rewiring_stats['removed_edges'])
         added_edges_history.append(rewiring_stats['added_edges'])
         rewired_edges_history.append(rewiring_stats['rewired_edges'])
@@ -542,6 +623,8 @@ def run_polarization_experiment(
                 f"Konsens={konsens_score:.3f}, Gruppenabstand={gruppenabstand:.3f}, "
                 f"Links/Mitte/Rechts={links}/{mitte}/{rechts}"
             )
+            if config.get('enable_bridge_mechanism') or config.get('enable_centrist_moderation'):
+                status += f", Brücken={len(bridge_ids)}, Mitte={center_zone_history[-1]}"
             if config.get('enable_dynamic_rewiring'):
                 status += f", Rewiring={rewiring_stats['rewired_edges']}"
             print(status)
@@ -551,6 +634,7 @@ def run_polarization_experiment(
     finaler_abstand = gruppenabstand_history[-1]
     links, mitte, rechts = berechne_lager(agenten)
     cross_group_rate = float(np.mean(cross_group_history))
+    cross_group_cooperation_rate = float(np.mean(cross_group_cooperation_history))
     mean_group_a = float(np.mean([agent.meinung for agent in agenten if agent.gruppe == 0]))
     mean_group_b = float(np.mean([agent.meinung for agent in agenten if agent.gruppe == 1]))
     finale_netzwerkmetriken = berechne_netzwerkmetriken(agenten, agenten_dict)
@@ -571,6 +655,10 @@ def run_polarization_experiment(
         print(f"Finaler Gruppenabstand:      {finaler_abstand:.3f}")
         print(f"Lagerverteilung:             Links={links}, Mitte={mitte}, Rechts={rechts}")
         print(f"Ø gruppenübergreifende Interaktionen: {cross_group_rate:.1%}")
+        print(f"Ø gruppenübergreifende Kooperation:   {cross_group_cooperation_rate:.1%}")
+        if config.get('enable_bridge_mechanism') or config.get('enable_centrist_moderation'):
+            print(f"Ø Brückenagenten:            {float(np.mean(bridge_count_history)):.2f}")
+            print(f"Ø Agenten in Mittelzone:     {float(np.mean(center_zone_history)):.2f}")
         if config.get('enable_dynamic_rewiring'):
             print(f"Ø Rewiring-Operationen/Runde: {durchschnitt_rewiring:.2f}")
             print(f"Finale Netzwerkdichte:       {finale_netzwerkmetriken['density']:.3f}")
@@ -596,6 +684,7 @@ def run_polarization_experiment(
         'center_count': mitte,
         'right_count': rechts,
         'cross_group_interaction_rate': cross_group_rate,
+        'cross_group_cooperation_rate': cross_group_cooperation_rate,
         'group_1_mean_opinion': mean_group_a,
         'group_2_mean_opinion': mean_group_b,
         'interpretation': interpretation,
@@ -609,6 +698,9 @@ def run_polarization_experiment(
         'group_a_intelligence_history': gruppe_a_intelligenz,
         'group_b_intelligence_history': gruppe_b_intelligenz,
         'cross_group_history': cross_group_history,
+        'cross_group_cooperation_history': cross_group_cooperation_history,
+        'bridge_count_history': bridge_count_history,
+        'center_zone_history': center_zone_history,
         'removed_edges_history': removed_edges_history,
         'added_edges_history': added_edges_history,
         'rewired_edges_history': rewired_edges_history,

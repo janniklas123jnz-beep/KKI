@@ -45,6 +45,7 @@ Die Simulationen basieren auf wiederholten Interaktionen im Stil des Gefangenend
 | `schwarm_commitment_resilienz.py` | Vergleichsstudie zu adaptiven Netzwerken unter Manipulations- und Commitment-Angriffen |
 | `schwarm_vertrauens_benchmark.py` | Benchmark fuer Vertrauensstrategien wie Reputation, Commitment, Meinung und hybride Mischungen |
 | `schwarm_grossstudie.py` | Kombinierte Grossstudie ueber Polarisierung, Invasion und Commitment-Angriffe auf gemeinsamer Agenten-Grund-DNA |
+| `schwarm_anti_polarisierung.py` | Vergleichsstudie fuer Brueckenagenten, Mittelzonen-Moderation und hybride Anti-Polarisierungsstrategien |
 | `commitment_protokoll.py` | Commit-Reveal-Verify-Protokoll gegen Manipulation |
 
 ## Features
@@ -120,6 +121,7 @@ python3 schwarm_invasive_netzwerke.py
 python3 schwarm_commitment_resilienz.py
 python3 schwarm_vertrauens_benchmark.py
 python3 schwarm_grossstudie.py
+python3 schwarm_anti_polarisierung.py
 python3 commitment_protokoll.py
 ```
 
@@ -201,6 +203,21 @@ Die kombinierte Grossstudie fuehrt Polarisierung, Invasion und Commitment-Angrif
 python3 schwarm_grossstudie.py
 ```
 
+Die neue Anti-Polarisierungsstudie vergleicht Baseline, Brueckenagenten, Mittelzonen-Moderation und einen hybriden Ansatz direkt miteinander:
+
+```bash
+python3 schwarm_anti_polarisierung.py
+```
+
+Optional lassen sich Wiederholungen und Kernparameter fuer schnelle Reproduktionen anpassen:
+
+```bash
+KKI_ANTI_POL_REPETITIONS=2 \
+KKI_ANTI_POL_AGENT_COUNT=60 \
+KKI_NETWORK_DEGREE=6 \
+python3 schwarm_anti_polarisierung.py
+```
+
 Optional lassen sich Wiederholungen und gemeinsame Basisparameter anpassen:
 
 ```bash
@@ -239,6 +256,7 @@ Die folgenden Skripte erzeugen die im Repository abgelegten PNG-Dateien:
 | `schwarm_commitment_resilienz.py` | `kki_commitment_resilienz.png` | `KKI_SEED=42 python3 schwarm_commitment_resilienz.py` |
 | `schwarm_vertrauens_benchmark.py` | `kki_vertrauens_benchmark.png` | `KKI_SEED=42 python3 schwarm_vertrauens_benchmark.py` |
 | `schwarm_grossstudie.py` | `kki_grossstudie.png` | `KKI_SEED=42 python3 schwarm_grossstudie.py` |
+| `schwarm_anti_polarisierung.py` | `kki_anti_polarisierung.png` | `KKI_SEED=42 python3 schwarm_anti_polarisierung.py` |
 | `commitment_protokoll.py` | `kki_commitment_protokoll.png` | `KKI_SEED=42 python3 commitment_protokoll.py` |
 
 Hinweise zur Reproduktion:
@@ -251,6 +269,7 @@ Hinweise zur Reproduktion:
 - das Commitment-Experiment nutzt zusaetzlich `KKI_COMMITMENT_ATTACK_STRENGTH`, `KKI_COMMITMENT_REP_THRESHOLDS` und `KKI_COMMITMENT_TRUST_THRESHOLDS`
 - der Vertrauens-Benchmark nutzt zusaetzlich `KKI_BENCHMARK_REPETITIONS` und vergleicht statische, reputationsbasierte, commitment-basierte, meinungsbasierte und hybride Strategien
 - die Grossstudie nutzt zusaetzlich `KKI_MEGASTUDY_REPETITIONS`, `KKI_MEGASTUDY_AGENT_COUNT` und `KKI_MEGASTUDY_STRESS_ROUND` fuer eine gemeinsame Grundlagenkonfiguration
+- die Anti-Polarisierungsstudie nutzt zusaetzlich `KKI_ANTI_POL_REPETITIONS`, `KKI_ANTI_POL_AGENT_COUNT` und die optionalen Schalter `KKI_BRIDGE_MECHANISM`, `KKI_CENTRIST_MODERATION` und `KKI_MEDIATOR_MODE`
 
 Beispiel für eine reproduzierbare, headless Erzeugung:
 
@@ -302,6 +321,10 @@ Die Smoke-Tests starten ausgewählte Kernskripte im verkürzten headless Testmod
 
 ![KKI Grossstudie](kki_grossstudie.png)
 
+### Anti-Polarisierungsstudie
+
+![KKI Anti-Polarisierung](kki_anti_polarisierung.png)
+
 ## Zentrale Beobachtungen
 
 Die bisherigen Simulationen illustrieren wiederkehrende Muster:
@@ -315,6 +338,7 @@ Die bisherigen Simulationen illustrieren wiederkehrende Muster:
 - adaptive Netzwerke koennen Commitment-Brueche zusaetzlich in schnelle soziale Isolation manipulativer Agenten uebersetzen
 - unterschiedliche Vertrauenssignale lassen sich nun direkt benchmarken, statt nur einzeln in getrennten Experimenten zu betrachten
 - die neue Grossstudie verbindet diese Einzelbefunde zu einer gemeinsamen Grundlage fuer spaetere Agenten mit einheitlicher DNA und gruppenspezifischen Zusatzfaehigkeiten
+- reine Polarisierung braucht zusaetzlich soziale Bruecken und eine stabile Mittelzone; genau diese Mechanismen vergleicht nun die Anti-Polarisierungsstudie explizit
 
 ## Projektstruktur und Ausrichtung
 

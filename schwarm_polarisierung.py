@@ -64,6 +64,8 @@ DEFAULT_META_PRIORITY_STRENGTH = 0.18
 DEFAULT_INJECTION_ATTACK_ROUND = 90
 DEFAULT_INJECTION_STRENGTH = 0.38
 DEFAULT_INJECTION_SOURCE_COUNT = 6
+DEFAULT_GROUP_LEARNING_RATE = 0.10
+DEFAULT_SKILL_SPECIALIZATION_THRESHOLD = 0.62
 MISSION_CONSENSUS = 'consensus_building'
 MISSION_KNOWLEDGE = 'knowledge_sharing'
 MISSION_DEFENSE = 'reputation_defense'
@@ -175,6 +177,14 @@ class Agent:
         self.false_cluster_signal = None
         self.misinformation_events = 0
         self.misinformation_detected = 0
+        self.emergent_skill = 'adaptive_generalist'
+        self.initial_emergent_skill = 'adaptive_generalist'
+        self.emergent_skill_history = []
+        self.bridge_skill = 0.25
+        self.analysis_skill = 0.25
+        self.defense_skill = 0.25
+        self.recovery_skill = 0.25
+        self.group_learning_gain_total = 0.0
 
         self.meinung_history = [meinung]
         self.kooperation_history = [kooperations_neigung]
@@ -473,6 +483,17 @@ def build_runtime_config() -> tuple[dict[str, float | int | str], int]:
         'injection_source_count': int(
             os.getenv('KKI_INJECTION_SOURCE_COUNT', str(DEFAULT_INJECTION_SOURCE_COUNT))
         ),
+        'enable_emergent_skills': os.getenv('KKI_EMERGENT_SKILLS_ENABLED', '').strip().lower()
+        in {'1', 'true', 'yes', 'on'},
+        'group_learning_rate': float(
+            os.getenv('KKI_GROUP_LEARNING_RATE', str(DEFAULT_GROUP_LEARNING_RATE))
+        ),
+        'skill_specialization_threshold': float(
+            os.getenv(
+                'KKI_SKILL_SPECIALIZATION_THRESHOLD',
+                str(DEFAULT_SKILL_SPECIALIZATION_THRESHOLD),
+            )
+        ),
     }
     return config, seed
 
@@ -651,6 +672,27 @@ def cluster_fuer_mission(mission):
     return mapping.get(mission, 'synthesis_cluster')
 
 
+def skill_fokus_fuer_cluster(cluster):
+    mapping = {
+        'scout_cluster': 'bridge_specialist',
+        'synthesis_cluster': 'analysis_specialist',
+        'response_cluster': 'defense_specialist',
+        'resilience_cluster': 'recovery_specialist',
+    }
+    return mapping.get(cluster, 'adaptive_generalist')
+
+
+def skill_bonus_fuer_mission(agent, mission):
+    bonuses = {
+        'bridge_specialist': {MISSION_CONSENSUS: 0.06, MISSION_KNOWLEDGE: 0.04},
+        'analysis_specialist': {MISSION_KNOWLEDGE: 0.07, MISSION_SUPPORT: 0.03},
+        'defense_specialist': {MISSION_DEFENSE: 0.08, MISSION_STABILITY: 0.03},
+        'recovery_specialist': {MISSION_STABILITY: 0.08, MISSION_SUPPORT: 0.04},
+        'adaptive_generalist': {MISSION_SUPPORT: 0.02},
+    }
+    return bonuses.get(agent.emergent_skill, {}).get(mission, 0.0)
+
+
 def cluster_profil(cluster, config):
     skew = max(0.0, float(config.get('cluster_budget_skew', DEFAULT_CLUSTER_BUDGET_SKEW)))
     profiles = {
@@ -724,6 +766,123 @@ def initialisiere_faehigkeitscluster(agenten, config):
         agent.misinformation_events = 0
         agent.misinformation_detected = 0
         setze_faehigkeitscluster(agent, cluster, config, runde=0)
+
+
+def initialisiere_emergente_faehigkeiten(agenten):
+    for agent in agenten:
+        fokus = skill_fokus_fuer_cluster(agent.capability_cluster)
+        agent.bridge_skill = 0.25
+        agent.analysis_skill = 0.25
+        agent.defense_skill = 0.25
+        agent.recovery_skill = 0.25
+        if fokus == 'bridge_specialist':
+            agent.bridge_skill += 0.08
+        elif fokus == 'analysis_specialist':
+            agent.analysis_skill += 0.08
+        elif fokus == 'defense_specialist':
+            agent.defense_skill += 0.08
+        elif fokus == 'recovery_specialist':
+            agent.recovery_skill += 0.08
+        agent.emergent_skill = 'adaptive_generalist'
+        agent.initial_emergent_skill = 'adaptive_generalist'
+        agent.emergent_skill_history = []
+        agent.group_learning_gain_total = 0.0
+
+
+def skill_scores(agent):
+    return {
+        'bridge_specialist': agent.bridge_skill,
+        'analysis_specialist': agent.analysis_skill,
+        'defense_specialist': agent.defense_skill,
+        'recovery_specialist': agent.recovery_skill,
+    }
+
+
+def setze_emergente_faehigkeit(agent, neue_faehigkeit, runde):
+    if agent.emergent_skill != neue_faehigkeit:
+        agent.emergent_skill_history.append((runde, agent.emergent_skill, neue_faehigkeit))
+    agent.emergent_skill = neue_faehigkeit
+
+
+def aktualisiere_gruppenlernen(agenten, agenten_dict, config, runde):
+    if not config.get('enable_emergent_skills'):
+        return {'switches': 0, 'alignment_rate': 0.0, 'learning_gain': 0.0}
+
+    learning_rate = max(0.0, float(config.get('group_learning_rate', DEFAULT_GROUP_LEARNING_RATE)))
+    threshold = float(
+        config.get('skill_specialization_threshold', DEFAULT_SKILL_SPECIALIZATION_THRESHOLD)
+    )
+    switches = 0
+    aligned = 0
+    learning_gain = 0.0
+    for agent in agenten:
+        nachbarn = [agenten_dict[nid] for nid in agent.nachbarn if nid in agenten_dict]
+        same_cluster_neighbors = [
+            nachbar for nachbar in nachbarn if nachbar.capability_cluster == agent.capability_cluster
+        ]
+        coop_signal = agent.kooperations_neigung + 0.5 * agent.meta_priority_score
+        rep_signal = agent.reputation + agent.cluster_resilience_bonus
+        int_signal = min(1.0, agent.intelligenz / 4.0)
+        cluster_focus = skill_fokus_fuer_cluster(agent.capability_cluster)
+        bridge_delta = learning_rate * (
+            0.30 * coop_signal
+            + 0.25 * sum(1 for nachbar in nachbarn if nachbar.gruppe != agent.gruppe) / max(1, len(nachbarn))
+            + (0.30 if cluster_focus == 'bridge_specialist' else 0.0)
+        )
+        analysis_delta = learning_rate * (
+            0.28 * int_signal
+            + 0.22 * len(same_cluster_neighbors) / max(1, len(nachbarn) or 1)
+            + (0.30 if cluster_focus == 'analysis_specialist' else 0.0)
+        )
+        defense_delta = learning_rate * (
+            0.26 * (1.0 - agent.misinformation_exposure)
+            + 0.24 * rep_signal
+            + (0.30 if cluster_focus == 'defense_specialist' else 0.0)
+        )
+        recovery_delta = learning_rate * (
+            0.26 * rep_signal
+            + 0.22 * (1.0 - agent.cluster_compromise_level)
+            + (0.30 if cluster_focus == 'recovery_specialist' else 0.0)
+        )
+        if same_cluster_neighbors:
+            bridge_delta += learning_rate * 0.08 * np.mean(
+                [nachbar.bridge_skill for nachbar in same_cluster_neighbors]
+            )
+            analysis_delta += learning_rate * 0.08 * np.mean(
+                [nachbar.analysis_skill for nachbar in same_cluster_neighbors]
+            )
+            defense_delta += learning_rate * 0.08 * np.mean(
+                [nachbar.defense_skill for nachbar in same_cluster_neighbors]
+            )
+            recovery_delta += learning_rate * 0.08 * np.mean(
+                [nachbar.recovery_skill for nachbar in same_cluster_neighbors]
+            )
+
+        agent.bridge_skill = min(1.0, agent.bridge_skill * (1.0 - learning_rate * 0.08) + bridge_delta)
+        agent.analysis_skill = min(
+            1.0, agent.analysis_skill * (1.0 - learning_rate * 0.08) + analysis_delta
+        )
+        agent.defense_skill = min(1.0, agent.defense_skill * (1.0 - learning_rate * 0.08) + defense_delta)
+        agent.recovery_skill = min(
+            1.0, agent.recovery_skill * (1.0 - learning_rate * 0.08) + recovery_delta
+        )
+        scores = skill_scores(agent)
+        beste_faehigkeit, bester_score = max(scores.items(), key=lambda item: item[1])
+        neue_faehigkeit = beste_faehigkeit if bester_score >= threshold else 'adaptive_generalist'
+        if neue_faehigkeit == cluster_focus:
+            aligned += 1
+        if neue_faehigkeit != agent.emergent_skill:
+            switches += 1
+            setze_emergente_faehigkeit(agent, neue_faehigkeit, runde)
+        gain = bridge_delta + analysis_delta + defense_delta + recovery_delta
+        agent.group_learning_gain_total += gain
+        learning_gain += gain
+
+    return {
+        'switches': switches,
+        'alignment_rate': aligned / max(1, len(agenten)),
+        'learning_gain': learning_gain,
+    }
 
 
 def weise_misinformation_quellen_zu(agenten, config):
@@ -972,11 +1131,14 @@ def koordiniere_ressourcen(agenten, config):
 
     for agent in agenten:
         cell_members[agent.workflow_cell].append(agent)
+        skill_focus = skill_fokus_fuer_cluster(agent.capability_cluster)
+        skill_alignment = 1.0 if agent.emergent_skill == skill_focus else 0.0
         demand = (
             agent.task_priority
             + agent.handoff_credit * 0.5
             + agent.reputation * 0.1
             + agent.meta_priority_score * 0.35
+            + skill_alignment * 0.12
         ) * agent.cluster_demand_multiplier
         cell_demand[agent.workflow_cell] += demand
         agent.resource_credit *= 0.85
@@ -1073,7 +1235,12 @@ def koordiniere_ressourcen(agenten, config):
             agent.resource_credit = min(1.0, agent.resource_credit + resource_bonus)
             agent.resource_received_total += resource_bonus
             agent.resource_shared_total += budget / len(agenten)
-            output_gain = resource_bonus * agent.cluster_output_multiplier * (0.5 + agent.task_priority + 0.25 * agent.meta_priority_score)
+            output_gain = resource_bonus * agent.cluster_output_multiplier * (
+                0.5
+                + agent.task_priority
+                + 0.25 * agent.meta_priority_score
+                + (0.12 if agent.emergent_skill == skill_fokus_fuer_cluster(agent.capability_cluster) else 0.0)
+            )
             agent.cluster_output_total += output_gain
             agent.bottleneck_pressure = max(agent.bottleneck_pressure, cell_pressure.get(dominant_cell, 0.0))
             total_shared += resource_bonus
@@ -1106,7 +1273,12 @@ def koordiniere_ressourcen(agenten, config):
             output_gain = (
                 resource_bonus
                 * agent.cluster_output_multiplier
-                * (0.5 + agent.task_priority + 0.25 * agent.meta_priority_score)
+                * (
+                    0.5
+                    + agent.task_priority
+                    + 0.25 * agent.meta_priority_score
+                    + (0.12 if agent.emergent_skill == skill_fokus_fuer_cluster(agent.capability_cluster) else 0.0)
+                )
                 * triage_bonus
             )
             agent.cluster_output_total += output_gain
@@ -1194,6 +1366,7 @@ def berechne_missionsfitness(agent, agenten_dict):
             + 0.06 * agent.resource_credit
             + 0.05 * agent.cluster_coordination_bonus
             + 0.05 * agent.meta_priority_score
+            + skill_bonus_fuer_mission(agent, MISSION_CONSENSUS)
             - 0.05 * agent.cluster_compromise_level
         ),
         MISSION_KNOWLEDGE: (
@@ -1205,6 +1378,7 @@ def berechne_missionsfitness(agent, agenten_dict):
             + 0.07 * agent.resource_credit
             + 0.04 * agent.cluster_output_multiplier
             + 0.06 * agent.meta_priority_score
+            + skill_bonus_fuer_mission(agent, MISSION_KNOWLEDGE)
             - 0.04 * agent.cluster_compromise_level
         ),
         MISSION_DEFENSE: (
@@ -1217,6 +1391,7 @@ def berechne_missionsfitness(agent, agenten_dict):
             + 0.05 * agent.cluster_resilience_bonus
             + 0.05 * agent.meta_priority_score
             + 0.04 * agent.misinformation_exposure
+            + skill_bonus_fuer_mission(agent, MISSION_DEFENSE)
         ),
         MISSION_STABILITY: (
             missions_rollenfit(agent.role, MISSION_STABILITY)
@@ -1228,6 +1403,7 @@ def berechne_missionsfitness(agent, agenten_dict):
             + 0.06 * agent.cluster_resilience_bonus
             + 0.05 * agent.meta_priority_score
             + 0.04 * agent.misinformation_exposure
+            + skill_bonus_fuer_mission(agent, MISSION_STABILITY)
         ),
         MISSION_SUPPORT: (
             missions_rollenfit(agent.role, MISSION_SUPPORT)
@@ -1237,6 +1413,7 @@ def berechne_missionsfitness(agent, agenten_dict):
             + 0.04 * agent.resource_credit
             + 0.04 * agent.cluster_coordination_bonus
             + 0.04 * agent.meta_priority_score
+            + skill_bonus_fuer_mission(agent, MISSION_SUPPORT)
             - 0.05 * agent.meta_signal_corruption
         ),
     }
@@ -1342,6 +1519,8 @@ def initialisiere_missionen(agenten, config=None):
     initialisiere_workflows(agenten)
     if config and config.get('enable_capability_clusters'):
         initialisiere_faehigkeitscluster(agenten, config)
+    if config and config.get('enable_emergent_skills'):
+        initialisiere_emergente_faehigkeiten(agenten)
 
 
 def aktualisiere_missionen(agenten, agenten_dict, config, runde):
@@ -1429,6 +1608,16 @@ def missions_bonus(agent, partner_reputation, partner, ist_cross_group):
     opinion_pull += agent.cluster_resilience_bonus * 0.2
     cooperation_bonus += agent.meta_priority_score * (0.35 if ist_cross_group else 0.18)
     opinion_pull += agent.meta_priority_score * 0.08
+    if agent.emergent_skill == 'bridge_specialist' and ist_cross_group:
+        cooperation_bonus += 0.05
+        opinion_pull += 0.03
+    elif agent.emergent_skill == 'analysis_specialist' and ist_cross_group:
+        cooperation_bonus += 0.03
+    elif agent.emergent_skill == 'defense_specialist' and partner_reputation < 0.5:
+        cooperation_bonus -= 0.04
+    elif agent.emergent_skill == 'recovery_specialist':
+        cooperation_bonus += 0.02
+        opinion_pull += 0.02
 
     return cooperation_bonus, opinion_pull
 
@@ -2041,6 +2230,10 @@ def run_polarization_experiment(
     misinformation_detection_history = []
     misinformation_corruption_history = []
     misinformation_compromise_history = []
+    skill_switch_history = []
+    skill_alignment_history = []
+    learning_gain_history = []
+    emergent_skill_counts = defaultdict(int)
 
     for runde in range(1, rounds + 1):
         gruppenuebergreifende_interaktionen = 0
@@ -2159,6 +2352,7 @@ def run_polarization_experiment(
             mission_success_counts,
             mission_contact_counts,
         )
+        learning_stats = aktualisiere_gruppenlernen(agenten, agenten_dict, config, runde)
         resource_stats = koordiniere_ressourcen(agenten, config)
         rewiring_stats = aktualisiere_adaptives_netzwerk(agenten, agenten_dict, config)
         for agent in agenten:
@@ -2206,6 +2400,8 @@ def run_polarization_experiment(
                 workflow_cell_counts[agent.workflow_cell] += 1
                 if config.get('enable_capability_clusters'):
                     capability_cluster_counts[agent.capability_cluster] += 1
+                if config.get('enable_emergent_skills'):
+                    emergent_skill_counts[agent.emergent_skill] += 1
             resource_sharing_history.append(resource_stats['shared'])
             active_cell_history.append(resource_stats['active_cells'])
             cluster_output_history.append(resource_stats['effective_output'])
@@ -2218,6 +2414,9 @@ def run_polarization_experiment(
             misinformation_detection_history.append(manipulation_stats['detections'])
             misinformation_corruption_history.append(manipulation_stats['corruption'])
             misinformation_compromise_history.append(manipulation_stats['compromise'])
+            skill_switch_history.append(learning_stats['switches'])
+            skill_alignment_history.append(learning_stats['alignment_rate'])
+            learning_gain_history.append(learning_stats['learning_gain'])
             if meta_stats['priority_mission'] is not None:
                 meta_mission_focus_counts[meta_stats['priority_mission']] += 1
             if meta_stats['priority_cluster'] is not None:
@@ -2263,6 +2462,8 @@ def run_polarization_experiment(
                 status += f", Meta={meta_stats['alignment_rate']:.2f}"
             if config.get('enable_prompt_injection'):
                 status += f", Angriff={manipulation_stats['events']}, Det={manipulation_stats['detections']}"
+            if config.get('enable_emergent_skills'):
+                status += f", Skills={learning_stats['alignment_rate']:.2f}"
             print(status)
 
     finale_pi = polarisierungs_history[-1]
@@ -2360,6 +2561,21 @@ def run_polarization_experiment(
         'cluster_compromise_mean': float(np.mean(misinformation_compromise_history))
         if misinformation_compromise_history
         else 0.0,
+        'emergent_skill_distribution': {
+            skill: sum(1 for agent in agenten if agent.emergent_skill == skill)
+            for skill in (
+                'adaptive_generalist',
+                'bridge_specialist',
+                'analysis_specialist',
+                'defense_specialist',
+                'recovery_specialist',
+            )
+        },
+        'observed_emergent_skills': dict(emergent_skill_counts),
+        'skill_switch_total': int(sum(skill_switch_history)),
+        'skill_alignment_rate': float(np.mean(skill_alignment_history)) if skill_alignment_history else 0.0,
+        'group_learning_gain_total': float(sum(learning_gain_history)),
+        'group_learning_gain_rate': float(np.mean(learning_gain_history)) if learning_gain_history else 0.0,
     }
 
     interpretation = "hybrid"
@@ -2428,6 +2644,10 @@ def run_polarization_experiment(
                 print(f"Manipulationsereignisse:  {workflow_metrics['misinformation_events_total']}")
                 print(f"Detektionsrate:           {workflow_metrics['misinformation_detection_rate']:.1%}")
                 print(f"Korruptionsniveau:        {workflow_metrics['misinformation_corruption_mean']:.2f}")
+            if config.get('enable_emergent_skills'):
+                print(f"Skill-Wechsel gesamt:     {workflow_metrics['skill_switch_total']}")
+                print(f"Skill-Ausrichtung:        {workflow_metrics['skill_alignment_rate']:.1%}")
+                print(f"Lerngewinn gesamt:        {workflow_metrics['group_learning_gain_total']:.2f}")
         if config.get('enable_dynamic_rewiring'):
             print(f"Ø Rewiring-Operationen/Runde: {durchschnitt_rewiring:.2f}")
             print(f"Finale Netzwerkdichte:       {finale_netzwerkmetriken['density']:.3f}")

@@ -405,6 +405,27 @@ class SmokeTests(unittest.TestCase):
             self.assertTrue((output_dir / "kki_meta_koordination.png").exists())
             self.assertIn("Beste Meta-Architektur", result.stdout)
 
+
+    def test_schwarm_spezialfaehigkeiten_smoke(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:
+            output_dir = Path(tmpdir)
+            result = self.run_script(
+                "schwarm_spezialfaehigkeiten.py",
+                output_dir,
+                seed=109,
+                extra_env={
+                    "KKI_SKILL_REPETITIONS": "1",
+                    "KKI_WORKFLOW_STAGE_MIN_TENURE": "1",
+                    "KKI_MISSION_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_MIN_TENURE": "2",
+                    "KKI_INJECTION_ATTACK_ROUND": "3",
+                },
+            )
+            self.assert_successful_run(result)
+            self.assertTrue((output_dir / "kki_spezialfaehigkeiten.png").exists())
+            self.assertIn("Beste Lernarchitektur", result.stdout)
+
     def test_schwarm_manipulationsresistenz_smoke(self) -> None:
         with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:
             output_dir = Path(tmpdir)

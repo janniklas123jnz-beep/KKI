@@ -59,6 +59,7 @@ Die Simulationen basieren auf wiederholten Interaktionen im Stil des Gefangenend
 | `schwarm_engpassmanagement.py` | Studie fuer Bottleneck-Management und prioritaetsbasierte Ressourcen-Umlenkung zwischen Zellclustern |
 | `schwarm_meta_koordination.py` | Studie fuer hierarchische Meta-Koordination zwischen Zellclustern und Missionslagen |
 | `schwarm_manipulationsresistenz.py` | Studie fuer Promptinjektion, Manipulation und strategische Fehlinformation gegen Cluster und Meta-Koordination |
+| `schwarm_spezialfaehigkeiten.py` | Studie fuer emergente Spezialfaehigkeiten aus gemeinsamer Agenten-DNA durch adaptives Gruppenlernen |
 | `commitment_protokoll.py` | Commit-Reveal-Verify-Protokoll gegen Manipulation |
 
 ## Features
@@ -148,6 +149,7 @@ python3 schwarm_faehigkeitscluster.py
 python3 schwarm_engpassmanagement.py
 python3 schwarm_meta_koordination.py
 python3 schwarm_manipulationsresistenz.py
+python3 schwarm_spezialfaehigkeiten.py
 python3 commitment_protokoll.py
 ```
 
@@ -439,6 +441,22 @@ KKI_INJECTION_SOURCE_COUNT=6 \
 python3 schwarm_manipulationsresistenz.py
 ```
 
+Die Spezialfaehigkeits-Studie prueft den naechsten Schritt: ob robuste Meta-Koordination unter Angriff durch adaptives Gruppenlernen in emergente Talente umschlaegt:
+
+```bash
+python3 schwarm_spezialfaehigkeiten.py
+```
+
+Optional lassen sich Lernrate, Spezialisierungsschwelle und Wiederholungen anpassen:
+
+```bash
+KKI_SKILL_REPETITIONS=2 \
+KKI_EMERGENT_SKILLS_ENABLED=true \
+KKI_GROUP_LEARNING_RATE=0.12 \
+KKI_SKILL_SPECIALIZATION_THRESHOLD=0.60 \
+python3 schwarm_spezialfaehigkeiten.py
+```
+
 Optional lassen sich Wiederholungen und gemeinsame Basisparameter anpassen:
 
 ```bash
@@ -500,6 +518,7 @@ Die folgenden Skripte erzeugen die im Repository abgelegten PNG-Dateien:
 | `schwarm_engpassmanagement.py` | `kki_engpassmanagement.png` | `KKI_SEED=42 python3 schwarm_engpassmanagement.py` |
 | `schwarm_meta_koordination.py` | `kki_meta_koordination.png` | `KKI_SEED=42 python3 schwarm_meta_koordination.py` |
 | `schwarm_manipulationsresistenz.py` | `kki_manipulationsresistenz.png` | `KKI_SEED=42 python3 schwarm_manipulationsresistenz.py` |
+| `schwarm_spezialfaehigkeiten.py` | `kki_spezialfaehigkeiten.png` | `KKI_SEED=42 python3 schwarm_spezialfaehigkeiten.py` |
 | `commitment_protokoll.py` | `kki_commitment_protokoll.png` | `KKI_SEED=42 python3 commitment_protokoll.py` |
 
 Hinweise zur Reproduktion:
@@ -526,6 +545,7 @@ Hinweise zur Reproduktion:
 - die Engpassmanagement-Studie nutzt zusaetzlich `KKI_BOTTLENECK_REPETITIONS`, `KKI_BOTTLENECK_MANAGEMENT_ENABLED`, `KKI_BOTTLENECK_THRESHOLD` und `KKI_BOTTLENECK_TRIAGE_INTENSITY`
 - die Meta-Koordinations-Studie nutzt zusaetzlich `KKI_META_REPETITIONS`, `KKI_META_COORDINATION_ENABLED`, `KKI_META_UPDATE_INTERVAL` und `KKI_META_PRIORITY_STRENGTH`
 - die Manipulationsresistenz-Studie nutzt zusaetzlich `KKI_MANIPULATION_REPETITIONS`, `KKI_PROMPT_INJECTION_ENABLED`, `KKI_INJECTION_ATTACK_ROUND`, `KKI_INJECTION_STRENGTH` und `KKI_INJECTION_SOURCE_COUNT`
+- die Spezialfaehigkeits-Studie nutzt zusaetzlich `KKI_SKILL_REPETITIONS`, `KKI_EMERGENT_SKILLS_ENABLED`, `KKI_GROUP_LEARNING_RATE` und `KKI_SKILL_SPECIALIZATION_THRESHOLD`
 
 Beispiel für eine reproduzierbare, headless Erzeugung:
 
@@ -632,6 +652,10 @@ Die Smoke-Tests starten ausgewählte Kernskripte im verkürzten headless Testmod
 ### Manipulationsresistenz-Studie
 
 ![KKI Manipulationsresistenz](kki_manipulationsresistenz.png)
+
+### Spezialfaehigkeits-Studie
+
+![KKI Spezialfaehigkeiten](kki_spezialfaehigkeiten.png)
 
 ## Zentrale Beobachtungen
 

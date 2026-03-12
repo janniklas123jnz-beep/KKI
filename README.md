@@ -58,6 +58,7 @@ Die Simulationen basieren auf wiederholten Interaktionen im Stil des Gefangenend
 | `schwarm_faehigkeitscluster.py` | Studie fuer heterogene Faehigkeitscluster und asymmetrische Ressourcenbudgets im Schwarm |
 | `schwarm_engpassmanagement.py` | Studie fuer Bottleneck-Management und prioritaetsbasierte Ressourcen-Umlenkung zwischen Zellclustern |
 | `schwarm_meta_koordination.py` | Studie fuer hierarchische Meta-Koordination zwischen Zellclustern und Missionslagen |
+| `schwarm_manipulationsresistenz.py` | Studie fuer Promptinjektion, Manipulation und strategische Fehlinformation gegen Cluster und Meta-Koordination |
 | `commitment_protokoll.py` | Commit-Reveal-Verify-Protokoll gegen Manipulation |
 
 ## Features
@@ -146,6 +147,7 @@ python3 schwarm_arbeitszellen_parallel.py
 python3 schwarm_faehigkeitscluster.py
 python3 schwarm_engpassmanagement.py
 python3 schwarm_meta_koordination.py
+python3 schwarm_manipulationsresistenz.py
 python3 commitment_protokoll.py
 ```
 
@@ -420,6 +422,23 @@ KKI_META_PRIORITY_STRENGTH=0.18 \
 python3 schwarm_meta_koordination.py
 ```
 
+Die Manipulationsresistenz-Studie setzt darauf gezielte Promptinjektion und strategische Fehlinformation gegen Cluster und Meta-Koordination:
+
+```bash
+python3 schwarm_manipulationsresistenz.py
+```
+
+Optional lassen sich Angriffsstaerke und Quellenanzahl anpassen:
+
+```bash
+KKI_MANIPULATION_REPETITIONS=2 \
+KKI_PROMPT_INJECTION_ENABLED=true \
+KKI_INJECTION_ATTACK_ROUND=90 \
+KKI_INJECTION_STRENGTH=0.38 \
+KKI_INJECTION_SOURCE_COUNT=6 \
+python3 schwarm_manipulationsresistenz.py
+```
+
 Optional lassen sich Wiederholungen und gemeinsame Basisparameter anpassen:
 
 ```bash
@@ -480,6 +499,7 @@ Die folgenden Skripte erzeugen die im Repository abgelegten PNG-Dateien:
 | `schwarm_faehigkeitscluster.py` | `kki_faehigkeitscluster.png` | `KKI_SEED=42 python3 schwarm_faehigkeitscluster.py` |
 | `schwarm_engpassmanagement.py` | `kki_engpassmanagement.png` | `KKI_SEED=42 python3 schwarm_engpassmanagement.py` |
 | `schwarm_meta_koordination.py` | `kki_meta_koordination.png` | `KKI_SEED=42 python3 schwarm_meta_koordination.py` |
+| `schwarm_manipulationsresistenz.py` | `kki_manipulationsresistenz.png` | `KKI_SEED=42 python3 schwarm_manipulationsresistenz.py` |
 | `commitment_protokoll.py` | `kki_commitment_protokoll.png` | `KKI_SEED=42 python3 commitment_protokoll.py` |
 
 Hinweise zur Reproduktion:
@@ -505,6 +525,7 @@ Hinweise zur Reproduktion:
 - die Faehigkeitscluster-Studie nutzt zusaetzlich `KKI_CAPABILITY_CLUSTER_REPETITIONS`, `KKI_CAPABILITY_CLUSTERS_ENABLED`, `KKI_ASYMMETRIC_CLUSTER_BUDGETS_ENABLED` und `KKI_CLUSTER_BUDGET_SKEW`
 - die Engpassmanagement-Studie nutzt zusaetzlich `KKI_BOTTLENECK_REPETITIONS`, `KKI_BOTTLENECK_MANAGEMENT_ENABLED`, `KKI_BOTTLENECK_THRESHOLD` und `KKI_BOTTLENECK_TRIAGE_INTENSITY`
 - die Meta-Koordinations-Studie nutzt zusaetzlich `KKI_META_REPETITIONS`, `KKI_META_COORDINATION_ENABLED`, `KKI_META_UPDATE_INTERVAL` und `KKI_META_PRIORITY_STRENGTH`
+- die Manipulationsresistenz-Studie nutzt zusaetzlich `KKI_MANIPULATION_REPETITIONS`, `KKI_PROMPT_INJECTION_ENABLED`, `KKI_INJECTION_ATTACK_ROUND`, `KKI_INJECTION_STRENGTH` und `KKI_INJECTION_SOURCE_COUNT`
 
 Beispiel für eine reproduzierbare, headless Erzeugung:
 
@@ -607,6 +628,10 @@ Die Smoke-Tests starten ausgewählte Kernskripte im verkürzten headless Testmod
 ### Meta-Koordinations-Studie
 
 ![KKI Meta-Koordination](kki_meta_koordination.png)
+
+### Manipulationsresistenz-Studie
+
+![KKI Manipulationsresistenz](kki_manipulationsresistenz.png)
 
 ## Zentrale Beobachtungen
 

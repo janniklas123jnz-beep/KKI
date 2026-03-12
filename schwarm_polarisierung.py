@@ -61,6 +61,9 @@ DEFAULT_BOTTLENECK_THRESHOLD = 1.05
 DEFAULT_BOTTLENECK_TRIAGE_INTENSITY = 0.55
 DEFAULT_META_UPDATE_INTERVAL = 12
 DEFAULT_META_PRIORITY_STRENGTH = 0.18
+DEFAULT_INJECTION_ATTACK_ROUND = 90
+DEFAULT_INJECTION_STRENGTH = 0.38
+DEFAULT_INJECTION_SOURCE_COUNT = 6
 MISSION_CONSENSUS = 'consensus_building'
 MISSION_KNOWLEDGE = 'knowledge_sharing'
 MISSION_DEFENSE = 'reputation_defense'
@@ -163,6 +166,15 @@ class Agent:
         self.meta_priority_score = 0.0
         self.meta_aligned_rounds = 0
         self.meta_focus_history = []
+        self.ist_misinformation_source = False
+        self.misinformation_intensity = 0.0
+        self.cluster_compromise_level = 0.0
+        self.meta_signal_corruption = 0.0
+        self.misinformation_exposure = 0.0
+        self.false_mission_signal = None
+        self.false_cluster_signal = None
+        self.misinformation_events = 0
+        self.misinformation_detected = 0
 
         self.meinung_history = [meinung]
         self.kooperation_history = [kooperations_neigung]
@@ -450,6 +462,17 @@ def build_runtime_config() -> tuple[dict[str, float | int | str], int]:
         'meta_priority_strength': float(
             os.getenv('KKI_META_PRIORITY_STRENGTH', str(DEFAULT_META_PRIORITY_STRENGTH))
         ),
+        'enable_prompt_injection': os.getenv('KKI_PROMPT_INJECTION_ENABLED', '').strip().lower()
+        in {'1', 'true', 'yes', 'on'},
+        'injection_attack_round': int(
+            os.getenv('KKI_INJECTION_ATTACK_ROUND', str(DEFAULT_INJECTION_ATTACK_ROUND))
+        ),
+        'injection_strength': float(
+            os.getenv('KKI_INJECTION_STRENGTH', str(DEFAULT_INJECTION_STRENGTH))
+        ),
+        'injection_source_count': int(
+            os.getenv('KKI_INJECTION_SOURCE_COUNT', str(DEFAULT_INJECTION_SOURCE_COUNT))
+        ),
     }
     return config, seed
 
@@ -691,7 +714,101 @@ def initialisiere_faehigkeitscluster(agenten, config):
         agent.meta_priority_score = 0.0
         agent.meta_aligned_rounds = 0
         agent.meta_focus_history = []
+        agent.ist_misinformation_source = False
+        agent.misinformation_intensity = 0.0
+        agent.cluster_compromise_level = 0.0
+        agent.meta_signal_corruption = 0.0
+        agent.misinformation_exposure = 0.0
+        agent.false_mission_signal = None
+        agent.false_cluster_signal = None
+        agent.misinformation_events = 0
+        agent.misinformation_detected = 0
         setze_faehigkeitscluster(agent, cluster, config, runde=0)
+
+
+def weise_misinformation_quellen_zu(agenten, config):
+    if not config.get('enable_prompt_injection'):
+        return
+    source_count = max(1, min(len(agenten), int(config.get('injection_source_count', DEFAULT_INJECTION_SOURCE_COUNT))))
+    bevorzugte = [
+        agent for agent in agenten if agent.capability_cluster in {'synthesis_cluster', 'response_cluster'}
+    ]
+    kandidaten = bevorzugte if len(bevorzugte) >= source_count else list(agenten)
+    random.shuffle(kandidaten)
+    for agent in kandidaten[:source_count]:
+        agent.ist_misinformation_source = True
+        agent.misinformation_intensity = float(config.get('injection_strength', DEFAULT_INJECTION_STRENGTH))
+        agent.reputation = max(0.18, agent.reputation - 0.10)
+
+
+def manipulations_zielmission(agent):
+    if agent.capability_cluster == 'response_cluster':
+        return MISSION_DEFENSE
+    if agent.capability_cluster == 'resilience_cluster':
+        return MISSION_STABILITY
+    if agent.capability_cluster == 'scout_cluster':
+        return MISSION_KNOWLEDGE
+    return MISSION_SUPPORT
+
+
+def manipulations_zielcluster(agent):
+    mapping = {
+        'synthesis_cluster': 'response_cluster',
+        'response_cluster': 'resilience_cluster',
+        'resilience_cluster': 'synthesis_cluster',
+        'scout_cluster': 'response_cluster',
+    }
+    return mapping.get(agent.capability_cluster, 'response_cluster')
+
+
+def wende_promptinjektion_an(agenten, agenten_dict, config, runde):
+    if not config.get('enable_prompt_injection'):
+        for agent in agenten:
+            agent.cluster_compromise_level *= 0.90
+            agent.meta_signal_corruption *= 0.85
+            agent.misinformation_exposure *= 0.80
+        return {'events': 0, 'detections': 0, 'corruption': 0.0, 'compromise': 0.0}
+
+    attack_round = int(config.get('injection_attack_round', DEFAULT_INJECTION_ATTACK_ROUND))
+    if runde < attack_round:
+        return {'events': 0, 'detections': 0, 'corruption': 0.0, 'compromise': 0.0}
+
+    attack_strength = max(0.0, float(config.get('injection_strength', DEFAULT_INJECTION_STRENGTH)))
+    events = 0
+    detections = 0
+    for agent in agenten:
+        if not agent.ist_misinformation_source:
+            agent.cluster_compromise_level *= 0.90
+            agent.meta_signal_corruption *= 0.85
+            agent.misinformation_exposure *= 0.80
+            continue
+        nachbarn = [agenten_dict[nid] for nid in agent.nachbarn if nid in agenten_dict]
+        for ziel in nachbarn:
+            if random.random() >= attack_strength:
+                continue
+            ziel.misinformation_exposure = min(1.0, ziel.misinformation_exposure + attack_strength * 0.8)
+            ziel.cluster_compromise_level = min(1.0, ziel.cluster_compromise_level + attack_strength * 0.45)
+            ziel.meta_signal_corruption = min(1.0, ziel.meta_signal_corruption + attack_strength * 0.40)
+            ziel.false_mission_signal = manipulations_zielmission(agent)
+            ziel.false_cluster_signal = manipulations_zielcluster(agent)
+            ziel.misinformation_events += 1
+            events += 1
+            detection_score = ziel.reputation + ziel.cluster_resilience_bonus + ziel.meta_priority_score
+            if detection_score >= 0.82:
+                ziel.misinformation_detected += 1
+                ziel.cluster_compromise_level = max(0.0, ziel.cluster_compromise_level - 0.18)
+                ziel.meta_signal_corruption = max(0.0, ziel.meta_signal_corruption - 0.16)
+                ziel.misinformation_exposure = max(0.0, ziel.misinformation_exposure - 0.14)
+                detections += 1
+
+    corruption = float(np.mean([agent.meta_signal_corruption for agent in agenten])) if agenten else 0.0
+    compromise = float(np.mean([agent.cluster_compromise_level for agent in agenten])) if agenten else 0.0
+    return {
+        'events': events,
+        'detections': detections,
+        'corruption': corruption,
+        'compromise': compromise,
+    }
 
 
 def aktualisiere_meta_koordination(agenten, config, runde, mission_success_counts, mission_contact_counts):
@@ -726,6 +843,17 @@ def aktualisiere_meta_koordination(agenten, config, runde, mission_success_count
     else:
         priority_cluster = cluster_fuer_mission(priority_mission)
 
+    if config.get('enable_prompt_injection'):
+        corrupt_agents = [agent for agent in agenten if agent.meta_signal_corruption > 0.0]
+        if corrupt_agents:
+            falsche_cluster = [agent.false_cluster_signal for agent in corrupt_agents if agent.false_cluster_signal]
+            falsche_missionen = [agent.false_mission_signal for agent in corrupt_agents if agent.false_mission_signal]
+            corruption_mean = float(np.mean([agent.meta_signal_corruption for agent in corrupt_agents]))
+            if falsche_cluster and corruption_mean >= 0.22:
+                priority_cluster = max(set(falsche_cluster), key=falsche_cluster.count)
+            if falsche_missionen and corruption_mean >= 0.24:
+                priority_mission = max(set(falsche_missionen), key=falsche_missionen.count)
+
     switches = 0
     aligned = 0
     if runde % interval == 0:
@@ -752,6 +880,8 @@ def aktualisiere_meta_koordination(agenten, config, runde, mission_success_count
                 agent.task_priority = min(1.0, agent.task_priority + 0.16 + strength * 0.35)
                 if agent.capability_cluster == priority_cluster:
                     agent.cluster_output_multiplier = min(1.45, agent.cluster_output_multiplier + 0.06)
+            if agent.meta_signal_corruption > 0.0:
+                agent.meta_priority_score = max(0.0, agent.meta_priority_score - 0.08 * agent.meta_signal_corruption)
         alignment_rate = aligned / max(1, len(agenten))
     else:
         for agent in agenten:
@@ -1064,6 +1194,7 @@ def berechne_missionsfitness(agent, agenten_dict):
             + 0.06 * agent.resource_credit
             + 0.05 * agent.cluster_coordination_bonus
             + 0.05 * agent.meta_priority_score
+            - 0.05 * agent.cluster_compromise_level
         ),
         MISSION_KNOWLEDGE: (
             missions_rollenfit(agent.role, MISSION_KNOWLEDGE)
@@ -1074,6 +1205,7 @@ def berechne_missionsfitness(agent, agenten_dict):
             + 0.07 * agent.resource_credit
             + 0.04 * agent.cluster_output_multiplier
             + 0.06 * agent.meta_priority_score
+            - 0.04 * agent.cluster_compromise_level
         ),
         MISSION_DEFENSE: (
             missions_rollenfit(agent.role, MISSION_DEFENSE)
@@ -1084,6 +1216,7 @@ def berechne_missionsfitness(agent, agenten_dict):
             + 0.05 * agent.resource_credit
             + 0.05 * agent.cluster_resilience_bonus
             + 0.05 * agent.meta_priority_score
+            + 0.04 * agent.misinformation_exposure
         ),
         MISSION_STABILITY: (
             missions_rollenfit(agent.role, MISSION_STABILITY)
@@ -1094,6 +1227,7 @@ def berechne_missionsfitness(agent, agenten_dict):
             + 0.05 * agent.resource_credit
             + 0.06 * agent.cluster_resilience_bonus
             + 0.05 * agent.meta_priority_score
+            + 0.04 * agent.misinformation_exposure
         ),
         MISSION_SUPPORT: (
             missions_rollenfit(agent.role, MISSION_SUPPORT)
@@ -1103,11 +1237,14 @@ def berechne_missionsfitness(agent, agenten_dict):
             + 0.04 * agent.resource_credit
             + 0.04 * agent.cluster_coordination_bonus
             + 0.04 * agent.meta_priority_score
+            - 0.05 * agent.meta_signal_corruption
         ),
     }
 
     if agent.mission in fitness:
         fitness[agent.mission] += 0.03
+    if agent.false_mission_signal in fitness:
+        fitness[agent.false_mission_signal] += 0.10 * agent.meta_signal_corruption
     return fitness
 
 
@@ -1164,6 +1301,16 @@ def arbitriere_mission(agent, fitness, conflict_info, config):
             elif zweite_mission == MISSION_DEFENSE and agent.reputation < 0.5:
                 chosen_mission = zweite_mission
             activated = chosen_mission != beste_mission
+
+    if (
+        config.get('enable_prompt_injection')
+        and agent.false_mission_signal in fitness
+        and agent.meta_signal_corruption >= 0.18
+        and agent.false_mission_signal != chosen_mission
+    ):
+        if fitness[agent.false_mission_signal] + margin * 0.5 >= fitness.get(chosen_mission, 0.0):
+            chosen_mission = agent.false_mission_signal
+            activated = True
 
     fitness_gain = fitness[chosen_mission] - fitness.get(role_default, 0.0)
     return {
@@ -1359,6 +1506,8 @@ def erstelle_agenten(config):
         weise_rollen_zu(agenten, config)
     if config.get('enable_missions'):
         initialisiere_missionen(agenten, config)
+    if config.get('enable_prompt_injection'):
+        weise_misinformation_quellen_zu(agenten, config)
 
     return agenten
 
@@ -1737,6 +1886,10 @@ def run_polarization_experiment(
     config.setdefault('enable_meta_coordination', False)
     config.setdefault('meta_update_interval', DEFAULT_META_UPDATE_INTERVAL)
     config.setdefault('meta_priority_strength', DEFAULT_META_PRIORITY_STRENGTH)
+    config.setdefault('enable_prompt_injection', False)
+    config.setdefault('injection_attack_round', DEFAULT_INJECTION_ATTACK_ROUND)
+    config.setdefault('injection_strength', DEFAULT_INJECTION_STRENGTH)
+    config.setdefault('injection_source_count', DEFAULT_INJECTION_SOURCE_COUNT)
     scenario = str(config['scenario'])
     rounds = int(config['rounds'])
     interactions_per_round = int(config['interactions_per_round'])
@@ -1828,6 +1981,12 @@ def run_polarization_experiment(
                         "Meta-Koordination: "
                         f"aktiv | Intervall={int(config.get('meta_update_interval', DEFAULT_META_UPDATE_INTERVAL))}"
                     )
+                if config.get('enable_prompt_injection'):
+                    print(
+                        "Promptinjektion: "
+                        f"aktiv | Start={int(config.get('injection_attack_round', DEFAULT_INJECTION_ATTACK_ROUND))}, "
+                        f"Staerke={float(config.get('injection_strength', DEFAULT_INJECTION_STRENGTH)):.2f}"
+                    )
         print("Ziel: Beobachte, ob der Schwarm in Richtung Konsens oder in stabile Lager driftet.")
         print("\nSimulation läuft...\n")
 
@@ -1878,11 +2037,16 @@ def run_polarization_experiment(
     meta_alignment_history = []
     meta_mission_focus_counts = defaultdict(int)
     meta_cluster_focus_counts = defaultdict(int)
+    misinformation_events_history = []
+    misinformation_detection_history = []
+    misinformation_corruption_history = []
+    misinformation_compromise_history = []
 
     for runde in range(1, rounds + 1):
         gruppenuebergreifende_interaktionen = 0
         gruppenuebergreifende_kooperationen = 0
         bridge_ids = berechne_brueckenagenten(agenten, agenten_dict)
+        manipulation_stats = wende_promptinjektion_an(agenten, agenten_dict, config, runde)
 
         for _ in range(interactions_per_round):
             agent = random.choice(agenten)
@@ -2050,6 +2214,10 @@ def run_polarization_experiment(
             rerouted_budget_history.append(resource_stats['rerouted'])
             meta_switch_history.append(meta_stats['switches'])
             meta_alignment_history.append(meta_stats['alignment_rate'])
+            misinformation_events_history.append(manipulation_stats['events'])
+            misinformation_detection_history.append(manipulation_stats['detections'])
+            misinformation_corruption_history.append(manipulation_stats['corruption'])
+            misinformation_compromise_history.append(manipulation_stats['compromise'])
             if meta_stats['priority_mission'] is not None:
                 meta_mission_focus_counts[meta_stats['priority_mission']] += 1
             if meta_stats['priority_cluster'] is not None:
@@ -2093,6 +2261,8 @@ def run_polarization_experiment(
                 status += f", Bottlenecks={resource_stats['bottlenecks']}"
             if config.get('enable_meta_coordination'):
                 status += f", Meta={meta_stats['alignment_rate']:.2f}"
+            if config.get('enable_prompt_injection'):
+                status += f", Angriff={manipulation_stats['events']}, Det={manipulation_stats['detections']}"
             print(status)
 
     finale_pi = polarisierungs_history[-1]
@@ -2182,6 +2352,14 @@ def run_polarization_experiment(
         'meta_alignment_rate': float(np.mean(meta_alignment_history)) if meta_alignment_history else 0.0,
         'meta_mission_focus_counts': dict(meta_mission_focus_counts),
         'meta_cluster_focus_counts': dict(meta_cluster_focus_counts),
+        'misinformation_events_total': int(sum(misinformation_events_history)),
+        'misinformation_detection_rate': float(sum(misinformation_detection_history) / max(1, sum(misinformation_events_history))),
+        'misinformation_corruption_mean': float(np.mean(misinformation_corruption_history))
+        if misinformation_corruption_history
+        else 0.0,
+        'cluster_compromise_mean': float(np.mean(misinformation_compromise_history))
+        if misinformation_compromise_history
+        else 0.0,
     }
 
     interpretation = "hybrid"
@@ -2246,6 +2424,10 @@ def run_polarization_experiment(
             if config.get('enable_meta_coordination'):
                 print(f"Meta-Wechsel gesamt:      {workflow_metrics['meta_switch_total']}")
                 print(f"Meta-Ausrichtung:         {workflow_metrics['meta_alignment_rate']:.1%}")
+            if config.get('enable_prompt_injection'):
+                print(f"Manipulationsereignisse:  {workflow_metrics['misinformation_events_total']}")
+                print(f"Detektionsrate:           {workflow_metrics['misinformation_detection_rate']:.1%}")
+                print(f"Korruptionsniveau:        {workflow_metrics['misinformation_corruption_mean']:.2f}")
         if config.get('enable_dynamic_rewiring'):
             print(f"Ø Rewiring-Operationen/Runde: {durchschnitt_rewiring:.2f}")
             print(f"Finale Netzwerkdichte:       {finale_netzwerkmetriken['density']:.3f}")

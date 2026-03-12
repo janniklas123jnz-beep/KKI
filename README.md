@@ -54,6 +54,7 @@ Die Simulationen basieren auf wiederholten Interaktionen im Stil des Gefangenend
 | `schwarm_missionskonflikte.py` | Studie fuer Arbitration und Zielkonflikte zwischen konkurrierenden Missionen |
 | `schwarm_arbeitsketten.py` | Studie fuer mehrstufige Teamaufgaben und Aufgabenabhaengigkeiten im Schwarm |
 | `schwarm_arbeitszellen.py` | Studie fuer spezialisierte Workflow-Zellen und Uebergabemechanismen im Schwarm |
+| `schwarm_arbeitszellen_parallel.py` | Studie fuer parallele Workflow-Zellen und koordinierte Ressourcenteilung im Schwarm |
 | `commitment_protokoll.py` | Commit-Reveal-Verify-Protokoll gegen Manipulation |
 
 ## Features
@@ -138,6 +139,7 @@ python3 schwarm_missionsziele.py
 python3 schwarm_missionskonflikte.py
 python3 schwarm_arbeitsketten.py
 python3 schwarm_arbeitszellen.py
+python3 schwarm_arbeitszellen_parallel.py
 python3 commitment_protokoll.py
 ```
 
@@ -347,6 +349,23 @@ KKI_HANDOFF_PRIORITY_BONUS=0.12 \
 python3 schwarm_arbeitszellen.py
 ```
 
+Die Parallel-Arbeitszellen-Studie laesst mehrere Zellen gleichzeitig an gekoppelten Teilaufgaben arbeiten und verteilt gemeinsame Ressourcen nach Prioritaet:
+
+```bash
+python3 schwarm_arbeitszellen_parallel.py
+```
+
+Optional lassen sich Ressourcenbudget und Parallelitaet feinjustieren:
+
+```bash
+KKI_PARALLEL_CELLS_REPETITIONS=2 \
+KKI_PARALLEL_WORKFLOW_CELLS_ENABLED=true \
+KKI_RESOURCE_COORDINATION_ENABLED=true \
+KKI_RESOURCE_BUDGET=1.0 \
+KKI_RESOURCE_SHARE_FACTOR=0.20 \
+python3 schwarm_arbeitszellen_parallel.py
+```
+
 Optional lassen sich Wiederholungen und gemeinsame Basisparameter anpassen:
 
 ```bash
@@ -403,6 +422,7 @@ Die folgenden Skripte erzeugen die im Repository abgelegten PNG-Dateien:
 | `schwarm_missionskonflikte.py` | `kki_missionskonflikte.png` | `KKI_SEED=42 python3 schwarm_missionskonflikte.py` |
 | `schwarm_arbeitsketten.py` | `kki_arbeitsketten.png` | `KKI_SEED=42 python3 schwarm_arbeitsketten.py` |
 | `schwarm_arbeitszellen.py` | `kki_arbeitszellen.png` | `KKI_SEED=42 python3 schwarm_arbeitszellen.py` |
+| `schwarm_arbeitszellen_parallel.py` | `kki_arbeitszellen_parallel.png` | `KKI_SEED=42 python3 schwarm_arbeitszellen_parallel.py` |
 | `commitment_protokoll.py` | `kki_commitment_protokoll.png` | `KKI_SEED=42 python3 commitment_protokoll.py` |
 
 Hinweise zur Reproduktion:
@@ -424,6 +444,7 @@ Hinweise zur Reproduktion:
 - die Missionskonflikt-Studie nutzt zusaetzlich `KKI_MISSION_ARBITRATION_REPETITIONS`, `KKI_MISSION_CONFLICT_THRESHOLD`, `KKI_MISSION_ARBITRATION_MARGIN` sowie `KKI_MISSION_ARBITRATION_ENABLED`
 - die Arbeitsketten-Studie nutzt zusaetzlich `KKI_WORKFLOW_REPETITIONS`, `KKI_WORKFLOW_STAGE_MIN_TENURE` und `KKI_WORKFLOW_STAGES_ENABLED`
 - die Arbeitszellen-Studie nutzt zusaetzlich `KKI_WORKFLOW_CELL_REPETITIONS`, `KKI_WORKFLOW_CELLS_ENABLED`, `KKI_HANDOFF_COORDINATION_ENABLED` und `KKI_HANDOFF_PRIORITY_BONUS`
+- die Parallel-Arbeitszellen-Studie nutzt zusaetzlich `KKI_PARALLEL_CELLS_REPETITIONS`, `KKI_PARALLEL_WORKFLOW_CELLS_ENABLED`, `KKI_RESOURCE_COORDINATION_ENABLED`, `KKI_RESOURCE_BUDGET` und `KKI_RESOURCE_SHARE_FACTOR`
 
 Beispiel für eine reproduzierbare, headless Erzeugung:
 
@@ -511,6 +532,10 @@ Die Smoke-Tests starten ausgewählte Kernskripte im verkürzten headless Testmod
 
 ![KKI Arbeitszellen](kki_arbeitszellen.png)
 
+### Parallele Arbeitszellen-Studie
+
+![KKI Parallele Arbeitszellen](kki_arbeitszellen_parallel.png)
+
 ## Zentrale Beobachtungen
 
 Die bisherigen Simulationen illustrieren wiederkehrende Muster:
@@ -518,6 +543,7 @@ Die bisherigen Simulationen illustrieren wiederkehrende Muster:
 - kooperative Agenten stabilisieren und steigern ihre Intelligenz häufiger
 - Defektoren verlieren auf Dauer Anschluss an die leistungsfähigen Teile des Systems
 - Schwarmstrukturen können Kooperation auch gegen Störungen oder Invasionsversuche absichern
+- spezialisierte Teilteams profitieren zusaetzlich, wenn mehrere Zellen parallel arbeiten und knappe Ressourcen koordiniert teilen
 - adaptive Rewiring-Regeln zeigen, wie stark soziale Brücken und Vertrauenssignale die Lagerbildung beeinflussen
 - unter Invasion wirkt adaptives Rewiring als Resilienzmechanismus, wenn schlechte Partner schnell isoliert und kooperative Kerne erhalten werden
 - Commitment-Mechanismen erschweren oder verhindern strategische Täuschung

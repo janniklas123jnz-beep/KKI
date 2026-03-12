@@ -329,6 +329,25 @@ class SmokeTests(unittest.TestCase):
             self.assertTrue((output_dir / "kki_arbeitszellen.png").exists())
             self.assertIn("Beste Zellarchitektur", result.stdout)
 
+    def test_schwarm_arbeitszellen_parallel_smoke(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:
+            output_dir = Path(tmpdir)
+            result = self.run_script(
+                "schwarm_arbeitszellen_parallel.py",
+                output_dir,
+                seed=89,
+                extra_env={
+                    "KKI_PARALLEL_CELLS_REPETITIONS": "1",
+                    "KKI_WORKFLOW_STAGE_MIN_TENURE": "1",
+                    "KKI_MISSION_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_MIN_TENURE": "2",
+                },
+            )
+            self.assert_successful_run(result)
+            self.assertTrue((output_dir / "kki_arbeitszellen_parallel.png").exists())
+            self.assertIn("Beste Ressourcenarchitektur", result.stdout)
+
 
 if __name__ == "__main__":
     unittest.main()

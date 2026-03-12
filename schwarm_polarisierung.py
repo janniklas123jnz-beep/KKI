@@ -54,6 +54,8 @@ DEFAULT_MISSION_CONFLICT_THRESHOLD = 0.45
 DEFAULT_MISSION_ARBITRATION_MARGIN = 0.08
 DEFAULT_WORKFLOW_STAGE_MIN_TENURE = 2
 DEFAULT_HANDOFF_PRIORITY_BONUS = 0.12
+DEFAULT_RESOURCE_BUDGET = 1.0
+DEFAULT_RESOURCE_SHARE_FACTOR = 0.20
 MISSION_CONSENSUS = 'consensus_building'
 MISSION_KNOWLEDGE = 'knowledge_sharing'
 MISSION_DEFENSE = 'reputation_defense'
@@ -132,6 +134,9 @@ class Agent:
         self.handoff_received = 0
         self.handoff_given = 0
         self.handoff_history = []
+        self.resource_credit = 0.0
+        self.resource_received_total = 0.0
+        self.resource_shared_total = 0.0
 
         self.meinung_history = [meinung]
         self.kooperation_history = [kooperations_neigung]
@@ -388,6 +393,14 @@ def build_runtime_config() -> tuple[dict[str, float | int | str], int]:
         'handoff_priority_bonus': float(
             os.getenv('KKI_HANDOFF_PRIORITY_BONUS', str(DEFAULT_HANDOFF_PRIORITY_BONUS))
         ),
+        'enable_parallel_workflow_cells': os.getenv('KKI_PARALLEL_WORKFLOW_CELLS_ENABLED', '').strip().lower()
+        in {'1', 'true', 'yes', 'on'},
+        'enable_resource_coordination': os.getenv('KKI_RESOURCE_COORDINATION_ENABLED', '').strip().lower()
+        in {'1', 'true', 'yes', 'on'},
+        'resource_budget': float(os.getenv('KKI_RESOURCE_BUDGET', str(DEFAULT_RESOURCE_BUDGET))),
+        'resource_share_factor': float(
+            os.getenv('KKI_RESOURCE_SHARE_FACTOR', str(DEFAULT_RESOURCE_SHARE_FACTOR))
+        ),
     }
     return config, seed
 
@@ -603,6 +616,58 @@ def koordiniere_workflow_handoff(agent, partner, aktion_a, aktion_p, runde, conf
     return handoffs
 
 
+def koordiniere_ressourcen(agenten, config):
+    if not (config.get('enable_workflow_cells') and config.get('enable_resource_coordination')):
+        return {'shared': 0.0, 'active_cells': 0}
+
+    budget = max(0.0, float(config.get('resource_budget', DEFAULT_RESOURCE_BUDGET)))
+    share_factor = max(0.0, float(config.get('resource_share_factor', DEFAULT_RESOURCE_SHARE_FACTOR)))
+    cell_members = defaultdict(list)
+    cell_demand = defaultdict(float)
+
+    for agent in agenten:
+        cell_members[agent.workflow_cell].append(agent)
+        demand = agent.task_priority + agent.handoff_credit * 0.5 + agent.reputation * 0.1
+        cell_demand[agent.workflow_cell] += demand
+        agent.resource_credit *= 0.85
+
+    total_demand = sum(cell_demand.values())
+    active_cells = sum(1 for demand in cell_demand.values() if demand > 0.0)
+    if total_demand <= 0.0 or budget <= 0.0:
+        return {'shared': 0.0, 'active_cells': active_cells}
+
+    if not config.get('enable_parallel_workflow_cells'):
+        dominant_cell = max(cell_demand, key=cell_demand.get)
+        dominant_members = cell_members[dominant_cell]
+        if not dominant_members:
+            return {'shared': 0.0, 'active_cells': 0}
+        share_per_agent = budget / len(dominant_members)
+        total_shared = 0.0
+        for agent in dominant_members:
+            resource_bonus = share_per_agent * share_factor
+            agent.resource_credit = min(1.0, agent.resource_credit + resource_bonus)
+            agent.resource_received_total += resource_bonus
+            agent.resource_shared_total += budget / len(agenten)
+            total_shared += resource_bonus
+        return {'shared': total_shared, 'active_cells': 1}
+
+    total_shared = 0.0
+    for cell, demand in cell_demand.items():
+        allocation = budget * (demand / total_demand)
+        members = cell_members[cell]
+        if not members:
+            continue
+        share_per_agent = allocation / len(members)
+        for agent in members:
+            resource_bonus = share_per_agent * share_factor
+            agent.resource_credit = min(1.0, agent.resource_credit + resource_bonus)
+            agent.resource_received_total += resource_bonus
+            agent.resource_shared_total += allocation / len(agenten)
+            total_shared += resource_bonus
+
+    return {'shared': total_shared, 'active_cells': active_cells}
+
+
 def missionskonflikt(mission_a, mission_b):
     if mission_a == mission_b:
         return 0.0
@@ -666,6 +731,7 @@ def berechne_missionsfitness(agent, agenten_dict):
             + 0.08 * agent.kooperations_neigung
             + 0.06 * max(0.0, 1.0 - abs(agent.meinung - 0.5) * 2.0)
             + 0.05 * agent.handoff_credit
+            + 0.06 * agent.resource_credit
         ),
         MISSION_KNOWLEDGE: (
             missions_rollenfit(agent.role, MISSION_KNOWLEDGE)
@@ -673,6 +739,7 @@ def berechne_missionsfitness(agent, agenten_dict):
             + 0.05 * agent.intelligenz / 6.0
             + 0.04 * mean_neighbor_distance
             + 0.06 * agent.handoff_credit
+            + 0.07 * agent.resource_credit
         ),
         MISSION_DEFENSE: (
             missions_rollenfit(agent.role, MISSION_DEFENSE)
@@ -680,6 +747,7 @@ def berechne_missionsfitness(agent, agenten_dict):
             + 0.08 * agent.reputation
             + 0.05 * (1.0 - agent.kooperations_neigung)
             + 0.05 * agent.handoff_credit
+            + 0.05 * agent.resource_credit
         ),
         MISSION_STABILITY: (
             missions_rollenfit(agent.role, MISSION_STABILITY)
@@ -687,12 +755,14 @@ def berechne_missionsfitness(agent, agenten_dict):
             + 0.06 * agent.reputation
             + 0.04 * (1.0 - cross_group_share)
             + 0.04 * agent.handoff_credit
+            + 0.05 * agent.resource_credit
         ),
         MISSION_SUPPORT: (
             missions_rollenfit(agent.role, MISSION_SUPPORT)
             + 0.05 * agent.kooperations_neigung
             + 0.04 * mean_partner_reputation
             + 0.03 * agent.handoff_credit
+            + 0.04 * agent.resource_credit
         ),
     }
 
@@ -1305,6 +1375,10 @@ def run_polarization_experiment(
     config.setdefault('enable_workflow_cells', False)
     config.setdefault('enable_handoff_coordination', False)
     config.setdefault('handoff_priority_bonus', DEFAULT_HANDOFF_PRIORITY_BONUS)
+    config.setdefault('enable_parallel_workflow_cells', False)
+    config.setdefault('enable_resource_coordination', False)
+    config.setdefault('resource_budget', DEFAULT_RESOURCE_BUDGET)
+    config.setdefault('resource_share_factor', DEFAULT_RESOURCE_SHARE_FACTOR)
     scenario = str(config['scenario'])
     rounds = int(config['rounds'])
     interactions_per_round = int(config['interactions_per_round'])
@@ -1375,6 +1449,12 @@ def run_polarization_experiment(
                     "Workflow-Zellen: "
                     f"aktiv | Handoffs={'an' if config.get('enable_handoff_coordination') else 'aus'}"
                 )
+                if config.get('enable_parallel_workflow_cells') or config.get('enable_resource_coordination'):
+                    print(
+                        "Ressourcenkoordination: "
+                        f"Zellen={'parallel' if config.get('enable_parallel_workflow_cells') else 'normal'}, "
+                        f"Sharing={'an' if config.get('enable_resource_coordination') else 'aus'}"
+                    )
         print("Ziel: Beobachte, ob der Schwarm in Richtung Konsens oder in stabile Lager driftet.")
         print("\nSimulation läuft...\n")
 
@@ -1414,6 +1494,8 @@ def run_polarization_experiment(
     workflow_stage_counts = defaultdict(int)
     handoff_history = []
     workflow_cell_counts = defaultdict(int)
+    resource_sharing_history = []
+    active_cell_history = []
 
     for runde in range(1, rounds + 1):
         gruppenuebergreifende_interaktionen = 0
@@ -1524,6 +1606,7 @@ def run_polarization_experiment(
 
         switch_stats = aktualisiere_rollenwechsel(agenten, agenten_dict, config, runde)
         mission_stats = aktualisiere_missionen(agenten, agenten_dict, config, runde)
+        resource_stats = koordiniere_ressourcen(agenten, config)
         rewiring_stats = aktualisiere_adaptives_netzwerk(agenten, agenten_dict, config)
         for agent in agenten:
             agent.role_tenure += 1
@@ -1568,6 +1651,8 @@ def run_polarization_experiment(
         if config.get('enable_workflow_cells'):
             for agent in agenten:
                 workflow_cell_counts[agent.workflow_cell] += 1
+            resource_sharing_history.append(resource_stats['shared'])
+            active_cell_history.append(resource_stats['active_cells'])
         for alte_rolle, neue_rolle in switch_stats['transitions']:
             role_transition_counts[f'{alte_rolle}->{neue_rolle}'] += 1
         removed_edges_history.append(rewiring_stats['removed_edges'])
@@ -1599,6 +1684,8 @@ def run_polarization_experiment(
                     )
             if config.get('enable_dynamic_rewiring'):
                 status += f", Rewiring={rewiring_stats['rewired_edges']}"
+            if config.get('enable_resource_coordination'):
+                status += f", Ressourcen={resource_stats['shared']:.2f}"
             print(status)
 
     finale_pi = polarisierungs_history[-1]
@@ -1666,6 +1753,9 @@ def run_polarization_experiment(
         'observed_cell_counts': dict(workflow_cell_counts),
         'handoff_total': int(sum(handoff_history)),
         'handoff_rate': float(np.mean(handoff_history)) if handoff_history else 0.0,
+        'resource_shared_total': float(sum(resource_sharing_history)),
+        'resource_share_rate': float(np.mean(resource_sharing_history)) if resource_sharing_history else 0.0,
+        'active_cells_mean': float(np.mean(active_cell_history)) if active_cell_history else 0.0,
     }
 
     interpretation = "hybrid"
@@ -1718,6 +1808,9 @@ def run_polarization_experiment(
             if config.get('enable_workflow_cells'):
                 print(f"Handoffs gesamt:            {workflow_metrics['handoff_total']}")
                 print(f"Ø Handoffs/Runde:           {workflow_metrics['handoff_rate']:.2f}")
+            if config.get('enable_resource_coordination'):
+                print(f"Ressourcen gesamt:         {workflow_metrics['resource_shared_total']:.2f}")
+                print(f"Ø aktive Zellen/Runde:     {workflow_metrics['active_cells_mean']:.2f}")
         if config.get('enable_dynamic_rewiring'):
             print(f"Ø Rewiring-Operationen/Runde: {durchschnitt_rewiring:.2f}")
             print(f"Finale Netzwerkdichte:       {finale_netzwerkmetriken['density']:.3f}")

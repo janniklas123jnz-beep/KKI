@@ -56,6 +56,7 @@ DEFAULT_WORKFLOW_STAGE_MIN_TENURE = 2
 DEFAULT_HANDOFF_PRIORITY_BONUS = 0.12
 DEFAULT_RESOURCE_BUDGET = 1.0
 DEFAULT_RESOURCE_SHARE_FACTOR = 0.20
+DEFAULT_CLUSTER_BUDGET_SKEW = 0.35
 MISSION_CONSENSUS = 'consensus_building'
 MISSION_KNOWLEDGE = 'knowledge_sharing'
 MISSION_DEFENSE = 'reputation_defense'
@@ -81,6 +82,12 @@ WORKFLOW_CELLS = (
     'analysis_cell',
     'execution_cell',
     'stability_cell',
+)
+CAPABILITY_CLUSTERS = (
+    'scout_cluster',
+    'synthesis_cluster',
+    'response_cluster',
+    'resilience_cluster',
 )
 
 
@@ -137,6 +144,15 @@ class Agent:
         self.resource_credit = 0.0
         self.resource_received_total = 0.0
         self.resource_shared_total = 0.0
+        self.capability_cluster = 'synthesis_cluster'
+        self.initial_capability_cluster = 'synthesis_cluster'
+        self.cluster_history = []
+        self.cluster_budget_weight = 1.0
+        self.cluster_demand_multiplier = 1.0
+        self.cluster_output_multiplier = 1.0
+        self.cluster_coordination_bonus = 0.0
+        self.cluster_resilience_bonus = 0.0
+        self.cluster_output_total = 0.0
 
         self.meinung_history = [meinung]
         self.kooperation_history = [kooperations_neigung]
@@ -401,6 +417,13 @@ def build_runtime_config() -> tuple[dict[str, float | int | str], int]:
         'resource_share_factor': float(
             os.getenv('KKI_RESOURCE_SHARE_FACTOR', str(DEFAULT_RESOURCE_SHARE_FACTOR))
         ),
+        'enable_capability_clusters': os.getenv('KKI_CAPABILITY_CLUSTERS_ENABLED', '').strip().lower()
+        in {'1', 'true', 'yes', 'on'},
+        'enable_asymmetric_cluster_budgets': os.getenv('KKI_ASYMMETRIC_CLUSTER_BUDGETS_ENABLED', '').strip().lower()
+        in {'1', 'true', 'yes', 'on'},
+        'cluster_budget_skew': float(
+            os.getenv('KKI_CLUSTER_BUDGET_SKEW', str(DEFAULT_CLUSTER_BUDGET_SKEW))
+        ),
     }
     return config, seed
 
@@ -558,6 +581,76 @@ def initialisiere_workflows(agenten):
         agent.handoff_history = []
 
 
+def faehigkeitscluster_fuer_agent(agent):
+    mapping = {
+        'interface_cell': 'scout_cluster',
+        'analysis_cell': 'synthesis_cluster',
+        'execution_cell': 'response_cluster',
+        'stability_cell': 'resilience_cluster',
+    }
+    return mapping.get(agent.workflow_cell, 'synthesis_cluster')
+
+
+def cluster_profil(cluster, config):
+    skew = max(0.0, float(config.get('cluster_budget_skew', DEFAULT_CLUSTER_BUDGET_SKEW)))
+    profiles = {
+        'scout_cluster': {
+            'budget_weight': max(0.5, 1.0 - 0.35 * skew),
+            'demand_multiplier': 0.92,
+            'output_multiplier': 0.97,
+            'coordination_bonus': 0.04,
+            'resilience_bonus': 0.01,
+        },
+        'synthesis_cluster': {
+            'budget_weight': 1.0,
+            'demand_multiplier': 1.05,
+            'output_multiplier': 1.05,
+            'coordination_bonus': 0.03,
+            'resilience_bonus': 0.02,
+        },
+        'response_cluster': {
+            'budget_weight': 1.0 + 0.55 * skew,
+            'demand_multiplier': 1.12,
+            'output_multiplier': 1.12,
+            'coordination_bonus': 0.02,
+            'resilience_bonus': 0.01,
+        },
+        'resilience_cluster': {
+            'budget_weight': max(0.65, 1.0 - 0.10 * skew),
+            'demand_multiplier': 0.96,
+            'output_multiplier': 1.00,
+            'coordination_bonus': 0.01,
+            'resilience_bonus': 0.05,
+        },
+    }
+    return profiles.get(cluster, profiles['synthesis_cluster'])
+
+
+def setze_faehigkeitscluster(agent, cluster, config, runde):
+    cluster = cluster if cluster in CAPABILITY_CLUSTERS else 'synthesis_cluster'
+    if agent.capability_cluster != cluster:
+        agent.cluster_history.append((runde, agent.capability_cluster, cluster))
+    profil = cluster_profil(cluster, config)
+    if not config.get('enable_asymmetric_cluster_budgets'):
+        profil = {**profil, 'budget_weight': 1.0}
+    agent.capability_cluster = cluster
+    agent.cluster_budget_weight = profil['budget_weight']
+    agent.cluster_demand_multiplier = profil['demand_multiplier']
+    agent.cluster_output_multiplier = profil['output_multiplier']
+    agent.cluster_coordination_bonus = profil['coordination_bonus']
+    agent.cluster_resilience_bonus = profil['resilience_bonus']
+
+
+def initialisiere_faehigkeitscluster(agenten, config):
+    for agent in agenten:
+        cluster = faehigkeitscluster_fuer_agent(agent)
+        agent.capability_cluster = cluster
+        agent.initial_capability_cluster = cluster
+        agent.cluster_history = []
+        agent.cluster_output_total = 0.0
+        setze_faehigkeitscluster(agent, cluster, config, runde=0)
+
+
 def workflow_voraussetzungen_erfuellt(agent, agenten_dict, config):
     if not config.get('enable_workflow_stages'):
         return True
@@ -618,7 +711,7 @@ def koordiniere_workflow_handoff(agent, partner, aktion_a, aktion_p, runde, conf
 
 def koordiniere_ressourcen(agenten, config):
     if not (config.get('enable_workflow_cells') and config.get('enable_resource_coordination')):
-        return {'shared': 0.0, 'active_cells': 0}
+        return {'shared': 0.0, 'active_cells': 0, 'effective_output': 0.0}
 
     budget = max(0.0, float(config.get('resource_budget', DEFAULT_RESOURCE_BUDGET)))
     share_factor = max(0.0, float(config.get('resource_share_factor', DEFAULT_RESOURCE_SHARE_FACTOR)))
@@ -627,33 +720,53 @@ def koordiniere_ressourcen(agenten, config):
 
     for agent in agenten:
         cell_members[agent.workflow_cell].append(agent)
-        demand = agent.task_priority + agent.handoff_credit * 0.5 + agent.reputation * 0.1
+        demand = (
+            agent.task_priority
+            + agent.handoff_credit * 0.5
+            + agent.reputation * 0.1
+        ) * agent.cluster_demand_multiplier
         cell_demand[agent.workflow_cell] += demand
         agent.resource_credit *= 0.85
 
     total_demand = sum(cell_demand.values())
     active_cells = sum(1 for demand in cell_demand.values() if demand > 0.0)
     if total_demand <= 0.0 or budget <= 0.0:
-        return {'shared': 0.0, 'active_cells': active_cells}
+        return {'shared': 0.0, 'active_cells': active_cells, 'effective_output': 0.0}
 
     if not config.get('enable_parallel_workflow_cells'):
         dominant_cell = max(cell_demand, key=cell_demand.get)
         dominant_members = cell_members[dominant_cell]
         if not dominant_members:
-            return {'shared': 0.0, 'active_cells': 0}
+            return {'shared': 0.0, 'active_cells': 0, 'effective_output': 0.0}
         share_per_agent = budget / len(dominant_members)
         total_shared = 0.0
+        total_output = 0.0
         for agent in dominant_members:
             resource_bonus = share_per_agent * share_factor
             agent.resource_credit = min(1.0, agent.resource_credit + resource_bonus)
             agent.resource_received_total += resource_bonus
             agent.resource_shared_total += budget / len(agenten)
+            output_gain = resource_bonus * agent.cluster_output_multiplier * (0.5 + agent.task_priority)
+            agent.cluster_output_total += output_gain
             total_shared += resource_bonus
-        return {'shared': total_shared, 'active_cells': 1}
+            total_output += output_gain
+        return {'shared': total_shared, 'active_cells': 1, 'effective_output': total_output}
 
     total_shared = 0.0
+    total_output = 0.0
     for cell, demand in cell_demand.items():
-        allocation = budget * (demand / total_demand)
+        cluster_weight = 1.0
+        if config.get('enable_capability_clusters') and cell_members[cell]:
+            cluster_weight = float(np.mean([agent.cluster_budget_weight for agent in cell_members[cell]]))
+        allocation = budget * (demand * cluster_weight / max(1e-9, sum(
+            cell_demand[name]
+            * (
+                float(np.mean([agent.cluster_budget_weight for agent in members]))
+                if config.get('enable_capability_clusters') and members
+                else 1.0
+            )
+            for name, members in cell_members.items()
+        )))
         members = cell_members[cell]
         if not members:
             continue
@@ -663,9 +776,12 @@ def koordiniere_ressourcen(agenten, config):
             agent.resource_credit = min(1.0, agent.resource_credit + resource_bonus)
             agent.resource_received_total += resource_bonus
             agent.resource_shared_total += allocation / len(agenten)
+            output_gain = resource_bonus * agent.cluster_output_multiplier * (0.5 + agent.task_priority)
+            agent.cluster_output_total += output_gain
             total_shared += resource_bonus
+            total_output += output_gain
 
-    return {'shared': total_shared, 'active_cells': active_cells}
+    return {'shared': total_shared, 'active_cells': active_cells, 'effective_output': total_output}
 
 
 def missionskonflikt(mission_a, mission_b):
@@ -732,6 +848,7 @@ def berechne_missionsfitness(agent, agenten_dict):
             + 0.06 * max(0.0, 1.0 - abs(agent.meinung - 0.5) * 2.0)
             + 0.05 * agent.handoff_credit
             + 0.06 * agent.resource_credit
+            + 0.05 * agent.cluster_coordination_bonus
         ),
         MISSION_KNOWLEDGE: (
             missions_rollenfit(agent.role, MISSION_KNOWLEDGE)
@@ -740,6 +857,7 @@ def berechne_missionsfitness(agent, agenten_dict):
             + 0.04 * mean_neighbor_distance
             + 0.06 * agent.handoff_credit
             + 0.07 * agent.resource_credit
+            + 0.04 * agent.cluster_output_multiplier
         ),
         MISSION_DEFENSE: (
             missions_rollenfit(agent.role, MISSION_DEFENSE)
@@ -748,6 +866,7 @@ def berechne_missionsfitness(agent, agenten_dict):
             + 0.05 * (1.0 - agent.kooperations_neigung)
             + 0.05 * agent.handoff_credit
             + 0.05 * agent.resource_credit
+            + 0.05 * agent.cluster_resilience_bonus
         ),
         MISSION_STABILITY: (
             missions_rollenfit(agent.role, MISSION_STABILITY)
@@ -756,6 +875,7 @@ def berechne_missionsfitness(agent, agenten_dict):
             + 0.04 * (1.0 - cross_group_share)
             + 0.04 * agent.handoff_credit
             + 0.05 * agent.resource_credit
+            + 0.06 * agent.cluster_resilience_bonus
         ),
         MISSION_SUPPORT: (
             missions_rollenfit(agent.role, MISSION_SUPPORT)
@@ -763,6 +883,7 @@ def berechne_missionsfitness(agent, agenten_dict):
             + 0.04 * mean_partner_reputation
             + 0.03 * agent.handoff_credit
             + 0.04 * agent.resource_credit
+            + 0.04 * agent.cluster_coordination_bonus
         ),
     }
 
@@ -842,7 +963,7 @@ def setze_mission(agent, mission, runde):
     agent.mission = mission
 
 
-def initialisiere_missionen(agenten):
+def initialisiere_missionen(agenten, config=None):
     for agent in agenten:
         mission = mission_fuer_rolle(agent.role)
         agent.mission = mission
@@ -853,6 +974,8 @@ def initialisiere_missionen(agenten):
         agent.mission_last_fitness = {}
         agent.mission_arbitration_history = []
     initialisiere_workflows(agenten)
+    if config and config.get('enable_capability_clusters'):
+        initialisiere_faehigkeitscluster(agenten, config)
 
 
 def aktualisiere_missionen(agenten, agenten_dict, config, runde):
@@ -910,6 +1033,8 @@ def aktualisiere_missionen(agenten, agenten_dict, config, runde):
                 setze_workflow_stufe(agent, 'task_queue', runde)
         if config.get('enable_workflow_cells'):
             setze_workflow_zelle(agent, workflow_zelle_fuer_agent(agent), runde)
+            if config.get('enable_capability_clusters'):
+                setze_faehigkeitscluster(agent, faehigkeitscluster_fuer_agent(agent), config, runde)
     return {
         'switches': switches,
         'arbitrations': arbitrations,
@@ -933,6 +1058,9 @@ def missions_bonus(agent, partner_reputation, partner, ist_cross_group):
         cooperation_bonus += 0.03
     elif agent.mission == MISSION_SUPPORT and partner_reputation >= 0.5:
         cooperation_bonus += 0.01
+
+    cooperation_bonus += agent.cluster_coordination_bonus * (0.6 if ist_cross_group else 0.3)
+    opinion_pull += agent.cluster_resilience_bonus * 0.2
 
     return cooperation_bonus, opinion_pull
 
@@ -1009,7 +1137,7 @@ def erstelle_agenten(config):
     if config.get('roles_enabled'):
         weise_rollen_zu(agenten, config)
     if config.get('enable_missions'):
-        initialisiere_missionen(agenten)
+        initialisiere_missionen(agenten, config)
 
     return agenten
 
@@ -1379,6 +1507,9 @@ def run_polarization_experiment(
     config.setdefault('enable_resource_coordination', False)
     config.setdefault('resource_budget', DEFAULT_RESOURCE_BUDGET)
     config.setdefault('resource_share_factor', DEFAULT_RESOURCE_SHARE_FACTOR)
+    config.setdefault('enable_capability_clusters', False)
+    config.setdefault('enable_asymmetric_cluster_budgets', False)
+    config.setdefault('cluster_budget_skew', DEFAULT_CLUSTER_BUDGET_SKEW)
     scenario = str(config['scenario'])
     rounds = int(config['rounds'])
     interactions_per_round = int(config['interactions_per_round'])
@@ -1455,6 +1586,11 @@ def run_polarization_experiment(
                         f"Zellen={'parallel' if config.get('enable_parallel_workflow_cells') else 'normal'}, "
                         f"Sharing={'an' if config.get('enable_resource_coordination') else 'aus'}"
                     )
+                if config.get('enable_capability_clusters'):
+                    print(
+                        "Faehigkeitscluster: "
+                        f"aktiv | asymmetrische Budgets={'an' if config.get('enable_asymmetric_cluster_budgets') else 'aus'}"
+                    )
         print("Ziel: Beobachte, ob der Schwarm in Richtung Konsens oder in stabile Lager driftet.")
         print("\nSimulation läuft...\n")
 
@@ -1496,6 +1632,8 @@ def run_polarization_experiment(
     workflow_cell_counts = defaultdict(int)
     resource_sharing_history = []
     active_cell_history = []
+    cluster_output_history = []
+    capability_cluster_counts = defaultdict(int)
 
     for runde in range(1, rounds + 1):
         gruppenuebergreifende_interaktionen = 0
@@ -1651,8 +1789,11 @@ def run_polarization_experiment(
         if config.get('enable_workflow_cells'):
             for agent in agenten:
                 workflow_cell_counts[agent.workflow_cell] += 1
+                if config.get('enable_capability_clusters'):
+                    capability_cluster_counts[agent.capability_cluster] += 1
             resource_sharing_history.append(resource_stats['shared'])
             active_cell_history.append(resource_stats['active_cells'])
+            cluster_output_history.append(resource_stats['effective_output'])
         for alte_rolle, neue_rolle in switch_stats['transitions']:
             role_transition_counts[f'{alte_rolle}->{neue_rolle}'] += 1
         removed_edges_history.append(rewiring_stats['removed_edges'])
@@ -1686,6 +1827,8 @@ def run_polarization_experiment(
                 status += f", Rewiring={rewiring_stats['rewired_edges']}"
             if config.get('enable_resource_coordination'):
                 status += f", Ressourcen={resource_stats['shared']:.2f}"
+            if config.get('enable_capability_clusters'):
+                status += f", Cluster-Output={resource_stats['effective_output']:.2f}"
             print(status)
 
     finale_pi = polarisierungs_history[-1]
@@ -1756,6 +1899,16 @@ def run_polarization_experiment(
         'resource_shared_total': float(sum(resource_sharing_history)),
         'resource_share_rate': float(np.mean(resource_sharing_history)) if resource_sharing_history else 0.0,
         'active_cells_mean': float(np.mean(active_cell_history)) if active_cell_history else 0.0,
+        'capability_cluster_distribution': {
+            cluster: sum(1 for agent in agenten if agent.capability_cluster == cluster)
+            for cluster in CAPABILITY_CLUSTERS
+        },
+        'observed_capability_clusters': dict(capability_cluster_counts),
+        'cluster_output_total': float(sum(cluster_output_history)),
+        'cluster_output_rate': float(np.mean(cluster_output_history)) if cluster_output_history else 0.0,
+        'resource_efficiency': float(sum(cluster_output_history) / max(1e-9, sum(resource_sharing_history)))
+        if resource_sharing_history
+        else 0.0,
     }
 
     interpretation = "hybrid"
@@ -1811,6 +1964,9 @@ def run_polarization_experiment(
             if config.get('enable_resource_coordination'):
                 print(f"Ressourcen gesamt:         {workflow_metrics['resource_shared_total']:.2f}")
                 print(f"Ø aktive Zellen/Runde:     {workflow_metrics['active_cells_mean']:.2f}")
+            if config.get('enable_capability_clusters'):
+                print(f"Cluster-Output gesamt:    {workflow_metrics['cluster_output_total']:.2f}")
+                print(f"Ressourcen-Effizienz:     {workflow_metrics['resource_efficiency']:.2f}")
         if config.get('enable_dynamic_rewiring'):
             print(f"Ø Rewiring-Operationen/Runde: {durchschnitt_rewiring:.2f}")
             print(f"Finale Netzwerkdichte:       {finale_netzwerkmetriken['density']:.3f}")

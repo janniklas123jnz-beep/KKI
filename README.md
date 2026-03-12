@@ -49,6 +49,7 @@ Die Simulationen basieren auf wiederholten Interaktionen im Stil des Gefangenend
 | `schwarm_gekoppelte_abwehr.py` | Architekturvergleich fuer gekoppelte Anti-Polarisierungs-, Invasions- und Commitment-Abwehr |
 | `schwarm_rollenspezialisierung.py` | Rollenstudie fuer gemeinsame Agenten-DNA mit Brueckenbauern, Waechtern und Rollenmix |
 | `schwarm_rollenlernen.py` | Verfeinerte Lernprofilstudie fuer Vermittler, Analytiker und adaptive Rollenprofile |
+| `schwarm_rollenwechsel.py` | Studie fuer dynamische Rollenwechsel und adaptive Aufgabenverteilung im Schwarm |
 | `commitment_protokoll.py` | Commit-Reveal-Verify-Protokoll gegen Manipulation |
 
 ## Features
@@ -128,6 +129,7 @@ python3 schwarm_anti_polarisierung.py
 python3 schwarm_gekoppelte_abwehr.py
 python3 schwarm_rollenspezialisierung.py
 python3 schwarm_rollenlernen.py
+python3 schwarm_rollenwechsel.py
 python3 commitment_protokoll.py
 ```
 
@@ -261,6 +263,21 @@ KKI_ANALYZER_SHARE=0.15 \
 python3 schwarm_rollenlernen.py
 ```
 
+Die Rollenwechsel-Studie prueft als naechsten Schritt, ob der Schwarm zwischen Rollen dynamisch wechseln sollte:
+
+```bash
+python3 schwarm_rollenwechsel.py
+```
+
+Optional lassen sich Wiederholungen und Wechselparameter anpassen:
+
+```bash
+KKI_ROLLENWECHSEL_REPETITIONS=2 \
+KKI_ENABLE_ROLE_SWITCHING=true \
+KKI_ROLE_SWITCH_INTERVAL=20 \
+python3 schwarm_rollenwechsel.py
+```
+
 Optional lassen sich Wiederholungen und gemeinsame Basisparameter anpassen:
 
 ```bash
@@ -312,6 +329,7 @@ Die folgenden Skripte erzeugen die im Repository abgelegten PNG-Dateien:
 | `schwarm_gekoppelte_abwehr.py` | `kki_gekoppelte_abwehr.png` | `KKI_SEED=42 python3 schwarm_gekoppelte_abwehr.py` |
 | `schwarm_rollenspezialisierung.py` | `kki_rollenspezialisierung.png` | `KKI_SEED=42 python3 schwarm_rollenspezialisierung.py` |
 | `schwarm_rollenlernen.py` | `kki_rollenlernen.png` | `KKI_SEED=42 python3 schwarm_rollenlernen.py` |
+| `schwarm_rollenwechsel.py` | `kki_rollenwechsel.png` | `KKI_SEED=42 python3 schwarm_rollenwechsel.py` |
 | `commitment_protokoll.py` | `kki_commitment_protokoll.png` | `KKI_SEED=42 python3 commitment_protokoll.py` |
 
 Hinweise zur Reproduktion:
@@ -328,6 +346,7 @@ Hinweise zur Reproduktion:
 - die gekoppelte Abwehrstudie nutzt zusaetzlich `KKI_COUPLED_REPETITIONS`, `KKI_COUPLED_AGENT_COUNT` und `KKI_COUPLED_STRESS_ROUND` fuer den Architekturvergleich ueber mehrere Bedrohungen
 - die Rollenspezialisierungsstudie nutzt zusaetzlich `KKI_ROLLENSPEZ_REPETITIONS`, `KKI_GENERALIST_SHARE`, `KKI_CONNECTOR_SHARE` und `KKI_SENTINEL_SHARE`
 - die Rollenlern-Studie nutzt zusaetzlich `KKI_ROLLENLERNEN_REPETITIONS`, `KKI_MEDIATOR_SHARE`, `KKI_ANALYZER_SHARE` sowie die Lernparameter fuer Connector, Sentinel, Vermittler und Analytiker
+- die Rollenwechsel-Studie nutzt zusaetzlich `KKI_ROLLENWECHSEL_REPETITIONS`, `KKI_ENABLE_ROLE_SWITCHING`, `KKI_ROLE_SWITCH_INTERVAL` und `KKI_ROLE_SWITCH_MIN_TENURE`
 
 Beispiel für eine reproduzierbare, headless Erzeugung:
 
@@ -395,6 +414,10 @@ Die Smoke-Tests starten ausgewählte Kernskripte im verkürzten headless Testmod
 
 ![KKI Rollenlernen](kki_rollenlernen.png)
 
+### Rollenwechsel-Studie
+
+![KKI Rollenwechsel](kki_rollenwechsel.png)
+
 ## Zentrale Beobachtungen
 
 Die bisherigen Simulationen illustrieren wiederkehrende Muster:
@@ -412,6 +435,7 @@ Die bisherigen Simulationen illustrieren wiederkehrende Muster:
 - die gekoppelte Abwehrstudie prueft nun, ob Anti-Polarisierung nur lokal wirkt oder als Teil einer breiteren Schutzarchitektur neben Invasions- und Commitment-Abwehr bestehen kann
 - die Rollenspezialisierungsstudie untersucht nun, ob dieselbe Grund-DNA bereits durch Brueckenbauer- und Waechterrollen robuster wird als ein homogener Schwarm
 - die Rollenlern-Studie untersucht nun, ob aus diesen Rollen auch verfeinerte Lernprofile wie Vermittler und Analytiker mit eigenstaendigen Staerken ableitbar sind
+- die Rollenwechsel-Studie untersucht nun, ob stabile Spezialrollen bereits genuegen oder ob ein dynamischer Wechsel zwischen Aufgaben im Schwarm zusaetzliche Vorteile bringt
 
 ## Projektstruktur und Ausrichtung
 

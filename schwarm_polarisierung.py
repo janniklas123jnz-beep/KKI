@@ -46,6 +46,9 @@ DEFAULT_MEDIATOR_CONTACT_BIAS = 0.70
 DEFAULT_MEDIATOR_OPINION_DISTANCE = 0.25
 DEFAULT_ANALYZER_MEMORY_WINDOW = 15
 DEFAULT_ANALYZER_LEARNING_MULTIPLIER = 1.10
+DEFAULT_ROLE_SWITCH_INTERVAL = 20
+DEFAULT_ROLE_SWITCH_MIN_TENURE = 20
+DEFAULT_ROLE_SWITCH_REPUTATION_COST = 0.02
 
 
 class Agent:
@@ -75,6 +78,9 @@ class Agent:
         self.memory_window = 10
         self.partner_bias_probability = 0.0
         self.partner_bias_min_distance = 0.0
+        self.role_tenure = 0
+        self.initial_role = 'generalist'
+        self.role_transition_history = []
 
         self.meinung_history = [meinung]
         self.kooperation_history = [kooperations_neigung]
@@ -293,6 +299,19 @@ def build_runtime_config() -> tuple[dict[str, float | int | str], int]:
                 str(DEFAULT_ANALYZER_LEARNING_MULTIPLIER),
             )
         ),
+        'enable_role_switching': os.getenv('KKI_ENABLE_ROLE_SWITCHING', '').strip().lower() in {'1', 'true', 'yes', 'on'},
+        'role_switch_interval': int(
+            os.getenv('KKI_ROLE_SWITCH_INTERVAL', str(DEFAULT_ROLE_SWITCH_INTERVAL))
+        ),
+        'role_switch_min_tenure': int(
+            os.getenv('KKI_ROLE_SWITCH_MIN_TENURE', str(DEFAULT_ROLE_SWITCH_MIN_TENURE))
+        ),
+        'role_switch_reputation_cost': float(
+            os.getenv(
+                'KKI_ROLE_SWITCH_REPUTATION_COST',
+                str(DEFAULT_ROLE_SWITCH_REPUTATION_COST),
+            )
+        ),
     }
     return config, seed
 
@@ -321,6 +340,68 @@ def normalisiere_rollenanteile(config):
     }
 
 
+def apply_role_profile(agent, role, config):
+    agent.role = role
+    agent.bridge_bonus = 0.0
+    agent.rewire_reputation_threshold = None
+    agent.cooperation_penalty_threshold = None
+    agent.cooperation_penalty = 0.0
+    agent.intelligence_learning_multiplier = 1.0
+    agent.cooperation_learning_multiplier = 1.0
+    agent.reputation_learning_multiplier = 1.0
+    agent.opinion_learning_multiplier = 1.0
+    agent.cross_group_learning_bonus = 0.0
+    agent.memory_window = 10
+    agent.partner_bias_probability = 0.0
+    agent.partner_bias_min_distance = 0.0
+
+    if role == 'connector':
+        agent.bridge_bonus = float(config.get('connector_bridge_bonus', DEFAULT_CONNECTOR_BONUS))
+        agent.opinion_learning_multiplier = 1.15
+        agent.cross_group_learning_bonus = float(
+            config.get(
+                'connector_cross_group_learning_bonus',
+                DEFAULT_CONNECTOR_CROSS_GROUP_LEARNING,
+            )
+        )
+    elif role == 'sentinel':
+        agent.rewire_reputation_threshold = float(
+            config.get('sentinel_rep_threshold', DEFAULT_SENTINEL_REP_THRESHOLD)
+        )
+        agent.cooperation_penalty_threshold = agent.rewire_reputation_threshold
+        agent.cooperation_penalty = float(
+            config.get('sentinel_cooperation_penalty', DEFAULT_SENTINEL_COOPERATION_PENALTY)
+        )
+        agent.reputation_learning_multiplier = float(
+            config.get(
+                'sentinel_reputation_learning_multiplier',
+                DEFAULT_SENTINEL_REPUTATION_LEARNING,
+            )
+        )
+        agent.opinion_learning_multiplier = 0.75
+        agent.memory_window = 12
+    elif role == 'mediator':
+        agent.bridge_bonus = float(config.get('mediator_bridge_bonus', DEFAULT_MEDIATOR_BONUS))
+        agent.partner_bias_probability = float(
+            config.get('mediator_partner_bias', DEFAULT_MEDIATOR_CONTACT_BIAS)
+        )
+        agent.partner_bias_min_distance = float(
+            config.get('mediator_partner_distance', DEFAULT_MEDIATOR_OPINION_DISTANCE)
+        )
+        agent.opinion_learning_multiplier = 1.30
+        agent.cross_group_learning_bonus = 0.10
+    elif role == 'analyzer':
+        agent.memory_window = int(config.get('analyzer_memory_window', DEFAULT_ANALYZER_MEMORY_WINDOW))
+        agent.intelligence_learning_multiplier = float(
+            config.get(
+                'analyzer_learning_multiplier',
+                DEFAULT_ANALYZER_LEARNING_MULTIPLIER,
+            )
+        )
+        agent.reputation_learning_multiplier = 1.10
+        agent.opinion_learning_multiplier = 0.85
+
+
 def weise_rollen_zu(agenten, config):
     shares = normalisiere_rollenanteile(config)
     agent_count = len(agenten)
@@ -347,78 +428,24 @@ def weise_rollen_zu(agenten, config):
     analyzer_ids = {agent.id for agent in shuffled[offset : offset + analyzer_count]}
 
     for agent in agenten:
-        agent.role = 'generalist'
-        agent.bridge_bonus = 0.0
-        agent.rewire_reputation_threshold = None
-        agent.cooperation_penalty_threshold = None
-        agent.cooperation_penalty = 0.0
-        agent.intelligence_learning_multiplier = 1.0
-        agent.cooperation_learning_multiplier = 1.0
-        agent.reputation_learning_multiplier = 1.0
-        agent.opinion_learning_multiplier = 1.0
-        agent.cross_group_learning_bonus = 0.0
-        agent.memory_window = 10
-        agent.partner_bias_probability = 0.0
-        agent.partner_bias_min_distance = 0.0
-
+        zielrolle = 'generalist'
         if agent.id in connector_ids:
-            agent.role = 'connector'
-            agent.bridge_bonus = float(config.get('connector_bridge_bonus', DEFAULT_CONNECTOR_BONUS))
+            zielrolle = 'connector'
             agent.hartnaeckigkeit = max(0.0, agent.hartnaeckigkeit * 0.6)
             agent.kooperations_neigung = min(0.95, agent.kooperations_neigung + 0.04)
-            agent.opinion_learning_multiplier = 1.15
-            agent.cross_group_learning_bonus = float(
-                config.get(
-                    'connector_cross_group_learning_bonus',
-                    DEFAULT_CONNECTOR_CROSS_GROUP_LEARNING,
-                )
-            )
         elif agent.id in sentinel_ids:
-            agent.role = 'sentinel'
-            agent.rewire_reputation_threshold = float(
-                config.get('sentinel_rep_threshold', DEFAULT_SENTINEL_REP_THRESHOLD)
-            )
-            agent.cooperation_penalty_threshold = agent.rewire_reputation_threshold
-            agent.cooperation_penalty = float(
-                config.get(
-                    'sentinel_cooperation_penalty',
-                    DEFAULT_SENTINEL_COOPERATION_PENALTY,
-                )
-            )
+            zielrolle = 'sentinel'
             agent.reputation = min(1.0, agent.reputation + 0.04)
-            agent.reputation_learning_multiplier = float(
-                config.get(
-                    'sentinel_reputation_learning_multiplier',
-                    DEFAULT_SENTINEL_REPUTATION_LEARNING,
-                )
-            )
-            agent.opinion_learning_multiplier = 0.75
-            agent.memory_window = 12
         elif agent.id in mediator_ids:
-            agent.role = 'mediator'
-            agent.bridge_bonus = float(config.get('mediator_bridge_bonus', DEFAULT_MEDIATOR_BONUS))
-            agent.partner_bias_probability = float(
-                config.get('mediator_partner_bias', DEFAULT_MEDIATOR_CONTACT_BIAS)
-            )
-            agent.partner_bias_min_distance = float(
-                config.get('mediator_partner_distance', DEFAULT_MEDIATOR_OPINION_DISTANCE)
-            )
-            agent.opinion_learning_multiplier = 1.30
-            agent.cross_group_learning_bonus = 0.10
+            zielrolle = 'mediator'
             agent.hartnaeckigkeit = max(0.0, agent.hartnaeckigkeit * 0.5)
         elif agent.id in analyzer_ids:
-            agent.role = 'analyzer'
-            agent.memory_window = int(
-                config.get('analyzer_memory_window', DEFAULT_ANALYZER_MEMORY_WINDOW)
-            )
-            agent.intelligence_learning_multiplier = float(
-                config.get(
-                    'analyzer_learning_multiplier',
-                    DEFAULT_ANALYZER_LEARNING_MULTIPLIER,
-                )
-            )
-            agent.reputation_learning_multiplier = 1.10
-            agent.opinion_learning_multiplier = 0.85
+            zielrolle = 'analyzer'
+
+        apply_role_profile(agent, zielrolle, config)
+        agent.initial_role = zielrolle
+        agent.role_tenure = 0
+        agent.role_transition_history = []
 
 
 def erstelle_agenten(config):
@@ -684,6 +711,85 @@ def aktualisiere_adaptives_netzwerk(agenten, agenten_dict, config):
     }
 
 
+def bestimme_rollenwechsel(agent, agenten_dict):
+    if not agent.nachbarn:
+        return None
+
+    nachbarn = [agenten_dict[nachbar_id] for nachbar_id in agent.nachbarn if nachbar_id in agenten_dict]
+    if not nachbarn:
+        return None
+
+    cross_group_neighbors = sum(1 for nachbar in nachbarn if nachbar.gruppe != agent.gruppe)
+    cross_group_share = cross_group_neighbors / len(nachbarn)
+    mean_partner_reputation = float(np.mean([agent.berechne_partner_reputation(nachbar.id) for nachbar in nachbarn]))
+    mean_neighbor_distance = float(np.mean([abs(agent.meinung - nachbar.meinung) for nachbar in nachbarn]))
+
+    if agent.role == 'generalist':
+        if cross_group_share >= 0.35 and agent.kooperations_neigung >= 0.62:
+            return 'connector'
+        if agent.reputation >= 0.60 and mean_partner_reputation <= 0.45:
+            return 'sentinel'
+    elif agent.role == 'connector':
+        if cross_group_share >= 0.45 and 0.30 <= agent.meinung <= 0.70:
+            return 'mediator'
+        if mean_partner_reputation <= 0.42 and agent.reputation >= 0.60:
+            return 'sentinel'
+    elif agent.role == 'sentinel':
+        if agent.reputation >= 0.72 and mean_neighbor_distance <= 0.28:
+            return 'analyzer'
+        if cross_group_share >= 0.40 and agent.kooperations_neigung >= 0.60:
+            return 'connector'
+    elif agent.role == 'mediator':
+        if mean_neighbor_distance <= 0.18 and agent.reputation >= 0.62:
+            return 'analyzer'
+        if mean_partner_reputation <= 0.40:
+            return 'sentinel'
+    elif agent.role == 'analyzer':
+        if cross_group_share >= 0.40 and agent.reputation >= 0.65:
+            return 'connector'
+        if agent.kooperations_neigung <= 0.42:
+            return 'generalist'
+
+    if len(agent.nachbarn) <= 2 and agent.role != 'generalist':
+        return 'generalist'
+    return None
+
+
+def aktualisiere_rollenwechsel(agenten, agenten_dict, config, runde):
+    if not config.get('enable_role_switching') or not config.get('roles_enabled'):
+        return {'switches': 0, 'transitions': []}
+
+    interval = max(1, int(config.get('role_switch_interval', DEFAULT_ROLE_SWITCH_INTERVAL)))
+    min_tenure = max(1, int(config.get('role_switch_min_tenure', DEFAULT_ROLE_SWITCH_MIN_TENURE)))
+    if runde % interval != 0:
+        return {'switches': 0, 'transitions': []}
+
+    max_switches = int(config.get('max_role_switches_per_round', max(1, len(agenten) // 10)))
+    switch_cost = float(config.get('role_switch_reputation_cost', DEFAULT_ROLE_SWITCH_REPUTATION_COST))
+    transitions = []
+
+    kandidaten = list(agenten)
+    random.shuffle(kandidaten)
+    for agent in kandidaten:
+        if len(transitions) >= max_switches:
+            break
+        if agent.role_tenure < min_tenure:
+            continue
+
+        neue_rolle = bestimme_rollenwechsel(agent, agenten_dict)
+        if neue_rolle is None or neue_rolle == agent.role:
+            continue
+
+        alte_rolle = agent.role
+        apply_role_profile(agent, neue_rolle, config)
+        agent.reputation = max(0.0, min(1.0, agent.reputation - switch_cost))
+        agent.role_tenure = 0
+        agent.role_transition_history.append((runde, alte_rolle, neue_rolle))
+        transitions.append((alte_rolle, neue_rolle))
+
+    return {'switches': len(transitions), 'transitions': transitions}
+
+
 def run_polarization_experiment(
     config,
     *,
@@ -716,6 +822,11 @@ def run_polarization_experiment(
     config.setdefault('mediator_partner_distance', DEFAULT_MEDIATOR_OPINION_DISTANCE)
     config.setdefault('analyzer_memory_window', DEFAULT_ANALYZER_MEMORY_WINDOW)
     config.setdefault('analyzer_learning_multiplier', DEFAULT_ANALYZER_LEARNING_MULTIPLIER)
+    config.setdefault('enable_role_switching', False)
+    config.setdefault('role_switch_interval', DEFAULT_ROLE_SWITCH_INTERVAL)
+    config.setdefault('role_switch_min_tenure', DEFAULT_ROLE_SWITCH_MIN_TENURE)
+    config.setdefault('role_switch_reputation_cost', DEFAULT_ROLE_SWITCH_REPUTATION_COST)
+    config.setdefault('max_role_switches_per_round', max(1, int(config['agent_count']) // 10))
     scenario = str(config['scenario'])
     rounds = int(config['rounds'])
     interactions_per_round = int(config['interactions_per_round'])
@@ -757,6 +868,13 @@ def run_polarization_experiment(
                 f"Vermittler={shares['mediator']:.0%}, "
                 f"Analytiker={shares['analyzer']:.0%}"
             )
+            if config.get('enable_role_switching'):
+                print(
+                    "Rollenwechsel: "
+                    f"aktiv | Intervall={int(config['role_switch_interval'])}, "
+                    f"Mindestdauer={int(config['role_switch_min_tenure'])}, "
+                    f"Kosten={float(config['role_switch_reputation_cost']):.2f}"
+                )
         print("Ziel: Beobachte, ob der Schwarm in Richtung Konsens oder in stabile Lager driftet.")
         print("\nSimulation läuft...\n")
 
@@ -774,6 +892,8 @@ def run_polarization_experiment(
     center_zone_history = []
     role_cross_group_contacts = defaultdict(int)
     role_cross_group_cooperations = defaultdict(int)
+    role_switch_history = []
+    role_transition_counts = defaultdict(int)
     removed_edges_history = []
     added_edges_history = []
     rewired_edges_history = []
@@ -850,8 +970,10 @@ def run_polarization_experiment(
                 opinion_pull=opinion_pull_p,
             )
 
+        switch_stats = aktualisiere_rollenwechsel(agenten, agenten_dict, config, runde)
         rewiring_stats = aktualisiere_adaptives_netzwerk(agenten, agenten_dict, config)
         for agent in agenten:
+            agent.role_tenure += 1
             agent.runde_beenden()
 
         polarisierungs_index = berechne_polarisierungs_index(agenten)
@@ -874,6 +996,9 @@ def run_polarization_experiment(
         )
         bridge_count_history.append(len(bridge_ids))
         center_zone_history.append(sum(1 for agent in agenten if ist_zentrist(agent.meinung, config)))
+        role_switch_history.append(switch_stats['switches'])
+        for alte_rolle, neue_rolle in switch_stats['transitions']:
+            role_transition_counts[f'{alte_rolle}->{neue_rolle}'] += 1
         removed_edges_history.append(rewiring_stats['removed_edges'])
         added_edges_history.append(rewiring_stats['added_edges'])
         rewired_edges_history.append(rewiring_stats['rewired_edges'])
@@ -892,6 +1017,8 @@ def run_polarization_experiment(
             )
             if config.get('enable_bridge_mechanism') or config.get('enable_centrist_moderation'):
                 status += f", Brücken={len(bridge_ids)}, Mitte={center_zone_history[-1]}"
+            if config.get('enable_role_switching'):
+                status += f", Wechsel={switch_stats['switches']}"
             if config.get('enable_dynamic_rewiring'):
                 status += f", Rewiring={rewiring_stats['rewired_edges']}"
             print(status)
@@ -907,6 +1034,7 @@ def run_polarization_experiment(
     finale_netzwerkmetriken = berechne_netzwerkmetriken(agenten, agenten_dict)
     durchschnitt_rewiring = float(np.mean(rewired_edges_history)) if rewired_edges_history else 0.0
     bekannte_rollen = ('generalist', 'connector', 'sentinel', 'mediator', 'analyzer')
+    initial_role_counts = {role: sum(1 for agent in agenten if agent.initial_role == role) for role in bekannte_rollen}
     role_counts = {role: sum(1 for agent in agenten if agent.role == role) for role in bekannte_rollen}
     role_mean_intelligence = {
         role: float(np.mean([agent.intelligenz for agent in agenten if agent.role == role]))
@@ -967,6 +1095,8 @@ def run_polarization_experiment(
                 f"Vermittler={role_cross_group_cooperation_rate['mediator']:.1%}, "
                 f"Analytiker={role_cross_group_cooperation_rate['analyzer']:.1%}"
             )
+            if config.get('enable_role_switching'):
+                print(f"Ø Rollenwechsel/Runde:       {float(np.mean(role_switch_history)):.2f}")
         if config.get('enable_dynamic_rewiring'):
             print(f"Ø Rewiring-Operationen/Runde: {durchschnitt_rewiring:.2f}")
             print(f"Finale Netzwerkdichte:       {finale_netzwerkmetriken['density']:.3f}")
@@ -993,11 +1123,16 @@ def run_polarization_experiment(
         'right_count': rechts,
         'cross_group_interaction_rate': cross_group_rate,
         'cross_group_cooperation_rate': cross_group_cooperation_rate,
+        'role_switch_enabled': bool(config.get('enable_role_switching')),
+        'initial_role_counts': initial_role_counts,
         'role_counts': role_counts,
         'role_mean_intelligence': role_mean_intelligence,
         'role_mean_reputation': role_mean_reputation,
         'role_mean_opinion_shift': role_mean_opinion_shift,
         'role_cross_group_cooperation_rate': role_cross_group_cooperation_rate,
+        'role_switch_history': role_switch_history,
+        'role_switch_total': int(sum(role_switch_history)),
+        'role_transition_counts': dict(role_transition_counts),
         'group_1_mean_opinion': mean_group_a,
         'group_2_mean_opinion': mean_group_b,
         'interpretation': interpretation,

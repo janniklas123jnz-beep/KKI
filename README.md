@@ -62,6 +62,7 @@ Die Simulationen basieren auf wiederholten Interaktionen im Stil des Gefangenend
 | `schwarm_spezialfaehigkeiten.py` | Studie fuer emergente Spezialfaehigkeiten aus gemeinsamer Agenten-DNA durch adaptives Gruppenlernen |
 | `schwarm_fehlerisolation.py` | Studie fuer Fehlerisolation, Quarantaene und Vertrauensabschirmung kompromittierter Teilzellen |
 | `schwarm_wiederanlauf.py` | Studie fuer Wiederanlauf, Resynchronisation und Rekonfiguration nach Zell- und Cluster-Ausfaellen |
+| `schwarm_integrationsstudie.py` | Finale integrierte Grossstudie ueber Heterogenitaet, Engpaesse, Angriffe, Isolation und Wiederherstellung |
 | `commitment_protokoll.py` | Commit-Reveal-Verify-Protokoll gegen Manipulation |
 
 ## Features
@@ -154,6 +155,7 @@ python3 schwarm_manipulationsresistenz.py
 python3 schwarm_spezialfaehigkeiten.py
 python3 schwarm_fehlerisolation.py
 python3 schwarm_wiederanlauf.py
+python3 schwarm_integrationsstudie.py
 python3 commitment_protokoll.py
 ```
 
@@ -497,6 +499,23 @@ KKI_RESYNC_STRENGTH=0.24 \
 python3 schwarm_wiederanlauf.py
 ```
 
+Die Integrationsstudie schliesst schliesslich die dritte 10er-Reihe ab und vergleicht die gesamte neue Architektur in einer finalen Grossstudie direkt gegeneinander:
+
+```bash
+python3 schwarm_integrationsstudie.py
+```
+
+Optional lassen sich Wiederholungen sowie Stress- und Wiederherstellungsparameter anpassen:
+
+```bash
+KKI_INTEGRATION_REPETITIONS=2 \
+KKI_FAILURE_ROUND=110 \
+KKI_FAILURE_DURATION=8 \
+KKI_FAILURE_FRACTION=0.22 \
+KKI_RESYNC_STRENGTH=0.32 \
+python3 schwarm_integrationsstudie.py
+```
+
 Optional lassen sich Wiederholungen und gemeinsame Basisparameter anpassen:
 
 ```bash
@@ -561,6 +580,7 @@ Die folgenden Skripte erzeugen die im Repository abgelegten PNG-Dateien:
 | `schwarm_spezialfaehigkeiten.py` | `kki_spezialfaehigkeiten.png` | `KKI_SEED=42 python3 schwarm_spezialfaehigkeiten.py` |
 | `schwarm_fehlerisolation.py` | `kki_fehlerisolation.png` | `KKI_SEED=42 python3 schwarm_fehlerisolation.py` |
 | `schwarm_wiederanlauf.py` | `kki_wiederanlauf.png` | `KKI_SEED=42 python3 schwarm_wiederanlauf.py` |
+| `schwarm_integrationsstudie.py` | `kki_integrationsstudie.png` | `KKI_SEED=42 python3 schwarm_integrationsstudie.py` |
 | `commitment_protokoll.py` | `kki_commitment_protokoll.png` | `KKI_SEED=42 python3 commitment_protokoll.py` |
 
 Hinweise zur Reproduktion:
@@ -590,6 +610,7 @@ Hinweise zur Reproduktion:
 - die Spezialfaehigkeits-Studie nutzt zusaetzlich `KKI_SKILL_REPETITIONS`, `KKI_EMERGENT_SKILLS_ENABLED`, `KKI_GROUP_LEARNING_RATE` und `KKI_SKILL_SPECIALIZATION_THRESHOLD`
 - die Fehlerisolations-Studie nutzt zusaetzlich `KKI_ISOLATION_REPETITIONS`, `KKI_FAULT_ISOLATION_ENABLED`, `KKI_QUARANTINE_COMPROMISE_THRESHOLD`, `KKI_QUARANTINE_EXPOSURE_THRESHOLD` und `KKI_TRUST_SHIELD_STRENGTH`
 - die Wiederanlauf-Studie nutzt zusaetzlich `KKI_RESTART_REPETITIONS`, `KKI_CLUSTER_FAILURES_ENABLED`, `KKI_RESTART_RECOVERY_ENABLED`, `KKI_FAILURE_ROUND`, `KKI_FAILURE_DURATION`, `KKI_FAILURE_FRACTION` und `KKI_RESYNC_STRENGTH`
+- die Integrationsstudie nutzt zusaetzlich `KKI_INTEGRATION_REPETITIONS`, `KKI_FAILURE_ROUND`, `KKI_FAILURE_DURATION`, `KKI_FAILURE_FRACTION` und `KKI_RESYNC_STRENGTH` fuer die finale Gesamtarchitektur
 
 Beispiel für eine reproduzierbare, headless Erzeugung:
 
@@ -708,6 +729,10 @@ Die Smoke-Tests starten ausgewählte Kernskripte im verkürzten headless Testmod
 ### Wiederanlauf-Studie
 
 ![KKI Wiederanlauf](kki_wiederanlauf.png)
+
+### Integrationsstudie
+
+![KKI Integrationsstudie](kki_integrationsstudie.png)
 
 ## Zentrale Beobachtungen
 

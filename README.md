@@ -25,4 +25,3 @@ Sektion VIII: Intrinsische Selbstkorrektur durch Architektur-gebundene Moral
 
 ## Autor
 Jan Niklas (@janniklas123jnz-beep)
-EOF

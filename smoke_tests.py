@@ -406,6 +406,27 @@ class SmokeTests(unittest.TestCase):
             self.assertIn("Beste Meta-Architektur", result.stdout)
 
 
+
+    def test_schwarm_fehlerisolation_smoke(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:
+            output_dir = Path(tmpdir)
+            result = self.run_script(
+                "schwarm_fehlerisolation.py",
+                output_dir,
+                seed=113,
+                extra_env={
+                    "KKI_ISOLATION_REPETITIONS": "1",
+                    "KKI_WORKFLOW_STAGE_MIN_TENURE": "1",
+                    "KKI_MISSION_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_MIN_TENURE": "2",
+                    "KKI_INJECTION_ATTACK_ROUND": "3",
+                },
+            )
+            self.assert_successful_run(result)
+            self.assertTrue((output_dir / "kki_fehlerisolation.png").exists())
+            self.assertIn("Beste Isolationsarchitektur", result.stdout)
+
     def test_schwarm_spezialfaehigkeiten_smoke(self) -> None:
         with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:
             output_dir = Path(tmpdir)

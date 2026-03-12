@@ -66,6 +66,10 @@ DEFAULT_INJECTION_STRENGTH = 0.38
 DEFAULT_INJECTION_SOURCE_COUNT = 6
 DEFAULT_GROUP_LEARNING_RATE = 0.10
 DEFAULT_SKILL_SPECIALIZATION_THRESHOLD = 0.62
+DEFAULT_QUARANTINE_COMPROMISE_THRESHOLD = 0.28
+DEFAULT_QUARANTINE_EXPOSURE_THRESHOLD = 0.34
+DEFAULT_QUARANTINE_DURATION = 4
+DEFAULT_TRUST_SHIELD_STRENGTH = 0.22
 MISSION_CONSENSUS = 'consensus_building'
 MISSION_KNOWLEDGE = 'knowledge_sharing'
 MISSION_DEFENSE = 'reputation_defense'
@@ -185,6 +189,12 @@ class Agent:
         self.defense_skill = 0.25
         self.recovery_skill = 0.25
         self.group_learning_gain_total = 0.0
+        self.is_quarantined = False
+        self.quarantine_rounds = 0
+        self.quarantine_events = 0
+        self.trust_shield_score = 0.0
+        self.shielding_actions_total = 0
+        self.isolation_relief_total = 0.0
 
         self.meinung_history = [meinung]
         self.kooperation_history = [kooperations_neigung]
@@ -494,6 +504,26 @@ def build_runtime_config() -> tuple[dict[str, float | int | str], int]:
                 str(DEFAULT_SKILL_SPECIALIZATION_THRESHOLD),
             )
         ),
+        'enable_fault_isolation': os.getenv('KKI_FAULT_ISOLATION_ENABLED', '').strip().lower()
+        in {'1', 'true', 'yes', 'on'},
+        'quarantine_compromise_threshold': float(
+            os.getenv(
+                'KKI_QUARANTINE_COMPROMISE_THRESHOLD',
+                str(DEFAULT_QUARANTINE_COMPROMISE_THRESHOLD),
+            )
+        ),
+        'quarantine_exposure_threshold': float(
+            os.getenv(
+                'KKI_QUARANTINE_EXPOSURE_THRESHOLD',
+                str(DEFAULT_QUARANTINE_EXPOSURE_THRESHOLD),
+            )
+        ),
+        'quarantine_duration': int(
+            os.getenv('KKI_QUARANTINE_DURATION', str(DEFAULT_QUARANTINE_DURATION))
+        ),
+        'trust_shield_strength': float(
+            os.getenv('KKI_TRUST_SHIELD_STRENGTH', str(DEFAULT_TRUST_SHIELD_STRENGTH))
+        ),
     }
     return config, seed
 
@@ -789,6 +819,16 @@ def initialisiere_emergente_faehigkeiten(agenten):
         agent.group_learning_gain_total = 0.0
 
 
+def initialisiere_fehlerisolation(agenten):
+    for agent in agenten:
+        agent.is_quarantined = False
+        agent.quarantine_rounds = 0
+        agent.quarantine_events = 0
+        agent.trust_shield_score = 0.0
+        agent.shielding_actions_total = 0
+        agent.isolation_relief_total = 0.0
+
+
 def skill_scores(agent):
     return {
         'bridge_specialist': agent.bridge_skill,
@@ -885,6 +925,145 @@ def aktualisiere_gruppenlernen(agenten, agenten_dict, config, runde):
     }
 
 
+def aktualisiere_fehlerisolation(agenten, agenten_dict, config, runde):
+    if not config.get('enable_fault_isolation'):
+        for agent in agenten:
+            agent.is_quarantined = False
+            agent.quarantine_rounds = 0
+            agent.trust_shield_score *= 0.85
+        return {
+            'events': 0,
+            'quarantined_agents': 0,
+            'quarantined_cells': 0,
+            'shielding_actions': 0,
+            'shield_mean': 0.0,
+            'relief': 0.0,
+        }
+
+    compromise_threshold = float(
+        config.get('quarantine_compromise_threshold', DEFAULT_QUARANTINE_COMPROMISE_THRESHOLD)
+    )
+    exposure_threshold = float(
+        config.get('quarantine_exposure_threshold', DEFAULT_QUARANTINE_EXPOSURE_THRESHOLD)
+    )
+    quarantine_duration = max(1, int(config.get('quarantine_duration', DEFAULT_QUARANTINE_DURATION)))
+    shield_strength = max(0.0, float(config.get('trust_shield_strength', DEFAULT_TRUST_SHIELD_STRENGTH)))
+
+    cell_members = defaultdict(list)
+    for agent in agenten:
+        cell_members[agent.workflow_cell].append(agent)
+
+    quarantined_cells = set()
+    for cell, members in cell_members.items():
+        compromise_mean = float(np.mean([agent.cluster_compromise_level for agent in members]))
+        exposure_mean = float(np.mean([agent.misinformation_exposure for agent in members]))
+        detection_mean = float(
+            np.mean(
+                [
+                    agent.misinformation_detected / max(1, agent.misinformation_events)
+                    if agent.misinformation_events
+                    else 0.0
+                    for agent in members
+                ]
+            )
+        )
+        if (
+            compromise_mean >= compromise_threshold * 1.15
+            or exposure_mean >= exposure_threshold * 1.15
+            or (compromise_mean + exposure_mean) * 0.5 + detection_mean * 0.10
+            >= compromise_threshold * 1.05
+        ):
+            quarantined_cells.add(cell)
+
+    events = 0
+    shielding_actions = 0
+    relief_total = 0.0
+    for agent in agenten:
+        high_risk = (
+            agent.cluster_compromise_level >= compromise_threshold
+            or agent.misinformation_exposure >= exposure_threshold
+            or agent.meta_signal_corruption >= compromise_threshold * 0.85
+        )
+        should_quarantine = high_risk or agent.workflow_cell in quarantined_cells
+        if should_quarantine:
+            if not agent.is_quarantined:
+                events += 1
+                agent.quarantine_events += 1
+            agent.is_quarantined = True
+            agent.quarantine_rounds = max(agent.quarantine_rounds, quarantine_duration)
+            agent.task_priority = max(0.18, agent.task_priority * 0.82)
+            agent.resource_credit *= 0.90
+            agent.meta_priority_score *= 0.92
+            if agent.workflow_stage != 'recovery':
+                agent.workflow_history.append((runde, agent.workflow_stage, 'recovery'))
+                agent.workflow_stage = 'recovery'
+                agent.stage_tenure = 0
+        elif agent.is_quarantined:
+            agent.quarantine_rounds = max(0, agent.quarantine_rounds - 1)
+            if (
+                agent.quarantine_rounds == 0
+                and agent.cluster_compromise_level < compromise_threshold * 0.70
+                and agent.misinformation_exposure < exposure_threshold * 0.70
+                and agent.meta_signal_corruption < compromise_threshold * 0.60
+            ):
+                agent.is_quarantined = False
+
+    quarantined_agents = [agent for agent in agenten if agent.is_quarantined]
+    for agent in agenten:
+        if agent.is_quarantined:
+            agent.trust_shield_score *= 0.65
+            continue
+        quarantined_neighbors = [
+            agenten_dict[nid]
+            for nid in agent.nachbarn
+            if nid in agenten_dict and agenten_dict[nid].is_quarantined
+        ]
+        same_cell_quarantine = agent.workflow_cell in quarantined_cells
+        if quarantined_neighbors or same_cell_quarantine:
+            agent.trust_shield_score = min(
+                1.0,
+                agent.trust_shield_score * 0.85
+                + shield_strength
+                + 0.06 * agent.cluster_resilience_bonus
+                + 0.08 * (agent.emergent_skill == 'defense_specialist'),
+            )
+            shielding_actions += 1
+            agent.shielding_actions_total += 1
+            before = (
+                agent.cluster_compromise_level
+                + agent.meta_signal_corruption
+                + agent.misinformation_exposure
+            )
+            agent.cluster_compromise_level = max(
+                0.0, agent.cluster_compromise_level - shield_strength * 0.22
+            )
+            agent.meta_signal_corruption = max(
+                0.0, agent.meta_signal_corruption - shield_strength * 0.24
+            )
+            agent.misinformation_exposure = max(
+                0.0, agent.misinformation_exposure - shield_strength * 0.20
+            )
+            after = (
+                agent.cluster_compromise_level
+                + agent.meta_signal_corruption
+                + agent.misinformation_exposure
+            )
+            relief = max(0.0, before - after)
+            relief_total += relief
+            agent.isolation_relief_total += relief
+        else:
+            agent.trust_shield_score *= 0.92
+
+    return {
+        'events': events,
+        'quarantined_agents': len(quarantined_agents),
+        'quarantined_cells': len(quarantined_cells),
+        'shielding_actions': shielding_actions,
+        'shield_mean': float(np.mean([agent.trust_shield_score for agent in agenten])) if agenten else 0.0,
+        'relief': relief_total,
+    }
+
+
 def weise_misinformation_quellen_zu(agenten, config):
     if not config.get('enable_prompt_injection'):
         return
@@ -941,18 +1120,32 @@ def wende_promptinjektion_an(agenten, agenten_dict, config, runde):
             agent.meta_signal_corruption *= 0.85
             agent.misinformation_exposure *= 0.80
             continue
+        if config.get('enable_fault_isolation') and agent.is_quarantined:
+            agent.misinformation_intensity *= 0.92
+            continue
         nachbarn = [agenten_dict[nid] for nid in agent.nachbarn if nid in agenten_dict]
         for ziel in nachbarn:
-            if random.random() >= attack_strength:
+            effective_strength = attack_strength
+            if config.get('enable_fault_isolation'):
+                effective_strength *= max(0.15, 1.0 - 0.80 * ziel.trust_shield_score)
+                if ziel.is_quarantined:
+                    effective_strength *= 0.45
+            if random.random() >= effective_strength:
                 continue
-            ziel.misinformation_exposure = min(1.0, ziel.misinformation_exposure + attack_strength * 0.8)
-            ziel.cluster_compromise_level = min(1.0, ziel.cluster_compromise_level + attack_strength * 0.45)
-            ziel.meta_signal_corruption = min(1.0, ziel.meta_signal_corruption + attack_strength * 0.40)
+            ziel.misinformation_exposure = min(1.0, ziel.misinformation_exposure + effective_strength * 0.8)
+            ziel.cluster_compromise_level = min(1.0, ziel.cluster_compromise_level + effective_strength * 0.45)
+            ziel.meta_signal_corruption = min(1.0, ziel.meta_signal_corruption + effective_strength * 0.40)
             ziel.false_mission_signal = manipulations_zielmission(agent)
             ziel.false_cluster_signal = manipulations_zielcluster(agent)
             ziel.misinformation_events += 1
             events += 1
-            detection_score = ziel.reputation + ziel.cluster_resilience_bonus + ziel.meta_priority_score
+            detection_score = (
+                ziel.reputation
+                + ziel.cluster_resilience_bonus
+                + ziel.meta_priority_score
+                + ziel.trust_shield_score * 0.45
+                + (0.10 if ziel.emergent_skill == 'defense_specialist' else 0.0)
+            )
             if detection_score >= 0.82:
                 ziel.misinformation_detected += 1
                 ziel.cluster_compromise_level = max(0.0, ziel.cluster_compromise_level - 0.18)
@@ -1133,13 +1326,15 @@ def koordiniere_ressourcen(agenten, config):
         cell_members[agent.workflow_cell].append(agent)
         skill_focus = skill_fokus_fuer_cluster(agent.capability_cluster)
         skill_alignment = 1.0 if agent.emergent_skill == skill_focus else 0.0
+        quarantine_penalty = 0.70 if agent.is_quarantined else 1.0
         demand = (
             agent.task_priority
             + agent.handoff_credit * 0.5
             + agent.reputation * 0.1
             + agent.meta_priority_score * 0.35
             + skill_alignment * 0.12
-        ) * agent.cluster_demand_multiplier
+            + agent.trust_shield_score * 0.08
+        ) * agent.cluster_demand_multiplier * quarantine_penalty
         cell_demand[agent.workflow_cell] += demand
         agent.resource_credit *= 0.85
         agent.bottleneck_pressure *= 0.75
@@ -1232,6 +1427,8 @@ def koordiniere_ressourcen(agenten, config):
         total_output = 0.0
         for agent in dominant_members:
             resource_bonus = share_per_agent * share_factor
+            if agent.is_quarantined:
+                resource_bonus *= 0.75
             agent.resource_credit = min(1.0, agent.resource_credit + resource_bonus)
             agent.resource_received_total += resource_bonus
             agent.resource_shared_total += budget / len(agenten)
@@ -1267,6 +1464,8 @@ def koordiniere_ressourcen(agenten, config):
             triage_bonus += 0.25 + 0.35 * min(1.0, relief_total / max(1e-9, budget))
         for agent in members:
             resource_bonus = share_per_agent * share_factor
+            if agent.is_quarantined:
+                resource_bonus *= 0.75
             agent.resource_credit = min(1.0, agent.resource_credit + resource_bonus)
             agent.resource_received_total += resource_bonus
             agent.resource_shared_total += allocation / len(agenten)
@@ -1367,6 +1566,8 @@ def berechne_missionsfitness(agent, agenten_dict):
             + 0.05 * agent.cluster_coordination_bonus
             + 0.05 * agent.meta_priority_score
             + skill_bonus_fuer_mission(agent, MISSION_CONSENSUS)
+            + 0.04 * agent.trust_shield_score
+            - (0.05 if agent.is_quarantined else 0.0)
             - 0.05 * agent.cluster_compromise_level
         ),
         MISSION_KNOWLEDGE: (
@@ -1379,6 +1580,8 @@ def berechne_missionsfitness(agent, agenten_dict):
             + 0.04 * agent.cluster_output_multiplier
             + 0.06 * agent.meta_priority_score
             + skill_bonus_fuer_mission(agent, MISSION_KNOWLEDGE)
+            + 0.05 * agent.trust_shield_score
+            - (0.04 if agent.is_quarantined else 0.0)
             - 0.04 * agent.cluster_compromise_level
         ),
         MISSION_DEFENSE: (
@@ -1392,6 +1595,8 @@ def berechne_missionsfitness(agent, agenten_dict):
             + 0.05 * agent.meta_priority_score
             + 0.04 * agent.misinformation_exposure
             + skill_bonus_fuer_mission(agent, MISSION_DEFENSE)
+            + 0.06 * agent.trust_shield_score
+            - (0.01 if agent.is_quarantined else 0.0)
         ),
         MISSION_STABILITY: (
             missions_rollenfit(agent.role, MISSION_STABILITY)
@@ -1404,6 +1609,8 @@ def berechne_missionsfitness(agent, agenten_dict):
             + 0.05 * agent.meta_priority_score
             + 0.04 * agent.misinformation_exposure
             + skill_bonus_fuer_mission(agent, MISSION_STABILITY)
+            + 0.06 * agent.trust_shield_score
+            - (0.01 if agent.is_quarantined else 0.0)
         ),
         MISSION_SUPPORT: (
             missions_rollenfit(agent.role, MISSION_SUPPORT)
@@ -1414,6 +1621,8 @@ def berechne_missionsfitness(agent, agenten_dict):
             + 0.04 * agent.cluster_coordination_bonus
             + 0.04 * agent.meta_priority_score
             + skill_bonus_fuer_mission(agent, MISSION_SUPPORT)
+            + 0.04 * agent.trust_shield_score
+            - (0.03 if agent.is_quarantined else 0.0)
             - 0.05 * agent.meta_signal_corruption
         ),
     }
@@ -1521,6 +1730,8 @@ def initialisiere_missionen(agenten, config=None):
         initialisiere_faehigkeitscluster(agenten, config)
     if config and config.get('enable_emergent_skills'):
         initialisiere_emergente_faehigkeiten(agenten)
+    if config and config.get('enable_fault_isolation'):
+        initialisiere_fehlerisolation(agenten)
 
 
 def aktualisiere_missionen(agenten, agenten_dict, config, runde):
@@ -1608,6 +1819,10 @@ def missions_bonus(agent, partner_reputation, partner, ist_cross_group):
     opinion_pull += agent.cluster_resilience_bonus * 0.2
     cooperation_bonus += agent.meta_priority_score * (0.35 if ist_cross_group else 0.18)
     opinion_pull += agent.meta_priority_score * 0.08
+    cooperation_bonus += agent.trust_shield_score * (0.14 if ist_cross_group else 0.06)
+    if agent.is_quarantined:
+        cooperation_bonus -= 0.06 if ist_cross_group else 0.02
+        opinion_pull -= 0.02
     if agent.emergent_skill == 'bridge_specialist' and ist_cross_group:
         cooperation_bonus += 0.05
         opinion_pull += 0.03
@@ -1729,13 +1944,34 @@ def erstelle_netzwerk(agenten, config):
 
 
 def waehle_partner(agent, agenten, agenten_dict, config=None):
+    if config and config.get('enable_fault_isolation'):
+        if agent.is_quarantined:
+            kandidaten = [
+                anderer
+                for anderer in agenten
+                if anderer.id != agent.id
+                and (anderer.is_quarantined or anderer.workflow_cell == agent.workflow_cell)
+            ]
+            if kandidaten:
+                return random.choice(kandidaten)
+        else:
+            unquarantined_neighbors = [
+                agenten_dict[nid]
+                for nid in agent.nachbarn
+                if nid in agenten_dict and not agenten_dict[nid].is_quarantined
+            ]
+            if unquarantined_neighbors and random.random() < 0.9:
+                return random.choice(unquarantined_neighbors)
+
     partner_bias_probability = getattr(agent, 'partner_bias_probability', 0.0)
     if partner_bias_probability > 0.0 and random.random() < partner_bias_probability:
         bias_distance = getattr(agent, 'partner_bias_min_distance', 0.0)
         kandidaten = [
             anderer
             for anderer in agenten
-            if anderer.id != agent.id and abs(anderer.meinung - agent.meinung) >= bias_distance
+            if anderer.id != agent.id
+            and abs(anderer.meinung - agent.meinung) >= bias_distance
+            and (not config or not config.get('enable_fault_isolation') or not anderer.is_quarantined)
         ]
         if kandidaten:
             kandidaten.sort(key=lambda anderer: abs(anderer.meinung - agent.meinung), reverse=True)
@@ -1746,13 +1982,27 @@ def waehle_partner(agent, agenten, agenten_dict, config=None):
             kandidaten = [
                 anderer
                 for anderer in agenten
-                if anderer.id != agent.id and abs(anderer.meinung - agent.meinung) > 0.30
+                if anderer.id != agent.id
+                and abs(anderer.meinung - agent.meinung) > 0.30
+                and (not config or not config.get('enable_fault_isolation') or not anderer.is_quarantined)
             ]
             if kandidaten:
                 return random.choice(kandidaten)
     if agent.nachbarn and random.random() < 0.9:
-        return agenten_dict[random.choice(list(agent.nachbarn))]
-    kandidaten = [anderer for anderer in agenten if anderer.id != agent.id]
+        nachbar_ids = list(agent.nachbarn)
+        if config and config.get('enable_fault_isolation'):
+            sichere_ids = [nid for nid in nachbar_ids if nid in agenten_dict and not agenten_dict[nid].is_quarantined]
+            if sichere_ids:
+                return agenten_dict[random.choice(sichere_ids)]
+        return agenten_dict[random.choice(nachbar_ids)]
+    kandidaten = [
+        anderer
+        for anderer in agenten
+        if anderer.id != agent.id
+        and (not config or not config.get('enable_fault_isolation') or not anderer.is_quarantined)
+    ]
+    if not kandidaten:
+        kandidaten = [anderer for anderer in agenten if anderer.id != agent.id]
     return random.choice(kandidaten)
 
 
@@ -1837,6 +2087,8 @@ def finde_neuen_nachbarn(agent, agenten, config):
 
     for kandidat in agenten:
         if kandidat.id == agent.id or kandidat.id in agent.nachbarn:
+            continue
+        if config.get('enable_fault_isolation') and kandidat.is_quarantined:
             continue
 
         distanz = abs(agent.meinung - kandidat.meinung)
@@ -2234,12 +2486,19 @@ def run_polarization_experiment(
     skill_alignment_history = []
     learning_gain_history = []
     emergent_skill_counts = defaultdict(int)
+    quarantine_event_history = []
+    quarantined_agents_history = []
+    quarantined_cells_history = []
+    shielding_action_history = []
+    shield_strength_history = []
+    isolation_relief_history = []
 
     for runde in range(1, rounds + 1):
         gruppenuebergreifende_interaktionen = 0
         gruppenuebergreifende_kooperationen = 0
         bridge_ids = berechne_brueckenagenten(agenten, agenten_dict)
         manipulation_stats = wende_promptinjektion_an(agenten, agenten_dict, config, runde)
+        isolation_stats = aktualisiere_fehlerisolation(agenten, agenten_dict, config, runde)
 
         for _ in range(interactions_per_round):
             agent = random.choice(agenten)
@@ -2417,6 +2676,12 @@ def run_polarization_experiment(
             skill_switch_history.append(learning_stats['switches'])
             skill_alignment_history.append(learning_stats['alignment_rate'])
             learning_gain_history.append(learning_stats['learning_gain'])
+            quarantine_event_history.append(isolation_stats['events'])
+            quarantined_agents_history.append(isolation_stats['quarantined_agents'])
+            quarantined_cells_history.append(isolation_stats['quarantined_cells'])
+            shielding_action_history.append(isolation_stats['shielding_actions'])
+            shield_strength_history.append(isolation_stats['shield_mean'])
+            isolation_relief_history.append(isolation_stats['relief'])
             if meta_stats['priority_mission'] is not None:
                 meta_mission_focus_counts[meta_stats['priority_mission']] += 1
             if meta_stats['priority_cluster'] is not None:
@@ -2464,6 +2729,8 @@ def run_polarization_experiment(
                 status += f", Angriff={manipulation_stats['events']}, Det={manipulation_stats['detections']}"
             if config.get('enable_emergent_skills'):
                 status += f", Skills={learning_stats['alignment_rate']:.2f}"
+            if config.get('enable_fault_isolation'):
+                status += f", Quar={isolation_stats['quarantined_agents']}"
             print(status)
 
     finale_pi = polarisierungs_history[-1]
@@ -2561,6 +2828,18 @@ def run_polarization_experiment(
         'cluster_compromise_mean': float(np.mean(misinformation_compromise_history))
         if misinformation_compromise_history
         else 0.0,
+        'quarantine_events_total': int(sum(quarantine_event_history)),
+        'quarantine_rate': float(np.mean(quarantine_event_history)) if quarantine_event_history else 0.0,
+        'quarantined_agents_mean': float(np.mean(quarantined_agents_history))
+        if quarantined_agents_history
+        else 0.0,
+        'quarantined_cells_mean': float(np.mean(quarantined_cells_history))
+        if quarantined_cells_history
+        else 0.0,
+        'shielding_actions_total': int(sum(shielding_action_history)),
+        'trust_shield_mean': float(np.mean(shield_strength_history)) if shield_strength_history else 0.0,
+        'isolation_relief_total': float(sum(isolation_relief_history)),
+        'isolation_relief_rate': float(np.mean(isolation_relief_history)) if isolation_relief_history else 0.0,
         'emergent_skill_distribution': {
             skill: sum(1 for agent in agenten if agent.emergent_skill == skill)
             for skill in (
@@ -2644,6 +2923,11 @@ def run_polarization_experiment(
                 print(f"Manipulationsereignisse:  {workflow_metrics['misinformation_events_total']}")
                 print(f"Detektionsrate:           {workflow_metrics['misinformation_detection_rate']:.1%}")
                 print(f"Korruptionsniveau:        {workflow_metrics['misinformation_corruption_mean']:.2f}")
+            if config.get('enable_fault_isolation'):
+                print(f"Quarantaenen gesamt:      {workflow_metrics['quarantine_events_total']}")
+                print(f"Ø quarant. Agenten:       {workflow_metrics['quarantined_agents_mean']:.2f}")
+                print(f"Abschirmaktionen gesamt:  {workflow_metrics['shielding_actions_total']}")
+                print(f"Abschirmniveau:           {workflow_metrics['trust_shield_mean']:.2f}")
             if config.get('enable_emergent_skills'):
                 print(f"Skill-Wechsel gesamt:     {workflow_metrics['skill_switch_total']}")
                 print(f"Skill-Ausrichtung:        {workflow_metrics['skill_alignment_rate']:.1%}")

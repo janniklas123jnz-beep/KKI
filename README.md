@@ -60,6 +60,7 @@ Die Simulationen basieren auf wiederholten Interaktionen im Stil des Gefangenend
 | `schwarm_meta_koordination.py` | Studie fuer hierarchische Meta-Koordination zwischen Zellclustern und Missionslagen |
 | `schwarm_manipulationsresistenz.py` | Studie fuer Promptinjektion, Manipulation und strategische Fehlinformation gegen Cluster und Meta-Koordination |
 | `schwarm_spezialfaehigkeiten.py` | Studie fuer emergente Spezialfaehigkeiten aus gemeinsamer Agenten-DNA durch adaptives Gruppenlernen |
+| `schwarm_fehlerisolation.py` | Studie fuer Fehlerisolation, Quarantaene und Vertrauensabschirmung kompromittierter Teilzellen |
 | `commitment_protokoll.py` | Commit-Reveal-Verify-Protokoll gegen Manipulation |
 
 ## Features
@@ -150,6 +151,7 @@ python3 schwarm_engpassmanagement.py
 python3 schwarm_meta_koordination.py
 python3 schwarm_manipulationsresistenz.py
 python3 schwarm_spezialfaehigkeiten.py
+python3 schwarm_fehlerisolation.py
 python3 commitment_protokoll.py
 ```
 
@@ -457,6 +459,23 @@ KKI_SKILL_SPECIALIZATION_THRESHOLD=0.60 \
 python3 schwarm_spezialfaehigkeiten.py
 ```
 
+Die Fehlerisolations-Studie untersucht anschliessend, ob kompromittierte Teilzellen gezielt in Quarantaene gehen koennen, waehrend gesunde Nachbarzellen durch Vertrauensabschirmung stabil bleiben:
+
+```bash
+python3 schwarm_fehlerisolation.py
+```
+
+Optional lassen sich Quarantaeneschwellen und Abschirmstaerke anpassen:
+
+```bash
+KKI_ISOLATION_REPETITIONS=2 \
+KKI_FAULT_ISOLATION_ENABLED=true \
+KKI_QUARANTINE_COMPROMISE_THRESHOLD=0.24 \
+KKI_QUARANTINE_EXPOSURE_THRESHOLD=0.30 \
+KKI_TRUST_SHIELD_STRENGTH=0.28 \
+python3 schwarm_fehlerisolation.py
+```
+
 Optional lassen sich Wiederholungen und gemeinsame Basisparameter anpassen:
 
 ```bash
@@ -519,6 +538,7 @@ Die folgenden Skripte erzeugen die im Repository abgelegten PNG-Dateien:
 | `schwarm_meta_koordination.py` | `kki_meta_koordination.png` | `KKI_SEED=42 python3 schwarm_meta_koordination.py` |
 | `schwarm_manipulationsresistenz.py` | `kki_manipulationsresistenz.png` | `KKI_SEED=42 python3 schwarm_manipulationsresistenz.py` |
 | `schwarm_spezialfaehigkeiten.py` | `kki_spezialfaehigkeiten.png` | `KKI_SEED=42 python3 schwarm_spezialfaehigkeiten.py` |
+| `schwarm_fehlerisolation.py` | `kki_fehlerisolation.png` | `KKI_SEED=42 python3 schwarm_fehlerisolation.py` |
 | `commitment_protokoll.py` | `kki_commitment_protokoll.png` | `KKI_SEED=42 python3 commitment_protokoll.py` |
 
 Hinweise zur Reproduktion:
@@ -546,6 +566,7 @@ Hinweise zur Reproduktion:
 - die Meta-Koordinations-Studie nutzt zusaetzlich `KKI_META_REPETITIONS`, `KKI_META_COORDINATION_ENABLED`, `KKI_META_UPDATE_INTERVAL` und `KKI_META_PRIORITY_STRENGTH`
 - die Manipulationsresistenz-Studie nutzt zusaetzlich `KKI_MANIPULATION_REPETITIONS`, `KKI_PROMPT_INJECTION_ENABLED`, `KKI_INJECTION_ATTACK_ROUND`, `KKI_INJECTION_STRENGTH` und `KKI_INJECTION_SOURCE_COUNT`
 - die Spezialfaehigkeits-Studie nutzt zusaetzlich `KKI_SKILL_REPETITIONS`, `KKI_EMERGENT_SKILLS_ENABLED`, `KKI_GROUP_LEARNING_RATE` und `KKI_SKILL_SPECIALIZATION_THRESHOLD`
+- die Fehlerisolations-Studie nutzt zusaetzlich `KKI_ISOLATION_REPETITIONS`, `KKI_FAULT_ISOLATION_ENABLED`, `KKI_QUARANTINE_COMPROMISE_THRESHOLD`, `KKI_QUARANTINE_EXPOSURE_THRESHOLD` und `KKI_TRUST_SHIELD_STRENGTH`
 
 Beispiel für eine reproduzierbare, headless Erzeugung:
 
@@ -656,6 +677,10 @@ Die Smoke-Tests starten ausgewählte Kernskripte im verkürzten headless Testmod
 ### Spezialfaehigkeits-Studie
 
 ![KKI Spezialfaehigkeiten](kki_spezialfaehigkeiten.png)
+
+### Fehlerisolations-Studie
+
+![KKI Fehlerisolation](kki_fehlerisolation.png)
 
 ## Zentrale Beobachtungen
 

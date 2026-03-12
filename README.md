@@ -39,6 +39,7 @@ Die Simulationen basieren auf wiederholten Interaktionen im Stil des Gefangenend
 | `schwarm_cluster.py` | Simulation mit Cluster- und Netzwerkdynamik |
 | `schwarm_invasion.py` | Resilienz-Test gegen spätere Invasion durch Defektoren |
 | `schwarm_polarisierung.py` | Experiment zu Polarisierung, Konsensbildung und Lagerdynamik |
+| `schwarm_parameterstudie.py` | Vergleichsstudie zu Netzwerkparametern gegen Polarisierung |
 | `commitment_protokoll.py` | Commit-Reveal-Verify-Protokoll gegen Manipulation |
 
 ## Features
@@ -107,6 +108,7 @@ python3 schwarm_100.py
 python3 schwarm_cluster.py
 python3 schwarm_invasion.py
 python3 schwarm_polarisierung.py
+python3 schwarm_parameterstudie.py
 python3 commitment_protokoll.py
 ```
 
@@ -115,6 +117,12 @@ Für das neue Polarisierungs-Experiment kann das Szenario zusätzlich per Umgebu
 ```bash
 KKI_POLARIZATION_SCENARIO=polarization python3 schwarm_polarisierung.py
 KKI_POLARIZATION_SCENARIO=consensus python3 schwarm_polarisierung.py
+```
+
+Für die Netzwerk-Parameterstudie kann zusätzlich ein Grid über Umgebungsvariablen gesetzt werden:
+
+```bash
+KKI_STUDY_DEGREES=4,6,8 KKI_STUDY_CROSS_GROUPS=0.05,0.15,0.25 python3 schwarm_parameterstudie.py
 ```
 
 Die Visualisierungs-Skripte erzeugen PNG-Dateien direkt im Projektverzeichnis.
@@ -132,6 +140,7 @@ Die folgenden Skripte erzeugen die im Repository abgelegten PNG-Dateien:
 | `schwarm_cluster.py` | `kki_cluster_simulation.png` | `KKI_SEED=42 python3 schwarm_cluster.py` |
 | `schwarm_invasion.py` | `kki_invasion.png` | `KKI_SEED=42 python3 schwarm_invasion.py` |
 | `schwarm_polarisierung.py` | `kki_polarisierung.png` | `KKI_SEED=42 KKI_POLARIZATION_SCENARIO=polarization python3 schwarm_polarisierung.py` |
+| `schwarm_parameterstudie.py` | `kki_netzwerk_parameterstudie.png` | `KKI_SEED=42 python3 schwarm_parameterstudie.py` |
 | `commitment_protokoll.py` | `kki_commitment_protokoll.png` | `KKI_SEED=42 python3 commitment_protokoll.py` |
 
 Hinweise zur Reproduktion:

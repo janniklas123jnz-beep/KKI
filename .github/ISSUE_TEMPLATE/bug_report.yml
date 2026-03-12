@@ -1,0 +1,53 @@
+name: Bug Report
+description: Melde einen Fehler in einer Simulation, Visualisierung oder Projektdatei.
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Danke für den Report. Bitte beschreibe den Fehler so konkret wie möglich, damit er reproduzierbar wird.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Fehlerbeschreibung
+      description: Was ist passiert und was war stattdessen erwartet?
+      placeholder: Beim Ausführen von `python3 schwarm_simulation.py` bricht das Skript nach Runde 30 mit ...
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduktionsschritte
+      description: Welche Schritte führen zuverlässig zum Problem?
+      placeholder: |
+        1. Virtuelle Umgebung aktivieren
+        2. `pip install -r requirements.txt`
+        3. `python3 schwarm_simulation.py`
+        4. Fehlerausgabe beobachten
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Erwartetes Verhalten
+      placeholder: Die Simulation sollte vollständig durchlaufen und die PNG-Datei erzeugen.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Umgebung
+      description: Bitte relevante Infos zu OS, Python-Version und Umgebung angeben.
+      placeholder: Ubuntu 24.04, Python 3.12, venv, matplotlib 3.x
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / Screenshots
+      description: Fehlerausgaben, Stacktraces oder Screenshots
+      render: shell
+    validations:
+      required: false

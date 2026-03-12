@@ -1,0 +1,48 @@
+name: Feature Request
+description: Schlage eine neue Funktion, Erweiterung oder Verbesserung für KKI vor.
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Danke für die Idee. Bitte beschreibe nicht nur die Funktion, sondern auch den Nutzen für das Projekt.
+  - type: input
+    id: summary
+    attributes:
+      label: Kurzbeschreibung
+      placeholder: Deterministische Seeds für reproduzierbare Simulationen
+    validations:
+      required: true
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation / Problem
+      description: Welches Problem löst die Erweiterung?
+      placeholder: Ergebnisse variieren zwischen Läufen und sind dadurch schwer vergleichbar.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Vorschlag
+      description: Wie könnte die Lösung konkret aussehen?
+      placeholder: Seed als Konstante oder CLI-Parameter ergänzen und in allen Simulationsskripten verwenden.
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Betroffene Dateien / Bereiche
+      placeholder: schwarm_simulation.py, schwarm_100.py, commitment_protokoll.py
+    validations:
+      required: false
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Akzeptanzkriterien
+      description: Woran erkennt man, dass die Erweiterung erfolgreich umgesetzt wurde?
+      placeholder: Wiederholte Läufe mit gleichem Seed liefern identische Ergebnisse.
+    validations:
+      required: false

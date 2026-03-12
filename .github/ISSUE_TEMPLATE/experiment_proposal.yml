@@ -1,0 +1,48 @@
+name: Experiment Proposal
+description: Schlage ein neues Experiment, eine Validierung oder eine wissenschaftliche Erweiterung vor.
+title: "[Experiment]: "
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Diese Vorlage ist für neue Simulationsideen, Vergleichsexperimente oder empirische Validierungen gedacht.
+  - type: input
+    id: hypothesis
+    attributes:
+      label: Hypothese / Forschungsfrage
+      placeholder: Verbessert ein Reputationsmechanismus die Resilienz gegen Defektoren?
+    validations:
+      required: true
+  - type: textarea
+    id: rationale
+    attributes:
+      label: Begründung
+      description: Warum ist dieses Experiment interessant?
+      placeholder: Die bestehende Theorie sagt voraus, dass ...
+    validations:
+      required: true
+  - type: textarea
+    id: design
+    attributes:
+      label: Experimentdesign
+      description: Welche Variablen, Agentenanzahlen oder Szenarien sollen getestet werden?
+      placeholder: Vergleich zwischen Basisschwarm und Schwarm mit Reputation über 100, 250 und 500 Runden.
+    validations:
+      required: true
+  - type: textarea
+    id: metrics
+    attributes:
+      label: Erfolgsmetriken
+      description: Welche Kennzahlen oder Diagramme sollen ausgewertet werden?
+      placeholder: durchschnittliche Intelligenz, Kooperationsrate, Reputation, Anteil erwischter Manipulatoren
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Zusätzliche Hinweise
+      placeholder: Relevante Paper, theoretische Notizen oder Bezug zu Sektion VIII
+    validations:
+      required: false

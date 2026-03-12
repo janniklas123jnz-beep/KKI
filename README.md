@@ -1,6 +1,16 @@
 # KKI - Künstliche Kollektive Intelligenz
 
+![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)
+![Lizenz](https://img.shields.io/badge/Lizenz-MIT-green)
+![Status](https://img.shields.io/badge/Status-Experimentell-orange)
+
 Ein Python-Projekt zur Frage, wie **Kooperation, Vertrauen und kollektive Intelligenz** in Multi-Agenten-Systemen emergieren können.
+
+## Auf einen Blick
+
+- Python-Simulationen zu Kooperation, Schwarmverhalten und Manipulationsresistenz
+- klare Leitthese: **Intelligenz = f(Kooperation)**
+- direkt ausführbare Experimente mit Visualisierungen und Beispielgrafiken
 
 Die Leitidee des Repositories lautet:
 

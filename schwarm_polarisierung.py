@@ -52,6 +52,7 @@ DEFAULT_ROLE_SWITCH_REPUTATION_COST = 0.02
 DEFAULT_MISSION_SWITCH_INTERVAL = 30
 DEFAULT_MISSION_CONFLICT_THRESHOLD = 0.45
 DEFAULT_MISSION_ARBITRATION_MARGIN = 0.08
+DEFAULT_WORKFLOW_STAGE_MIN_TENURE = 2
 MISSION_CONSENSUS = 'consensus_building'
 MISSION_KNOWLEDGE = 'knowledge_sharing'
 MISSION_DEFENSE = 'reputation_defense'
@@ -63,6 +64,14 @@ MISSION_TYPES = (
     MISSION_DEFENSE,
     MISSION_STABILITY,
     MISSION_SUPPORT,
+)
+WORKFLOW_STAGES = (
+    'task_queue',
+    'discovery',
+    'preparation',
+    'execution',
+    'consolidation',
+    'recovery',
 )
 
 
@@ -103,6 +112,12 @@ class Agent:
         self.mission_candidates = []
         self.mission_last_fitness = {}
         self.mission_arbitration_history = []
+        self.workflow_stage = 'task_queue'
+        self.initial_workflow_stage = 'task_queue'
+        self.workflow_history = []
+        self.task_priority = 0.5
+        self.dependencies_met = True
+        self.stage_tenure = 0
 
         self.meinung_history = [meinung]
         self.kooperation_history = [kooperations_neigung]
@@ -347,6 +362,11 @@ def build_runtime_config() -> tuple[dict[str, float | int | str], int]:
         'mission_arbitration_margin': float(
             os.getenv('KKI_MISSION_ARBITRATION_MARGIN', str(DEFAULT_MISSION_ARBITRATION_MARGIN))
         ),
+        'enable_workflow_stages': os.getenv('KKI_WORKFLOW_STAGES_ENABLED', '').strip().lower()
+        in {'1', 'true', 'yes', 'on'},
+        'workflow_stage_min_tenure': int(
+            os.getenv('KKI_WORKFLOW_STAGE_MIN_TENURE', str(DEFAULT_WORKFLOW_STAGE_MIN_TENURE))
+        ),
     }
     return config, seed
 
@@ -447,6 +467,61 @@ def mission_fuer_rolle(role):
     if role == 'analyzer':
         return MISSION_STABILITY
     return MISSION_SUPPORT
+
+
+def workflow_stufe_fuer_mission(mission):
+    mapping = {
+        MISSION_CONSENSUS: 'discovery',
+        MISSION_KNOWLEDGE: 'preparation',
+        MISSION_DEFENSE: 'execution',
+        MISSION_STABILITY: 'consolidation',
+        MISSION_SUPPORT: 'recovery',
+    }
+    return mapping.get(mission, 'task_queue')
+
+
+def setze_workflow_stufe(agent, stage, runde):
+    stage = stage if stage in WORKFLOW_STAGES else 'task_queue'
+    if agent.workflow_stage != stage:
+        agent.workflow_history.append((runde, agent.workflow_stage, stage))
+        agent.stage_tenure = 0
+    agent.workflow_stage = stage
+
+
+def initialisiere_workflows(agenten):
+    for agent in agenten:
+        stage = workflow_stufe_fuer_mission(agent.mission)
+        agent.workflow_stage = stage
+        agent.initial_workflow_stage = stage
+        agent.workflow_history = []
+        agent.task_priority = 0.5
+        agent.dependencies_met = True
+        agent.stage_tenure = 0
+
+
+def workflow_voraussetzungen_erfuellt(agent, agenten_dict, config):
+    if not config.get('enable_workflow_stages'):
+        return True
+
+    nachbarn = [agenten_dict[nid] for nid in agent.nachbarn if nid in agenten_dict]
+    stage = agent.workflow_stage
+    min_tenure = max(1, int(config.get('workflow_stage_min_tenure', DEFAULT_WORKFLOW_STAGE_MIN_TENURE)))
+
+    if stage in {'task_queue', 'recovery'}:
+        return True
+    if stage == 'discovery':
+        return sum(1 for nachbar in nachbarn if nachbar.gruppe != agent.gruppe) >= 1
+    if stage == 'preparation':
+        return agent.reputation >= 0.45
+    if stage == 'execution':
+        kooperative_partner = 0
+        for partner_id, history in agent.interaktions_history.items():
+            if history and history[-1] == 'C':
+                kooperative_partner += 1
+        return kooperative_partner >= 2
+    if stage == 'consolidation':
+        return agent.stage_tenure >= min_tenure and agent.reputation >= 0.5
+    return True
 
 
 def missionskonflikt(mission_a, mission_b):
@@ -623,6 +698,7 @@ def initialisiere_missionen(agenten):
         agent.mission_candidates = []
         agent.mission_last_fitness = {}
         agent.mission_arbitration_history = []
+    initialisiere_workflows(agenten)
 
 
 def aktualisiere_missionen(agenten, agenten_dict, config, runde):
@@ -671,6 +747,13 @@ def aktualisiere_missionen(agenten, agenten_dict, config, runde):
         if agent.mission != neue_mission:
             setze_mission(agent, neue_mission, runde)
             switches += 1
+        if config.get('enable_workflow_stages'):
+            agent.task_priority = max(0.0, min(1.0, agent.mission_last_fitness.get(neue_mission, 0.5)))
+            zielstufe = workflow_stufe_fuer_mission(neue_mission)
+            setze_workflow_stufe(agent, zielstufe, runde)
+            agent.dependencies_met = workflow_voraussetzungen_erfuellt(agent, agenten_dict, config)
+            if not agent.dependencies_met:
+                setze_workflow_stufe(agent, 'task_queue', runde)
     return {
         'switches': switches,
         'arbitrations': arbitrations,
@@ -1131,6 +1214,8 @@ def run_polarization_experiment(
     config.setdefault('mission_arbitration_enabled', False)
     config.setdefault('mission_conflict_threshold', DEFAULT_MISSION_CONFLICT_THRESHOLD)
     config.setdefault('mission_arbitration_margin', DEFAULT_MISSION_ARBITRATION_MARGIN)
+    config.setdefault('enable_workflow_stages', False)
+    config.setdefault('workflow_stage_min_tenure', DEFAULT_WORKFLOW_STAGE_MIN_TENURE)
     scenario = str(config['scenario'])
     rounds = int(config['rounds'])
     interactions_per_round = int(config['interactions_per_round'])
@@ -1191,6 +1276,11 @@ def run_polarization_experiment(
                     f"aktiv | Konflikt-Schwelle={float(config['mission_conflict_threshold']):.2f}, "
                     f"Margin={float(config['mission_arbitration_margin']):.2f}"
                 )
+            if config.get('enable_workflow_stages'):
+                print(
+                    "Workflow-Stufen: "
+                    f"aktiv | Mindestdauer={int(config['workflow_stage_min_tenure'])}"
+                )
         print("Ziel: Beobachte, ob der Schwarm in Richtung Konsens oder in stabile Lager driftet.")
         print("\nSimulation läuft...\n")
 
@@ -1225,6 +1315,9 @@ def run_polarization_experiment(
     mission_arbitration_history = []
     mission_conflict_history = []
     mission_fitness_gain_history = []
+    workflow_completion_history = []
+    workflow_prerequisite_failures_history = []
+    workflow_stage_counts = defaultdict(int)
 
     for runde in range(1, rounds + 1):
         gruppenuebergreifende_interaktionen = 0
@@ -1335,6 +1428,7 @@ def run_polarization_experiment(
         for agent in agenten:
             agent.role_tenure += 1
             agent.mission_tenure += 1
+            agent.stage_tenure += 1
             agent.runde_beenden()
 
         polarisierungs_index = berechne_polarisierungs_index(agenten)
@@ -1362,6 +1456,15 @@ def run_polarization_experiment(
         mission_arbitration_history.append(mission_stats['arbitrations'])
         mission_conflict_history.append(mission_stats['conflicts'])
         mission_fitness_gain_history.append(mission_stats['fitness_gain'])
+        if config.get('enable_workflow_stages'):
+            workflow_completion_history.append(
+                sum(1 for agent in agenten if agent.workflow_stage == 'recovery') / len(agenten)
+            )
+            workflow_prerequisite_failures_history.append(
+                sum(1 for agent in agenten if not agent.dependencies_met)
+            )
+            for agent in agenten:
+                workflow_stage_counts[agent.workflow_stage] += 1
         for alte_rolle, neue_rolle in switch_stats['transitions']:
             role_transition_counts[f'{alte_rolle}->{neue_rolle}'] += 1
         removed_edges_history.append(rewiring_stats['removed_edges'])
@@ -1451,6 +1554,12 @@ def run_polarization_experiment(
     mission_arbitration_total = int(sum(mission_arbitration_history))
     mission_arbitration_mean_gain = float(np.mean(mission_fitness_gain_history))
     mission_switch_stability = float(np.std(mission_switch_history) / max(1.0, np.mean(mission_switch_history)))
+    workflow_metrics = {
+        'stage_distribution': {stage: sum(1 for agent in agenten if agent.workflow_stage == stage) for stage in WORKFLOW_STAGES},
+        'completion_rate': float(np.mean(workflow_completion_history)) if workflow_completion_history else 0.0,
+        'prerequisite_failures': int(sum(workflow_prerequisite_failures_history)),
+        'observed_stage_counts': dict(workflow_stage_counts),
+    }
 
     interpretation = "hybrid"
     if finale_pi > 0.22 and finaler_abstand > 0.35:
@@ -1496,6 +1605,9 @@ def run_polarization_experiment(
                 print(f"Ø Konflikte/Runde:           {float(np.mean(mission_conflict_history)):.2f}")
                 print(f"Ø Arbitrierungen/Runde:      {float(np.mean(mission_arbitration_history)):.2f}")
                 print(f"Ø Fitnessgewinn/Arbitration: {mission_arbitration_mean_gain:.3f}")
+            if config.get('enable_workflow_stages'):
+                print(f"Workflow-Abschlussrate:      {workflow_metrics['completion_rate']:.1%}")
+                print(f"Workflow-Blockaden gesamt:   {workflow_metrics['prerequisite_failures']}")
         if config.get('enable_dynamic_rewiring'):
             print(f"Ø Rewiring-Operationen/Runde: {durchschnitt_rewiring:.2f}")
             print(f"Finale Netzwerkdichte:       {finale_netzwerkmetriken['density']:.3f}")
@@ -1548,6 +1660,7 @@ def run_polarization_experiment(
         'mission_arbitration_total': mission_arbitration_total,
         'mission_arbitration_mean_gain': mission_arbitration_mean_gain,
         'mission_switch_stability': mission_switch_stability,
+        'workflow_metrics': workflow_metrics,
         'group_1_mean_opinion': mean_group_a,
         'group_2_mean_opinion': mean_group_b,
         'interpretation': interpretation,

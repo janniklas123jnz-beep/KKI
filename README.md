@@ -52,6 +52,7 @@ Die Simulationen basieren auf wiederholten Interaktionen im Stil des Gefangenend
 | `schwarm_rollenwechsel.py` | Studie fuer dynamische Rollenwechsel und adaptive Aufgabenverteilung im Schwarm |
 | `schwarm_missionsziele.py` | Studie fuer explizite Teamaufgaben wie Konsensbildung, Wissensaustausch und Abwehr |
 | `schwarm_missionskonflikte.py` | Studie fuer Arbitration und Zielkonflikte zwischen konkurrierenden Missionen |
+| `schwarm_arbeitsketten.py` | Studie fuer mehrstufige Teamaufgaben und Aufgabenabhaengigkeiten im Schwarm |
 | `commitment_protokoll.py` | Commit-Reveal-Verify-Protokoll gegen Manipulation |
 
 ## Features
@@ -134,6 +135,7 @@ python3 schwarm_rollenlernen.py
 python3 schwarm_rollenwechsel.py
 python3 schwarm_missionsziele.py
 python3 schwarm_missionskonflikte.py
+python3 schwarm_arbeitsketten.py
 python3 commitment_protokoll.py
 ```
 
@@ -312,6 +314,21 @@ KKI_MISSION_ARBITRATION_MARGIN=0.08 \
 python3 schwarm_missionskonflikte.py
 ```
 
+Die Arbeitsketten-Studie baut darauf auf und untersucht, ob daraus mehrstufige Teamaufgaben mit Voraussetzungen entstehen koennen:
+
+```bash
+python3 schwarm_arbeitsketten.py
+```
+
+Optional lassen sich Wiederholungen und Workflow-Stufenparameter anpassen:
+
+```bash
+KKI_WORKFLOW_REPETITIONS=2 \
+KKI_WORKFLOW_STAGES_ENABLED=true \
+KKI_WORKFLOW_STAGE_MIN_TENURE=2 \
+python3 schwarm_arbeitsketten.py
+```
+
 Optional lassen sich Wiederholungen und gemeinsame Basisparameter anpassen:
 
 ```bash
@@ -366,6 +383,7 @@ Die folgenden Skripte erzeugen die im Repository abgelegten PNG-Dateien:
 | `schwarm_rollenwechsel.py` | `kki_rollenwechsel.png` | `KKI_SEED=42 python3 schwarm_rollenwechsel.py` |
 | `schwarm_missionsziele.py` | `kki_missionsziele.png` | `KKI_SEED=42 python3 schwarm_missionsziele.py` |
 | `schwarm_missionskonflikte.py` | `kki_missionskonflikte.png` | `KKI_SEED=42 python3 schwarm_missionskonflikte.py` |
+| `schwarm_arbeitsketten.py` | `kki_arbeitsketten.png` | `KKI_SEED=42 python3 schwarm_arbeitsketten.py` |
 | `commitment_protokoll.py` | `kki_commitment_protokoll.png` | `KKI_SEED=42 python3 commitment_protokoll.py` |
 
 Hinweise zur Reproduktion:
@@ -385,6 +403,7 @@ Hinweise zur Reproduktion:
 - die Rollenwechsel-Studie nutzt zusaetzlich `KKI_ROLLENWECHSEL_REPETITIONS`, `KKI_ENABLE_ROLE_SWITCHING`, `KKI_ROLE_SWITCH_INTERVAL` und `KKI_ROLE_SWITCH_MIN_TENURE`
 - die Missionsziel-Studie nutzt zusaetzlich `KKI_MISSION_REPETITIONS`, `KKI_MISSION_SWITCH_INTERVAL` und die Missionsschalter `KKI_MISSIONS_ENABLED` sowie `KKI_MISSION_ASSIGNMENT`
 - die Missionskonflikt-Studie nutzt zusaetzlich `KKI_MISSION_ARBITRATION_REPETITIONS`, `KKI_MISSION_CONFLICT_THRESHOLD`, `KKI_MISSION_ARBITRATION_MARGIN` sowie `KKI_MISSION_ARBITRATION_ENABLED`
+- die Arbeitsketten-Studie nutzt zusaetzlich `KKI_WORKFLOW_REPETITIONS`, `KKI_WORKFLOW_STAGE_MIN_TENURE` und `KKI_WORKFLOW_STAGES_ENABLED`
 
 Beispiel für eine reproduzierbare, headless Erzeugung:
 
@@ -464,6 +483,10 @@ Die Smoke-Tests starten ausgewählte Kernskripte im verkürzten headless Testmod
 
 ![KKI Missionskonflikte](kki_missionskonflikte.png)
 
+### Arbeitsketten-Studie
+
+![KKI Arbeitsketten](kki_arbeitsketten.png)
+
 ## Zentrale Beobachtungen
 
 Die bisherigen Simulationen illustrieren wiederkehrende Muster:
@@ -484,6 +507,7 @@ Die bisherigen Simulationen illustrieren wiederkehrende Muster:
 - die Rollenwechsel-Studie untersucht nun, ob stabile Spezialrollen bereits genuegen oder ob ein dynamischer Wechsel zwischen Aufgaben im Schwarm zusaetzliche Vorteile bringt
 - die Missionsziel-Studie untersucht nun, ob dieselben Rollen durch explizite Teamaufgaben noch fokussierter auf Konsens, Wissensaustausch und Abwehr ausgerichtet werden koennen
 - die Missionskonflikt-Studie untersucht nun, ob adaptive Missionen besser werden, wenn der Schwarm Zielkonflikte explizit erkennt und konkurrierende Aufgaben arbitriert
+- die Arbeitsketten-Studie untersucht nun, ob aus diesen Missionen mehrstufige Arbeitsablaeufe mit Abhaengigkeiten entstehen koennen, statt nur einzelne Aufgaben zu optimieren
 
 ## Projektstruktur und Ausrichtung
 

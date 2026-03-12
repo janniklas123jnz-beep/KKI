@@ -57,6 +57,7 @@ Die Simulationen basieren auf wiederholten Interaktionen im Stil des Gefangenend
 | `schwarm_arbeitszellen_parallel.py` | Studie fuer parallele Workflow-Zellen und koordinierte Ressourcenteilung im Schwarm |
 | `schwarm_faehigkeitscluster.py` | Studie fuer heterogene Faehigkeitscluster und asymmetrische Ressourcenbudgets im Schwarm |
 | `schwarm_engpassmanagement.py` | Studie fuer Bottleneck-Management und prioritaetsbasierte Ressourcen-Umlenkung zwischen Zellclustern |
+| `schwarm_meta_koordination.py` | Studie fuer hierarchische Meta-Koordination zwischen Zellclustern und Missionslagen |
 | `commitment_protokoll.py` | Commit-Reveal-Verify-Protokoll gegen Manipulation |
 
 ## Features
@@ -144,6 +145,7 @@ python3 schwarm_arbeitszellen.py
 python3 schwarm_arbeitszellen_parallel.py
 python3 schwarm_faehigkeitscluster.py
 python3 schwarm_engpassmanagement.py
+python3 schwarm_meta_koordination.py
 python3 commitment_protokoll.py
 ```
 
@@ -402,6 +404,22 @@ KKI_BOTTLENECK_TRIAGE_INTENSITY=0.55 \
 python3 schwarm_engpassmanagement.py
 ```
 
+Die Meta-Koordinations-Studie erweitert diese lokale Triage um globale Prioritaeten zwischen Missionen und Zellclustern:
+
+```bash
+python3 schwarm_meta_koordination.py
+```
+
+Optional lassen sich Meta-Intervall und Prioritaetsstaerke anpassen:
+
+```bash
+KKI_META_REPETITIONS=2 \
+KKI_META_COORDINATION_ENABLED=true \
+KKI_META_UPDATE_INTERVAL=12 \
+KKI_META_PRIORITY_STRENGTH=0.18 \
+python3 schwarm_meta_koordination.py
+```
+
 Optional lassen sich Wiederholungen und gemeinsame Basisparameter anpassen:
 
 ```bash
@@ -461,6 +479,7 @@ Die folgenden Skripte erzeugen die im Repository abgelegten PNG-Dateien:
 | `schwarm_arbeitszellen_parallel.py` | `kki_arbeitszellen_parallel.png` | `KKI_SEED=42 python3 schwarm_arbeitszellen_parallel.py` |
 | `schwarm_faehigkeitscluster.py` | `kki_faehigkeitscluster.png` | `KKI_SEED=42 python3 schwarm_faehigkeitscluster.py` |
 | `schwarm_engpassmanagement.py` | `kki_engpassmanagement.png` | `KKI_SEED=42 python3 schwarm_engpassmanagement.py` |
+| `schwarm_meta_koordination.py` | `kki_meta_koordination.png` | `KKI_SEED=42 python3 schwarm_meta_koordination.py` |
 | `commitment_protokoll.py` | `kki_commitment_protokoll.png` | `KKI_SEED=42 python3 commitment_protokoll.py` |
 
 Hinweise zur Reproduktion:
@@ -485,6 +504,7 @@ Hinweise zur Reproduktion:
 - die Parallel-Arbeitszellen-Studie nutzt zusaetzlich `KKI_PARALLEL_CELLS_REPETITIONS`, `KKI_PARALLEL_WORKFLOW_CELLS_ENABLED`, `KKI_RESOURCE_COORDINATION_ENABLED`, `KKI_RESOURCE_BUDGET` und `KKI_RESOURCE_SHARE_FACTOR`
 - die Faehigkeitscluster-Studie nutzt zusaetzlich `KKI_CAPABILITY_CLUSTER_REPETITIONS`, `KKI_CAPABILITY_CLUSTERS_ENABLED`, `KKI_ASYMMETRIC_CLUSTER_BUDGETS_ENABLED` und `KKI_CLUSTER_BUDGET_SKEW`
 - die Engpassmanagement-Studie nutzt zusaetzlich `KKI_BOTTLENECK_REPETITIONS`, `KKI_BOTTLENECK_MANAGEMENT_ENABLED`, `KKI_BOTTLENECK_THRESHOLD` und `KKI_BOTTLENECK_TRIAGE_INTENSITY`
+- die Meta-Koordinations-Studie nutzt zusaetzlich `KKI_META_REPETITIONS`, `KKI_META_COORDINATION_ENABLED`, `KKI_META_UPDATE_INTERVAL` und `KKI_META_PRIORITY_STRENGTH`
 
 Beispiel für eine reproduzierbare, headless Erzeugung:
 
@@ -583,6 +603,10 @@ Die Smoke-Tests starten ausgewählte Kernskripte im verkürzten headless Testmod
 ### Engpassmanagement-Studie
 
 ![KKI Engpassmanagement](kki_engpassmanagement.png)
+
+### Meta-Koordinations-Studie
+
+![KKI Meta-Koordination](kki_meta_koordination.png)
 
 ## Zentrale Beobachtungen
 

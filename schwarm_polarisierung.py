@@ -59,6 +59,8 @@ DEFAULT_RESOURCE_SHARE_FACTOR = 0.20
 DEFAULT_CLUSTER_BUDGET_SKEW = 0.35
 DEFAULT_BOTTLENECK_THRESHOLD = 1.05
 DEFAULT_BOTTLENECK_TRIAGE_INTENSITY = 0.55
+DEFAULT_META_UPDATE_INTERVAL = 12
+DEFAULT_META_PRIORITY_STRENGTH = 0.18
 MISSION_CONSENSUS = 'consensus_building'
 MISSION_KNOWLEDGE = 'knowledge_sharing'
 MISSION_DEFENSE = 'reputation_defense'
@@ -158,6 +160,9 @@ class Agent:
         self.bottleneck_pressure = 0.0
         self.bottleneck_relief_total = 0.0
         self.resource_rerouted_total = 0.0
+        self.meta_priority_score = 0.0
+        self.meta_aligned_rounds = 0
+        self.meta_focus_history = []
 
         self.meinung_history = [meinung]
         self.kooperation_history = [kooperations_neigung]
@@ -437,6 +442,14 @@ def build_runtime_config() -> tuple[dict[str, float | int | str], int]:
         'bottleneck_triage_intensity': float(
             os.getenv('KKI_BOTTLENECK_TRIAGE_INTENSITY', str(DEFAULT_BOTTLENECK_TRIAGE_INTENSITY))
         ),
+        'enable_meta_coordination': os.getenv('KKI_META_COORDINATION_ENABLED', '').strip().lower()
+        in {'1', 'true', 'yes', 'on'},
+        'meta_update_interval': int(
+            os.getenv('KKI_META_UPDATE_INTERVAL', str(DEFAULT_META_UPDATE_INTERVAL))
+        ),
+        'meta_priority_strength': float(
+            os.getenv('KKI_META_PRIORITY_STRENGTH', str(DEFAULT_META_PRIORITY_STRENGTH))
+        ),
     }
     return config, seed
 
@@ -604,6 +617,17 @@ def faehigkeitscluster_fuer_agent(agent):
     return mapping.get(agent.workflow_cell, 'synthesis_cluster')
 
 
+def cluster_fuer_mission(mission):
+    mapping = {
+        MISSION_CONSENSUS: 'synthesis_cluster',
+        MISSION_KNOWLEDGE: 'scout_cluster',
+        MISSION_DEFENSE: 'response_cluster',
+        MISSION_STABILITY: 'resilience_cluster',
+        MISSION_SUPPORT: 'synthesis_cluster',
+    }
+    return mapping.get(mission, 'synthesis_cluster')
+
+
 def cluster_profil(cluster, config):
     skew = max(0.0, float(config.get('cluster_budget_skew', DEFAULT_CLUSTER_BUDGET_SKEW)))
     profiles = {
@@ -664,7 +688,82 @@ def initialisiere_faehigkeitscluster(agenten, config):
         agent.bottleneck_pressure = 0.0
         agent.bottleneck_relief_total = 0.0
         agent.resource_rerouted_total = 0.0
+        agent.meta_priority_score = 0.0
+        agent.meta_aligned_rounds = 0
+        agent.meta_focus_history = []
         setze_faehigkeitscluster(agent, cluster, config, runde=0)
+
+
+def aktualisiere_meta_koordination(agenten, config, runde, mission_success_counts, mission_contact_counts):
+    if not config.get('enable_meta_coordination'):
+        for agent in agenten:
+            agent.meta_priority_score *= 0.7
+        return {
+            'switches': 0,
+            'alignment_rate': 0.0,
+            'priority_mission': None,
+            'priority_cluster': None,
+        }
+
+    interval = max(1, int(config.get('meta_update_interval', DEFAULT_META_UPDATE_INTERVAL)))
+    strength = max(0.0, float(config.get('meta_priority_strength', DEFAULT_META_PRIORITY_STRENGTH)))
+    mission_scores = {
+        mission: mission_success_counts[mission] / max(1, mission_contact_counts[mission])
+        for mission in MISSION_TYPES
+    }
+    priority_mission = min(mission_scores, key=mission_scores.get)
+
+    cluster_pressures = defaultdict(list)
+    for agent in agenten:
+        cluster_pressures[agent.capability_cluster].append(agent.bottleneck_pressure)
+    if cluster_pressures:
+        priority_cluster = max(
+            cluster_pressures,
+            key=lambda cluster: float(np.mean(cluster_pressures[cluster])) + (
+                0.08 if cluster == cluster_fuer_mission(priority_mission) else 0.0
+            ),
+        )
+    else:
+        priority_cluster = cluster_fuer_mission(priority_mission)
+
+    switches = 0
+    aligned = 0
+    if runde % interval == 0:
+        for agent in agenten:
+            aligned_now = (
+                agent.capability_cluster == priority_cluster
+                or agent.mission == priority_mission
+                or cluster_fuer_mission(agent.mission) == priority_cluster
+            )
+            if aligned_now:
+                aligned += 1
+                agent.meta_aligned_rounds += 1
+                neue_prioritaet = min(
+                    1.0,
+                    agent.meta_priority_score * 0.7 + strength + 0.10 * agent.cluster_coordination_bonus,
+                )
+            else:
+                neue_prioritaet = max(0.0, agent.meta_priority_score * 0.65)
+            if abs(neue_prioritaet - agent.meta_priority_score) > 1e-9:
+                switches += 1
+            agent.meta_priority_score = neue_prioritaet
+            agent.meta_focus_history.append((runde, priority_mission, priority_cluster, aligned_now))
+            if aligned_now:
+                agent.task_priority = min(1.0, agent.task_priority + 0.16 + strength * 0.35)
+                if agent.capability_cluster == priority_cluster:
+                    agent.cluster_output_multiplier = min(1.45, agent.cluster_output_multiplier + 0.06)
+        alignment_rate = aligned / max(1, len(agenten))
+    else:
+        for agent in agenten:
+            agent.meta_priority_score *= 0.96
+        alignment_rate = sum(1 for agent in agenten if agent.meta_priority_score >= strength * 0.5) / max(1, len(agenten))
+
+    return {
+        'switches': switches,
+        'alignment_rate': alignment_rate,
+        'priority_mission': priority_mission,
+        'priority_cluster': priority_cluster,
+    }
 
 
 def workflow_voraussetzungen_erfuellt(agent, agenten_dict, config):
@@ -747,6 +846,7 @@ def koordiniere_ressourcen(agenten, config):
             agent.task_priority
             + agent.handoff_credit * 0.5
             + agent.reputation * 0.1
+            + agent.meta_priority_score * 0.35
         ) * agent.cluster_demand_multiplier
         cell_demand[agent.workflow_cell] += demand
         agent.resource_credit *= 0.85
@@ -768,7 +868,9 @@ def koordiniere_ressourcen(agenten, config):
     for cell, members in cell_members.items():
         cluster_weight = 1.0
         if config.get('enable_capability_clusters') and members:
-            cluster_weight = float(np.mean([agent.cluster_budget_weight for agent in members]))
+            cluster_weight = float(
+                np.mean([agent.cluster_budget_weight * (1.0 + 0.25 * agent.meta_priority_score) for agent in members])
+            )
         cell_weighted_demand[cell] = cell_demand[cell] * cluster_weight
     weighted_total = max(1e-9, sum(cell_weighted_demand.values()))
 
@@ -841,7 +943,7 @@ def koordiniere_ressourcen(agenten, config):
             agent.resource_credit = min(1.0, agent.resource_credit + resource_bonus)
             agent.resource_received_total += resource_bonus
             agent.resource_shared_total += budget / len(agenten)
-            output_gain = resource_bonus * agent.cluster_output_multiplier * (0.5 + agent.task_priority)
+            output_gain = resource_bonus * agent.cluster_output_multiplier * (0.5 + agent.task_priority + 0.25 * agent.meta_priority_score)
             agent.cluster_output_total += output_gain
             agent.bottleneck_pressure = max(agent.bottleneck_pressure, cell_pressure.get(dominant_cell, 0.0))
             total_shared += resource_bonus
@@ -871,7 +973,12 @@ def koordiniere_ressourcen(agenten, config):
             agent.resource_credit = min(1.0, agent.resource_credit + resource_bonus)
             agent.resource_received_total += resource_bonus
             agent.resource_shared_total += allocation / len(agenten)
-            output_gain = resource_bonus * agent.cluster_output_multiplier * (0.5 + agent.task_priority) * triage_bonus
+            output_gain = (
+                resource_bonus
+                * agent.cluster_output_multiplier
+                * (0.5 + agent.task_priority + 0.25 * agent.meta_priority_score)
+                * triage_bonus
+            )
             agent.cluster_output_total += output_gain
             agent.bottleneck_pressure = max(agent.bottleneck_pressure, cell_pressure.get(cell, 0.0))
             if cell in bottleneck_cells:
@@ -956,6 +1063,7 @@ def berechne_missionsfitness(agent, agenten_dict):
             + 0.05 * agent.handoff_credit
             + 0.06 * agent.resource_credit
             + 0.05 * agent.cluster_coordination_bonus
+            + 0.05 * agent.meta_priority_score
         ),
         MISSION_KNOWLEDGE: (
             missions_rollenfit(agent.role, MISSION_KNOWLEDGE)
@@ -965,6 +1073,7 @@ def berechne_missionsfitness(agent, agenten_dict):
             + 0.06 * agent.handoff_credit
             + 0.07 * agent.resource_credit
             + 0.04 * agent.cluster_output_multiplier
+            + 0.06 * agent.meta_priority_score
         ),
         MISSION_DEFENSE: (
             missions_rollenfit(agent.role, MISSION_DEFENSE)
@@ -974,6 +1083,7 @@ def berechne_missionsfitness(agent, agenten_dict):
             + 0.05 * agent.handoff_credit
             + 0.05 * agent.resource_credit
             + 0.05 * agent.cluster_resilience_bonus
+            + 0.05 * agent.meta_priority_score
         ),
         MISSION_STABILITY: (
             missions_rollenfit(agent.role, MISSION_STABILITY)
@@ -983,6 +1093,7 @@ def berechne_missionsfitness(agent, agenten_dict):
             + 0.04 * agent.handoff_credit
             + 0.05 * agent.resource_credit
             + 0.06 * agent.cluster_resilience_bonus
+            + 0.05 * agent.meta_priority_score
         ),
         MISSION_SUPPORT: (
             missions_rollenfit(agent.role, MISSION_SUPPORT)
@@ -991,6 +1102,7 @@ def berechne_missionsfitness(agent, agenten_dict):
             + 0.03 * agent.handoff_credit
             + 0.04 * agent.resource_credit
             + 0.04 * agent.cluster_coordination_bonus
+            + 0.04 * agent.meta_priority_score
         ),
     }
 
@@ -1168,6 +1280,8 @@ def missions_bonus(agent, partner_reputation, partner, ist_cross_group):
 
     cooperation_bonus += agent.cluster_coordination_bonus * (0.6 if ist_cross_group else 0.3)
     opinion_pull += agent.cluster_resilience_bonus * 0.2
+    cooperation_bonus += agent.meta_priority_score * (0.35 if ist_cross_group else 0.18)
+    opinion_pull += agent.meta_priority_score * 0.08
 
     return cooperation_bonus, opinion_pull
 
@@ -1620,6 +1734,9 @@ def run_polarization_experiment(
     config.setdefault('enable_bottleneck_management', False)
     config.setdefault('bottleneck_threshold', DEFAULT_BOTTLENECK_THRESHOLD)
     config.setdefault('bottleneck_triage_intensity', DEFAULT_BOTTLENECK_TRIAGE_INTENSITY)
+    config.setdefault('enable_meta_coordination', False)
+    config.setdefault('meta_update_interval', DEFAULT_META_UPDATE_INTERVAL)
+    config.setdefault('meta_priority_strength', DEFAULT_META_PRIORITY_STRENGTH)
     scenario = str(config['scenario'])
     rounds = int(config['rounds'])
     interactions_per_round = int(config['interactions_per_round'])
@@ -1706,6 +1823,11 @@ def run_polarization_experiment(
                         "Bottleneck-Management: "
                         f"aktiv | Schwelle={float(config.get('bottleneck_threshold', DEFAULT_BOTTLENECK_THRESHOLD)):.2f}"
                     )
+                if config.get('enable_meta_coordination'):
+                    print(
+                        "Meta-Koordination: "
+                        f"aktiv | Intervall={int(config.get('meta_update_interval', DEFAULT_META_UPDATE_INTERVAL))}"
+                    )
         print("Ziel: Beobachte, ob der Schwarm in Richtung Konsens oder in stabile Lager driftet.")
         print("\nSimulation läuft...\n")
 
@@ -1752,6 +1874,10 @@ def run_polarization_experiment(
     bottleneck_history = []
     bottleneck_relief_history = []
     rerouted_budget_history = []
+    meta_switch_history = []
+    meta_alignment_history = []
+    meta_mission_focus_counts = defaultdict(int)
+    meta_cluster_focus_counts = defaultdict(int)
 
     for runde in range(1, rounds + 1):
         gruppenuebergreifende_interaktionen = 0
@@ -1862,6 +1988,13 @@ def run_polarization_experiment(
 
         switch_stats = aktualisiere_rollenwechsel(agenten, agenten_dict, config, runde)
         mission_stats = aktualisiere_missionen(agenten, agenten_dict, config, runde)
+        meta_stats = aktualisiere_meta_koordination(
+            agenten,
+            config,
+            runde,
+            mission_success_counts,
+            mission_contact_counts,
+        )
         resource_stats = koordiniere_ressourcen(agenten, config)
         rewiring_stats = aktualisiere_adaptives_netzwerk(agenten, agenten_dict, config)
         for agent in agenten:
@@ -1915,6 +2048,12 @@ def run_polarization_experiment(
             bottleneck_history.append(resource_stats['bottlenecks'])
             bottleneck_relief_history.append(resource_stats['relief'])
             rerouted_budget_history.append(resource_stats['rerouted'])
+            meta_switch_history.append(meta_stats['switches'])
+            meta_alignment_history.append(meta_stats['alignment_rate'])
+            if meta_stats['priority_mission'] is not None:
+                meta_mission_focus_counts[meta_stats['priority_mission']] += 1
+            if meta_stats['priority_cluster'] is not None:
+                meta_cluster_focus_counts[meta_stats['priority_cluster']] += 1
         for alte_rolle, neue_rolle in switch_stats['transitions']:
             role_transition_counts[f'{alte_rolle}->{neue_rolle}'] += 1
         removed_edges_history.append(rewiring_stats['removed_edges'])
@@ -1952,6 +2091,8 @@ def run_polarization_experiment(
                 status += f", Cluster-Output={resource_stats['effective_output']:.2f}"
             if config.get('enable_bottleneck_management'):
                 status += f", Bottlenecks={resource_stats['bottlenecks']}"
+            if config.get('enable_meta_coordination'):
+                status += f", Meta={meta_stats['alignment_rate']:.2f}"
             print(status)
 
     finale_pi = polarisierungs_history[-1]
@@ -2037,6 +2178,10 @@ def run_polarization_experiment(
         'bottleneck_relief_total': float(sum(bottleneck_relief_history)),
         'bottleneck_relief_rate': float(np.mean(bottleneck_relief_history)) if bottleneck_relief_history else 0.0,
         'rerouted_budget_total': float(sum(rerouted_budget_history)),
+        'meta_switch_total': int(sum(meta_switch_history)),
+        'meta_alignment_rate': float(np.mean(meta_alignment_history)) if meta_alignment_history else 0.0,
+        'meta_mission_focus_counts': dict(meta_mission_focus_counts),
+        'meta_cluster_focus_counts': dict(meta_cluster_focus_counts),
     }
 
     interpretation = "hybrid"
@@ -2098,6 +2243,9 @@ def run_polarization_experiment(
             if config.get('enable_bottleneck_management'):
                 print(f"Bottlenecks gesamt:       {workflow_metrics['bottleneck_total']}")
                 print(f"Entlastung gesamt:        {workflow_metrics['bottleneck_relief_total']:.2f}")
+            if config.get('enable_meta_coordination'):
+                print(f"Meta-Wechsel gesamt:      {workflow_metrics['meta_switch_total']}")
+                print(f"Meta-Ausrichtung:         {workflow_metrics['meta_alignment_rate']:.1%}")
         if config.get('enable_dynamic_rewiring'):
             print(f"Ø Rewiring-Operationen/Runde: {durchschnitt_rewiring:.2f}")
             print(f"Finale Netzwerkdichte:       {finale_netzwerkmetriken['density']:.3f}")

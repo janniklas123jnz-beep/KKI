@@ -25,3 +25,6 @@ Sektion VIII: Intrinsische Selbstkorrektur durch Architektur-gebundene Moral
 
 ## Autor
 Jan Niklas (@janniklas123jnz-beep)
+
+## Lizenz
+Dieses Projekt steht unter der `MIT License`. Details findest du in der Datei `LICENSE`.

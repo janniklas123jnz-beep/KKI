@@ -47,6 +47,7 @@ Die Simulationen basieren auf wiederholten Interaktionen im Stil des Gefangenend
 | `schwarm_grossstudie.py` | Kombinierte Grossstudie ueber Polarisierung, Invasion und Commitment-Angriffe auf gemeinsamer Agenten-Grund-DNA |
 | `schwarm_anti_polarisierung.py` | Vergleichsstudie fuer Brueckenagenten, Mittelzonen-Moderation und hybride Anti-Polarisierungsstrategien |
 | `schwarm_gekoppelte_abwehr.py` | Architekturvergleich fuer gekoppelte Anti-Polarisierungs-, Invasions- und Commitment-Abwehr |
+| `schwarm_rollenspezialisierung.py` | Rollenstudie fuer gemeinsame Agenten-DNA mit Brueckenbauern, Waechtern und Rollenmix |
 | `commitment_protokoll.py` | Commit-Reveal-Verify-Protokoll gegen Manipulation |
 
 ## Features
@@ -124,6 +125,7 @@ python3 schwarm_vertrauens_benchmark.py
 python3 schwarm_grossstudie.py
 python3 schwarm_anti_polarisierung.py
 python3 schwarm_gekoppelte_abwehr.py
+python3 schwarm_rollenspezialisierung.py
 python3 commitment_protokoll.py
 ```
 
@@ -226,6 +228,22 @@ Die gekoppelte Abwehrstudie vergleicht, ob die neue Anti-Polarisierung auch als 
 python3 schwarm_gekoppelte_abwehr.py
 ```
 
+Die Rollenspezialisierungsstudie prueft den naechsten Schritt zur Bauphase: gemeinsame Agenten-Grund-DNA, aber unterschiedliche Funktionsrollen im Schwarm:
+
+```bash
+python3 schwarm_rollenspezialisierung.py
+```
+
+Optional lassen sich Wiederholungen und Rollenanteile anpassen:
+
+```bash
+KKI_ROLLENSPEZ_REPETITIONS=2 \
+KKI_GENERALIST_SHARE=0.55 \
+KKI_CONNECTOR_SHARE=0.25 \
+KKI_SENTINEL_SHARE=0.20 \
+python3 schwarm_rollenspezialisierung.py
+```
+
 Optional lassen sich Wiederholungen und gemeinsame Basisparameter anpassen:
 
 ```bash
@@ -275,6 +293,7 @@ Die folgenden Skripte erzeugen die im Repository abgelegten PNG-Dateien:
 | `schwarm_grossstudie.py` | `kki_grossstudie.png` | `KKI_SEED=42 python3 schwarm_grossstudie.py` |
 | `schwarm_anti_polarisierung.py` | `kki_anti_polarisierung.png` | `KKI_SEED=42 python3 schwarm_anti_polarisierung.py` |
 | `schwarm_gekoppelte_abwehr.py` | `kki_gekoppelte_abwehr.png` | `KKI_SEED=42 python3 schwarm_gekoppelte_abwehr.py` |
+| `schwarm_rollenspezialisierung.py` | `kki_rollenspezialisierung.png` | `KKI_SEED=42 python3 schwarm_rollenspezialisierung.py` |
 | `commitment_protokoll.py` | `kki_commitment_protokoll.png` | `KKI_SEED=42 python3 commitment_protokoll.py` |
 
 Hinweise zur Reproduktion:
@@ -289,6 +308,7 @@ Hinweise zur Reproduktion:
 - die Grossstudie nutzt zusaetzlich `KKI_MEGASTUDY_REPETITIONS`, `KKI_MEGASTUDY_AGENT_COUNT` und `KKI_MEGASTUDY_STRESS_ROUND` fuer eine gemeinsame Grundlagenkonfiguration
 - die Anti-Polarisierungsstudie nutzt zusaetzlich `KKI_ANTI_POL_REPETITIONS`, `KKI_ANTI_POL_AGENT_COUNT` und die optionalen Schalter `KKI_BRIDGE_MECHANISM`, `KKI_CENTRIST_MODERATION` und `KKI_MEDIATOR_MODE`
 - die gekoppelte Abwehrstudie nutzt zusaetzlich `KKI_COUPLED_REPETITIONS`, `KKI_COUPLED_AGENT_COUNT` und `KKI_COUPLED_STRESS_ROUND` fuer den Architekturvergleich ueber mehrere Bedrohungen
+- die Rollenspezialisierungsstudie nutzt zusaetzlich `KKI_ROLLENSPEZ_REPETITIONS`, `KKI_GENERALIST_SHARE`, `KKI_CONNECTOR_SHARE` und `KKI_SENTINEL_SHARE`
 
 Beispiel für eine reproduzierbare, headless Erzeugung:
 
@@ -348,6 +368,10 @@ Die Smoke-Tests starten ausgewählte Kernskripte im verkürzten headless Testmod
 
 ![KKI Gekoppelte Abwehr](kki_gekoppelte_abwehr.png)
 
+### Rollenspezialisierungsstudie
+
+![KKI Rollenspezialisierung](kki_rollenspezialisierung.png)
+
 ## Zentrale Beobachtungen
 
 Die bisherigen Simulationen illustrieren wiederkehrende Muster:
@@ -363,6 +387,7 @@ Die bisherigen Simulationen illustrieren wiederkehrende Muster:
 - die neue Grossstudie verbindet diese Einzelbefunde zu einer gemeinsamen Grundlage fuer spaetere Agenten mit einheitlicher DNA und gruppenspezifischen Zusatzfaehigkeiten
 - reine Polarisierung braucht zusaetzlich soziale Bruecken und eine stabile Mittelzone; genau diese Mechanismen vergleicht nun die Anti-Polarisierungsstudie explizit
 - die gekoppelte Abwehrstudie prueft nun, ob Anti-Polarisierung nur lokal wirkt oder als Teil einer breiteren Schutzarchitektur neben Invasions- und Commitment-Abwehr bestehen kann
+- die Rollenspezialisierungsstudie untersucht nun, ob dieselbe Grund-DNA bereits durch Brueckenbauer- und Waechterrollen robuster wird als ein homogener Schwarm
 
 ## Projektstruktur und Ausrichtung
 

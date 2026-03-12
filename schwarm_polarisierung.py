@@ -31,6 +31,12 @@ DEFAULT_REWIRE_ADDITION_PROBABILITY = 0.75
 DEFAULT_REWIRE_CROSS_GROUP_BONUS = 0.08
 DEFAULT_CENTER_MIN = 0.35
 DEFAULT_CENTER_MAX = 0.65
+DEFAULT_GENERALIST_SHARE = 0.55
+DEFAULT_CONNECTOR_SHARE = 0.25
+DEFAULT_SENTINEL_SHARE = 0.20
+DEFAULT_CONNECTOR_BONUS = 0.10
+DEFAULT_SENTINEL_REP_THRESHOLD = 0.45
+DEFAULT_SENTINEL_COOPERATION_PENALTY = 0.06
 
 
 class Agent:
@@ -47,6 +53,11 @@ class Agent:
         self.reputation = 0.5
         self.nachbarn = set()
         self.interaktions_history = defaultdict(list)
+        self.role = 'generalist'
+        self.bridge_bonus = 0.0
+        self.rewire_reputation_threshold = None
+        self.cooperation_penalty_threshold = None
+        self.cooperation_penalty = 0.0
 
         self.meinung_history = [meinung]
         self.kooperation_history = [kooperations_neigung]
@@ -72,6 +83,11 @@ class Agent:
         effektive_neigung = self.kooperations_neigung
         effektive_neigung *= 0.55 + 0.45 * partner_reputation
         effektive_neigung *= 0.35 + 0.65 * aehnlichkeit
+        if (
+            self.cooperation_penalty_threshold is not None
+            and partner_reputation < self.cooperation_penalty_threshold
+        ):
+            effektive_neigung -= self.cooperation_penalty
         effektive_neigung += cooperation_bonus
         effektive_neigung = max(0.05, min(0.95, effektive_neigung))
 
@@ -205,8 +221,76 @@ def build_runtime_config() -> tuple[dict[str, float | int | str], int]:
         'mediator_contact_bias': float(os.getenv('KKI_MEDIATOR_CONTACT_BIAS', '0.60')),
         'center_zone_min': float(os.getenv('KKI_CENTER_ZONE_MIN', str(DEFAULT_CENTER_MIN))),
         'center_zone_max': float(os.getenv('KKI_CENTER_ZONE_MAX', str(DEFAULT_CENTER_MAX))),
+        'roles_enabled': os.getenv('KKI_ROLES_ENABLED', '').strip().lower() in {'1', 'true', 'yes', 'on'},
+        'generalist_share': float(os.getenv('KKI_GENERALIST_SHARE', str(DEFAULT_GENERALIST_SHARE))),
+        'connector_share': float(os.getenv('KKI_CONNECTOR_SHARE', str(DEFAULT_CONNECTOR_SHARE))),
+        'sentinel_share': float(os.getenv('KKI_SENTINEL_SHARE', str(DEFAULT_SENTINEL_SHARE))),
+        'connector_bridge_bonus': float(os.getenv('KKI_CONNECTOR_BRIDGE_BONUS', str(DEFAULT_CONNECTOR_BONUS))),
+        'sentinel_rep_threshold': float(
+            os.getenv('KKI_SENTINEL_REP_THRESHOLD', str(DEFAULT_SENTINEL_REP_THRESHOLD))
+        ),
+        'sentinel_cooperation_penalty': float(
+            os.getenv(
+                'KKI_SENTINEL_COOPERATION_PENALTY',
+                str(DEFAULT_SENTINEL_COOPERATION_PENALTY),
+            )
+        ),
     }
     return config, seed
+
+
+def normalisiere_rollenanteile(config):
+    generalist = max(0.0, float(config.get('generalist_share', DEFAULT_GENERALIST_SHARE)))
+    connector = max(0.0, float(config.get('connector_share', DEFAULT_CONNECTOR_SHARE)))
+    sentinel = max(0.0, float(config.get('sentinel_share', DEFAULT_SENTINEL_SHARE)))
+    total = generalist + connector + sentinel
+    if total <= 0.0:
+        return {'generalist': 1.0, 'connector': 0.0, 'sentinel': 0.0}
+    return {
+        'generalist': generalist / total,
+        'connector': connector / total,
+        'sentinel': sentinel / total,
+    }
+
+
+def weise_rollen_zu(agenten, config):
+    shares = normalisiere_rollenanteile(config)
+    agent_count = len(agenten)
+    connector_count = int(round(agent_count * shares['connector']))
+    sentinel_count = int(round(agent_count * shares['sentinel']))
+    connector_count = min(agent_count, connector_count)
+    sentinel_count = min(agent_count - connector_count, sentinel_count)
+
+    shuffled = list(agenten)
+    random.shuffle(shuffled)
+    connector_ids = {agent.id for agent in shuffled[:connector_count]}
+    sentinel_ids = {agent.id for agent in shuffled[connector_count : connector_count + sentinel_count]}
+
+    for agent in agenten:
+        agent.role = 'generalist'
+        agent.bridge_bonus = 0.0
+        agent.rewire_reputation_threshold = None
+        agent.cooperation_penalty_threshold = None
+        agent.cooperation_penalty = 0.0
+
+        if agent.id in connector_ids:
+            agent.role = 'connector'
+            agent.bridge_bonus = float(config.get('connector_bridge_bonus', DEFAULT_CONNECTOR_BONUS))
+            agent.hartnaeckigkeit = max(0.0, agent.hartnaeckigkeit * 0.6)
+            agent.kooperations_neigung = min(0.95, agent.kooperations_neigung + 0.04)
+        elif agent.id in sentinel_ids:
+            agent.role = 'sentinel'
+            agent.rewire_reputation_threshold = float(
+                config.get('sentinel_rep_threshold', DEFAULT_SENTINEL_REP_THRESHOLD)
+            )
+            agent.cooperation_penalty_threshold = agent.rewire_reputation_threshold
+            agent.cooperation_penalty = float(
+                config.get(
+                    'sentinel_cooperation_penalty',
+                    DEFAULT_SENTINEL_COOPERATION_PENALTY,
+                )
+            )
+            agent.reputation = min(1.0, agent.reputation + 0.04)
 
 
 def erstelle_agenten(config):
@@ -231,6 +315,9 @@ def erstelle_agenten(config):
 
         meinung = max(0.0, min(1.0, random.gauss(basis_meinung, streuung)))
         agenten.append(Agent(index, gruppe, meinung, kooperation, hartnaeckigkeit))
+
+    if config.get('roles_enabled'):
+        weise_rollen_zu(agenten, config)
 
     return agenten
 
@@ -408,13 +495,19 @@ def aktualisiere_adaptives_netzwerk(agenten, agenten_dict, config):
 
     for agent in agenten:
         zu_trennen = []
+        agent_role_threshold = getattr(agent, 'rewire_reputation_threshold', None)
+        lokaler_rep_threshold = (
+            float(agent_role_threshold)
+            if agent_role_threshold is not None
+            else rep_threshold
+        )
         for nachbar_id in list(agent.nachbarn):
             history = agent.interaktions_history.get(nachbar_id, [])
             if len(history) < min_interactions:
                 continue
 
             nachbar = agenten_dict[nachbar_id]
-            schwache_reputation = agent.berechne_partner_reputation(nachbar_id) < rep_threshold
+            schwache_reputation = agent.berechne_partner_reputation(nachbar_id) < lokaler_rep_threshold
             grosse_distanz = abs(agent.meinung - nachbar.meinung) > opinion_threshold
             if (schwache_reputation or grosse_distanz) and random.random() < removal_probability:
                 zu_trennen.append((nachbar, schwache_reputation, grosse_distanz))
@@ -468,6 +561,13 @@ def run_polarization_experiment(
     config.setdefault('bridge_cooperation_bonus', 0.08)
     config.setdefault('centrist_pull_strength', 0.08)
     config.setdefault('mediator_contact_bias', 0.60)
+    config.setdefault('roles_enabled', False)
+    config.setdefault('generalist_share', DEFAULT_GENERALIST_SHARE)
+    config.setdefault('connector_share', DEFAULT_CONNECTOR_SHARE)
+    config.setdefault('sentinel_share', DEFAULT_SENTINEL_SHARE)
+    config.setdefault('connector_bridge_bonus', DEFAULT_CONNECTOR_BONUS)
+    config.setdefault('sentinel_rep_threshold', DEFAULT_SENTINEL_REP_THRESHOLD)
+    config.setdefault('sentinel_cooperation_penalty', DEFAULT_SENTINEL_COOPERATION_PENALTY)
     scenario = str(config['scenario'])
     rounds = int(config['rounds'])
     interactions_per_round = int(config['interactions_per_round'])
@@ -499,6 +599,14 @@ def run_polarization_experiment(
                 f"Meinungs-Schwelle={float(config['rewire_opinion_distance_threshold']):.2f}, "
                 f"Zielgrad={int(config['rewire_target_degree'])}"
             )
+        if config.get('roles_enabled'):
+            shares = normalisiere_rollenanteile(config)
+            print(
+                "Rollen: "
+                f"Generalisten={shares['generalist']:.0%}, "
+                f"Brueckenbauer={shares['connector']:.0%}, "
+                f"Waechter={shares['sentinel']:.0%}"
+            )
         print("Ziel: Beobachte, ob der Schwarm in Richtung Konsens oder in stabile Lager driftet.")
         print("\nSimulation läuft...\n")
 
@@ -514,6 +622,8 @@ def run_polarization_experiment(
     cross_group_cooperation_history = []
     bridge_count_history = []
     center_zone_history = []
+    role_cross_group_contacts = defaultdict(int)
+    role_cross_group_cooperations = defaultdict(int)
     removed_edges_history = []
     added_edges_history = []
     rewired_edges_history = []
@@ -535,6 +645,8 @@ def run_polarization_experiment(
 
             if agent.gruppe != partner.gruppe:
                 gruppenuebergreifende_interaktionen += 1
+                role_cross_group_contacts[agent.role] += 1
+                role_cross_group_contacts[partner.role] += 1
 
             partner_rep_aus_agent_sicht = agent.berechne_partner_reputation(partner.id)
             agent_rep_aus_partner_sicht = partner.berechne_partner_reputation(agent.id)
@@ -546,6 +658,9 @@ def run_polarization_experiment(
                     cooperation_bonus_a += float(config['bridge_cooperation_bonus'])
                 if partner.id in bridge_ids:
                     cooperation_bonus_p += float(config['bridge_cooperation_bonus'])
+            if agent.gruppe != partner.gruppe:
+                cooperation_bonus_a += agent.bridge_bonus
+                cooperation_bonus_p += partner.bridge_bonus
             if agent.gruppe != partner.gruppe and config.get('enable_centrist_moderation'):
                 if ist_zentrist(agent.meinung, config):
                     cooperation_bonus_a += 0.04
@@ -556,6 +671,8 @@ def run_polarization_experiment(
             aktion_p = partner.waehle_aktion(agent_rep_aus_partner_sicht, agent.meinung, cooperation_bonus_p)
             if agent.gruppe != partner.gruppe and aktion_a == 'C' and aktion_p == 'C':
                 gruppenuebergreifende_kooperationen += 1
+                role_cross_group_cooperations[agent.role] += 1
+                role_cross_group_cooperations[partner.role] += 1
 
             opinion_pull_a = 0.0
             opinion_pull_p = 0.0
@@ -639,6 +756,26 @@ def run_polarization_experiment(
     mean_group_b = float(np.mean([agent.meinung for agent in agenten if agent.gruppe == 1]))
     finale_netzwerkmetriken = berechne_netzwerkmetriken(agenten, agenten_dict)
     durchschnitt_rewiring = float(np.mean(rewired_edges_history)) if rewired_edges_history else 0.0
+    role_counts = {
+        role: sum(1 for agent in agenten if agent.role == role)
+        for role in ('generalist', 'connector', 'sentinel')
+    }
+    role_mean_intelligence = {
+        role: float(np.mean([agent.intelligenz for agent in agenten if agent.role == role]))
+        if role_counts[role]
+        else 0.0
+        for role in role_counts
+    }
+    role_mean_reputation = {
+        role: float(np.mean([agent.reputation for agent in agenten if agent.role == role]))
+        if role_counts[role]
+        else 0.0
+        for role in role_counts
+    }
+    role_cross_group_cooperation_rate = {
+        role: role_cross_group_cooperations[role] / max(1, role_cross_group_contacts[role])
+        for role in role_counts
+    }
 
     interpretation = "hybrid"
     if finale_pi > 0.22 and finaler_abstand > 0.35:
@@ -659,6 +796,13 @@ def run_polarization_experiment(
         if config.get('enable_bridge_mechanism') or config.get('enable_centrist_moderation'):
             print(f"Ø Brückenagenten:            {float(np.mean(bridge_count_history)):.2f}")
             print(f"Ø Agenten in Mittelzone:     {float(np.mean(center_zone_history)):.2f}")
+        if config.get('roles_enabled'):
+            print(
+                "Rollen-Kooperation:          "
+                f"Generalisten={role_cross_group_cooperation_rate['generalist']:.1%}, "
+                f"Brueckenbauer={role_cross_group_cooperation_rate['connector']:.1%}, "
+                f"Waechter={role_cross_group_cooperation_rate['sentinel']:.1%}"
+            )
         if config.get('enable_dynamic_rewiring'):
             print(f"Ø Rewiring-Operationen/Runde: {durchschnitt_rewiring:.2f}")
             print(f"Finale Netzwerkdichte:       {finale_netzwerkmetriken['density']:.3f}")
@@ -685,6 +829,10 @@ def run_polarization_experiment(
         'right_count': rechts,
         'cross_group_interaction_rate': cross_group_rate,
         'cross_group_cooperation_rate': cross_group_cooperation_rate,
+        'role_counts': role_counts,
+        'role_mean_intelligence': role_mean_intelligence,
+        'role_mean_reputation': role_mean_reputation,
+        'role_cross_group_cooperation_rate': role_cross_group_cooperation_rate,
         'group_1_mean_opinion': mean_group_a,
         'group_2_mean_opinion': mean_group_b,
         'interpretation': interpretation,

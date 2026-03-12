@@ -26,6 +26,32 @@ DEFAULT_CONNECTIONS_PER_AGENT = 8
 DEFAULT_INTERACTIONS_PER_ROUND = 90
 
 
+def strategieprofil(name: str) -> dict[str, object]:
+    profile = {
+        'reputation': {
+            'label': 'Reputation',
+            'weights': {'reputation': 1.0, 'commitment': 0.0, 'opinion': 0.0},
+            'threshold': 0.48,
+        },
+        'commitment': {
+            'label': 'Commitment',
+            'weights': {'reputation': 0.0, 'commitment': 1.0, 'opinion': 0.0},
+            'threshold': 0.72,
+        },
+        'opinion': {
+            'label': 'Meinungsnaehe',
+            'weights': {'reputation': 0.0, 'commitment': 0.0, 'opinion': 1.0},
+            'threshold': 0.58,
+        },
+        'hybrid': {
+            'label': 'Hybrid',
+            'weights': {'reputation': 0.35, 'commitment': 0.45, 'opinion': 0.20},
+            'threshold': 0.58,
+        },
+    }
+    return profile[name]
+
+
 class Agent:
     """Agent fuer Commitment-Angriffs- und Abwehrszenarien."""
 
@@ -273,7 +299,57 @@ def commitment_kantenanteil(agenten):
     return manipulator_kanten / len(kanten) if kanten else 0.0
 
 
+def kombiniertes_vertrauen(agent, partner, config):
+    weights = config.get('strategy_weights')
+    if not weights:
+        return None
+
+    rep_signal = agent.berechne_partner_reputation(partner.id)
+    commitment_signal = min(
+        agent.berechne_partner_commitment_trust(partner.id),
+        partner.commitment_integritaet,
+    )
+    opinion_signal = 1.0 - abs(agent.meinung - partner.meinung)
+    total_weight = float(sum(weights.values()))
+    if total_weight <= 0:
+        return 0.0
+
+    return (
+        float(weights.get('reputation', 0.0)) * rep_signal
+        + float(weights.get('commitment', 0.0)) * commitment_signal
+        + float(weights.get('opinion', 0.0)) * opinion_signal
+    ) / total_weight
+
+
 def finde_neuen_commitment_nachbarn(agent, agenten, config):
+    signal_threshold = config.get('signal_threshold')
+    if config.get('strategy_weights'):
+        bester_score = None
+        beste_kandidaten = []
+
+        for kandidat in agenten:
+            if kandidat.id == agent.id or kandidat.id in agent.nachbarn:
+                continue
+
+            score = kombiniertes_vertrauen(agent, kandidat, config)
+            if score is None:
+                continue
+            if signal_threshold is not None and score < float(signal_threshold) - 0.10:
+                continue
+
+            if kandidat.gruppe == agent.gruppe:
+                score += 0.03
+
+            if bester_score is None or score > bester_score + 1e-9:
+                bester_score = score
+                beste_kandidaten = [kandidat]
+            elif abs(score - bester_score) <= 1e-9:
+                beste_kandidaten.append(kandidat)
+
+        if not beste_kandidaten:
+            return None
+        return random.choice(beste_kandidaten)
+
     trust_threshold = float(config['trust_threshold'])
     bester_score = None
     beste_kandidaten = []
@@ -303,6 +379,44 @@ def finde_neuen_commitment_nachbarn(agent, agenten, config):
 def aktualisiere_commitment_netzwerk(agenten, config):
     if not config.get('adaptive_enabled'):
         return {'rewired_edges': 0}
+
+    if config.get('strategy_weights'):
+        target_degree = int(config['degree'])
+        threshold = float(config.get('signal_threshold', 0.58))
+        removed_edges = 0
+        added_edges = 0
+        agenten_dict = {agent.id: agent for agent in agenten}
+
+        for agent in agenten:
+            zu_trennen = []
+            for nachbar_id in list(agent.nachbarn):
+                history_len = len(agent.interaktions_history.get(nachbar_id, []))
+                if history_len < 2:
+                    continue
+                partner = agenten_dict[nachbar_id]
+                score = kombiniertes_vertrauen(agent, partner, config)
+                if score is not None and score < threshold:
+                    zu_trennen.append(partner)
+
+            for partner in zu_trennen:
+                if partner.id not in agent.nachbarn:
+                    continue
+                agent.trenne(partner)
+                removed_edges += 1
+
+        for agent in agenten:
+            if len(agent.nachbarn) >= target_degree:
+                continue
+            versuche = 0
+            while len(agent.nachbarn) < target_degree and versuche < 2:
+                versuche += 1
+                kandidat = finde_neuen_commitment_nachbarn(agent, agenten, config)
+                if kandidat is None or kandidat.id in agent.nachbarn:
+                    break
+                agent.verbinde(kandidat)
+                added_edges += 1
+
+        return {'rewired_edges': removed_edges + added_edges}
 
     rep_threshold = float(config['rep_threshold'])
     trust_threshold = float(config['trust_threshold'])
@@ -372,6 +486,8 @@ def run_commitment_experiment(config, *, adaptive_enabled, rep_threshold, trust_
         'rep_threshold': rep_threshold,
         'trust_threshold': trust_threshold,
         'degree': int(config['degree']),
+        'strategy_weights': config.get('strategy_weights'),
+        'signal_threshold': config.get('signal_threshold'),
     }
 
     for runde in range(1, total_rounds + 1):
@@ -437,6 +553,7 @@ def run_commitment_experiment(config, *, adaptive_enabled, rep_threshold, trust_
     resilience_score = native_retention + detection_rate + commitment_divergence + (1.0 - edge_share) - manipulator_final_phi
 
     return {
+        'strategy_name': config.get('strategy_name', 'grid'),
         'native_retention': native_retention,
         'detection_rate': detection_rate,
         'attack_success_rate': attack_success_rate,

@@ -160,6 +160,19 @@ class SmokeTests(unittest.TestCase):
             self.assertTrue((output_dir / "kki_commitment_resilienz.png").exists())
             self.assertIn("Beste adaptive Commitment-Abwehr", result.stdout)
 
+    def test_schwarm_vertrauens_benchmark_smoke(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:
+            output_dir = Path(tmpdir)
+            result = self.run_script(
+                "schwarm_vertrauens_benchmark.py",
+                output_dir,
+                seed=41,
+                extra_env={"KKI_BENCHMARK_REPETITIONS": "1"},
+            )
+            self.assert_successful_run(result)
+            self.assertTrue((output_dir / "kki_vertrauens_benchmark.png").exists())
+            self.assertIn("Beste Vertrauensstrategie", result.stdout)
+
 
 if __name__ == "__main__":
     unittest.main()

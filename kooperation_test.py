@@ -7,16 +7,15 @@ Agenten, die kooperieren, erhalten höhere "Intelligenz-Punkte".
 
 import random
 
-from kki_runtime import apply_test_overrides, initialize_runtime
+from kki_runtime import configure_simulation
 
 # === KONFIGURATION ===
 RUNDEN = 100
 LERNRATE = 0.1
-TEST_OVERRIDES = apply_test_overrides({
+CONFIG, SEED = configure_simulation({
     'RUNDEN': RUNDEN,
 })
-RUNDEN = TEST_OVERRIDES['RUNDEN']
-SEED = initialize_runtime()
+RUNDEN = CONFIG['RUNDEN']
 
 # Payoff-Matrix (Gefangenendilemma)
 # (meine_aktion, andere_aktion) -> mein_payoff

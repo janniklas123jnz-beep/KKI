@@ -73,6 +73,12 @@ KKI_SEED=42 python3 commitment_protokoll.py
 
 Ohne gesetzte Variable verwenden die Skripte standardmäßig den Seed `42` und geben den aktiven Seed beim Start aus.
 
+Für reproduzierbare PNG-Ausgaben kann zusätzlich ein separates Zielverzeichnis gesetzt werden:
+
+```bash
+KKI_SEED=42 KKI_OUTPUT_DIR=artefakte python3 schwarm_simulation.py
+```
+
 ## Schnellstart
 
 Kleinstes Beispiel:
@@ -104,6 +110,31 @@ python3 commitment_protokoll.py
 
 Die Visualisierungs-Skripte erzeugen PNG-Dateien direkt im Projektverzeichnis.
 Da die Simulationen Zufallselemente enthalten, können konkrete Zahlenwerte zwischen einzelnen Läufen variieren.
+
+## Reproduktion der Beispielgrafiken
+
+Die folgenden Skripte erzeugen die im Repository abgelegten PNG-Dateien:
+
+| Skript | Ausgabe | Beispiel |
+| --- | --- | --- |
+| `kooperation_visual.py` | `kki_kooperation_graph.png` | `KKI_SEED=42 python3 kooperation_visual.py` |
+| `schwarm_simulation.py` | `kki_schwarm_simulation.png` | `KKI_SEED=42 python3 schwarm_simulation.py` |
+| `schwarm_100.py` | `kki_100_agenten.png` | `KKI_SEED=42 python3 schwarm_100.py` |
+| `schwarm_cluster.py` | `kki_cluster_simulation.png` | `KKI_SEED=42 python3 schwarm_cluster.py` |
+| `schwarm_invasion.py` | `kki_invasion.png` | `KKI_SEED=42 python3 schwarm_invasion.py` |
+| `commitment_protokoll.py` | `kki_commitment_protokoll.png` | `KKI_SEED=42 python3 commitment_protokoll.py` |
+
+Hinweise zur Reproduktion:
+
+- `KKI_SEED=42` sorgt für denselben Zufallsstart bei wiederholten Läufen.
+- `KKI_OUTPUT_DIR=artefakte` schreibt PNG-Dateien in ein separates Verzeichnis statt ins Projektwurzelverzeichnis.
+- für schnelle technische Prüfungen ohne GUI kann zusätzlich `KKI_TEST_MODE=1` gesetzt werden
+
+Beispiel für eine reproduzierbare, headless Erzeugung:
+
+```bash
+KKI_SEED=42 KKI_OUTPUT_DIR=artefakte MPLBACKEND=Agg python3 commitment_protokoll.py
+```
 
 ## Smoke-Tests
 

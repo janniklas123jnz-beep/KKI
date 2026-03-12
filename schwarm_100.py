@@ -10,13 +10,9 @@ import numpy as np
 from collections import defaultdict
 
 from kki_runtime import (
-    apply_test_overrides,
-    configure_matplotlib,
-    initialize_runtime,
+    configure_simulation,
     save_and_maybe_show,
 )
-
-configure_matplotlib(plt)
 
 # === KONFIGURATION ===
 ANZAHL_AGENTEN = 100
@@ -24,13 +20,12 @@ ANZAHL_DEFEKTOREN = 15  # 15% Defektoren
 RUNDEN = 250
 VERBINDUNGEN_PRO_AGENT = 8  # Etwas mehr Verbindungen bei größerem Netzwerk
 INTERAKTIONEN_PRO_RUNDE = 150  # Mehr Interaktionen
-TEST_OVERRIDES = apply_test_overrides({
+CONFIG, SEED = configure_simulation({
     'RUNDEN': RUNDEN,
     'INTERAKTIONEN_PRO_RUNDE': INTERAKTIONEN_PRO_RUNDE,
-})
-RUNDEN = TEST_OVERRIDES['RUNDEN']
-INTERAKTIONEN_PRO_RUNDE = TEST_OVERRIDES['INTERAKTIONEN_PRO_RUNDE']
-SEED = initialize_runtime(np)
+}, np_module=np, plt_module=plt)
+RUNDEN = CONFIG['RUNDEN']
+INTERAKTIONEN_PRO_RUNDE = CONFIG['INTERAKTIONEN_PRO_RUNDE']
 
 # Payoff-Matrix
 PAYOFFS = {

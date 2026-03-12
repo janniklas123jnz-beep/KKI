@@ -37,6 +37,21 @@ def initialize_runtime(np_module: Any | None = None) -> int:
     return seed
 
 
+def configure_simulation(
+    config: Mapping[str, int],
+    *,
+    np_module: Any | None = None,
+    plt_module: Any | None = None,
+) -> tuple[dict[str, int], int]:
+    """Initialisiere eine Simulation mit gemeinsamen Runtime-Konventionen."""
+    if plt_module is not None:
+        configure_matplotlib(plt_module)
+
+    updated_config = apply_test_overrides(config)
+    seed = initialize_runtime(np_module)
+    return updated_config, seed
+
+
 def apply_test_overrides(values: Mapping[str, int]) -> dict[str, int]:
     """Verkuerze Laufzeiten im Testmodus, ohne die Logik komplett zu veraendern."""
     updated = dict(values)
@@ -77,7 +92,8 @@ def save_and_maybe_show(plt_module: Any, filename: str, **savefig_kwargs: Any) -
     plt_module.savefig(target, **savefig_kwargs)
     print(f"\nGraph gespeichert: {target}")
 
-    if not is_test_mode():
+    backend = str(plt_module.get_backend()).lower()
+    if not is_test_mode() and "agg" not in backend:
         plt_module.show()
 
     plt_module.close()

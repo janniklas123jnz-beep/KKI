@@ -18,26 +18,21 @@ from dataclasses import dataclass
 from typing import Optional, Tuple
 
 from kki_runtime import (
-    apply_test_overrides,
-    configure_matplotlib,
-    initialize_runtime,
+    configure_simulation,
     save_and_maybe_show,
 )
-
-configure_matplotlib(plt)
 
 # === KONFIGURATION ===
 ANZAHL_AGENTEN = 50
 ANZAHL_MANIPULATOREN = 8  # Agenten die versuchen zu betrügen
 RUNDEN = 200
 INTERAKTIONEN_PRO_RUNDE = 100
-TEST_OVERRIDES = apply_test_overrides({
+CONFIG, SEED = configure_simulation({
     'RUNDEN': RUNDEN,
     'INTERAKTIONEN_PRO_RUNDE': INTERAKTIONEN_PRO_RUNDE,
-})
-RUNDEN = TEST_OVERRIDES['RUNDEN']
-INTERAKTIONEN_PRO_RUNDE = TEST_OVERRIDES['INTERAKTIONEN_PRO_RUNDE']
-SEED = initialize_runtime(np)
+}, np_module=np, plt_module=plt)
+RUNDEN = CONFIG['RUNDEN']
+INTERAKTIONEN_PRO_RUNDE = CONFIG['INTERAKTIONEN_PRO_RUNDE']
 
 PAYOFFS = {
     ('C', 'C'): 3,

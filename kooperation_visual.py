@@ -8,22 +8,17 @@ import random
 import matplotlib.pyplot as plt
 
 from kki_runtime import (
-    apply_test_overrides,
-    configure_matplotlib,
-    initialize_runtime,
+    configure_simulation,
     save_and_maybe_show,
 )
-
-configure_matplotlib(plt)
 
 # === KONFIGURATION ===
 RUNDEN = 100
 LERNRATE = 0.1
-TEST_OVERRIDES = apply_test_overrides({
+CONFIG, SEED = configure_simulation({
     'RUNDEN': RUNDEN,
-})
-RUNDEN = TEST_OVERRIDES['RUNDEN']
-SEED = initialize_runtime()
+}, plt_module=plt)
+RUNDEN = CONFIG['RUNDEN']
 
 # Payoff-Matrix (Gefangenendilemma)
 PAYOFFS = {

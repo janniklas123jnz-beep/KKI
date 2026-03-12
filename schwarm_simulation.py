@@ -10,26 +10,21 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from kki_runtime import (
-    apply_test_overrides,
-    configure_matplotlib,
-    initialize_runtime,
+    configure_simulation,
     save_and_maybe_show,
 )
-
-configure_matplotlib(plt)
 
 # === KONFIGURATION ===
 ANZAHL_AGENTEN = 10
 RUNDEN = 150
 LERNRATE = 0.1
 INTERAKTIONEN_PRO_RUNDE = 15  # Wie viele zufällige Begegnungen pro Runde
-TEST_OVERRIDES = apply_test_overrides({
+CONFIG, SEED = configure_simulation({
     'RUNDEN': RUNDEN,
     'INTERAKTIONEN_PRO_RUNDE': INTERAKTIONEN_PRO_RUNDE,
-})
-RUNDEN = TEST_OVERRIDES['RUNDEN']
-INTERAKTIONEN_PRO_RUNDE = TEST_OVERRIDES['INTERAKTIONEN_PRO_RUNDE']
-SEED = initialize_runtime(np)
+}, np_module=np, plt_module=plt)
+RUNDEN = CONFIG['RUNDEN']
+INTERAKTIONEN_PRO_RUNDE = CONFIG['INTERAKTIONEN_PRO_RUNDE']
 
 # Payoff-Matrix
 PAYOFFS = {

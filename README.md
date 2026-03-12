@@ -46,6 +46,7 @@ Die Simulationen basieren auf wiederholten Interaktionen im Stil des Gefangenend
 | `schwarm_vertrauens_benchmark.py` | Benchmark fuer Vertrauensstrategien wie Reputation, Commitment, Meinung und hybride Mischungen |
 | `schwarm_grossstudie.py` | Kombinierte Grossstudie ueber Polarisierung, Invasion und Commitment-Angriffe auf gemeinsamer Agenten-Grund-DNA |
 | `schwarm_anti_polarisierung.py` | Vergleichsstudie fuer Brueckenagenten, Mittelzonen-Moderation und hybride Anti-Polarisierungsstrategien |
+| `schwarm_gekoppelte_abwehr.py` | Architekturvergleich fuer gekoppelte Anti-Polarisierungs-, Invasions- und Commitment-Abwehr |
 | `commitment_protokoll.py` | Commit-Reveal-Verify-Protokoll gegen Manipulation |
 
 ## Features
@@ -122,6 +123,7 @@ python3 schwarm_commitment_resilienz.py
 python3 schwarm_vertrauens_benchmark.py
 python3 schwarm_grossstudie.py
 python3 schwarm_anti_polarisierung.py
+python3 schwarm_gekoppelte_abwehr.py
 python3 commitment_protokoll.py
 ```
 
@@ -218,6 +220,21 @@ KKI_NETWORK_DEGREE=6 \
 python3 schwarm_anti_polarisierung.py
 ```
 
+Die gekoppelte Abwehrstudie vergleicht, ob die neue Anti-Polarisierung auch als Teil einer uebergreifenden Resilienzarchitektur neben Invasions- und Commitment-Abwehr traegt:
+
+```bash
+python3 schwarm_gekoppelte_abwehr.py
+```
+
+Optional lassen sich Wiederholungen und gemeinsame Basisparameter anpassen:
+
+```bash
+KKI_COUPLED_REPETITIONS=2 \
+KKI_COUPLED_AGENT_COUNT=60 \
+KKI_COUPLED_STRESS_ROUND=90 \
+python3 schwarm_gekoppelte_abwehr.py
+```
+
 Optional lassen sich Wiederholungen und gemeinsame Basisparameter anpassen:
 
 ```bash
@@ -257,6 +274,7 @@ Die folgenden Skripte erzeugen die im Repository abgelegten PNG-Dateien:
 | `schwarm_vertrauens_benchmark.py` | `kki_vertrauens_benchmark.png` | `KKI_SEED=42 python3 schwarm_vertrauens_benchmark.py` |
 | `schwarm_grossstudie.py` | `kki_grossstudie.png` | `KKI_SEED=42 python3 schwarm_grossstudie.py` |
 | `schwarm_anti_polarisierung.py` | `kki_anti_polarisierung.png` | `KKI_SEED=42 python3 schwarm_anti_polarisierung.py` |
+| `schwarm_gekoppelte_abwehr.py` | `kki_gekoppelte_abwehr.png` | `KKI_SEED=42 python3 schwarm_gekoppelte_abwehr.py` |
 | `commitment_protokoll.py` | `kki_commitment_protokoll.png` | `KKI_SEED=42 python3 commitment_protokoll.py` |
 
 Hinweise zur Reproduktion:
@@ -270,6 +288,7 @@ Hinweise zur Reproduktion:
 - der Vertrauens-Benchmark nutzt zusaetzlich `KKI_BENCHMARK_REPETITIONS` und vergleicht statische, reputationsbasierte, commitment-basierte, meinungsbasierte und hybride Strategien
 - die Grossstudie nutzt zusaetzlich `KKI_MEGASTUDY_REPETITIONS`, `KKI_MEGASTUDY_AGENT_COUNT` und `KKI_MEGASTUDY_STRESS_ROUND` fuer eine gemeinsame Grundlagenkonfiguration
 - die Anti-Polarisierungsstudie nutzt zusaetzlich `KKI_ANTI_POL_REPETITIONS`, `KKI_ANTI_POL_AGENT_COUNT` und die optionalen Schalter `KKI_BRIDGE_MECHANISM`, `KKI_CENTRIST_MODERATION` und `KKI_MEDIATOR_MODE`
+- die gekoppelte Abwehrstudie nutzt zusaetzlich `KKI_COUPLED_REPETITIONS`, `KKI_COUPLED_AGENT_COUNT` und `KKI_COUPLED_STRESS_ROUND` fuer den Architekturvergleich ueber mehrere Bedrohungen
 
 Beispiel für eine reproduzierbare, headless Erzeugung:
 
@@ -325,6 +344,10 @@ Die Smoke-Tests starten ausgewählte Kernskripte im verkürzten headless Testmod
 
 ![KKI Anti-Polarisierung](kki_anti_polarisierung.png)
 
+### Gekoppelte Abwehrstudie
+
+![KKI Gekoppelte Abwehr](kki_gekoppelte_abwehr.png)
+
 ## Zentrale Beobachtungen
 
 Die bisherigen Simulationen illustrieren wiederkehrende Muster:
@@ -339,6 +362,7 @@ Die bisherigen Simulationen illustrieren wiederkehrende Muster:
 - unterschiedliche Vertrauenssignale lassen sich nun direkt benchmarken, statt nur einzeln in getrennten Experimenten zu betrachten
 - die neue Grossstudie verbindet diese Einzelbefunde zu einer gemeinsamen Grundlage fuer spaetere Agenten mit einheitlicher DNA und gruppenspezifischen Zusatzfaehigkeiten
 - reine Polarisierung braucht zusaetzlich soziale Bruecken und eine stabile Mittelzone; genau diese Mechanismen vergleicht nun die Anti-Polarisierungsstudie explizit
+- die gekoppelte Abwehrstudie prueft nun, ob Anti-Polarisierung nur lokal wirkt oder als Teil einer breiteren Schutzarchitektur neben Invasions- und Commitment-Abwehr bestehen kann
 
 ## Projektstruktur und Ausrichtung
 

@@ -199,6 +199,19 @@ class SmokeTests(unittest.TestCase):
             self.assertTrue((output_dir / "kki_anti_polarisierung.png").exists())
             self.assertIn("Beste Anti-Polarisierungsstrategie", result.stdout)
 
+    def test_schwarm_gekoppelte_abwehr_smoke(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:
+            output_dir = Path(tmpdir)
+            result = self.run_script(
+                "schwarm_gekoppelte_abwehr.py",
+                output_dir,
+                seed=53,
+                extra_env={"KKI_COUPLED_REPETITIONS": "1"},
+            )
+            self.assert_successful_run(result)
+            self.assertTrue((output_dir / "kki_gekoppelte_abwehr.png").exists())
+            self.assertIn("Beste gekoppelte Abwehrarchitektur", result.stdout)
+
 
 if __name__ == "__main__":
     unittest.main()

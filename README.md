@@ -48,6 +48,7 @@ Die Simulationen basieren auf wiederholten Interaktionen im Stil des Gefangenend
 | `schwarm_anti_polarisierung.py` | Vergleichsstudie fuer Brueckenagenten, Mittelzonen-Moderation und hybride Anti-Polarisierungsstrategien |
 | `schwarm_gekoppelte_abwehr.py` | Architekturvergleich fuer gekoppelte Anti-Polarisierungs-, Invasions- und Commitment-Abwehr |
 | `schwarm_rollenspezialisierung.py` | Rollenstudie fuer gemeinsame Agenten-DNA mit Brueckenbauern, Waechtern und Rollenmix |
+| `schwarm_rollenlernen.py` | Verfeinerte Lernprofilstudie fuer Vermittler, Analytiker und adaptive Rollenprofile |
 | `commitment_protokoll.py` | Commit-Reveal-Verify-Protokoll gegen Manipulation |
 
 ## Features
@@ -126,6 +127,7 @@ python3 schwarm_grossstudie.py
 python3 schwarm_anti_polarisierung.py
 python3 schwarm_gekoppelte_abwehr.py
 python3 schwarm_rollenspezialisierung.py
+python3 schwarm_rollenlernen.py
 python3 commitment_protokoll.py
 ```
 
@@ -244,6 +246,21 @@ KKI_SENTINEL_SHARE=0.20 \
 python3 schwarm_rollenspezialisierung.py
 ```
 
+Die Rollenlern-Studie verfeinert diese Rollen um neue Lernprofile wie Vermittler und Analytiker:
+
+```bash
+python3 schwarm_rollenlernen.py
+```
+
+Optional lassen sich Wiederholungen und Rollenanteile anpassen:
+
+```bash
+KKI_ROLLENLERNEN_REPETITIONS=2 \
+KKI_MEDIATOR_SHARE=0.15 \
+KKI_ANALYZER_SHARE=0.15 \
+python3 schwarm_rollenlernen.py
+```
+
 Optional lassen sich Wiederholungen und gemeinsame Basisparameter anpassen:
 
 ```bash
@@ -294,6 +311,7 @@ Die folgenden Skripte erzeugen die im Repository abgelegten PNG-Dateien:
 | `schwarm_anti_polarisierung.py` | `kki_anti_polarisierung.png` | `KKI_SEED=42 python3 schwarm_anti_polarisierung.py` |
 | `schwarm_gekoppelte_abwehr.py` | `kki_gekoppelte_abwehr.png` | `KKI_SEED=42 python3 schwarm_gekoppelte_abwehr.py` |
 | `schwarm_rollenspezialisierung.py` | `kki_rollenspezialisierung.png` | `KKI_SEED=42 python3 schwarm_rollenspezialisierung.py` |
+| `schwarm_rollenlernen.py` | `kki_rollenlernen.png` | `KKI_SEED=42 python3 schwarm_rollenlernen.py` |
 | `commitment_protokoll.py` | `kki_commitment_protokoll.png` | `KKI_SEED=42 python3 commitment_protokoll.py` |
 
 Hinweise zur Reproduktion:
@@ -309,6 +327,7 @@ Hinweise zur Reproduktion:
 - die Anti-Polarisierungsstudie nutzt zusaetzlich `KKI_ANTI_POL_REPETITIONS`, `KKI_ANTI_POL_AGENT_COUNT` und die optionalen Schalter `KKI_BRIDGE_MECHANISM`, `KKI_CENTRIST_MODERATION` und `KKI_MEDIATOR_MODE`
 - die gekoppelte Abwehrstudie nutzt zusaetzlich `KKI_COUPLED_REPETITIONS`, `KKI_COUPLED_AGENT_COUNT` und `KKI_COUPLED_STRESS_ROUND` fuer den Architekturvergleich ueber mehrere Bedrohungen
 - die Rollenspezialisierungsstudie nutzt zusaetzlich `KKI_ROLLENSPEZ_REPETITIONS`, `KKI_GENERALIST_SHARE`, `KKI_CONNECTOR_SHARE` und `KKI_SENTINEL_SHARE`
+- die Rollenlern-Studie nutzt zusaetzlich `KKI_ROLLENLERNEN_REPETITIONS`, `KKI_MEDIATOR_SHARE`, `KKI_ANALYZER_SHARE` sowie die Lernparameter fuer Connector, Sentinel, Vermittler und Analytiker
 
 Beispiel für eine reproduzierbare, headless Erzeugung:
 
@@ -372,6 +391,10 @@ Die Smoke-Tests starten ausgewählte Kernskripte im verkürzten headless Testmod
 
 ![KKI Rollenspezialisierung](kki_rollenspezialisierung.png)
 
+### Rollenlern-Studie
+
+![KKI Rollenlernen](kki_rollenlernen.png)
+
 ## Zentrale Beobachtungen
 
 Die bisherigen Simulationen illustrieren wiederkehrende Muster:
@@ -388,6 +411,7 @@ Die bisherigen Simulationen illustrieren wiederkehrende Muster:
 - reine Polarisierung braucht zusaetzlich soziale Bruecken und eine stabile Mittelzone; genau diese Mechanismen vergleicht nun die Anti-Polarisierungsstudie explizit
 - die gekoppelte Abwehrstudie prueft nun, ob Anti-Polarisierung nur lokal wirkt oder als Teil einer breiteren Schutzarchitektur neben Invasions- und Commitment-Abwehr bestehen kann
 - die Rollenspezialisierungsstudie untersucht nun, ob dieselbe Grund-DNA bereits durch Brueckenbauer- und Waechterrollen robuster wird als ein homogener Schwarm
+- die Rollenlern-Studie untersucht nun, ob aus diesen Rollen auch verfeinerte Lernprofile wie Vermittler und Analytiker mit eigenstaendigen Staerken ableitbar sind
 
 ## Projektstruktur und Ausrichtung
 

@@ -34,9 +34,18 @@ DEFAULT_CENTER_MAX = 0.65
 DEFAULT_GENERALIST_SHARE = 0.55
 DEFAULT_CONNECTOR_SHARE = 0.25
 DEFAULT_SENTINEL_SHARE = 0.20
+DEFAULT_MEDIATOR_SHARE = 0.0
+DEFAULT_ANALYZER_SHARE = 0.0
 DEFAULT_CONNECTOR_BONUS = 0.10
 DEFAULT_SENTINEL_REP_THRESHOLD = 0.45
 DEFAULT_SENTINEL_COOPERATION_PENALTY = 0.06
+DEFAULT_CONNECTOR_CROSS_GROUP_LEARNING = 0.15
+DEFAULT_SENTINEL_REPUTATION_LEARNING = 1.20
+DEFAULT_MEDIATOR_BONUS = 0.06
+DEFAULT_MEDIATOR_CONTACT_BIAS = 0.70
+DEFAULT_MEDIATOR_OPINION_DISTANCE = 0.25
+DEFAULT_ANALYZER_MEMORY_WINDOW = 15
+DEFAULT_ANALYZER_LEARNING_MULTIPLIER = 1.10
 
 
 class Agent:
@@ -58,6 +67,14 @@ class Agent:
         self.rewire_reputation_threshold = None
         self.cooperation_penalty_threshold = None
         self.cooperation_penalty = 0.0
+        self.intelligence_learning_multiplier = 1.0
+        self.cooperation_learning_multiplier = 1.0
+        self.reputation_learning_multiplier = 1.0
+        self.opinion_learning_multiplier = 1.0
+        self.cross_group_learning_bonus = 0.0
+        self.memory_window = 10
+        self.partner_bias_probability = 0.0
+        self.partner_bias_min_distance = 0.0
 
         self.meinung_history = [meinung]
         self.kooperation_history = [kooperations_neigung]
@@ -75,7 +92,8 @@ class Agent:
         history = self.interaktions_history.get(partner_id, [])
         if not history:
             return 0.5
-        return sum(1 for aktion in history[-10:] if aktion == 'C') / len(history[-10:])
+        fenster = history[-self.memory_window :]
+        return sum(1 for aktion in fenster if aktion == 'C') / len(fenster)
 
     def waehle_aktion(self, partner_reputation, partner_meinung, cooperation_bonus=0.0):
         meinungs_distanz = abs(self.meinung - partner_meinung)
@@ -109,33 +127,41 @@ class Agent:
         meinungs_distanz = abs(self.meinung - partner_meinung)
         aehnlichkeit = 1.0 - meinungs_distanz
         beweglichkeit = 1.0 - self.hartnaeckigkeit
+        learning_factor = self.intelligence_learning_multiplier
+        cooperation_factor = self.cooperation_learning_multiplier
+        reputation_factor = self.reputation_learning_multiplier
+        opinion_factor = self.opinion_learning_multiplier
+        if not gleiche_gruppe:
+            learning_factor *= 1.0 + self.cross_group_learning_bonus
 
         if meine_aktion == 'C' and andere_aktion == 'C':
-            self.intelligenz *= 1.002 + 0.002 * aehnlichkeit + 0.001 * min(partner_intelligenz, 4.0)
-            self.kooperations_neigung += 0.006 * (0.5 + aehnlichkeit)
-            self.reputation += 0.012
+            self.intelligenz *= 1.0 + (
+                (1.002 + 0.002 * aehnlichkeit + 0.001 * min(partner_intelligenz, 4.0)) - 1.0
+            ) * learning_factor
+            self.kooperations_neigung += 0.006 * cooperation_factor * (0.5 + aehnlichkeit)
+            self.reputation += 0.012 * reputation_factor
             zugkraft = 0.12 if gleiche_gruppe else 0.08
-            zugkraft += opinion_pull
+            zugkraft = (zugkraft + opinion_pull) * opinion_factor
             self.meinung += (partner_meinung - self.meinung) * zugkraft * beweglichkeit
 
         elif meine_aktion == 'C' and andere_aktion == 'D':
-            self.kooperations_neigung -= 0.004
-            self.reputation += 0.004
+            self.kooperations_neigung -= 0.004 * cooperation_factor
+            self.reputation += 0.004 * reputation_factor
             if meinungs_distanz > 0.3:
-                self.meinung += (self.meinung - partner_meinung) * 0.03 * beweglichkeit
+                self.meinung += (self.meinung - partner_meinung) * 0.03 * opinion_factor * beweglichkeit
 
         elif meine_aktion == 'D' and andere_aktion == 'C':
-            self.intelligenz *= 0.997
-            self.reputation -= 0.02
+            self.intelligenz *= 1.0 - (1.0 - 0.997) * learning_factor
+            self.reputation -= 0.02 * reputation_factor
             if meinungs_distanz > 0.25:
-                self.meinung += (self.meinung - partner_meinung) * 0.025 * beweglichkeit
+                self.meinung += (self.meinung - partner_meinung) * 0.025 * opinion_factor * beweglichkeit
 
         elif meine_aktion == 'D' and andere_aktion == 'D':
-            self.intelligenz *= 0.991
-            self.reputation -= 0.01
-            self.kooperations_neigung += 0.002
+            self.intelligenz *= 1.0 - (1.0 - 0.991) * learning_factor
+            self.reputation -= 0.01 * reputation_factor
+            self.kooperations_neigung += 0.002 * cooperation_factor
             if meinungs_distanz > 0.2:
-                self.meinung += (self.meinung - partner_meinung) * 0.02 * beweglichkeit
+                self.meinung += (self.meinung - partner_meinung) * 0.02 * opinion_factor * beweglichkeit
 
         self.kooperations_neigung = max(0.05, min(0.95, self.kooperations_neigung))
         self.intelligenz = max(0.1, min(6.0, self.intelligenz))
@@ -225,6 +251,8 @@ def build_runtime_config() -> tuple[dict[str, float | int | str], int]:
         'generalist_share': float(os.getenv('KKI_GENERALIST_SHARE', str(DEFAULT_GENERALIST_SHARE))),
         'connector_share': float(os.getenv('KKI_CONNECTOR_SHARE', str(DEFAULT_CONNECTOR_SHARE))),
         'sentinel_share': float(os.getenv('KKI_SENTINEL_SHARE', str(DEFAULT_SENTINEL_SHARE))),
+        'mediator_share': float(os.getenv('KKI_MEDIATOR_SHARE', str(DEFAULT_MEDIATOR_SHARE))),
+        'analyzer_share': float(os.getenv('KKI_ANALYZER_SHARE', str(DEFAULT_ANALYZER_SHARE))),
         'connector_bridge_bonus': float(os.getenv('KKI_CONNECTOR_BRIDGE_BONUS', str(DEFAULT_CONNECTOR_BONUS))),
         'sentinel_rep_threshold': float(
             os.getenv('KKI_SENTINEL_REP_THRESHOLD', str(DEFAULT_SENTINEL_REP_THRESHOLD))
@@ -235,6 +263,36 @@ def build_runtime_config() -> tuple[dict[str, float | int | str], int]:
                 str(DEFAULT_SENTINEL_COOPERATION_PENALTY),
             )
         ),
+        'connector_cross_group_learning_bonus': float(
+            os.getenv(
+                'KKI_CONNECTOR_CROSS_GROUP_LEARNING',
+                str(DEFAULT_CONNECTOR_CROSS_GROUP_LEARNING),
+            )
+        ),
+        'sentinel_reputation_learning_multiplier': float(
+            os.getenv(
+                'KKI_SENTINEL_REPUTATION_LEARNING',
+                str(DEFAULT_SENTINEL_REPUTATION_LEARNING),
+            )
+        ),
+        'mediator_bridge_bonus': float(
+            os.getenv('KKI_MEDIATOR_BRIDGE_BONUS', str(DEFAULT_MEDIATOR_BONUS))
+        ),
+        'mediator_partner_bias': float(
+            os.getenv('KKI_MEDIATOR_PARTNER_BIAS', str(DEFAULT_MEDIATOR_CONTACT_BIAS))
+        ),
+        'mediator_partner_distance': float(
+            os.getenv('KKI_MEDIATOR_PARTNER_DISTANCE', str(DEFAULT_MEDIATOR_OPINION_DISTANCE))
+        ),
+        'analyzer_memory_window': int(
+            os.getenv('KKI_ANALYZER_MEMORY_WINDOW', str(DEFAULT_ANALYZER_MEMORY_WINDOW))
+        ),
+        'analyzer_learning_multiplier': float(
+            os.getenv(
+                'KKI_ANALYZER_LEARNING_MULTIPLIER',
+                str(DEFAULT_ANALYZER_LEARNING_MULTIPLIER),
+            )
+        ),
     }
     return config, seed
 
@@ -243,13 +301,23 @@ def normalisiere_rollenanteile(config):
     generalist = max(0.0, float(config.get('generalist_share', DEFAULT_GENERALIST_SHARE)))
     connector = max(0.0, float(config.get('connector_share', DEFAULT_CONNECTOR_SHARE)))
     sentinel = max(0.0, float(config.get('sentinel_share', DEFAULT_SENTINEL_SHARE)))
-    total = generalist + connector + sentinel
+    mediator = max(0.0, float(config.get('mediator_share', DEFAULT_MEDIATOR_SHARE)))
+    analyzer = max(0.0, float(config.get('analyzer_share', DEFAULT_ANALYZER_SHARE)))
+    total = generalist + connector + sentinel + mediator + analyzer
     if total <= 0.0:
-        return {'generalist': 1.0, 'connector': 0.0, 'sentinel': 0.0}
+        return {
+            'generalist': 1.0,
+            'connector': 0.0,
+            'sentinel': 0.0,
+            'mediator': 0.0,
+            'analyzer': 0.0,
+        }
     return {
         'generalist': generalist / total,
         'connector': connector / total,
         'sentinel': sentinel / total,
+        'mediator': mediator / total,
+        'analyzer': analyzer / total,
     }
 
 
@@ -258,13 +326,25 @@ def weise_rollen_zu(agenten, config):
     agent_count = len(agenten)
     connector_count = int(round(agent_count * shares['connector']))
     sentinel_count = int(round(agent_count * shares['sentinel']))
+    mediator_count = int(round(agent_count * shares['mediator']))
+    analyzer_count = int(round(agent_count * shares['analyzer']))
     connector_count = min(agent_count, connector_count)
     sentinel_count = min(agent_count - connector_count, sentinel_count)
+    mediator_count = min(agent_count - connector_count - sentinel_count, mediator_count)
+    analyzer_count = min(
+        agent_count - connector_count - sentinel_count - mediator_count,
+        analyzer_count,
+    )
 
     shuffled = list(agenten)
     random.shuffle(shuffled)
     connector_ids = {agent.id for agent in shuffled[:connector_count]}
-    sentinel_ids = {agent.id for agent in shuffled[connector_count : connector_count + sentinel_count]}
+    offset = connector_count
+    sentinel_ids = {agent.id for agent in shuffled[offset : offset + sentinel_count]}
+    offset += sentinel_count
+    mediator_ids = {agent.id for agent in shuffled[offset : offset + mediator_count]}
+    offset += mediator_count
+    analyzer_ids = {agent.id for agent in shuffled[offset : offset + analyzer_count]}
 
     for agent in agenten:
         agent.role = 'generalist'
@@ -272,12 +352,27 @@ def weise_rollen_zu(agenten, config):
         agent.rewire_reputation_threshold = None
         agent.cooperation_penalty_threshold = None
         agent.cooperation_penalty = 0.0
+        agent.intelligence_learning_multiplier = 1.0
+        agent.cooperation_learning_multiplier = 1.0
+        agent.reputation_learning_multiplier = 1.0
+        agent.opinion_learning_multiplier = 1.0
+        agent.cross_group_learning_bonus = 0.0
+        agent.memory_window = 10
+        agent.partner_bias_probability = 0.0
+        agent.partner_bias_min_distance = 0.0
 
         if agent.id in connector_ids:
             agent.role = 'connector'
             agent.bridge_bonus = float(config.get('connector_bridge_bonus', DEFAULT_CONNECTOR_BONUS))
             agent.hartnaeckigkeit = max(0.0, agent.hartnaeckigkeit * 0.6)
             agent.kooperations_neigung = min(0.95, agent.kooperations_neigung + 0.04)
+            agent.opinion_learning_multiplier = 1.15
+            agent.cross_group_learning_bonus = float(
+                config.get(
+                    'connector_cross_group_learning_bonus',
+                    DEFAULT_CONNECTOR_CROSS_GROUP_LEARNING,
+                )
+            )
         elif agent.id in sentinel_ids:
             agent.role = 'sentinel'
             agent.rewire_reputation_threshold = float(
@@ -291,6 +386,39 @@ def weise_rollen_zu(agenten, config):
                 )
             )
             agent.reputation = min(1.0, agent.reputation + 0.04)
+            agent.reputation_learning_multiplier = float(
+                config.get(
+                    'sentinel_reputation_learning_multiplier',
+                    DEFAULT_SENTINEL_REPUTATION_LEARNING,
+                )
+            )
+            agent.opinion_learning_multiplier = 0.75
+            agent.memory_window = 12
+        elif agent.id in mediator_ids:
+            agent.role = 'mediator'
+            agent.bridge_bonus = float(config.get('mediator_bridge_bonus', DEFAULT_MEDIATOR_BONUS))
+            agent.partner_bias_probability = float(
+                config.get('mediator_partner_bias', DEFAULT_MEDIATOR_CONTACT_BIAS)
+            )
+            agent.partner_bias_min_distance = float(
+                config.get('mediator_partner_distance', DEFAULT_MEDIATOR_OPINION_DISTANCE)
+            )
+            agent.opinion_learning_multiplier = 1.30
+            agent.cross_group_learning_bonus = 0.10
+            agent.hartnaeckigkeit = max(0.0, agent.hartnaeckigkeit * 0.5)
+        elif agent.id in analyzer_ids:
+            agent.role = 'analyzer'
+            agent.memory_window = int(
+                config.get('analyzer_memory_window', DEFAULT_ANALYZER_MEMORY_WINDOW)
+            )
+            agent.intelligence_learning_multiplier = float(
+                config.get(
+                    'analyzer_learning_multiplier',
+                    DEFAULT_ANALYZER_LEARNING_MULTIPLIER,
+                )
+            )
+            agent.reputation_learning_multiplier = 1.10
+            agent.opinion_learning_multiplier = 0.85
 
 
 def erstelle_agenten(config):
@@ -350,6 +478,17 @@ def erstelle_netzwerk(agenten, config):
 
 
 def waehle_partner(agent, agenten, agenten_dict, config=None):
+    partner_bias_probability = getattr(agent, 'partner_bias_probability', 0.0)
+    if partner_bias_probability > 0.0 and random.random() < partner_bias_probability:
+        bias_distance = getattr(agent, 'partner_bias_min_distance', 0.0)
+        kandidaten = [
+            anderer
+            for anderer in agenten
+            if anderer.id != agent.id and abs(anderer.meinung - agent.meinung) >= bias_distance
+        ]
+        if kandidaten:
+            kandidaten.sort(key=lambda anderer: abs(anderer.meinung - agent.meinung), reverse=True)
+            return kandidaten[0]
     if config and config.get('enable_mediator_encouragement') and ist_zentrist(agent.meinung, config):
         bias = float(config['mediator_contact_bias'])
         if random.random() < bias:
@@ -565,9 +704,18 @@ def run_polarization_experiment(
     config.setdefault('generalist_share', DEFAULT_GENERALIST_SHARE)
     config.setdefault('connector_share', DEFAULT_CONNECTOR_SHARE)
     config.setdefault('sentinel_share', DEFAULT_SENTINEL_SHARE)
+    config.setdefault('mediator_share', DEFAULT_MEDIATOR_SHARE)
+    config.setdefault('analyzer_share', DEFAULT_ANALYZER_SHARE)
     config.setdefault('connector_bridge_bonus', DEFAULT_CONNECTOR_BONUS)
     config.setdefault('sentinel_rep_threshold', DEFAULT_SENTINEL_REP_THRESHOLD)
     config.setdefault('sentinel_cooperation_penalty', DEFAULT_SENTINEL_COOPERATION_PENALTY)
+    config.setdefault('connector_cross_group_learning_bonus', DEFAULT_CONNECTOR_CROSS_GROUP_LEARNING)
+    config.setdefault('sentinel_reputation_learning_multiplier', DEFAULT_SENTINEL_REPUTATION_LEARNING)
+    config.setdefault('mediator_bridge_bonus', DEFAULT_MEDIATOR_BONUS)
+    config.setdefault('mediator_partner_bias', DEFAULT_MEDIATOR_CONTACT_BIAS)
+    config.setdefault('mediator_partner_distance', DEFAULT_MEDIATOR_OPINION_DISTANCE)
+    config.setdefault('analyzer_memory_window', DEFAULT_ANALYZER_MEMORY_WINDOW)
+    config.setdefault('analyzer_learning_multiplier', DEFAULT_ANALYZER_LEARNING_MULTIPLIER)
     scenario = str(config['scenario'])
     rounds = int(config['rounds'])
     interactions_per_round = int(config['interactions_per_round'])
@@ -605,7 +753,9 @@ def run_polarization_experiment(
                 "Rollen: "
                 f"Generalisten={shares['generalist']:.0%}, "
                 f"Brueckenbauer={shares['connector']:.0%}, "
-                f"Waechter={shares['sentinel']:.0%}"
+                f"Waechter={shares['sentinel']:.0%}, "
+                f"Vermittler={shares['mediator']:.0%}, "
+                f"Analytiker={shares['analyzer']:.0%}"
             )
         print("Ziel: Beobachte, ob der Schwarm in Richtung Konsens oder in stabile Lager driftet.")
         print("\nSimulation läuft...\n")
@@ -756,10 +906,8 @@ def run_polarization_experiment(
     mean_group_b = float(np.mean([agent.meinung for agent in agenten if agent.gruppe == 1]))
     finale_netzwerkmetriken = berechne_netzwerkmetriken(agenten, agenten_dict)
     durchschnitt_rewiring = float(np.mean(rewired_edges_history)) if rewired_edges_history else 0.0
-    role_counts = {
-        role: sum(1 for agent in agenten if agent.role == role)
-        for role in ('generalist', 'connector', 'sentinel')
-    }
+    bekannte_rollen = ('generalist', 'connector', 'sentinel', 'mediator', 'analyzer')
+    role_counts = {role: sum(1 for agent in agenten if agent.role == role) for role in bekannte_rollen}
     role_mean_intelligence = {
         role: float(np.mean([agent.intelligenz for agent in agenten if agent.role == role]))
         if role_counts[role]
@@ -768,6 +916,20 @@ def run_polarization_experiment(
     }
     role_mean_reputation = {
         role: float(np.mean([agent.reputation for agent in agenten if agent.role == role]))
+        if role_counts[role]
+        else 0.0
+        for role in role_counts
+    }
+    role_mean_opinion_shift = {
+        role: float(
+            np.mean(
+                [
+                    abs(agent.meinung_history[-1] - agent.meinung_history[0])
+                    for agent in agenten
+                    if agent.role == role
+                ]
+            )
+        )
         if role_counts[role]
         else 0.0
         for role in role_counts
@@ -801,7 +963,9 @@ def run_polarization_experiment(
                 "Rollen-Kooperation:          "
                 f"Generalisten={role_cross_group_cooperation_rate['generalist']:.1%}, "
                 f"Brueckenbauer={role_cross_group_cooperation_rate['connector']:.1%}, "
-                f"Waechter={role_cross_group_cooperation_rate['sentinel']:.1%}"
+                f"Waechter={role_cross_group_cooperation_rate['sentinel']:.1%}, "
+                f"Vermittler={role_cross_group_cooperation_rate['mediator']:.1%}, "
+                f"Analytiker={role_cross_group_cooperation_rate['analyzer']:.1%}"
             )
         if config.get('enable_dynamic_rewiring'):
             print(f"Ø Rewiring-Operationen/Runde: {durchschnitt_rewiring:.2f}")
@@ -832,6 +996,7 @@ def run_polarization_experiment(
         'role_counts': role_counts,
         'role_mean_intelligence': role_mean_intelligence,
         'role_mean_reputation': role_mean_reputation,
+        'role_mean_opinion_shift': role_mean_opinion_shift,
         'role_cross_group_cooperation_rate': role_cross_group_cooperation_rate,
         'group_1_mean_opinion': mean_group_a,
         'group_2_mean_opinion': mean_group_b,

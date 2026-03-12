@@ -134,6 +134,19 @@ class SmokeTests(unittest.TestCase):
             self.assertTrue((output_dir / "kki_adaptive_netzwerke.png").exists())
             self.assertIn("Beste adaptive Konfiguration", result.stdout)
 
+    def test_schwarm_invasive_netzwerke_smoke(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:
+            output_dir = Path(tmpdir)
+            result = self.run_script(
+                "schwarm_invasive_netzwerke.py",
+                output_dir,
+                seed=31,
+                extra_env={"KKI_INVASION_REPETITIONS": "1"},
+            )
+            self.assert_successful_run(result)
+            self.assertTrue((output_dir / "kki_invasive_netzwerke.png").exists())
+            self.assertIn("Beste adaptive Abwehr", result.stdout)
+
 
 if __name__ == "__main__":
     unittest.main()

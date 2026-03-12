@@ -49,6 +49,12 @@ DEFAULT_ANALYZER_LEARNING_MULTIPLIER = 1.10
 DEFAULT_ROLE_SWITCH_INTERVAL = 20
 DEFAULT_ROLE_SWITCH_MIN_TENURE = 20
 DEFAULT_ROLE_SWITCH_REPUTATION_COST = 0.02
+DEFAULT_MISSION_SWITCH_INTERVAL = 30
+MISSION_CONSENSUS = 'consensus_building'
+MISSION_KNOWLEDGE = 'knowledge_sharing'
+MISSION_DEFENSE = 'reputation_defense'
+MISSION_STABILITY = 'network_stability'
+MISSION_SUPPORT = 'support'
 
 
 class Agent:
@@ -81,6 +87,10 @@ class Agent:
         self.role_tenure = 0
         self.initial_role = 'generalist'
         self.role_transition_history = []
+        self.mission = MISSION_SUPPORT
+        self.initial_mission = MISSION_SUPPORT
+        self.mission_tenure = 0
+        self.mission_transition_history = []
 
         self.meinung_history = [meinung]
         self.kooperation_history = [kooperations_neigung]
@@ -312,6 +322,11 @@ def build_runtime_config() -> tuple[dict[str, float | int | str], int]:
                 str(DEFAULT_ROLE_SWITCH_REPUTATION_COST),
             )
         ),
+        'enable_missions': os.getenv('KKI_MISSIONS_ENABLED', '').strip().lower() in {'1', 'true', 'yes', 'on'},
+        'mission_assignment': os.getenv('KKI_MISSION_ASSIGNMENT', 'static').strip().lower(),
+        'mission_switch_interval': int(
+            os.getenv('KKI_MISSION_SWITCH_INTERVAL', str(DEFAULT_MISSION_SWITCH_INTERVAL))
+        ),
     }
     return config, seed
 
@@ -402,6 +417,77 @@ def apply_role_profile(agent, role, config):
         agent.opinion_learning_multiplier = 0.85
 
 
+def mission_fuer_rolle(role):
+    if role == 'connector':
+        return MISSION_KNOWLEDGE
+    if role == 'sentinel':
+        return MISSION_DEFENSE
+    if role == 'mediator':
+        return MISSION_CONSENSUS
+    if role == 'analyzer':
+        return MISSION_STABILITY
+    return MISSION_SUPPORT
+
+
+def setze_mission(agent, mission, runde):
+    if agent.mission != mission:
+        agent.mission_transition_history.append((runde, agent.mission, mission))
+        agent.mission_tenure = 0
+    agent.mission = mission
+
+
+def initialisiere_missionen(agenten):
+    for agent in agenten:
+        mission = mission_fuer_rolle(agent.role)
+        agent.mission = mission
+        agent.initial_mission = mission
+        agent.mission_tenure = 0
+        agent.mission_transition_history = []
+
+
+def aktualisiere_missionen(agenten, config, runde):
+    if not config.get('enable_missions'):
+        return {'switches': 0}
+    if config.get('mission_assignment') != 'adaptive':
+        return {'switches': 0}
+
+    interval = max(1, int(config.get('mission_switch_interval', DEFAULT_MISSION_SWITCH_INTERVAL)))
+    if runde % interval != 0:
+        return {'switches': 0}
+
+    switches = 0
+    for agent in agenten:
+        neue_mission = mission_fuer_rolle(agent.role)
+        if agent.role == 'generalist':
+            if agent.reputation >= 0.62 and agent.kooperations_neigung >= 0.60:
+                neue_mission = MISSION_KNOWLEDGE
+            elif agent.reputation < 0.45:
+                neue_mission = MISSION_DEFENSE
+        if agent.mission != neue_mission:
+            setze_mission(agent, neue_mission, runde)
+            switches += 1
+    return {'switches': switches}
+
+
+def missions_bonus(agent, partner_reputation, partner, ist_cross_group):
+    cooperation_bonus = 0.0
+    opinion_pull = 0.0
+
+    if agent.mission == MISSION_CONSENSUS and ist_cross_group:
+        cooperation_bonus += 0.05
+        opinion_pull += 0.04
+    elif agent.mission == MISSION_KNOWLEDGE and ist_cross_group:
+        cooperation_bonus += 0.06
+    elif agent.mission == MISSION_DEFENSE and partner_reputation < DEFAULT_SENTINEL_REP_THRESHOLD:
+        cooperation_bonus -= 0.08
+    elif agent.mission == MISSION_STABILITY and not ist_cross_group and abs(agent.meinung - partner.meinung) < 0.2:
+        cooperation_bonus += 0.03
+    elif agent.mission == MISSION_SUPPORT and partner_reputation >= 0.5:
+        cooperation_bonus += 0.01
+
+    return cooperation_bonus, opinion_pull
+
+
 def weise_rollen_zu(agenten, config):
     shares = normalisiere_rollenanteile(config)
     agent_count = len(agenten)
@@ -473,6 +559,8 @@ def erstelle_agenten(config):
 
     if config.get('roles_enabled'):
         weise_rollen_zu(agenten, config)
+    if config.get('enable_missions'):
+        initialisiere_missionen(agenten)
 
     return agenten
 
@@ -827,6 +915,9 @@ def run_polarization_experiment(
     config.setdefault('role_switch_min_tenure', DEFAULT_ROLE_SWITCH_MIN_TENURE)
     config.setdefault('role_switch_reputation_cost', DEFAULT_ROLE_SWITCH_REPUTATION_COST)
     config.setdefault('max_role_switches_per_round', max(1, int(config['agent_count']) // 10))
+    config.setdefault('enable_missions', False)
+    config.setdefault('mission_assignment', 'static')
+    config.setdefault('mission_switch_interval', DEFAULT_MISSION_SWITCH_INTERVAL)
     scenario = str(config['scenario'])
     rounds = int(config['rounds'])
     interactions_per_round = int(config['interactions_per_round'])
@@ -875,6 +966,12 @@ def run_polarization_experiment(
                     f"Mindestdauer={int(config['role_switch_min_tenure'])}, "
                     f"Kosten={float(config['role_switch_reputation_cost']):.2f}"
                 )
+        if config.get('enable_missions'):
+            print(
+                "Missionen: "
+                f"aktiv | Zuweisung={config['mission_assignment']}, "
+                f"Intervall={int(config['mission_switch_interval'])}"
+            )
         print("Ziel: Beobachte, ob der Schwarm in Richtung Konsens oder in stabile Lager driftet.")
         print("\nSimulation läuft...\n")
 
@@ -903,6 +1000,9 @@ def run_polarization_experiment(
     mean_degree_history = []
     neighbor_distance_history = []
     cross_group_edge_share_history = []
+    mission_switch_history = []
+    mission_contact_counts = defaultdict(int)
+    mission_success_counts = defaultdict(int)
 
     for runde in range(1, rounds + 1):
         gruppenuebergreifende_interaktionen = 0
@@ -936,6 +1036,14 @@ def run_polarization_experiment(
                     cooperation_bonus_a += 0.04
                 if ist_zentrist(partner.meinung, config):
                     cooperation_bonus_p += 0.04
+            mission_bonus_a, mission_pull_a = missions_bonus(
+                agent, partner_rep_aus_agent_sicht, partner, agent.gruppe != partner.gruppe
+            )
+            mission_bonus_p, mission_pull_p = missions_bonus(
+                partner, agent_rep_aus_partner_sicht, agent, agent.gruppe != partner.gruppe
+            )
+            cooperation_bonus_a += mission_bonus_a
+            cooperation_bonus_p += mission_bonus_p
 
             aktion_a = agent.waehle_aktion(partner_rep_aus_agent_sicht, partner.meinung, cooperation_bonus_a)
             aktion_p = partner.waehle_aktion(agent_rep_aus_partner_sicht, agent.meinung, cooperation_bonus_p)
@@ -950,6 +1058,35 @@ def run_polarization_experiment(
                 if ist_zentrist(agent.meinung, config) or ist_zentrist(partner.meinung, config):
                     opinion_pull_a += float(config['centrist_pull_strength'])
                     opinion_pull_p += float(config['centrist_pull_strength'])
+            opinion_pull_a += mission_pull_a
+            opinion_pull_p += mission_pull_p
+
+            if config.get('enable_missions'):
+                mission_contact_counts[agent.mission] += 1
+                mission_contact_counts[partner.mission] += 1
+                if agent.mission in {MISSION_CONSENSUS, MISSION_KNOWLEDGE}:
+                    if agent.gruppe != partner.gruppe and aktion_a == 'C' and aktion_p == 'C':
+                        mission_success_counts[agent.mission] += 1
+                elif agent.mission == MISSION_DEFENSE:
+                    if partner_rep_aus_agent_sicht < DEFAULT_SENTINEL_REP_THRESHOLD and aktion_a == 'D':
+                        mission_success_counts[agent.mission] += 1
+                elif agent.mission == MISSION_STABILITY:
+                    if agent.gruppe == partner.gruppe and aktion_a == 'C' and aktion_p == 'C':
+                        mission_success_counts[agent.mission] += 1
+                elif agent.mission == MISSION_SUPPORT and aktion_a == 'C':
+                    mission_success_counts[agent.mission] += 1
+
+                if partner.mission in {MISSION_CONSENSUS, MISSION_KNOWLEDGE}:
+                    if agent.gruppe != partner.gruppe and aktion_a == 'C' and aktion_p == 'C':
+                        mission_success_counts[partner.mission] += 1
+                elif partner.mission == MISSION_DEFENSE:
+                    if agent_rep_aus_partner_sicht < DEFAULT_SENTINEL_REP_THRESHOLD and aktion_p == 'D':
+                        mission_success_counts[partner.mission] += 1
+                elif partner.mission == MISSION_STABILITY:
+                    if agent.gruppe == partner.gruppe and aktion_a == 'C' and aktion_p == 'C':
+                        mission_success_counts[partner.mission] += 1
+                elif partner.mission == MISSION_SUPPORT and aktion_p == 'C':
+                    mission_success_counts[partner.mission] += 1
 
             agent.lerne(
                 aktion_a,
@@ -971,9 +1108,11 @@ def run_polarization_experiment(
             )
 
         switch_stats = aktualisiere_rollenwechsel(agenten, agenten_dict, config, runde)
+        mission_stats = aktualisiere_missionen(agenten, config, runde)
         rewiring_stats = aktualisiere_adaptives_netzwerk(agenten, agenten_dict, config)
         for agent in agenten:
             agent.role_tenure += 1
+            agent.mission_tenure += 1
             agent.runde_beenden()
 
         polarisierungs_index = berechne_polarisierungs_index(agenten)
@@ -997,6 +1136,7 @@ def run_polarization_experiment(
         bridge_count_history.append(len(bridge_ids))
         center_zone_history.append(sum(1 for agent in agenten if ist_zentrist(agent.meinung, config)))
         role_switch_history.append(switch_stats['switches'])
+        mission_switch_history.append(mission_stats['switches'])
         for alte_rolle, neue_rolle in switch_stats['transitions']:
             role_transition_counts[f'{alte_rolle}->{neue_rolle}'] += 1
         removed_edges_history.append(rewiring_stats['removed_edges'])
@@ -1019,6 +1159,8 @@ def run_polarization_experiment(
                 status += f", Brücken={len(bridge_ids)}, Mitte={center_zone_history[-1]}"
             if config.get('enable_role_switching'):
                 status += f", Wechsel={switch_stats['switches']}"
+            if config.get('enable_missions'):
+                status += f", Missionen={mission_stats['switches']}"
             if config.get('enable_dynamic_rewiring'):
                 status += f", Rewiring={rewiring_stats['rewired_edges']}"
             print(status)
@@ -1066,6 +1208,21 @@ def run_polarization_experiment(
         role: role_cross_group_cooperations[role] / max(1, role_cross_group_contacts[role])
         for role in role_counts
     }
+    bekannte_missionen = (
+        MISSION_CONSENSUS,
+        MISSION_KNOWLEDGE,
+        MISSION_DEFENSE,
+        MISSION_STABILITY,
+        MISSION_SUPPORT,
+    )
+    initial_mission_counts = {
+        mission: sum(1 for agent in agenten if agent.initial_mission == mission) for mission in bekannte_missionen
+    }
+    mission_counts = {mission: sum(1 for agent in agenten if agent.mission == mission) for mission in bekannte_missionen}
+    mission_success_rates = {
+        mission: mission_success_counts[mission] / max(1, mission_contact_counts[mission])
+        for mission in bekannte_missionen
+    }
 
     interpretation = "hybrid"
     if finale_pi > 0.22 and finaler_abstand > 0.35:
@@ -1097,6 +1254,16 @@ def run_polarization_experiment(
             )
             if config.get('enable_role_switching'):
                 print(f"Ø Rollenwechsel/Runde:       {float(np.mean(role_switch_history)):.2f}")
+        if config.get('enable_missions'):
+            print(
+                "Missionserfolg:             "
+                f"Konsens={mission_success_rates[MISSION_CONSENSUS]:.1%}, "
+                f"Wissen={mission_success_rates[MISSION_KNOWLEDGE]:.1%}, "
+                f"Abwehr={mission_success_rates[MISSION_DEFENSE]:.1%}, "
+                f"Stabilitaet={mission_success_rates[MISSION_STABILITY]:.1%}, "
+                f"Support={mission_success_rates[MISSION_SUPPORT]:.1%}"
+            )
+            print(f"Ø Missionswechsel/Runde:     {float(np.mean(mission_switch_history)):.2f}")
         if config.get('enable_dynamic_rewiring'):
             print(f"Ø Rewiring-Operationen/Runde: {durchschnitt_rewiring:.2f}")
             print(f"Finale Netzwerkdichte:       {finale_netzwerkmetriken['density']:.3f}")
@@ -1124,6 +1291,8 @@ def run_polarization_experiment(
         'cross_group_interaction_rate': cross_group_rate,
         'cross_group_cooperation_rate': cross_group_cooperation_rate,
         'role_switch_enabled': bool(config.get('enable_role_switching')),
+        'missions_enabled': bool(config.get('enable_missions')),
+        'mission_assignment': str(config.get('mission_assignment', 'static')),
         'initial_role_counts': initial_role_counts,
         'role_counts': role_counts,
         'role_mean_intelligence': role_mean_intelligence,
@@ -1133,6 +1302,11 @@ def run_polarization_experiment(
         'role_switch_history': role_switch_history,
         'role_switch_total': int(sum(role_switch_history)),
         'role_transition_counts': dict(role_transition_counts),
+        'initial_mission_counts': initial_mission_counts,
+        'mission_counts': mission_counts,
+        'mission_success_rates': mission_success_rates,
+        'mission_switch_history': mission_switch_history,
+        'mission_switch_total': int(sum(mission_switch_history)),
         'group_1_mean_opinion': mean_group_a,
         'group_2_mean_opinion': mean_group_b,
         'interpretation': interpretation,

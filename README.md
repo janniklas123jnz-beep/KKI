@@ -42,6 +42,7 @@ Die Simulationen basieren auf wiederholten Interaktionen im Stil des Gefangenend
 | `schwarm_parameterstudie.py` | Vergleichsstudie zu Netzwerkparametern gegen Polarisierung |
 | `schwarm_adaptive_netzwerke.py` | Vergleichsstudie zu adaptivem Rewiring auf Basis von Reputation und Meinungsnähe |
 | `schwarm_invasive_netzwerke.py` | Vergleichsstudie zu adaptiven Netzwerken unter Invasions- und Stoerungsszenarien |
+| `schwarm_commitment_resilienz.py` | Vergleichsstudie zu adaptiven Netzwerken unter Manipulations- und Commitment-Angriffen |
 | `commitment_protokoll.py` | Commit-Reveal-Verify-Protokoll gegen Manipulation |
 
 ## Features
@@ -114,6 +115,7 @@ python3 schwarm_polarisierung.py
 python3 schwarm_parameterstudie.py
 python3 schwarm_adaptive_netzwerke.py
 python3 schwarm_invasive_netzwerke.py
+python3 schwarm_commitment_resilienz.py
 python3 commitment_protokoll.py
 ```
 
@@ -168,6 +170,21 @@ KKI_INVASION_PROXIMITY_WEIGHTS=0.25,0.45,0.65 \
 python3 schwarm_invasive_netzwerke.py
 ```
 
+Fuer adaptive Netzwerke unter Commitment-Angriffen gibt es eine eigene Vergleichsstudie:
+
+```bash
+python3 schwarm_commitment_resilienz.py
+```
+
+Optional lassen sich Angriffsstaerke und Commitment-Schwellen anpassen:
+
+```bash
+KKI_COMMITMENT_ATTACK_STRENGTH=0.45 \
+KKI_COMMITMENT_REP_THRESHOLDS=0.25,0.35,0.45 \
+KKI_COMMITMENT_TRUST_THRESHOLDS=0.55,0.75,0.95 \
+python3 schwarm_commitment_resilienz.py
+```
+
 Die Visualisierungs-Skripte erzeugen PNG-Dateien direkt im Projektverzeichnis.
 Da die Simulationen Zufallselemente enthalten, können konkrete Zahlenwerte zwischen einzelnen Läufen variieren.
 
@@ -186,6 +203,7 @@ Die folgenden Skripte erzeugen die im Repository abgelegten PNG-Dateien:
 | `schwarm_parameterstudie.py` | `kki_netzwerk_parameterstudie.png` | `KKI_SEED=42 python3 schwarm_parameterstudie.py` |
 | `schwarm_adaptive_netzwerke.py` | `kki_adaptive_netzwerke.png` | `KKI_SEED=42 python3 schwarm_adaptive_netzwerke.py` |
 | `schwarm_invasive_netzwerke.py` | `kki_invasive_netzwerke.png` | `KKI_SEED=42 python3 schwarm_invasive_netzwerke.py` |
+| `schwarm_commitment_resilienz.py` | `kki_commitment_resilienz.png` | `KKI_SEED=42 python3 schwarm_commitment_resilienz.py` |
 | `commitment_protokoll.py` | `kki_commitment_protokoll.png` | `KKI_SEED=42 python3 commitment_protokoll.py` |
 
 Hinweise zur Reproduktion:
@@ -195,6 +213,7 @@ Hinweise zur Reproduktion:
 - für schnelle technische Prüfungen ohne GUI kann zusätzlich `KKI_TEST_MODE=1` gesetzt werden
 - adaptive Netzwerke lassen sich u. a. mit `KKI_REWIRING_ENABLED`, `KKI_REWIRE_REP_THRESHOLD` und `KKI_REWIRE_PROXIMITY_WEIGHT` steuern
 - das Invasions-Experiment nutzt zusaetzlich `KKI_INVASION_AGENT_COUNT`, `KKI_INVASION_REP_THRESHOLDS` und `KKI_INVASION_PROXIMITY_WEIGHTS`
+- das Commitment-Experiment nutzt zusaetzlich `KKI_COMMITMENT_ATTACK_STRENGTH`, `KKI_COMMITMENT_REP_THRESHOLDS` und `KKI_COMMITMENT_TRUST_THRESHOLDS`
 
 Beispiel für eine reproduzierbare, headless Erzeugung:
 
@@ -234,6 +253,10 @@ Die Smoke-Tests starten ausgewählte Kernskripte im verkürzten headless Testmod
 
 ![KKI Invasive Netzwerke](kki_invasive_netzwerke.png)
 
+### Adaptive Netzwerke gegen Commitment-Angriffe
+
+![KKI Commitment-Resilienz](kki_commitment_resilienz.png)
+
 ## Zentrale Beobachtungen
 
 Die bisherigen Simulationen illustrieren wiederkehrende Muster:
@@ -244,6 +267,7 @@ Die bisherigen Simulationen illustrieren wiederkehrende Muster:
 - adaptive Rewiring-Regeln zeigen, wie stark soziale Brücken und Vertrauenssignale die Lagerbildung beeinflussen
 - unter Invasion wirkt adaptives Rewiring als Resilienzmechanismus, wenn schlechte Partner schnell isoliert und kooperative Kerne erhalten werden
 - Commitment-Mechanismen erschweren oder verhindern strategische Täuschung
+- adaptive Netzwerke koennen Commitment-Brueche zusaetzlich in schnelle soziale Isolation manipulativer Agenten uebersetzen
 
 ## Projektstruktur und Ausrichtung
 

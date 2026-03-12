@@ -10,17 +10,16 @@ Agenten können nicht mehr lügen, ohne entdeckt zu werden!
 """
 
 import random
-import hashlib
 import matplotlib.pyplot as plt
 import numpy as np
 from collections import defaultdict
-from dataclasses import dataclass
 from typing import Optional, Tuple
 
 from kki_runtime import (
     configure_simulation,
     save_and_maybe_show,
 )
+from kki_commitment import Commitment
 
 # === KONFIGURATION ===
 ANZAHL_AGENTEN = 50
@@ -40,32 +39,6 @@ PAYOFFS = {
     ('D', 'C'): 5,
     ('D', 'D'): 1,
 }
-
-
-@dataclass
-class Commitment:
-    """Ein kryptografisches Commitment."""
-    hash_wert: str
-    nonce: str
-    aktion: Optional[str] = None  # Wird beim Reveal gesetzt
-    
-    @staticmethod
-    def erstelle(aktion: str) -> 'Commitment':
-        """Erstelle ein Commitment für eine Aktion."""
-        nonce = hashlib.sha256(str(random.random()).encode()).hexdigest()[:16]
-        hash_wert = hashlib.sha256(f"{aktion}:{nonce}".encode()).hexdigest()
-        return Commitment(hash_wert=hash_wert, nonce=nonce, aktion=None)
-    
-    def reveal(self, aktion: str) -> bool:
-        """Offenbare die Aktion und prüfe Konsistenz."""
-        erwarteter_hash = hashlib.sha256(f"{aktion}:{self.nonce}".encode()).hexdigest()
-        self.aktion = aktion
-        return erwarteter_hash == self.hash_wert
-    
-    def verifiziere(self, behauptete_aktion: str) -> bool:
-        """Verifiziere ob die behauptete Aktion zum Commitment passt."""
-        erwarteter_hash = hashlib.sha256(f"{behauptete_aktion}:{self.nonce}".encode()).hexdigest()
-        return erwarteter_hash == self.hash_wert
 
 
 class Agent:

@@ -510,6 +510,26 @@ class SmokeTests(unittest.TestCase):
             self.assertTrue((output_dir / "kki_manipulationsresistenz.png").exists())
             self.assertIn("Beste Abwehrarchitektur", result.stdout)
 
+    def test_schwarm_interaktionsmodelle_smoke(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:
+            output_dir = Path(tmpdir)
+            result = self.run_script(
+                "schwarm_interaktionsmodelle.py",
+                output_dir,
+                seed=139,
+                extra_env={
+                    "KKI_INTERACTION_REPETITIONS": "1",
+                    "KKI_WORKFLOW_STAGE_MIN_TENURE": "1",
+                    "KKI_MISSION_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_MIN_TENURE": "2",
+                    "KKI_INJECTION_ATTACK_ROUND": "3",
+                },
+            )
+            self.assert_successful_run(result)
+            self.assertTrue((output_dir / "kki_interaktionsmodelle.png").exists())
+            self.assertIn("Bestes Interaktionsmodell", result.stdout)
+
 
 if __name__ == "__main__":
     unittest.main()

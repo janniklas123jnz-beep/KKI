@@ -131,7 +131,7 @@ def profile(params):
             'analyzer_learning_multiplier': 1.05,
         },
 
-        # 3. Vertrauensgewichtetes Modell: Reputation als primaeree Einflussgrösse
+        # 3. Vertrauensgewichtetes Modell: Reputation als primaere Einflussgrösse
         {
             'name': 'trust-weighted',
             'label': 'Vertrauensgewichtet',

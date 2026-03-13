@@ -516,6 +516,21 @@ KKI_RESYNC_STRENGTH=0.32 \
 python3 schwarm_integrationsstudie.py
 ```
 
+Die Interaktionsmodell-Studie eroeffnet die naechste Forschungsreihe und vergleicht, wie unterschiedliche Regeln fuer Partnerwahl, Lerngewichtung und Gedaechtnis die Schwarmresilienz beeinflussen:
+
+```bash
+python3 schwarm_interaktionsmodelle.py
+```
+
+Optional lassen sich Wiederholungen und Modellparameter anpassen:
+
+```bash
+KKI_INTERACTION_REPETITIONS=2 \
+KKI_INJECTION_ATTACK_ROUND=90 \
+KKI_GROUP_LEARNING_RATE=0.12 \
+python3 schwarm_interaktionsmodelle.py
+```
+
 Optional lassen sich Wiederholungen und gemeinsame Basisparameter anpassen:
 
 ```bash
@@ -581,6 +596,7 @@ Die folgenden Skripte erzeugen die im Repository abgelegten PNG-Dateien:
 | `schwarm_fehlerisolation.py` | `kki_fehlerisolation.png` | `KKI_SEED=42 python3 schwarm_fehlerisolation.py` |
 | `schwarm_wiederanlauf.py` | `kki_wiederanlauf.png` | `KKI_SEED=42 python3 schwarm_wiederanlauf.py` |
 | `schwarm_integrationsstudie.py` | `kki_integrationsstudie.png` | `KKI_SEED=42 python3 schwarm_integrationsstudie.py` |
+| `schwarm_interaktionsmodelle.py` | `kki_interaktionsmodelle.png` | `KKI_SEED=42 python3 schwarm_interaktionsmodelle.py` |
 | `commitment_protokoll.py` | `kki_commitment_protokoll.png` | `KKI_SEED=42 python3 commitment_protokoll.py` |
 
 Hinweise zur Reproduktion:
@@ -611,6 +627,7 @@ Hinweise zur Reproduktion:
 - die Fehlerisolations-Studie nutzt zusaetzlich `KKI_ISOLATION_REPETITIONS`, `KKI_FAULT_ISOLATION_ENABLED`, `KKI_QUARANTINE_COMPROMISE_THRESHOLD`, `KKI_QUARANTINE_EXPOSURE_THRESHOLD` und `KKI_TRUST_SHIELD_STRENGTH`
 - die Wiederanlauf-Studie nutzt zusaetzlich `KKI_RESTART_REPETITIONS`, `KKI_CLUSTER_FAILURES_ENABLED`, `KKI_RESTART_RECOVERY_ENABLED`, `KKI_FAILURE_ROUND`, `KKI_FAILURE_DURATION`, `KKI_FAILURE_FRACTION` und `KKI_RESYNC_STRENGTH`
 - die Integrationsstudie nutzt zusaetzlich `KKI_INTEGRATION_REPETITIONS`, `KKI_FAILURE_ROUND`, `KKI_FAILURE_DURATION`, `KKI_FAILURE_FRACTION` und `KKI_RESYNC_STRENGTH` fuer die finale Gesamtarchitektur
+- die Interaktionsmodell-Studie nutzt zusaetzlich `KKI_INTERACTION_REPETITIONS`, `KKI_INJECTION_ATTACK_ROUND`, `KKI_GROUP_LEARNING_RATE` und `KKI_SKILL_SPECIALIZATION_THRESHOLD` fuer den Modellvergleich
 
 Beispiel für eine reproduzierbare, headless Erzeugung:
 
@@ -734,6 +751,10 @@ Die Smoke-Tests starten ausgewählte Kernskripte im verkürzten headless Testmod
 
 ![KKI Integrationsstudie](kki_integrationsstudie.png)
 
+### Interaktionsmodell-Studie
+
+![KKI Interaktionsmodelle](kki_interaktionsmodelle.png)
+
 ## Zentrale Beobachtungen
 
 Die bisherigen Simulationen illustrieren wiederkehrende Muster:
@@ -757,6 +778,7 @@ Die bisherigen Simulationen illustrieren wiederkehrende Muster:
 - die Missionskonflikt-Studie untersucht nun, ob adaptive Missionen besser werden, wenn der Schwarm Zielkonflikte explizit erkennt und konkurrierende Aufgaben arbitriert
 - die Arbeitsketten-Studie untersucht nun, ob aus diesen Missionen mehrstufige Arbeitsablaeufe mit Abhaengigkeiten entstehen koennen, statt nur einzelne Aufgaben zu optimieren
 - die Arbeitszellen-Studie untersucht nun, ob spezialisierte Teilteams mit expliziten Uebergaben die Arbeitsketten nochmals koordinierter und skalierbarer machen
+- die Interaktionsmodell-Studie vergleicht nun, ob bounded-confidence, vertrauensgewichtete, gedaechtnisbasierte oder adaptive Hybridregeln die staerksten Kooperations- und Resilienzgewinne liefern
 
 ## Projektstruktur und Ausrichtung
 

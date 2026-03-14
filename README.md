@@ -144,6 +144,12 @@ Damit endet die Planungsphase nicht nur in einzelnen Studienergebnissen, sondern
 - dann Vertraege, Daten-, Betriebs- und Freigaberegeln aus `#111` bis `#119`
 - schliesslich ein konkreter Realisierungsfahrplan in `#120`
 
+Der erste reale Bauschritt `#121` startet nun im Paket `kki/` mit einer Runtime-DNA-Grundlage:
+
+- benannte Runtime-DNA-Profile fuer Labor-, Shadow-, Pilot- und produktionsnahe Vorbereitung
+- validierte Grundschwellen fuer Budget, Recovery-Reserve, Freigabefenster und Update-Takt
+- environment-gesteuerter Bootstrap fuer spaetere Modul-, Daten- und Rolloutbausteine
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

@@ -7,7 +7,10 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest import mock
 from pathlib import Path
+
+from kki import RuntimeStage, RuntimeThresholds, runtime_dna_for_profile, runtime_dna_from_env
 
 REPO_ROOT = Path(__file__).resolve().parent
 PYTHON = sys.executable
@@ -52,6 +55,41 @@ class SmokeTests(unittest.TestCase):
             self.fail(
                 f"Skript schlug fehl ({result.returncode}).\nSTDOUT:\n{result.stdout}\nSTDERR:\n{result.stderr}"
             )
+
+    def test_runtime_dna_foundation_profile(self) -> None:
+        dna = runtime_dna_for_profile("balanced-runtime-dna", stage=RuntimeStage.SHADOW)
+        exported = dna.to_dict()
+
+        self.assertEqual(exported["identity"]["stage"], "shadow")
+        self.assertIn("telemetry", exported["enabled_hooks"])
+        self.assertIn("audit-before-cutover", exported["invariants"])
+        self.assertGreater(exported["thresholds"]["resource_budget"], exported["thresholds"]["recovery_reserve"])
+
+    def test_runtime_dna_env_overrides(self) -> None:
+        with mock.patch.dict(
+            os.environ,
+            {
+                "KKI_RUNTIME_PROFILE": "pilot-runtime-dna",
+                "KKI_RUNTIME_STAGE": "pilot",
+                "KKI_RUNTIME_RESOURCE_BUDGET": "0.81",
+                "KKI_RUNTIME_RECOVERY_RESERVE": "0.21",
+                "KKI_RUNTIME_ENABLE_SHADOW": "false",
+                "KKI_RUNTIME_OWNER": "copilot",
+            },
+            clear=False,
+        ):
+            dna = runtime_dna_from_env()
+
+        self.assertEqual(dna.identity.profile, "pilot-runtime-dna")
+        self.assertEqual(dna.identity.stage, RuntimeStage.PILOT)
+        self.assertAlmostEqual(dna.thresholds.resource_budget, 0.81)
+        self.assertAlmostEqual(dna.thresholds.recovery_reserve, 0.21)
+        self.assertFalse(dna.hooks.shadow)
+        self.assertEqual(dna.metadata["owner"], "copilot")
+
+    def test_runtime_thresholds_reject_invalid_reserve(self) -> None:
+        with self.assertRaises(ValueError):
+            RuntimeThresholds(resource_budget=0.2, recovery_reserve=0.2)
 
     def test_kooperation_test_is_reproducible(self) -> None:
         with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:

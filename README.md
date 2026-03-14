@@ -202,6 +202,13 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `shadow_snapshot()` fuer verdichtete Shadow-Drill-down-Sichten
 - `shadow_event()` fuer protokollierte Shadow-Auswertung an die Telemetrieschicht
 
+`#129` fuehrt darauf Recovery- und Rollback-Grundpfade ein:
+
+- `RecoveryCheckpoint` fuer Zustandssicherung mit Persistenz- und Transfervertrag
+- `RollbackDirective` fuer Ruecksprung-, Restart- und Wiedereintrittssteuerung
+- `RecoveryOutcome` fuer evidence-gebundene Recovery-Ergebnisse
+- Helfer fuer Checkpoint-Erzeugung, Rollback-Ketten und Snapshot-gebundene Recovery-Telemetrie
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

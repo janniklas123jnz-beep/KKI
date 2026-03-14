@@ -37,6 +37,15 @@ from .runtime_dna import (
     runtime_dna_for_profile,
     runtime_dna_from_env,
 )
+from .recovery import (
+    RecoveryCheckpoint,
+    RecoveryMode,
+    RecoveryOutcome,
+    RollbackDirective,
+    recovery_checkpoint_for_state,
+    recovery_outcome,
+    rollback_directive_for_checkpoint,
+)
 from .security import (
     ActionName,
     ArtifactKind,
@@ -104,7 +113,11 @@ __all__ = [
     "PermissionRule",
     "PersistenceRecord",
     "ProtocolContext",
+    "RecoveryCheckpoint",
+    "RecoveryMode",
+    "RecoveryOutcome",
     "RoleName",
+    "RollbackDirective",
     "RuntimeDNA",
     "RuntimeHooks",
     "RuntimeIdentity",
@@ -135,6 +148,9 @@ __all__ = [
     "permission_catalog",
     "protocol_context",
     "role_permissions",
+    "recovery_checkpoint_for_state",
+    "recovery_outcome",
+    "rollback_directive_for_checkpoint",
     "runtime_dna_for_profile",
     "runtime_dna_from_env",
     "shadow_event",

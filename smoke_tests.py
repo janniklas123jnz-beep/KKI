@@ -32,7 +32,11 @@ from kki import (
     PersistenceRecord,
     PreviewMode,
     ProtocolContext,
+    RecoveryCheckpoint,
+    RecoveryMode,
+    RecoveryOutcome,
     RoleName,
+    RollbackDirective,
     RuntimeStage,
     RuntimeThresholds,
     ShadowPreview,
@@ -56,6 +60,9 @@ from kki import (
     module_boundaries,
     module_dependency_graph,
     protocol_context,
+    recovery_checkpoint_for_state,
+    recovery_outcome,
+    rollback_directive_for_checkpoint,
     runtime_dna_for_profile,
     runtime_dna_from_env,
     shadow_event,
@@ -767,6 +774,96 @@ class SmokeTests(unittest.TestCase):
         self.assertIsInstance(event, EventEnvelope)
         self.assertEqual(event.event_class, "shadow")
         self.assertEqual(event.message.target_boundary, ModuleBoundaryName.TELEMETRY)
+
+    def test_kki_recovery_checkpoint_captures_state_and_transfer(self) -> None:
+        dna = runtime_dna_for_profile("balanced-runtime-dna", stage=RuntimeStage.SHADOW)
+        state = core_state_for_runtime(dna, module="orchestration", status="degraded", budget=0.52)
+
+        checkpoint = recovery_checkpoint_for_state(state, correlation_id="corr-recovery-1")
+
+        self.assertIsInstance(checkpoint, RecoveryCheckpoint)
+        self.assertEqual(checkpoint.persistence_record.retention_class, "restart")
+        self.assertEqual(checkpoint.transfer_envelope.target_boundary, ModuleBoundaryName.RECOVERY)
+
+    def test_kki_rollback_directive_uses_control_plane_chain(self) -> None:
+        dna = runtime_dna_for_profile("pilot-runtime-dna", stage=RuntimeStage.PILOT)
+        state = core_state_for_runtime(dna, module="rollout", status="rollback", budget=0.48)
+        checkpoint = recovery_checkpoint_for_state(state, correlation_id="corr-recovery-2")
+        control_plane = load_control_plane(
+            (
+                ControlArtifact(
+                    artifact_id="pilot-runtime",
+                    kind=ArtifactKind.BASE_CONFIG,
+                    version="1.1",
+                    scope=ArtifactScope.STAGE,
+                    runtime_stage=RuntimeStage.PILOT,
+                    validations=(ValidationStep.STATIC, ValidationStep.CONSISTENCY, ValidationStep.SHADOW),
+                    rollback_version="1.0",
+                    payload={"budget": 0.76},
+                ),
+            ),
+            runtime_stage=RuntimeStage.PILOT,
+        )
+
+        directive = rollback_directive_for_checkpoint(checkpoint, control_plane, reason="shadow drift")
+
+        self.assertIsInstance(directive, RollbackDirective)
+        self.assertEqual(directive.mode, RecoveryMode.ROLLBACK)
+        self.assertEqual(directive.rollback_chain, ("pilot-runtime:1.0",))
+
+    def test_kki_rollback_directive_falls_back_without_versions(self) -> None:
+        dna = runtime_dna_for_profile("balanced-runtime-dna", stage=RuntimeStage.SHADOW)
+        state = core_state_for_runtime(dna, module="shadow", status="blocked", budget=0.44)
+        checkpoint = recovery_checkpoint_for_state(state, correlation_id="corr-recovery-3")
+        control_plane = load_control_plane((), runtime_stage=RuntimeStage.SHADOW)
+
+        directive = rollback_directive_for_checkpoint(
+            checkpoint,
+            control_plane,
+            reason="missing preview guarantees",
+            mode=RecoveryMode.RESTART,
+        )
+
+        self.assertEqual(directive.rollback_chain, ("state-only-recovery",))
+        self.assertEqual(directive.mode, RecoveryMode.RESTART)
+
+    def test_kki_recovery_outcome_binds_evidence_and_snapshot(self) -> None:
+        dna = runtime_dna_for_profile("pilot-runtime-dna", stage=RuntimeStage.PILOT)
+        state = core_state_for_runtime(dna, module="rollout", status="rollback", budget=0.46)
+        checkpoint = recovery_checkpoint_for_state(state, correlation_id="corr-recovery-4")
+        control_plane = load_control_plane(
+            (
+                ControlArtifact(
+                    artifact_id="rollout-policy",
+                    kind=ArtifactKind.POLICY,
+                    version="2.0",
+                    scope=ArtifactScope.BOUNDARY,
+                    runtime_stage=RuntimeStage.PILOT,
+                    boundary="rollout",
+                    validations=(ValidationStep.STATIC, ValidationStep.CONSISTENCY, ValidationStep.SHADOW),
+                    evidence_ref="audit-rollout-2",
+                    rollback_version="1.9",
+                    payload={"cutover_gate": "hold"},
+                ),
+            ),
+            runtime_stage=RuntimeStage.PILOT,
+            boundary="rollout",
+        )
+        directive = rollback_directive_for_checkpoint(checkpoint, control_plane, reason="pilot drift")
+
+        outcome = recovery_outcome(
+            directive,
+            checkpoint,
+            control_plane,
+            replay_ready=True,
+            audit_ref="audit-recovery-4",
+            commitment_ref="commit-recovery-4",
+        )
+
+        self.assertIsInstance(outcome, RecoveryOutcome)
+        self.assertEqual(outcome.status, "reentry-ready")
+        self.assertEqual(outcome.evidence.commitment_ref, "commit-recovery-4")
+        self.assertIn("rollout-policy", outcome.snapshot.to_dict()["active_controls"])
 
     def test_kooperation_test_is_reproducible(self) -> None:
         with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:

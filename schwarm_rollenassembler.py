@@ -293,6 +293,28 @@ def assembler_metrics(config, result, params, profile):
             ]
         )
     )
+    stress_integrity = clamp01(
+        mittelwert(
+            [
+                workflow.get('trust_shield_mean', 0.0),
+                workflow.get('sync_strength_mean', 0.0),
+                1.0 - workflow.get('misinformation_corruption_mean', 0.0),
+                1.0 - workflow.get('cluster_compromise_mean', 0.0),
+                handoff_readiness,
+            ]
+        )
+    )
+    assembly_stability = clamp01(
+        mittelwert(
+            [
+                role_fit,
+                assembly_cohesion,
+                workflow.get('completion_rate', 0.0),
+                workflow.get('resource_efficiency', 0.0),
+                1.0 - failed_share,
+            ]
+        )
+    )
     assembler_overhead = clamp01(
         mittelwert(
             [
@@ -324,6 +346,8 @@ def assembler_metrics(config, result, params, profile):
         'handoff_readiness': handoff_readiness,
         'assembly_cohesion': assembly_cohesion,
         'recovery_margin': recovery_margin,
+        'stress_integrity': stress_integrity,
+        'assembly_stability': assembly_stability,
         'assembler_overhead': assembler_overhead,
     }
 
@@ -389,15 +413,15 @@ def context_score(kontext_name, result, agent_count):
     if kontext_name == 'stress':
         return (
             base
-            + 0.14 * metrics['recovery_margin']
+            + 0.14 * metrics['stress_integrity']
             + 0.12 * metrics['assembly_cohesion']
-            - 0.14 * metrics['corruption_mean']
-            - 0.10 * metrics['cluster_compromise_mean']
+            + 0.10 * metrics['assembly_stability']
             - 0.08 * metrics['assembler_overhead']
         )
     return (
         base
         + 0.18 * metrics['recovery_margin']
+        + 0.10 * metrics['assembly_stability']
         + 0.12 * recoveries
         + 0.08 * metrics['handoff_readiness']
         - 0.12 * failed_share
@@ -413,6 +437,8 @@ def summarize_runs(runs, profile, context_list, agent_count):
         'handoff_readiness': {},
         'assembly_cohesion': {},
         'recovery_margin': {},
+        'stress_integrity': {},
+        'assembly_stability': {},
         'assembler_overhead': {},
     }
 
@@ -468,7 +494,7 @@ def main():
             f"{summary['label']:<28} Score={summary['combined_score']:+.3f} | "
             f"Fit={summary['role_fit']['startup']:.2f} | "
             f"Handoff={summary['handoff_readiness']['operations']:.2f} | "
-            f"Recovery={summary['recovery_margin']['recovery']:.2f}"
+            f"Stabilitaet={summary['assembly_stability']['stress']:.2f}"
         )
 
     best = max(summaries, key=lambda item: item['combined_score'])
@@ -482,7 +508,7 @@ def main():
     print(
         f"Rollenfit {best['role_fit']['startup']:.2f}, "
         f"Handoff {best['handoff_readiness']['operations']:.2f}, "
-        f"Recovery {best['recovery_margin']['recovery']:.2f}"
+        f"Stress-Integritaet {best['stress_integrity']['stress']:.2f}"
     )
 
     labels = [item['label'] for item in summaries]
@@ -564,19 +590,19 @@ def main():
 
     axes[1, 1].bar(
         x - width / 2,
-        [item['recovery_margin']['recovery'] for item in summaries],
+        [item['stress_integrity']['stress'] for item in summaries],
         width,
-        label='Recovery',
-        color='#edc948',
+        label='Stress-Integritaet',
+        color='#b07aa1',
     )
     axes[1, 1].bar(
         x + width / 2,
-        [item['assembly_cohesion']['operations'] for item in summaries],
+        [item['assembly_stability']['recovery'] for item in summaries],
         width,
-        label='Kohaesion',
-        color='#b07aa1',
+        label='Montage-Stabilitaet',
+        color='#edc948',
     )
-    axes[1, 1].set_title('Recovery und Kohaesion')
+    axes[1, 1].set_title('Stress und Montage-Stabilitaet')
     axes[1, 1].set_xticks(x)
     axes[1, 1].set_xticklabels(labels, rotation=18)
     axes[1, 1].legend()
@@ -586,17 +612,18 @@ def main():
     axes[1, 2].text(
         0.0,
         0.98,
-        (
-            "Zusammenfassung\n"
-            f"- Bestes Profil: {best['label']}\n"
-            f"- Delta zur Ad-hoc-Besetzung: {best['combined_score'] - baseline['combined_score']:+.3f}\n"
-            f"- Rollenfit: {best['role_fit']['startup']:.2f}\n"
-            f"- Startreife: {best['assembly_readiness']['startup']:.2f}\n"
-            f"- Handoff: {best['handoff_readiness']['operations']:.2f}\n"
-            f"- Kohaesion: {best['assembly_cohesion']['operations']:.2f}\n"
-            f"- Recovery: {best['recovery_margin']['recovery']:.2f}\n"
-            f"- Overhead: {best['assembler_overhead']['operations']:.2f}"
-        ),
+            (
+                "Zusammenfassung\n"
+                f"- Bestes Profil: {best['label']}\n"
+                f"- Delta zur Ad-hoc-Besetzung: {best['combined_score'] - baseline['combined_score']:+.3f}\n"
+                f"- Rollenfit: {best['role_fit']['startup']:.2f}\n"
+                f"- Startreife: {best['assembly_readiness']['startup']:.2f}\n"
+                f"- Handoff: {best['handoff_readiness']['operations']:.2f}\n"
+                f"- Kohaesion: {best['assembly_cohesion']['operations']:.2f}\n"
+                f"- Stress-Integritaet: {best['stress_integrity']['stress']:.2f}\n"
+                f"- Montage-Stabilitaet: {best['assembly_stability']['recovery']:.2f}\n"
+                f"- Overhead: {best['assembler_overhead']['operations']:.2f}"
+            ),
         va='top',
         fontsize=10,
     )

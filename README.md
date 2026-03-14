@@ -150,6 +150,16 @@ Der erste reale Bauschritt `#121` startet nun im Paket `kki/` mit einer Runtime-
 - validierte Grundschwellen fuer Budget, Recovery-Reserve, Freigabefenster und Update-Takt
 - environment-gesteuerter Bootstrap fuer spaetere Modul-, Daten- und Rolloutbausteine
 
+Darauf setzt `#122` nun die ersten echten Paketgrenzen:
+
+- `kki.orchestration`
+- `kki.telemetry`
+- `kki.security`
+- `kki.shadow`
+- `kki.rollout`
+- `kki.recovery`
+- `kki.governance`
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

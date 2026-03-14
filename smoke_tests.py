@@ -10,7 +10,15 @@ import unittest
 from unittest import mock
 from pathlib import Path
 
-from kki import RuntimeStage, RuntimeThresholds, runtime_dna_for_profile, runtime_dna_from_env
+from kki import (
+    ModuleBoundaryName,
+    RuntimeStage,
+    RuntimeThresholds,
+    module_boundaries,
+    module_dependency_graph,
+    runtime_dna_for_profile,
+    runtime_dna_from_env,
+)
 
 REPO_ROOT = Path(__file__).resolve().parent
 PYTHON = sys.executable
@@ -90,6 +98,21 @@ class SmokeTests(unittest.TestCase):
     def test_runtime_thresholds_reject_invalid_reserve(self) -> None:
         with self.assertRaises(ValueError):
             RuntimeThresholds(resource_budget=0.2, recovery_reserve=0.2)
+
+    def test_kki_module_boundaries_are_importable(self) -> None:
+        boundaries = module_boundaries()
+
+        self.assertEqual(boundaries[0].name, ModuleBoundaryName.ORCHESTRATION)
+        self.assertEqual(boundaries[-1].name, ModuleBoundaryName.GOVERNANCE)
+        self.assertTrue(all(boundary.package.startswith("kki.") for boundary in boundaries))
+
+    def test_kki_module_dependency_graph_is_stable(self) -> None:
+        graph = module_dependency_graph()
+
+        self.assertEqual(graph["orchestration"], ())
+        self.assertEqual(graph["telemetry"], ("orchestration",))
+        self.assertEqual(graph["shadow"], ("telemetry", "security"))
+        self.assertEqual(graph["governance"], ("security", "rollout", "recovery"))
 
     def test_kooperation_test_is_reproducible(self) -> None:
         with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:

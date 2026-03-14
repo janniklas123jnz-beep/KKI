@@ -557,6 +557,7 @@ def summarize_runs(runs, eintrag, context_list, agent_count):
         'safety_margin': {},
         'overload_risk': {},
         'extensibility': {},
+        'contract_risk': {},
     }
 
     for kontext in context_list:
@@ -609,6 +610,7 @@ def summarize_runs(runs, eintrag, context_list, agent_count):
         metrics['safety_margin'][name] = mittelwert([run[name]['schema_metrics']['safety_margin'] for run in runs])
         metrics['overload_risk'][name] = mittelwert([run[name]['schema_metrics']['overload_risk'] for run in runs])
         metrics['extensibility'][name] = mittelwert([run[name]['schema_metrics']['extensibility'] for run in runs])
+        metrics['contract_risk'][name] = mittelwert([run[name]['schema_metrics']['contract_risk'] for run in runs])
 
     return {
         'name': eintrag['name'],
@@ -655,8 +657,8 @@ def main():
         print(
             f"{summary['label']:<28} Score={summary['combined_score']:+.3f} | "
             f"Coverage={summary['mandatory_coverage']['bootstrap']:.2f} | "
-            f"Invarianten={summary['invariant_compliance']['bootstrap']:.2f} | "
-            f"Erweiterung={summary['extensibility']['bootstrap']:.2f}"
+            f"Vertragsrisiko={summary['contract_risk']['bootstrap']:.2f} | "
+            f"Sicherheitsreserve={summary['safety_margin']['stress']:.2f}"
         )
 
     best = max(summaries, key=lambda item: item['combined_score'])
@@ -669,8 +671,8 @@ def main():
     )
     print(
         f"Coverage {best['mandatory_coverage']['bootstrap']:.2f}, "
-        f"Invarianten {best['invariant_compliance']['bootstrap']:.2f}, "
-        f"Erweiterbarkeit {best['extensibility']['bootstrap']:.2f}"
+        f"Vertragsrisiko {best['contract_risk']['bootstrap']:.2f}, "
+        f"Sicherheitsreserve {best['safety_margin']['stress']:.2f}"
     )
 
     labels = [item['label'] for item in summaries]
@@ -734,6 +736,7 @@ def main():
                 item['context_scores']['stress'],
                 item['context_scores']['recovery'],
                 item['extensibility']['bootstrap'],
+                item['contract_risk']['bootstrap'],
             ]
             for item in summaries
         ],
@@ -741,8 +744,8 @@ def main():
     )
     heatmap = axes[1, 0].imshow(heatmap_data, cmap='viridis', aspect='auto')
     axes[1, 0].set_title('Kontextprofil')
-    axes[1, 0].set_xticks([0, 1, 2, 3, 4])
-    axes[1, 0].set_xticklabels(['Boot', 'Kon', 'Stress', 'Rec', 'Ext'])
+    axes[1, 0].set_xticks([0, 1, 2, 3, 4, 5])
+    axes[1, 0].set_xticklabels(['Boot', 'Kon', 'Stress', 'Rec', 'Ext', 'Risk'])
     axes[1, 0].set_yticks(range(len(labels)))
     axes[1, 0].set_yticklabels(labels)
     for row in range(heatmap_data.shape[0]):
@@ -752,19 +755,19 @@ def main():
 
     axes[1, 1].bar(
         x - width / 2,
-        [item['detection_rate']['stress'] * 100.0 for item in summaries],
+        [item['safety_margin']['stress'] * 100.0 for item in summaries],
         width,
-        label='Detektion (%)',
+        label='Sicherheitsreserve (%)',
         color='#e15759',
     )
     axes[1, 1].bar(
         x + width / 2,
-        [item['trust_shield_mean']['stress'] for item in summaries],
+        [item['contract_risk']['bootstrap'] * 100.0 for item in summaries],
         width,
-        label='Abschirmung',
+        label='Vertragsrisiko (%)',
         color='#edc948',
     )
-    axes[1, 1].set_title('Stressabwehr')
+    axes[1, 1].set_title('Vertragsrisiko und Schutz')
     axes[1, 1].set_xticks(x)
     axes[1, 1].set_xticklabels(labels, rotation=18)
     axes[1, 1].legend()
@@ -780,10 +783,11 @@ def main():
             f"- Delta zur Homogenitaet: {best['combined_score'] - baseline['combined_score']:+.3f}\n"
             f"- Pflichtabdeckung: {best['mandatory_coverage']['bootstrap']:.2f}\n"
             f"- Invarianten: {best['invariant_compliance']['bootstrap']:.2f}\n"
+            f"- Vertragsrisiko: {best['contract_risk']['bootstrap']:.2f}\n"
             f"- Lernkapazitaet: {best['learning_capacity']['bootstrap']:.2f}\n"
             f"- Startbereitschaft: {best['startup_readiness']['bootstrap']:.2f}\n"
             f"- Erweiterbarkeit: {best['extensibility']['bootstrap']:.2f}\n"
-            f"- Stress-Detektion: {best['detection_rate']['stress']:.1%}\n"
+            f"- Sicherheitsreserve: {best['safety_margin']['stress']:.2f}\n"
             f"- Recovery-Sync: {best['sync_strength_mean']['recovery']:.2f}"
         ),
         va='top',

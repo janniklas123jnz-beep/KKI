@@ -1,0 +1,11 @@
+-r requirements.txt
+click
+debugpy
+icecream
+loguru
+pytest
+pytest-sugar
+pytest-xdist
+rich
+textual
+typer

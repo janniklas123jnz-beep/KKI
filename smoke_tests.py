@@ -510,6 +510,753 @@ class SmokeTests(unittest.TestCase):
             self.assertTrue((output_dir / "kki_manipulationsresistenz.png").exists())
             self.assertIn("Beste Abwehrarchitektur", result.stdout)
 
+    def test_schwarm_interaktionsmodelle_smoke(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:
+            output_dir = Path(tmpdir)
+            result = self.run_script(
+                "schwarm_interaktionsmodelle.py",
+                output_dir,
+                seed=139,
+                extra_env={
+                    "KKI_INTERACTION_REPETITIONS": "1",
+                    "KKI_WORKFLOW_STAGE_MIN_TENURE": "1",
+                    "KKI_MISSION_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_MIN_TENURE": "2",
+                    "KKI_INJECTION_ATTACK_ROUND": "3",
+                },
+            )
+            self.assert_successful_run(result)
+            self.assertTrue((output_dir / "kki_interaktionsmodelle.png").exists())
+            self.assertIn("Bestes Interaktionsmodell", result.stdout)
+
+    def test_schwarm_modellwechsel_smoke(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:
+            output_dir = Path(tmpdir)
+            result = self.run_script(
+                "schwarm_modellwechsel.py",
+                output_dir,
+                seed=149,
+                extra_env={
+                    "KKI_MODEL_SWITCH_REPETITIONS": "1",
+                    "KKI_WORKFLOW_STAGE_MIN_TENURE": "1",
+                    "KKI_MISSION_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_MIN_TENURE": "2",
+                    "KKI_INJECTION_ATTACK_ROUND": "3",
+                },
+            )
+            self.assert_successful_run(result)
+            self.assertTrue((output_dir / "kki_modellwechsel.png").exists())
+            self.assertIn("Bestes Modellwechselprofil", result.stdout)
+
+    def test_schwarm_beziehungsgedaechtnis_smoke(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:
+            output_dir = Path(tmpdir)
+            result = self.run_script(
+                "schwarm_beziehungsgedaechtnis.py",
+                output_dir,
+                seed=151,
+                extra_env={
+                    "KKI_RELATIONSHIP_REPETITIONS": "1",
+                    "KKI_WORKFLOW_STAGE_MIN_TENURE": "1",
+                    "KKI_MISSION_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_MIN_TENURE": "2",
+                    "KKI_INJECTION_ATTACK_ROUND": "3",
+                },
+            )
+            self.assert_successful_run(result)
+            self.assertTrue((output_dir / "kki_beziehungsgedaechtnis.png").exists())
+            self.assertIn("Bestes Beziehungsgedaechtnisprofil", result.stdout)
+
+    def test_schwarm_gruppenbildung_smoke(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:
+            output_dir = Path(tmpdir)
+            result = self.run_script(
+                "schwarm_gruppenbildung.py",
+                output_dir,
+                seed=157,
+                extra_env={
+                    "KKI_GROUP_FORMATION_REPETITIONS": "1",
+                    "KKI_WORKFLOW_STAGE_MIN_TENURE": "1",
+                    "KKI_MISSION_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_MIN_TENURE": "2",
+                    "KKI_INJECTION_ATTACK_ROUND": "3",
+                },
+            )
+            self.assert_successful_run(result)
+            self.assertTrue((output_dir / "kki_gruppenbildung.png").exists())
+            self.assertIn("Beste Gruppenarchitektur", result.stdout)
+
+    def test_schwarm_gruppenidentitaet_smoke(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:
+            output_dir = Path(tmpdir)
+            result = self.run_script(
+                "schwarm_gruppenidentitaet.py",
+                output_dir,
+                seed=163,
+                extra_env={
+                    "KKI_GROUP_IDENTITY_REPETITIONS": "1",
+                    "KKI_WORKFLOW_STAGE_MIN_TENURE": "1",
+                    "KKI_MISSION_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_MIN_TENURE": "2",
+                    "KKI_INJECTION_ATTACK_ROUND": "3",
+                },
+            )
+            self.assert_successful_run(result)
+            self.assertTrue((output_dir / "kki_gruppenidentitaet.png").exists())
+            self.assertIn("Beste Identitaetsarchitektur", result.stdout)
+
+    def test_schwarm_gruppentalente_smoke(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:
+            output_dir = Path(tmpdir)
+            result = self.run_script(
+                "schwarm_gruppentalente.py",
+                output_dir,
+                seed=167,
+                extra_env={
+                    "KKI_GROUP_TALENT_REPETITIONS": "1",
+                    "KKI_WORKFLOW_STAGE_MIN_TENURE": "1",
+                    "KKI_MISSION_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_MIN_TENURE": "2",
+                    "KKI_INJECTION_ATTACK_ROUND": "3",
+                },
+            )
+            self.assert_successful_run(result)
+            self.assertTrue((output_dir / "kki_gruppentalente.png").exists())
+            self.assertIn("Bestes Gruppentalentprofil", result.stdout)
+
+    def test_schwarm_gruppenhandoff_smoke(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:
+            output_dir = Path(tmpdir)
+            result = self.run_script(
+                "schwarm_gruppenhandoff.py",
+                output_dir,
+                seed=173,
+                extra_env={
+                    "KKI_GROUP_HANDOFF_REPETITIONS": "1",
+                    "KKI_WORKFLOW_STAGE_MIN_TENURE": "1",
+                    "KKI_MISSION_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_MIN_TENURE": "2",
+                    "KKI_INJECTION_ATTACK_ROUND": "3",
+                },
+            )
+            self.assert_successful_run(result)
+            self.assertTrue((output_dir / "kki_gruppenhandoff.png").exists())
+            self.assertIn("Bestes Gruppenhandoff-Profil", result.stdout)
+
+    def test_schwarm_faehigkeitsarbitration_smoke(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:
+            output_dir = Path(tmpdir)
+            result = self.run_script(
+                "schwarm_faehigkeitsarbitration.py",
+                output_dir,
+                seed=179,
+                extra_env={
+                    "KKI_CAPABILITY_ARBITRATION_REPETITIONS": "1",
+                    "KKI_WORKFLOW_STAGE_MIN_TENURE": "1",
+                    "KKI_MISSION_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_MIN_TENURE": "2",
+                    "KKI_INJECTION_ATTACK_ROUND": "3",
+                },
+            )
+            self.assert_successful_run(result)
+            self.assertTrue((output_dir / "kki_faehigkeitsarbitration.png").exists())
+            self.assertIn("Beste Faehigkeitsarbitration", result.stdout)
+
+    def test_schwarm_gruppenrobustheit_smoke(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:
+            output_dir = Path(tmpdir)
+            result = self.run_script(
+                "schwarm_gruppenrobustheit.py",
+                output_dir,
+                seed=181,
+                extra_env={
+                    "KKI_GROUP_ROBUSTNESS_REPETITIONS": "1",
+                    "KKI_WORKFLOW_STAGE_MIN_TENURE": "1",
+                    "KKI_MISSION_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_MIN_TENURE": "2",
+                    "KKI_INJECTION_ATTACK_ROUND": "3",
+                },
+            )
+            self.assert_successful_run(result)
+            self.assertTrue((output_dir / "kki_gruppenrobustheit.png").exists())
+            self.assertIn("Beste Gruppenrobustheit", result.stdout)
+
+    def test_schwarm_vorbauphase_smoke(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:
+            output_dir = Path(tmpdir)
+            result = self.run_script(
+                "schwarm_vorbauphase.py",
+                output_dir,
+                seed=191,
+                extra_env={
+                    "KKI_PREBUILD_REPETITIONS": "1",
+                    "KKI_WORKFLOW_STAGE_MIN_TENURE": "1",
+                    "KKI_MISSION_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_MIN_TENURE": "2",
+                    "KKI_INJECTION_ATTACK_ROUND": "3",
+                    "KKI_FAILURE_ROUND": "4",
+                },
+            )
+            self.assert_successful_run(result)
+            self.assertTrue((output_dir / "kki_vorbauphase.png").exists())
+            self.assertIn("Beste Vor-Bauphasen-Architektur", result.stdout)
+
+    def test_schwarm_dna_schema_smoke(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:
+            output_dir = Path(tmpdir)
+            result = self.run_script(
+                "schwarm_dna_schema.py",
+                output_dir,
+                seed=193,
+                extra_env={
+                    "KKI_DNA_SCHEMA_REPETITIONS": "1",
+                    "KKI_WORKFLOW_STAGE_MIN_TENURE": "1",
+                    "KKI_MISSION_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_MIN_TENURE": "2",
+                    "KKI_INJECTION_ATTACK_ROUND": "3",
+                    "KKI_FAILURE_ROUND": "4",
+                },
+            )
+            self.assert_successful_run(result)
+            self.assertTrue((output_dir / "kki_dna_schema.png").exists())
+            self.assertIn("Beste DNA-Schema-Architektur", result.stdout)
+
+    def test_schwarm_overlay_module_smoke(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:
+            output_dir = Path(tmpdir)
+            result = self.run_script(
+                "schwarm_overlay_module.py",
+                output_dir,
+                seed=197,
+                extra_env={
+                    "KKI_OVERLAY_MODULE_REPETITIONS": "1",
+                    "KKI_WORKFLOW_STAGE_MIN_TENURE": "1",
+                    "KKI_MISSION_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_MIN_TENURE": "2",
+                    "KKI_INJECTION_ATTACK_ROUND": "3",
+                    "KKI_FAILURE_ROUND": "4",
+                },
+            )
+            self.assert_successful_run(result)
+            self.assertTrue((output_dir / "kki_overlay_module.png").exists())
+            self.assertIn("Bestes Overlay-Modulprofil", result.stdout)
+
+    def test_schwarm_gruppenbootstrap_smoke(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:
+            output_dir = Path(tmpdir)
+            result = self.run_script(
+                "schwarm_gruppenbootstrap.py",
+                output_dir,
+                seed=199,
+                extra_env={
+                    "KKI_GROUP_BOOTSTRAP_REPETITIONS": "1",
+                    "KKI_WORKFLOW_STAGE_MIN_TENURE": "1",
+                    "KKI_MISSION_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_MIN_TENURE": "2",
+                    "KKI_INJECTION_ATTACK_ROUND": "3",
+                    "KKI_FAILURE_ROUND": "4",
+                },
+            )
+            self.assert_successful_run(result)
+            self.assertTrue((output_dir / "kki_gruppenbootstrap.png").exists())
+            self.assertIn("Bestes Bootstrap-Profil", result.stdout)
+
+    def test_schwarm_protokollstack_smoke(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:
+            output_dir = Path(tmpdir)
+            result = self.run_script(
+                "schwarm_protokollstack.py",
+                output_dir,
+                seed=211,
+                extra_env={
+                    "KKI_PROTOCOL_STACK_REPETITIONS": "1",
+                    "KKI_WORKFLOW_STAGE_MIN_TENURE": "1",
+                    "KKI_MISSION_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_MIN_TENURE": "2",
+                    "KKI_INJECTION_ATTACK_ROUND": "3",
+                    "KKI_FAILURE_ROUND": "4",
+                },
+            )
+            self.assert_successful_run(result)
+            self.assertTrue((output_dir / "kki_protokollstack.png").exists())
+            self.assertIn("Bester Protokollstack", result.stdout)
+
+    def test_schwarm_handoff_vertraege_smoke(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:
+            output_dir = Path(tmpdir)
+            result = self.run_script(
+                "schwarm_handoff_vertraege.py",
+                output_dir,
+                seed=223,
+                extra_env={
+                    "KKI_HANDOFF_CONTRACT_REPETITIONS": "1",
+                    "KKI_WORKFLOW_STAGE_MIN_TENURE": "1",
+                    "KKI_MISSION_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_MIN_TENURE": "2",
+                    "KKI_INJECTION_ATTACK_ROUND": "3",
+                    "KKI_FAILURE_ROUND": "4",
+                },
+            )
+            self.assert_successful_run(result)
+            self.assertTrue((output_dir / "kki_handoff_vertraege.png").exists())
+            self.assertIn("Bester Handoff-Vertrag", result.stdout)
+
+    def test_schwarm_governance_layer_smoke(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:
+            output_dir = Path(tmpdir)
+            result = self.run_script(
+                "schwarm_governance_layer.py",
+                output_dir,
+                seed=227,
+                extra_env={
+                    "KKI_GOVERNANCE_REPETITIONS": "1",
+                    "KKI_WORKFLOW_STAGE_MIN_TENURE": "1",
+                    "KKI_MISSION_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_MIN_TENURE": "2",
+                    "KKI_INJECTION_ATTACK_ROUND": "3",
+                    "KKI_FAILURE_ROUND": "4",
+                },
+            )
+            self.assert_successful_run(result)
+            self.assertTrue((output_dir / "kki_governance_layer.png").exists())
+            self.assertIn("Bester Governance-Layer", result.stdout)
+
+    def test_schwarm_werkzeugbindung_smoke(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:
+            output_dir = Path(tmpdir)
+            result = self.run_script(
+                "schwarm_werkzeugbindung.py",
+                output_dir,
+                seed=229,
+                extra_env={
+                    "KKI_TOOL_BINDING_REPETITIONS": "1",
+                    "KKI_WORKFLOW_STAGE_MIN_TENURE": "1",
+                    "KKI_MISSION_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_MIN_TENURE": "2",
+                    "KKI_INJECTION_ATTACK_ROUND": "3",
+                    "KKI_FAILURE_ROUND": "4",
+                },
+            )
+            self.assert_successful_run(result)
+            self.assertTrue((output_dir / "kki_werkzeugbindung.png").exists())
+            self.assertIn("Beste Werkzeugbindung", result.stdout)
+
+    def test_schwarm_laufzeitsupervision_smoke(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:
+            output_dir = Path(tmpdir)
+            result = self.run_script(
+                "schwarm_laufzeitsupervision.py",
+                output_dir,
+                seed=233,
+                extra_env={
+                    "KKI_RUNTIME_SUPERVISION_REPETITIONS": "1",
+                    "KKI_WORKFLOW_STAGE_MIN_TENURE": "1",
+                    "KKI_MISSION_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_MIN_TENURE": "2",
+                    "KKI_INJECTION_ATTACK_ROUND": "3",
+                    "KKI_FAILURE_ROUND": "4",
+                },
+            )
+            self.assert_successful_run(result)
+            self.assertTrue((output_dir / "kki_laufzeitsupervision.png").exists())
+            self.assertIn("Beste Laufzeitsupervision", result.stdout)
+
+    def test_schwarm_bauphasen_stresstest_smoke(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:
+            output_dir = Path(tmpdir)
+            result = self.run_script(
+                "schwarm_bauphasen_stresstest.py",
+                output_dir,
+                seed=239,
+                extra_env={
+                    "KKI_BUILD_STRESS_REPETITIONS": "1",
+                    "KKI_WORKFLOW_STAGE_MIN_TENURE": "1",
+                    "KKI_MISSION_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_MIN_TENURE": "2",
+                    "KKI_INJECTION_ATTACK_ROUND": "3",
+                    "KKI_FAILURE_ROUND": "4",
+                },
+            )
+            self.assert_successful_run(result)
+            self.assertTrue((output_dir / "kki_bauphasen_stresstest.png").exists())
+            self.assertIn("Bester Bauphasen-Stack", result.stdout)
+
+    def test_schwarm_bauphasen_blueprint_smoke(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:
+            output_dir = Path(tmpdir)
+            result = self.run_script(
+                "schwarm_bauphasen_blueprint.py",
+                output_dir,
+                seed=241,
+                extra_env={
+                    "KKI_BLUEPRINT_REPETITIONS": "1",
+                    "KKI_WORKFLOW_STAGE_MIN_TENURE": "1",
+                    "KKI_MISSION_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_MIN_TENURE": "2",
+                    "KKI_INJECTION_ATTACK_ROUND": "3",
+                    "KKI_FAILURE_ROUND": "4",
+                },
+            )
+            self.assert_successful_run(result)
+            self.assertTrue((output_dir / "kki_bauphasen_blueprint.png").exists())
+            self.assertIn("Bester Bauphasen-Blueprint", result.stdout)
+
+    def test_schwarm_runtime_dna_smoke(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:
+            output_dir = Path(tmpdir)
+            result = self.run_script(
+                "schwarm_runtime_dna.py",
+                output_dir,
+                seed=251,
+                extra_env={
+                    "KKI_RUNTIME_DNA_REPETITIONS": "1",
+                    "KKI_WORKFLOW_STAGE_MIN_TENURE": "1",
+                    "KKI_MISSION_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_MIN_TENURE": "2",
+                    "KKI_INJECTION_ATTACK_ROUND": "3",
+                    "KKI_FAILURE_ROUND": "4",
+                },
+            )
+            self.assert_successful_run(result)
+            self.assertTrue((output_dir / "kki_runtime_dna.png").exists())
+            self.assertIn("Beste Runtime-DNA", result.stdout)
+
+    def test_schwarm_rollenassembler_smoke(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:
+            output_dir = Path(tmpdir)
+            result = self.run_script(
+                "schwarm_rollenassembler.py",
+                output_dir,
+                seed=257,
+                extra_env={
+                    "KKI_ROLE_ASSEMBLER_REPETITIONS": "1",
+                    "KKI_WORKFLOW_STAGE_MIN_TENURE": "1",
+                    "KKI_MISSION_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_MIN_TENURE": "2",
+                    "KKI_INJECTION_ATTACK_ROUND": "3",
+                    "KKI_FAILURE_ROUND": "4",
+                },
+            )
+            self.assert_successful_run(result)
+            self.assertTrue((output_dir / "kki_rollenassembler.png").exists())
+            self.assertIn("Bester Rollen-Assembler", result.stdout)
+
+    def test_schwarm_werkzeugrouting_smoke(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:
+            output_dir = Path(tmpdir)
+            result = self.run_script(
+                "schwarm_werkzeugrouting.py",
+                output_dir,
+                seed=263,
+                extra_env={
+                    "KKI_TOOL_ROUTING_REPETITIONS": "1",
+                    "KKI_WORKFLOW_STAGE_MIN_TENURE": "1",
+                    "KKI_MISSION_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_MIN_TENURE": "2",
+                    "KKI_INJECTION_ATTACK_ROUND": "3",
+                    "KKI_FAILURE_ROUND": "4",
+                },
+            )
+            self.assert_successful_run(result)
+            self.assertTrue((output_dir / "kki_werkzeugrouting.png").exists())
+            self.assertIn("Bester Capability-Broker", result.stdout)
+
+    def test_schwarm_wissensspeicher_smoke(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:
+            output_dir = Path(tmpdir)
+            result = self.run_script(
+                "schwarm_wissensspeicher.py",
+                output_dir,
+                seed=269,
+                extra_env={
+                    "KKI_MEMORY_REPETITIONS": "1",
+                    "KKI_WORKFLOW_STAGE_MIN_TENURE": "1",
+                    "KKI_MISSION_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_MIN_TENURE": "2",
+                    "KKI_INJECTION_ATTACK_ROUND": "3",
+                    "KKI_FAILURE_ROUND": "4",
+                },
+            )
+            self.assert_successful_run(result)
+            self.assertTrue((output_dir / "kki_wissensspeicher.png").exists())
+            self.assertIn("Bester Wissensspeicher", result.stdout)
+
+    def test_schwarm_freigabe_workflow_smoke(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:
+            output_dir = Path(tmpdir)
+            result = self.run_script(
+                "schwarm_freigabe_workflow.py",
+                output_dir,
+                seed=271,
+                extra_env={
+                    "KKI_APPROVAL_REPETITIONS": "1",
+                    "KKI_WORKFLOW_STAGE_MIN_TENURE": "1",
+                    "KKI_MISSION_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_MIN_TENURE": "2",
+                    "KKI_INJECTION_ATTACK_ROUND": "3",
+                    "KKI_FAILURE_ROUND": "4",
+                },
+            )
+            self.assert_successful_run(result)
+            self.assertTrue((output_dir / "kki_freigabe_workflow.png").exists())
+            self.assertIn("Bester Freigabe-Workflow", result.stdout)
+
+    def test_schwarm_supervisor_eingriffe_smoke(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:
+            output_dir = Path(tmpdir)
+            result = self.run_script(
+                "schwarm_supervisor_eingriffe.py",
+                output_dir,
+                seed=277,
+                extra_env={
+                    "KKI_SUPERVISOR_ACTION_REPETITIONS": "1",
+                    "KKI_WORKFLOW_STAGE_MIN_TENURE": "1",
+                    "KKI_MISSION_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_MIN_TENURE": "2",
+                    "KKI_INJECTION_ATTACK_ROUND": "3",
+                    "KKI_FAILURE_ROUND": "4",
+                },
+            )
+            self.assert_successful_run(result)
+            self.assertTrue((output_dir / "kki_supervisor_eingriffe.png").exists())
+            self.assertIn("Bester Supervisor-Eingriff", result.stdout)
+
+    def test_schwarm_resilienzbudget_smoke(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:
+            output_dir = Path(tmpdir)
+            result = self.run_script(
+                "schwarm_resilienzbudget.py",
+                output_dir,
+                seed=281,
+                extra_env={
+                    "KKI_RESILIENCE_BUDGET_REPETITIONS": "1",
+                    "KKI_WORKFLOW_STAGE_MIN_TENURE": "1",
+                    "KKI_MISSION_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_MIN_TENURE": "2",
+                    "KKI_INJECTION_ATTACK_ROUND": "3",
+                    "KKI_FAILURE_ROUND": "4",
+                },
+            )
+            self.assert_successful_run(result)
+            self.assertTrue((output_dir / "kki_resilienzbudget.png").exists())
+            self.assertIn("Bestes Resilienzbudget", result.stdout)
+
+    def test_schwarm_sandbox_zellen_smoke(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:
+            output_dir = Path(tmpdir)
+            result = self.run_script(
+                "schwarm_sandbox_zellen.py",
+                output_dir,
+                seed=307,
+                extra_env={
+                    "KKI_SANDBOX_CELL_REPETITIONS": "1",
+                    "KKI_WORKFLOW_STAGE_MIN_TENURE": "1",
+                    "KKI_MISSION_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_MIN_TENURE": "2",
+                    "KKI_INJECTION_ATTACK_ROUND": "3",
+                    "KKI_FAILURE_ROUND": "4",
+                },
+            )
+            self.assert_successful_run(result)
+            self.assertTrue((output_dir / "kki_sandbox_zellen.png").exists())
+            self.assertIn("Beste Sandbox-Zellstruktur", result.stdout)
+
+    def test_schwarm_missions_dry_run_smoke(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:
+            output_dir = Path(tmpdir)
+            result = self.run_script(
+                "schwarm_missions_dry_run.py",
+                output_dir,
+                seed=331,
+                extra_env={
+                    "KKI_MISSION_DRY_RUN_REPETITIONS": "1",
+                    "KKI_WORKFLOW_STAGE_MIN_TENURE": "1",
+                    "KKI_MISSION_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_MIN_TENURE": "2",
+                    "KKI_INJECTION_ATTACK_ROUND": "3",
+                    "KKI_FAILURE_ROUND": "4",
+                },
+            )
+            self.assert_successful_run(result)
+            self.assertTrue((output_dir / "kki_missions_dry_run.png").exists())
+            self.assertIn("Bester Missions-Dry-Run", result.stdout)
+
+    def test_schwarm_bauphasen_pilot_smoke(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:
+            output_dir = Path(tmpdir)
+            result = self.run_script(
+                "schwarm_bauphasen_pilot.py",
+                output_dir,
+                seed=359,
+                extra_env={
+                    "KKI_PILOT_ARCH_REPETITIONS": "1",
+                    "KKI_WORKFLOW_STAGE_MIN_TENURE": "1",
+                    "KKI_MISSION_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_MIN_TENURE": "2",
+                    "KKI_INJECTION_ATTACK_ROUND": "3",
+                    "KKI_FAILURE_ROUND": "4",
+                },
+            )
+            self.assert_successful_run(result)
+            self.assertTrue((output_dir / "kki_bauphasen_pilot.png").exists())
+            self.assertIn("Beste Bauphasen-Pilotarchitektur", result.stdout)
+
+    def test_schwarm_instanziierungspipeline_smoke(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:
+            output_dir = Path(tmpdir)
+            result = self.run_script(
+                "schwarm_instanziierungspipeline.py",
+                output_dir,
+                seed=383,
+                extra_env={
+                    "KKI_INSTANTIATION_PIPELINE_REPETITIONS": "1",
+                    "KKI_WORKFLOW_STAGE_MIN_TENURE": "1",
+                    "KKI_MISSION_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_MIN_TENURE": "2",
+                    "KKI_INJECTION_ATTACK_ROUND": "3",
+                    "KKI_FAILURE_ROUND": "4",
+                },
+            )
+            self.assert_successful_run(result)
+            self.assertTrue((output_dir / "kki_instanziierungspipeline.png").exists())
+            self.assertIn("Beste Instanziierungs-Pipeline", result.stdout)
+
+    def test_schwarm_wissensbus_smoke(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:
+            output_dir = Path(tmpdir)
+            result = self.run_script(
+                "schwarm_wissensbus.py",
+                output_dir,
+                seed=401,
+                extra_env={
+                    "KKI_KNOWLEDGE_BUS_REPETITIONS": "1",
+                    "KKI_WORKFLOW_STAGE_MIN_TENURE": "1",
+                    "KKI_MISSION_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_MIN_TENURE": "2",
+                    "KKI_INJECTION_ATTACK_ROUND": "3",
+                    "KKI_FAILURE_ROUND": "4",
+                },
+            )
+            self.assert_successful_run(result)
+            self.assertTrue((output_dir / "kki_wissensbus.png").exists())
+            self.assertIn("Bester Wissensbus", result.stdout)
+
+    def test_schwarm_werkzeugadapter_smoke(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:
+            output_dir = Path(tmpdir)
+            result = self.run_script(
+                "schwarm_werkzeugadapter.py",
+                output_dir,
+                seed=419,
+                extra_env={
+                    "KKI_TOOL_ADAPTER_REPETITIONS": "1",
+                    "KKI_WORKFLOW_STAGE_MIN_TENURE": "1",
+                    "KKI_MISSION_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_MIN_TENURE": "2",
+                    "KKI_INJECTION_ATTACK_ROUND": "3",
+                    "KKI_FAILURE_ROUND": "4",
+                },
+            )
+            self.assert_successful_run(result)
+            self.assertTrue((output_dir / "kki_werkzeugadapter.png").exists())
+            self.assertIn("Bester Werkzeug-Adapter", result.stdout)
+
+    def test_schwarm_rollout_protokolle_smoke(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:
+            output_dir = Path(tmpdir)
+            result = self.run_script(
+                "schwarm_rollout_protokolle.py",
+                output_dir,
+                seed=433,
+                extra_env={
+                    "KKI_ROLLOUT_REPETITIONS": "1",
+                    "KKI_WORKFLOW_STAGE_MIN_TENURE": "1",
+                    "KKI_MISSION_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_MIN_TENURE": "2",
+                    "KKI_INJECTION_ATTACK_ROUND": "3",
+                    "KKI_FAILURE_ROUND": "4",
+                },
+            )
+            self.assert_successful_run(result)
+            self.assertTrue((output_dir / "kki_rollout_protokolle.png").exists())
+            self.assertIn("Bestes Rollout-Protokoll", result.stdout)
+
+    def test_schwarm_zustandstransfer_smoke(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:
+            output_dir = Path(tmpdir)
+            result = self.run_script(
+                "schwarm_zustandstransfer.py",
+                output_dir,
+                seed=449,
+                extra_env={
+                    "KKI_STATE_TRANSFER_REPETITIONS": "1",
+                    "KKI_WORKFLOW_STAGE_MIN_TENURE": "1",
+                    "KKI_MISSION_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_MIN_TENURE": "2",
+                    "KKI_INJECTION_ATTACK_ROUND": "3",
+                    "KKI_FAILURE_ROUND": "4",
+                },
+            )
+            self.assert_successful_run(result)
+            self.assertTrue((output_dir / "kki_zustandstransfer.png").exists())
+            self.assertIn("Bester Zustandstransfer", result.stdout)
+
+    def test_schwarm_ressourcen_orchestrator_smoke(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:
+            output_dir = Path(tmpdir)
+            result = self.run_script(
+                "schwarm_ressourcen_orchestrator.py",
+                output_dir,
+                seed=461,
+                extra_env={
+                    "KKI_RESOURCE_ORCHESTRATOR_REPETITIONS": "1",
+                    "KKI_WORKFLOW_STAGE_MIN_TENURE": "1",
+                    "KKI_MISSION_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_MIN_TENURE": "2",
+                    "KKI_INJECTION_ATTACK_ROUND": "3",
+                    "KKI_FAILURE_ROUND": "4",
+                },
+            )
+            self.assert_successful_run(result)
+            self.assertTrue((output_dir / "kki_ressourcen_orchestrator.png").exists())
+            self.assertIn("Bester Ressourcen-Orchestrator", result.stdout)
+
 
 if __name__ == "__main__":
     unittest.main()

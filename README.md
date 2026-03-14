@@ -63,6 +63,42 @@ Die Simulationen basieren auf wiederholten Interaktionen im Stil des Gefangenend
 | `schwarm_fehlerisolation.py` | Studie fuer Fehlerisolation, Quarantaene und Vertrauensabschirmung kompromittierter Teilzellen |
 | `schwarm_wiederanlauf.py` | Studie fuer Wiederanlauf, Resynchronisation und Rekonfiguration nach Zell- und Cluster-Ausfaellen |
 | `schwarm_integrationsstudie.py` | Finale integrierte Grossstudie ueber Heterogenitaet, Engpaesse, Angriffe, Isolation und Wiederherstellung |
+| `schwarm_interaktionsmodelle.py` | Vergleichsstudie fuer bounded-confidence, vertrauensgewichtete, gedaechtnisbasierte und adaptive Hybrid-Interaktionsmodelle |
+| `schwarm_modellwechsel.py` | Vergleichsstudie fuer situativen Wechsel zwischen Interaktionsmodellen je nach Polarisierung, Konsens und Manipulationsstress |
+| `schwarm_beziehungsgedaechtnis.py` | Studie fuer langfristige Beziehungshistorien, stabile Bindungen und kooperative Kerne im Schwarm |
+| `schwarm_gruppenbildung.py` | Studie fuer emergente Proto-Gruppen und Funktionsgruppen aus Beziehungsgraphen, Rollen und Faehigkeitsmustern |
+| `schwarm_gruppenidentitaet.py` | Studie zur Trennung gemeinsamer Grund-DNA und gruppenspezifischer Overlay-Profile gegen Fragmentierung |
+| `schwarm_gruppentalente.py` | Studie zu expliziten Zusatzfaehigkeiten pro Gruppe auf gemeinsamer DNA |
+| `schwarm_gruppenhandoff.py` | Studie zu gruppenuebergreifenden Uebergabeprotokollen zwischen Talentgruppen |
+| `schwarm_faehigkeitsarbitration.py` | Studie zur Arbitration konkurrierender Talentgruppen mit Missionen, Budgets und Meta-Prioritaeten |
+| `schwarm_gruppenrobustheit.py` | Studie zur Robustheit spezialisierter Gruppen gegen Manipulation, Fehlkopplung und Dominanzdruck |
+| `schwarm_vorbauphase.py` | Integrierte Vor-Bauphasen-Studie ueber Identitaet, Talente, Handoffs, Arbitration und Robustheit |
+| `schwarm_dna_schema.py` | Bauphasen-Studie zu gemeinsamer Grund-DNA, Pflichtkomponenten und explizitem Bauvertrag |
+| `schwarm_overlay_module.py` | Bauphasen-Studie zu modularen Zusatzfaehigkeiten als kompatible Overlay-Pakete |
+| `schwarm_gruppenbootstrap.py` | Bauphasen-Studie zu Initialisierung, Gruppenzuteilung und frueher Overlay-Koordination |
+| `schwarm_protokollstack.py` | Bauphasen-Studie zu mehrstufigen Kommunikations-, Validierungs- und Eskalationsprotokollen |
+| `schwarm_handoff_vertraege.py` | Bauphasen-Studie zu formalisierten Handoff-Vertraegen mit Quittierung, Validierung und Eskalation |
+| `schwarm_governance_layer.py` | Bauphasen-Studie zu Policy-, Freigabe- und Sicherheitslayern gegen Dominanz und Angriffsoberflaechen |
+| `schwarm_werkzeugbindung.py` | Bauphasen-Studie zu kontrollierter Werkzeug-, Speicher- und Umweltkopplung unter Governance |
+| `schwarm_laufzeitsupervision.py` | Bauphasen-Studie zu Supervisor-, Watchdog- und Triage-Schichten fuer laufende Gruppenprozesse |
+| `schwarm_bauphasen_stresstest.py` | Bauphasen-Studie zum integrierten Stresstest von Fehlstart, Fehlkopplung, Angriff und Recovery |
+| `schwarm_bauphasen_blueprint.py` | Bauphasen-Studie zur finalen Blueprint-Synthese aus DNA, Overlay, Governance, Werkzeugen und Supervision |
+| `schwarm_runtime_dna.py` | Operative Bauphasen-Studie zu instanziierbaren Laufzeit-Templates auf Basis des finalen Blueprints |
+| `schwarm_rollenassembler.py` | Operative Bauphasen-Studie zu Besetzungs- und Montageverfahren fuer Rollen und Gruppen auf Runtime-DNA |
+| `schwarm_werkzeugrouting.py` | Operative Bauphasen-Studie zu Capability-Brokern fuer kontrolliertes Routing auf Werkzeuge, Speicher und Umweltzugriffe |
+| `schwarm_wissensspeicher.py` | Operative Bauphasen-Studie zu Wissensspeichern und Arbeitsgedaechtnis fuer konsistentes Lernen, Audit und Recovery |
+| `schwarm_freigabe_workflow.py` | Operative Bauphasen-Studie zu Freigabe- und Human-in-the-Loop-Schleifen zwischen Governance, Werkzeugen und Wissen |
+| `schwarm_supervisor_eingriffe.py` | Operative Bauphasen-Studie zu konkreten Supervisor-Aktionen und Leitplanken zwischen Stabilisierung und Uebersteuerung |
+| `schwarm_resilienzbudget.py` | Operative Bauphasen-Studie zu adaptiven Schutzbudgets zwischen operativer Effizienz und maximaler Resilienz |
+| `schwarm_sandbox_zellen.py` | Operative Bauphasen-Studie zu Sandbox-Zellen und kontrollierten Ausfuehrungsraeumen zwischen Routing, Wissen und Supervisorik |
+| `schwarm_missions_dry_run.py` | Operative Bauphasen-Studie zu Missionsproben und Vorabnahme zwischen Sandbox, Freigabe, Routing und Supervisorik |
+| `schwarm_bauphasen_pilot.py` | Operative Bauphasen-Abschlussstudie zur finalen Pilotarchitektur aus Runtime, Routing, Wissen, Sandbox und Dry-Run |
+| `schwarm_instanziierungspipeline.py` | Studie zum Uebergang der Pilot-Architektur in konkrete Agenten-Templates, Rollen und Zellstarts |
+| `schwarm_wissensbus.py` | Studie zu Wissensbus und Zellsynchronisierung zwischen Instanziierung, Auditpfaden und Recovery |
+| `schwarm_werkzeugadapter.py` | Studie zu Werkzeug-Adaptern und IO-Schleusen zwischen Wissensbus, Auditpfaden und realnahen Schnittstellen |
+| `schwarm_rollout_protokolle.py` | Studie zu Rollout-Protokollen und Update-Fenstern zwischen Audit-Gateway, Freigaben und Recovery |
+| `schwarm_zustandstransfer.py` | Studie zu Zustandstransfer und Wiederanlaufketten zwischen Wissensbus, Rollout und Zellmigration |
+| `schwarm_ressourcen_orchestrator.py` | Studie zu Ressourcen-Orchestrator und Budgetzuteilung zwischen Zustandstransfer, Engpass-Triage und Rollout |
 | `commitment_protokoll.py` | Commit-Reveal-Verify-Protokoll gegen Manipulation |
 
 ## Features
@@ -79,6 +115,8 @@ Die Simulationen basieren auf wiederholten Interaktionen im Stil des Gefangenend
 - Python 3.10 oder neuer
 - `pip`
 - optional: eine grafische Umgebung für `matplotlib`, wenn Diagramme direkt angezeigt werden sollen
+- `requirements.txt` enthaelt die Kernpakete fuer Simulation, Analyse und Visualisierung
+- `requirements-dev.txt` erweitert diese Basis um Test-, Debugging- und CLI-Werkzeuge
 
 ## Installation
 
@@ -86,6 +124,12 @@ Die Simulationen basieren auf wiederholten Interaktionen im Stil des Gefangenend
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
+```
+
+Optional fuer Entwicklung, Debugging und spaetere CLI-Ausbaupfade:
+
+```bash
+pip install -r requirements-dev.txt
 ```
 
 ## Reproduzierbare Seeds
@@ -156,6 +200,42 @@ python3 schwarm_spezialfaehigkeiten.py
 python3 schwarm_fehlerisolation.py
 python3 schwarm_wiederanlauf.py
 python3 schwarm_integrationsstudie.py
+python3 schwarm_interaktionsmodelle.py
+python3 schwarm_modellwechsel.py
+python3 schwarm_beziehungsgedaechtnis.py
+python3 schwarm_gruppenbildung.py
+python3 schwarm_gruppenidentitaet.py
+python3 schwarm_gruppentalente.py
+python3 schwarm_gruppenhandoff.py
+python3 schwarm_faehigkeitsarbitration.py
+python3 schwarm_gruppenrobustheit.py
+python3 schwarm_vorbauphase.py
+python3 schwarm_dna_schema.py
+python3 schwarm_overlay_module.py
+python3 schwarm_gruppenbootstrap.py
+python3 schwarm_protokollstack.py
+python3 schwarm_handoff_vertraege.py
+python3 schwarm_governance_layer.py
+python3 schwarm_werkzeugbindung.py
+python3 schwarm_laufzeitsupervision.py
+python3 schwarm_bauphasen_stresstest.py
+python3 schwarm_bauphasen_blueprint.py
+python3 schwarm_runtime_dna.py
+python3 schwarm_rollenassembler.py
+python3 schwarm_werkzeugrouting.py
+python3 schwarm_wissensspeicher.py
+python3 schwarm_freigabe_workflow.py
+python3 schwarm_supervisor_eingriffe.py
+python3 schwarm_resilienzbudget.py
+python3 schwarm_sandbox_zellen.py
+python3 schwarm_missions_dry_run.py
+python3 schwarm_bauphasen_pilot.py
+python3 schwarm_instanziierungspipeline.py
+python3 schwarm_wissensbus.py
+python3 schwarm_werkzeugadapter.py
+python3 schwarm_rollout_protokolle.py
+python3 schwarm_zustandstransfer.py
+python3 schwarm_ressourcen_orchestrator.py
 python3 commitment_protokoll.py
 ```
 
@@ -516,6 +596,546 @@ KKI_RESYNC_STRENGTH=0.32 \
 python3 schwarm_integrationsstudie.py
 ```
 
+Die Interaktionsmodell-Studie eroeffnet die naechste Forschungsreihe und vergleicht, wie unterschiedliche Regeln fuer Partnerwahl, Lerngewichtung und Gedaechtnis die Schwarmresilienz beeinflussen:
+
+```bash
+python3 schwarm_interaktionsmodelle.py
+```
+
+Optional lassen sich Wiederholungen und Modellparameter anpassen:
+
+```bash
+KKI_INTERACTION_REPETITIONS=2 \
+KKI_INJECTION_ATTACK_ROUND=90 \
+KKI_GROUP_LEARNING_RATE=0.12 \
+python3 schwarm_interaktionsmodelle.py
+```
+
+Die Modellwechsel-Studie untersucht anschliessend, ob der Schwarm zwischen diesen Interaktionsmodellen je nach Lage adaptiv umschalten sollte:
+
+```bash
+python3 schwarm_modellwechsel.py
+```
+
+Optional lassen sich Wiederholungen und Stressparameter anpassen:
+
+```bash
+KKI_MODEL_SWITCH_REPETITIONS=2 \
+KKI_INJECTION_ATTACK_ROUND=90 \
+KKI_MODEL_SWITCH_STRESS_STRENGTH=0.42 \
+python3 schwarm_modellwechsel.py
+```
+
+Die Beziehungsgedaechtnis-Studie erweitert diese Ebene um langfristige Partnerhistorien und prueft, ob daraus stabilere kooperative Kerne entstehen als aus kurzfristigem Vertrauen:
+
+```bash
+python3 schwarm_beziehungsgedaechtnis.py
+```
+
+Optional lassen sich Wiederholungen und Stabilitaetsschwellen anpassen:
+
+```bash
+KKI_RELATIONSHIP_REPETITIONS=2 \
+KKI_RELATIONSHIP_MEMORY_WINDOW=42 \
+KKI_RELATIONSHIP_STABLE_TRUST=0.72 \
+python3 schwarm_beziehungsgedaechtnis.py
+```
+
+Die Gruppenbildungs-Studie untersucht anschliessend, wann aus diesen Beziehungsgraphen emergente Proto-Gruppen und stabile Funktionsgruppen ohne feste Vorabzuweisung werden:
+
+```bash
+python3 schwarm_gruppenbildung.py
+```
+
+Optional lassen sich Wiederholungen und Gruppenschwellen anpassen:
+
+```bash
+KKI_GROUP_FORMATION_REPETITIONS=2 \
+KKI_PROTO_GROUP_MIN_SIZE=4 \
+KKI_FUNCTIONAL_ALIGNMENT_THRESHOLD=0.60 \
+python3 schwarm_gruppenbildung.py
+```
+
+Die Gruppenidentitaets-Studie trennt darauf aufbauend gemeinsame Grund-DNA von gruppenspezifischen Overlay-Profilen und prueft, wann Spezialisierung in Fragmentierung kippt:
+
+```bash
+python3 schwarm_gruppenidentitaet.py
+```
+
+Optional lassen sich Wiederholungen und Fragmentierungsschwellen anpassen:
+
+```bash
+KKI_GROUP_IDENTITY_REPETITIONS=2 \
+KKI_DNA_SIMILARITY_WEIGHT=0.55 \
+KKI_OVERLAY_FRAGMENTATION_THRESHOLD=0.24 \
+python3 schwarm_gruppenidentitaet.py
+```
+
+Die Gruppentalente-Studie baut darauf auf und vergleicht explizite Talent-Overlays fuer Analyse, Brueckenbau, Schutz, Regeneration und Koordination:
+
+```bash
+python3 schwarm_gruppentalente.py
+```
+
+Optional lassen sich Wiederholungen und Stressparameter anpassen:
+
+```bash
+KKI_GROUP_TALENT_REPETITIONS=2 \
+KKI_GROUP_TALENT_STRESS_STRENGTH=0.42 \
+KKI_GROUP_TALENT_STRESS_SOURCES=6 \
+python3 schwarm_gruppentalente.py
+```
+
+Die Gruppenhandoff-Studie untersucht anschliessend, welche Uebergabeprotokolle zwischen diesen Talentgruppen Spezialisierung wirklich skalierbar machen:
+
+```bash
+python3 schwarm_gruppenhandoff.py
+```
+
+Optional lassen sich Wiederholungen und Stressparameter anpassen:
+
+```bash
+KKI_GROUP_HANDOFF_REPETITIONS=2 \
+KKI_GROUP_HANDOFF_STRESS_STRENGTH=0.42 \
+KKI_GROUP_HANDOFF_STRESS_SOURCES=6 \
+python3 schwarm_gruppenhandoff.py
+```
+
+Die Faehigkeitsarbitrations-Studie untersucht anschliessend, wie konkurrierende Talentgruppen mit unterschiedlichen Missionen und Budgets friedlich koordiniert werden:
+
+```bash
+python3 schwarm_faehigkeitsarbitration.py
+```
+
+Optional lassen sich Wiederholungen und Stressparameter anpassen:
+
+```bash
+KKI_CAPABILITY_ARBITRATION_REPETITIONS=2 \
+KKI_CAPABILITY_ARBITRATION_STRESS_STRENGTH=0.44 \
+KKI_CAPABILITY_ARBITRATION_STRESS_SOURCES=6 \
+python3 schwarm_faehigkeitsarbitration.py
+```
+
+Die Gruppenrobustheits-Studie prueft anschliessend, ob diese spezialisierten Gruppen unter Manipulation, Fehlkopplung und Dominanzdruck stabil bleiben:
+
+```bash
+python3 schwarm_gruppenrobustheit.py
+```
+
+Optional lassen sich Wiederholungen und Stressparameter anpassen:
+
+```bash
+KKI_GROUP_ROBUSTNESS_REPETITIONS=2 \
+KKI_GROUP_ROBUSTNESS_STRESS_STRENGTH=0.46 \
+KKI_GROUP_ROBUSTNESS_STRESS_SOURCES=8 \
+python3 schwarm_gruppenrobustheit.py
+```
+
+Die Vor-Bauphasen-Studie integriert zum Abschluss die besten Muster aus Identitaet, Talenten, Handoffs, Arbitration und Robustheit als finalen Architekturvergleich:
+
+```bash
+python3 schwarm_vorbauphase.py
+```
+
+Optional lassen sich Wiederholungen, Stress und Recovery anpassen:
+
+```bash
+KKI_PREBUILD_REPETITIONS=2 \
+KKI_PREBUILD_STRESS_STRENGTH=0.46 \
+KKI_FAILURE_ROUND=110 \
+python3 schwarm_vorbauphase.py
+```
+
+Die DNA-Schema-Studie eroeffnet den neuen Bauphasen-Block und vergleicht unterdefinierte, minimale, lernfokussierte, sicherheitsbetonte und balancierte Bauvertraege fuer die gemeinsame Agenten-DNA:
+
+```bash
+python3 schwarm_dna_schema.py
+```
+
+Optional lassen sich Wiederholungen, Stress und Recovery anpassen:
+
+```bash
+KKI_DNA_SCHEMA_REPETITIONS=2 \
+KKI_DNA_SCHEMA_STRESS_STRENGTH=0.44 \
+KKI_DNA_SCHEMA_FAILURE_FRACTION=0.18 \
+python3 schwarm_dna_schema.py
+```
+
+Die Overlay-Modul-Studie baut darauf auf und vergleicht, ob Zusatzfaehigkeiten besser als starres Bundle, isolierte Pakete oder kompatible Overlay-Module ueber dem Bauvertrag organisiert werden:
+
+```bash
+python3 schwarm_overlay_module.py
+```
+
+Optional lassen sich Wiederholungen, Stress und Recovery anpassen:
+
+```bash
+KKI_OVERLAY_MODULE_REPETITIONS=2 \
+KKI_OVERLAY_MODULE_STRESS_STRENGTH=0.45 \
+KKI_OVERLAY_MODULE_FAILURE_FRACTION=0.18 \
+python3 schwarm_overlay_module.py
+```
+
+Die Gruppen-Bootstrap-Studie baut darauf auf und vergleicht, wie Rollen, Gruppen und Overlay-Pakete beim Start zugeteilt werden muessen, damit Spezialisierung frueh koordinierbar bleibt:
+
+```bash
+python3 schwarm_gruppenbootstrap.py
+```
+
+Optional lassen sich Wiederholungen, Stress und Recovery anpassen:
+
+```bash
+KKI_GROUP_BOOTSTRAP_REPETITIONS=2 \
+KKI_GROUP_BOOTSTRAP_STRESS_STRENGTH=0.45 \
+KKI_GROUP_BOOTSTRAP_FAILURE_FRACTION=0.18 \
+python3 schwarm_gruppenbootstrap.py
+```
+
+Die Protokollstack-Studie baut darauf auf und vergleicht direkte, validierende, meta-koordinierte und resiliente Protokollschichten fuer Gruppenkommunikation und Entscheidungen:
+
+```bash
+python3 schwarm_protokollstack.py
+```
+
+Optional lassen sich Wiederholungen, Stress und Recovery anpassen:
+
+```bash
+KKI_PROTOCOL_STACK_REPETITIONS=2 \
+KKI_PROTOCOL_STACK_STRESS_STRENGTH=0.46 \
+KKI_PROTOCOL_STACK_FAILURE_FRACTION=0.18 \
+python3 schwarm_protokollstack.py
+```
+
+Die Handoff-Vertrags-Studie formalisiert darauf aufbauend Uebergaben mit Quittierung, Validierungsregeln, Eskalation und Rollback-Faehigkeit:
+
+```bash
+python3 schwarm_handoff_vertraege.py
+```
+
+Optional lassen sich Wiederholungen, Stress und Recovery anpassen:
+
+```bash
+KKI_HANDOFF_CONTRACT_REPETITIONS=2 \
+KKI_HANDOFF_CONTRACT_STRESS_STRENGTH=0.46 \
+KKI_HANDOFF_CONTRACT_FAILURE_FRACTION=0.18 \
+python3 schwarm_handoff_vertraege.py
+```
+
+Die Governance-Layer-Studie legt darauf eine eigene Policy-, Freigabe- und Sicherheitslogik ueber DNA, Overlays und Handoffs:
+
+```bash
+python3 schwarm_governance_layer.py
+```
+
+Optional lassen sich Wiederholungen, Stress und Recovery anpassen:
+
+```bash
+KKI_GOVERNANCE_REPETITIONS=2 \
+KKI_GOVERNANCE_STRESS_STRENGTH=0.48 \
+KKI_GOVERNANCE_FAILURE_FRACTION=0.18 \
+python3 schwarm_governance_layer.py
+```
+
+Die Werkzeugbindungs-Studie untersucht darauf aufbauend, wie Werkzeuge, Speicher und Umwelten kontrolliert an Gruppen gekoppelt werden koennen:
+
+```bash
+python3 schwarm_werkzeugbindung.py
+```
+
+Optional lassen sich Wiederholungen, Stress und Recovery anpassen:
+
+```bash
+KKI_TOOL_BINDING_REPETITIONS=2 \
+KKI_TOOL_BINDING_STRESS_STRENGTH=0.48 \
+KKI_TOOL_BINDING_FAILURE_FRACTION=0.18 \
+python3 schwarm_werkzeugbindung.py
+```
+
+Die Laufzeitsupervisions-Studie setzt darauf eine Watchdog-, Triage- und Recovery-Aufsicht fuer laufende Baugruppen:
+
+```bash
+python3 schwarm_laufzeitsupervision.py
+```
+
+Optional lassen sich Wiederholungen, Stress und Recovery anpassen:
+
+```bash
+KKI_RUNTIME_SUPERVISION_REPETITIONS=2 \
+KKI_RUNTIME_SUPERVISION_STRESS_STRENGTH=0.48 \
+KKI_RUNTIME_SUPERVISION_FAILURE_FRACTION=0.18 \
+python3 schwarm_laufzeitsupervision.py
+```
+
+Der Bauphasen-Stresstest fuehrt darauf Fehlstart, Fehlkopplung, Angriffe und Recovery-Druck in einem integrierten Architekturvergleich zusammen:
+
+```bash
+python3 schwarm_bauphasen_stresstest.py
+```
+
+Optional lassen sich Wiederholungen, Stress und Recovery anpassen:
+
+```bash
+KKI_BUILD_STRESS_REPETITIONS=2 \
+KKI_BUILD_STRESS_STRENGTH=0.50 \
+KKI_BUILD_STRESS_FAILURE_FRACTION=0.20 \
+python3 schwarm_bauphasen_stresstest.py
+```
+
+Die Bauphasen-Blueprint-Gesamtstudie fasst darauf alle Siegerbausteine zu finalen Zielarchitekturen zusammen:
+
+```bash
+python3 schwarm_bauphasen_blueprint.py
+```
+
+Optional lassen sich Wiederholungen, Stress und Recovery anpassen:
+
+```bash
+KKI_BLUEPRINT_REPETITIONS=2 \
+KKI_BLUEPRINT_STRESS_STRENGTH=0.50 \
+KKI_BLUEPRINT_FAILURE_FRACTION=0.20 \
+python3 schwarm_bauphasen_blueprint.py
+```
+
+Die Runtime-DNA-Studie uebersetzt diesen Sieger nun in konkrete Laufzeit-Templates fuer instanziierbare Bauagenten:
+
+```bash
+python3 schwarm_runtime_dna.py
+```
+
+Optional lassen sich Wiederholungen, Stress und Recovery anpassen:
+
+```bash
+KKI_RUNTIME_DNA_REPETITIONS=2 \
+KKI_RUNTIME_DNA_STRESS_STRENGTH=0.48 \
+KKI_RUNTIME_DNA_FAILURE_FRACTION=0.18 \
+python3 schwarm_runtime_dna.py
+```
+
+Die Rollen-Assembler-Studie setzt darauf auf und vergleicht konkrete Besetzungs- und Montageverfahren fuer belastbare Baugruppen:
+
+```bash
+python3 schwarm_rollenassembler.py
+```
+
+Optional lassen sich Wiederholungen, Stress und Recovery anpassen:
+
+```bash
+KKI_ROLE_ASSEMBLER_REPETITIONS=2 \
+KKI_ROLE_ASSEMBLER_STRESS_STRENGTH=0.48 \
+KKI_ROLE_ASSEMBLER_FAILURE_FRACTION=0.18 \
+python3 schwarm_rollenassembler.py
+```
+
+Die Werkzeugrouting-Studie setzt darauf auf und vergleicht operative Capability-Broker fuer sichere, kontrollierte Vermittlung zwischen Rollen, Werkzeugen und Umweltkontakten:
+
+```bash
+python3 schwarm_werkzeugrouting.py
+```
+
+Optional lassen sich Wiederholungen, Stress und Recovery anpassen:
+
+```bash
+KKI_TOOL_ROUTING_REPETITIONS=2 \
+KKI_TOOL_ROUTING_STRESS_STRENGTH=0.48 \
+KKI_TOOL_ROUTING_FAILURE_FRACTION=0.18 \
+python3 schwarm_werkzeugrouting.py
+```
+
+Die Wissensspeicher-Studie setzt darauf auf und vergleicht Speicherarchitekturen fuer Lernkontinuitaet, Auditierbarkeit und Recovery in operativen Baugruppen:
+
+```bash
+python3 schwarm_wissensspeicher.py
+```
+
+Optional lassen sich Wiederholungen, Stress und Recovery anpassen:
+
+```bash
+KKI_MEMORY_REPETITIONS=2 \
+KKI_MEMORY_STRESS_STRENGTH=0.48 \
+KKI_MEMORY_FAILURE_FRACTION=0.18 \
+python3 schwarm_wissensspeicher.py
+```
+
+Die Freigabe-Workflow-Studie setzt darauf auf und vergleicht explizite Gates, Reviews und Eingriffsschleifen fuer operative Baugruppen:
+
+```bash
+python3 schwarm_freigabe_workflow.py
+```
+
+Optional lassen sich Wiederholungen, Stress und Recovery anpassen:
+
+```bash
+KKI_APPROVAL_REPETITIONS=2 \
+KKI_APPROVAL_STRESS_STRENGTH=0.48 \
+KKI_APPROVAL_FAILURE_FRACTION=0.18 \
+python3 schwarm_freigabe_workflow.py
+```
+
+Die Supervisor-Eingriffs-Studie setzt darauf auf und vergleicht konkrete Stabilisierungsmuster zwischen Hinweis, Leitplanke, Quarantaene und Recovery-Orchestrierung:
+
+```bash
+python3 schwarm_supervisor_eingriffe.py
+```
+
+Optional lassen sich Wiederholungen, Stress und Recovery anpassen:
+
+```bash
+KKI_SUPERVISOR_ACTION_REPETITIONS=2 \
+KKI_SUPERVISOR_ACTION_STRESS_STRENGTH=0.48 \
+KKI_SUPERVISOR_ACTION_FAILURE_FRACTION=0.18 \
+python3 schwarm_supervisor_eingriffe.py
+```
+
+Die Resilienzbudget-Studie setzt darauf auf und vergleicht, wie viel Schutzbudget dynamisch zugeschaltet werden sollte, ohne den operativen Gewinn wieder zu verlieren:
+
+```bash
+python3 schwarm_resilienzbudget.py
+```
+
+Optional lassen sich Wiederholungen, Stress und Recovery anpassen:
+
+```bash
+KKI_RESILIENCE_BUDGET_REPETITIONS=2 \
+KKI_RESILIENCE_BUDGET_STRESS_STRENGTH=0.48 \
+KKI_RESILIENCE_BUDGET_FAILURE_FRACTION=0.18 \
+python3 schwarm_resilienzbudget.py
+```
+
+Die Sandbox-Zellen-Studie setzt darauf auf und vergleicht, welche Ausfuehrungsraeume Werkzeuge, Wissen und Supervisorik wirksam begrenzen, ohne den operativen Fluss zu verlieren:
+
+```bash
+python3 schwarm_sandbox_zellen.py
+```
+
+Optional lassen sich Wiederholungen, Stress und Recovery anpassen:
+
+```bash
+KKI_SANDBOX_CELL_REPETITIONS=2 \
+KKI_SANDBOX_CELL_STRESS_STRENGTH=0.48 \
+KKI_SANDBOX_CELL_FAILURE_FRACTION=0.18 \
+python3 schwarm_sandbox_zellen.py
+```
+
+Die Missions-Dry-Run-Studie setzt darauf auf und vergleicht, welche Vorabnahme reale Baugruppen mit Freigaben, Supervisorik und Routing belastbar freischaltet, ohne in reinen Abnahme-Overhead zu kippen:
+
+```bash
+python3 schwarm_missions_dry_run.py
+```
+
+Optional lassen sich Wiederholungen, Stress und Recovery anpassen:
+
+```bash
+KKI_MISSION_DRY_RUN_REPETITIONS=2 \
+KKI_MISSION_DRY_RUN_STRESS_STRENGTH=0.48 \
+KKI_MISSION_DRY_RUN_FAILURE_FRACTION=0.18 \
+python3 schwarm_missions_dry_run.py
+```
+
+Die Bauphasen-Pilotarchitektur-Studie schliesst den Block ab und verdichtet die Siegerbausteine zur finalen Pilotempfehlung fuer den spaeteren Uebergang in reale Bauaufgaben:
+
+```bash
+python3 schwarm_bauphasen_pilot.py
+```
+
+Optional lassen sich Wiederholungen, Stress und Recovery anpassen:
+
+```bash
+KKI_PILOT_ARCH_REPETITIONS=2 \
+KKI_PILOT_ARCH_STRESS_STRENGTH=0.48 \
+KKI_PILOT_ARCH_FAILURE_FRACTION=0.18 \
+python3 schwarm_bauphasen_pilot.py
+```
+
+Die Instanziierungs-Pipeline-Studie startet den naechsten Block und vergleicht, welche Erzeugungslogik die Pilot-Architektur am belastbarsten in konkrete Agenten und Zellstarts ueberfuehrt:
+
+```bash
+python3 schwarm_instanziierungspipeline.py
+```
+
+Optional lassen sich Wiederholungen, Stress und Recovery anpassen:
+
+```bash
+KKI_INSTANTIATION_PIPELINE_REPETITIONS=2 \
+KKI_INSTANTIATION_PIPELINE_STRESS_STRENGTH=0.48 \
+KKI_INSTANTIATION_PIPELINE_FAILURE_FRACTION=0.18 \
+python3 schwarm_instanziierungspipeline.py
+```
+
+Die Wissensbus-Studie setzt darauf auf und vergleicht, wie Zellspeicher, Auditpfade und Synchronisierung zwischen Instanziierung, Missionswechsel und Recovery gekoppelt bleiben:
+
+```bash
+python3 schwarm_wissensbus.py
+```
+
+Optional lassen sich Wiederholungen, Stress und Recovery anpassen:
+
+```bash
+KKI_KNOWLEDGE_BUS_REPETITIONS=2 \
+KKI_KNOWLEDGE_BUS_STRESS_STRENGTH=0.48 \
+KKI_KNOWLEDGE_BUS_FAILURE_FRACTION=0.18 \
+python3 schwarm_wissensbus.py
+```
+
+Die Werkzeug-Adapter-Studie baut darauf auf und vergleicht, wie reale IO-Schleusen mit Wissensbus, Audit und Abschirmung gekoppelt werden, ohne den operativen Fluss zu verlieren:
+
+```bash
+python3 schwarm_werkzeugadapter.py
+```
+
+Optional lassen sich Wiederholungen, Stress und Recovery anpassen:
+
+```bash
+KKI_TOOL_ADAPTER_REPETITIONS=2 \
+KKI_TOOL_ADAPTER_STRESS_STRENGTH=0.48 \
+KKI_TOOL_ADAPTER_FAILURE_FRACTION=0.18 \
+python3 schwarm_werkzeugadapter.py
+```
+
+Die Rollout-Protokoll-Studie setzt darauf auf und vergleicht, wie Update-Fenster, Audit-Gates und Rollback ueber reale Adapter kontrolliert ausgerollt werden:
+
+```bash
+python3 schwarm_rollout_protokolle.py
+```
+
+Optional lassen sich Wiederholungen, Stress und Recovery anpassen:
+
+```bash
+KKI_ROLLOUT_REPETITIONS=2 \
+KKI_ROLLOUT_STRESS_STRENGTH=0.48 \
+KKI_ROLLOUT_FAILURE_FRACTION=0.18 \
+python3 schwarm_rollout_protokolle.py
+```
+
+Die Zustandstransfer-Studie setzt darauf auf und vergleicht, wie Zellmigration, Restart-Ketten und Wissensuebergaben ueber rolloutfaehige Pfade stabil bleiben:
+
+```bash
+python3 schwarm_zustandstransfer.py
+```
+
+Optional lassen sich Wiederholungen, Stress und Recovery anpassen:
+
+```bash
+KKI_STATE_TRANSFER_REPETITIONS=2 \
+KKI_STATE_TRANSFER_STRESS_STRENGTH=0.48 \
+KKI_STATE_TRANSFER_FAILURE_FRACTION=0.18 \
+python3 schwarm_zustandstransfer.py
+```
+
+Die Ressourcen-Orchestrator-Studie setzt darauf auf und vergleicht, wie Budgets, Engpass-Triage und Prioritaeten ueber diese transferfaehigen Zustaende hinweg koordiniert werden:
+
+```bash
+python3 schwarm_ressourcen_orchestrator.py
+```
+
+Optional lassen sich Wiederholungen, Stress und Recovery anpassen:
+
+```bash
+KKI_RESOURCE_ORCHESTRATOR_REPETITIONS=2 \
+KKI_RESOURCE_ORCHESTRATOR_STRESS_STRENGTH=0.48 \
+KKI_RESOURCE_ORCHESTRATOR_FAILURE_FRACTION=0.18 \
+python3 schwarm_ressourcen_orchestrator.py
+```
+
 Optional lassen sich Wiederholungen und gemeinsame Basisparameter anpassen:
 
 ```bash
@@ -530,6 +1150,8 @@ Optional lassen sich Wiederholungen und gemeinsame Basisparameter anpassen:
 ```bash
 KKI_MEGASTUDY_REPETITIONS=2 \
 KKI_MEGASTUDY_AGENT_COUNT=60 \
+KKI_MEGASTUDY_ROUNDS=180 \
+KKI_MEGASTUDY_INTERACTIONS=90 \
 KKI_MEGASTUDY_STRESS_ROUND=90 \
 python3 schwarm_grossstudie.py
 ```
@@ -581,6 +1203,42 @@ Die folgenden Skripte erzeugen die im Repository abgelegten PNG-Dateien:
 | `schwarm_fehlerisolation.py` | `kki_fehlerisolation.png` | `KKI_SEED=42 python3 schwarm_fehlerisolation.py` |
 | `schwarm_wiederanlauf.py` | `kki_wiederanlauf.png` | `KKI_SEED=42 python3 schwarm_wiederanlauf.py` |
 | `schwarm_integrationsstudie.py` | `kki_integrationsstudie.png` | `KKI_SEED=42 python3 schwarm_integrationsstudie.py` |
+| `schwarm_interaktionsmodelle.py` | `kki_interaktionsmodelle.png` | `KKI_SEED=42 python3 schwarm_interaktionsmodelle.py` |
+| `schwarm_modellwechsel.py` | `kki_modellwechsel.png` | `KKI_SEED=42 python3 schwarm_modellwechsel.py` |
+| `schwarm_beziehungsgedaechtnis.py` | `kki_beziehungsgedaechtnis.png` | `KKI_SEED=42 python3 schwarm_beziehungsgedaechtnis.py` |
+| `schwarm_gruppenbildung.py` | `kki_gruppenbildung.png` | `KKI_SEED=42 python3 schwarm_gruppenbildung.py` |
+| `schwarm_gruppenidentitaet.py` | `kki_gruppenidentitaet.png` | `KKI_SEED=42 python3 schwarm_gruppenidentitaet.py` |
+| `schwarm_gruppentalente.py` | `kki_gruppentalente.png` | `KKI_SEED=42 python3 schwarm_gruppentalente.py` |
+| `schwarm_gruppenhandoff.py` | `kki_gruppenhandoff.png` | `KKI_SEED=42 python3 schwarm_gruppenhandoff.py` |
+| `schwarm_faehigkeitsarbitration.py` | `kki_faehigkeitsarbitration.png` | `KKI_SEED=42 python3 schwarm_faehigkeitsarbitration.py` |
+| `schwarm_gruppenrobustheit.py` | `kki_gruppenrobustheit.png` | `KKI_SEED=42 python3 schwarm_gruppenrobustheit.py` |
+| `schwarm_vorbauphase.py` | `kki_vorbauphase.png` | `KKI_SEED=42 python3 schwarm_vorbauphase.py` |
+| `schwarm_dna_schema.py` | `kki_dna_schema.png` | `KKI_SEED=42 python3 schwarm_dna_schema.py` |
+| `schwarm_overlay_module.py` | `kki_overlay_module.png` | `KKI_SEED=42 python3 schwarm_overlay_module.py` |
+| `schwarm_gruppenbootstrap.py` | `kki_gruppenbootstrap.png` | `KKI_SEED=42 python3 schwarm_gruppenbootstrap.py` |
+| `schwarm_protokollstack.py` | `kki_protokollstack.png` | `KKI_SEED=42 python3 schwarm_protokollstack.py` |
+| `schwarm_handoff_vertraege.py` | `kki_handoff_vertraege.png` | `KKI_SEED=42 python3 schwarm_handoff_vertraege.py` |
+| `schwarm_governance_layer.py` | `kki_governance_layer.png` | `KKI_SEED=42 python3 schwarm_governance_layer.py` |
+| `schwarm_werkzeugbindung.py` | `kki_werkzeugbindung.png` | `KKI_SEED=42 python3 schwarm_werkzeugbindung.py` |
+| `schwarm_laufzeitsupervision.py` | `kki_laufzeitsupervision.png` | `KKI_SEED=42 python3 schwarm_laufzeitsupervision.py` |
+| `schwarm_bauphasen_stresstest.py` | `kki_bauphasen_stresstest.png` | `KKI_SEED=42 python3 schwarm_bauphasen_stresstest.py` |
+| `schwarm_bauphasen_blueprint.py` | `kki_bauphasen_blueprint.png` | `KKI_SEED=42 python3 schwarm_bauphasen_blueprint.py` |
+| `schwarm_runtime_dna.py` | `kki_runtime_dna.png` | `KKI_SEED=42 python3 schwarm_runtime_dna.py` |
+| `schwarm_rollenassembler.py` | `kki_rollenassembler.png` | `KKI_SEED=42 python3 schwarm_rollenassembler.py` |
+| `schwarm_werkzeugrouting.py` | `kki_werkzeugrouting.png` | `KKI_SEED=42 python3 schwarm_werkzeugrouting.py` |
+| `schwarm_wissensspeicher.py` | `kki_wissensspeicher.png` | `KKI_SEED=42 python3 schwarm_wissensspeicher.py` |
+| `schwarm_freigabe_workflow.py` | `kki_freigabe_workflow.png` | `KKI_SEED=42 python3 schwarm_freigabe_workflow.py` |
+| `schwarm_supervisor_eingriffe.py` | `kki_supervisor_eingriffe.png` | `KKI_SEED=42 python3 schwarm_supervisor_eingriffe.py` |
+| `schwarm_resilienzbudget.py` | `kki_resilienzbudget.png` | `KKI_SEED=42 python3 schwarm_resilienzbudget.py` |
+| `schwarm_sandbox_zellen.py` | `kki_sandbox_zellen.png` | `KKI_SEED=42 python3 schwarm_sandbox_zellen.py` |
+| `schwarm_missions_dry_run.py` | `kki_missions_dry_run.png` | `KKI_SEED=42 python3 schwarm_missions_dry_run.py` |
+| `schwarm_bauphasen_pilot.py` | `kki_bauphasen_pilot.png` | `KKI_SEED=42 python3 schwarm_bauphasen_pilot.py` |
+| `schwarm_instanziierungspipeline.py` | `kki_instanziierungspipeline.png` | `KKI_SEED=42 python3 schwarm_instanziierungspipeline.py` |
+| `schwarm_wissensbus.py` | `kki_wissensbus.png` | `KKI_SEED=42 python3 schwarm_wissensbus.py` |
+| `schwarm_werkzeugadapter.py` | `kki_werkzeugadapter.png` | `KKI_SEED=42 python3 schwarm_werkzeugadapter.py` |
+| `schwarm_rollout_protokolle.py` | `kki_rollout_protokolle.png` | `KKI_SEED=42 python3 schwarm_rollout_protokolle.py` |
+| `schwarm_zustandstransfer.py` | `kki_zustandstransfer.png` | `KKI_SEED=42 python3 schwarm_zustandstransfer.py` |
+| `schwarm_ressourcen_orchestrator.py` | `kki_ressourcen_orchestrator.png` | `KKI_SEED=42 python3 schwarm_ressourcen_orchestrator.py` |
 | `commitment_protokoll.py` | `kki_commitment_protokoll.png` | `KKI_SEED=42 python3 commitment_protokoll.py` |
 
 Hinweise zur Reproduktion:
@@ -592,7 +1250,7 @@ Hinweise zur Reproduktion:
 - das Invasions-Experiment nutzt zusaetzlich `KKI_INVASION_AGENT_COUNT`, `KKI_INVASION_REP_THRESHOLDS` und `KKI_INVASION_PROXIMITY_WEIGHTS`
 - das Commitment-Experiment nutzt zusaetzlich `KKI_COMMITMENT_ATTACK_STRENGTH`, `KKI_COMMITMENT_REP_THRESHOLDS` und `KKI_COMMITMENT_TRUST_THRESHOLDS`
 - der Vertrauens-Benchmark nutzt zusaetzlich `KKI_BENCHMARK_REPETITIONS` und vergleicht statische, reputationsbasierte, commitment-basierte, meinungsbasierte und hybride Strategien
-- die Grossstudie nutzt zusaetzlich `KKI_MEGASTUDY_REPETITIONS`, `KKI_MEGASTUDY_AGENT_COUNT` und `KKI_MEGASTUDY_STRESS_ROUND` fuer eine gemeinsame Grundlagenkonfiguration
+- die Grossstudie nutzt zusaetzlich `KKI_MEGASTUDY_REPETITIONS`, `KKI_MEGASTUDY_AGENT_COUNT`, `KKI_MEGASTUDY_ROUNDS`, `KKI_MEGASTUDY_INTERACTIONS` und `KKI_MEGASTUDY_STRESS_ROUND` fuer eine gemeinsame Grundlagenkonfiguration
 - die Anti-Polarisierungsstudie nutzt zusaetzlich `KKI_ANTI_POL_REPETITIONS`, `KKI_ANTI_POL_AGENT_COUNT` und die optionalen Schalter `KKI_BRIDGE_MECHANISM`, `KKI_CENTRIST_MODERATION` und `KKI_MEDIATOR_MODE`
 - die gekoppelte Abwehrstudie nutzt zusaetzlich `KKI_COUPLED_REPETITIONS`, `KKI_COUPLED_AGENT_COUNT` und `KKI_COUPLED_STRESS_ROUND` fuer den Architekturvergleich ueber mehrere Bedrohungen
 - die Rollenspezialisierungsstudie nutzt zusaetzlich `KKI_ROLLENSPEZ_REPETITIONS`, `KKI_GENERALIST_SHARE`, `KKI_CONNECTOR_SHARE` und `KKI_SENTINEL_SHARE`
@@ -611,6 +1269,42 @@ Hinweise zur Reproduktion:
 - die Fehlerisolations-Studie nutzt zusaetzlich `KKI_ISOLATION_REPETITIONS`, `KKI_FAULT_ISOLATION_ENABLED`, `KKI_QUARANTINE_COMPROMISE_THRESHOLD`, `KKI_QUARANTINE_EXPOSURE_THRESHOLD` und `KKI_TRUST_SHIELD_STRENGTH`
 - die Wiederanlauf-Studie nutzt zusaetzlich `KKI_RESTART_REPETITIONS`, `KKI_CLUSTER_FAILURES_ENABLED`, `KKI_RESTART_RECOVERY_ENABLED`, `KKI_FAILURE_ROUND`, `KKI_FAILURE_DURATION`, `KKI_FAILURE_FRACTION` und `KKI_RESYNC_STRENGTH`
 - die Integrationsstudie nutzt zusaetzlich `KKI_INTEGRATION_REPETITIONS`, `KKI_FAILURE_ROUND`, `KKI_FAILURE_DURATION`, `KKI_FAILURE_FRACTION` und `KKI_RESYNC_STRENGTH` fuer die finale Gesamtarchitektur
+- die Interaktionsmodell-Studie nutzt zusaetzlich `KKI_INTERACTION_REPETITIONS`, `KKI_INJECTION_ATTACK_ROUND`, `KKI_GROUP_LEARNING_RATE` und `KKI_SKILL_SPECIALIZATION_THRESHOLD` fuer den Modellvergleich
+- die Modellwechsel-Studie nutzt zusaetzlich `KKI_MODEL_SWITCH_REPETITIONS`, `KKI_INJECTION_ATTACK_ROUND`, `KKI_MODEL_SWITCH_STRESS_STRENGTH` und `KKI_MODEL_SWITCH_STRESS_SOURCES` fuer adaptive Kontextwechsel
+- die Beziehungsgedaechtnis-Studie nutzt zusaetzlich `KKI_RELATIONSHIP_REPETITIONS`, `KKI_RELATIONSHIP_MEMORY_WINDOW`, `KKI_RELATIONSHIP_STABLE_MIN_HISTORY`, `KKI_RELATIONSHIP_STABLE_TRUST` und `KKI_RELATIONSHIP_STRESS_STRENGTH` fuer stabile Beziehungskerne
+- die Gruppenbildungs-Studie nutzt zusaetzlich `KKI_GROUP_FORMATION_REPETITIONS`, `KKI_GROUP_BOND_HISTORY_THRESHOLD`, `KKI_GROUP_BOND_TRUST_THRESHOLD`, `KKI_PROTO_GROUP_MIN_SIZE`, `KKI_FUNCTIONAL_GROUP_MIN_SIZE` und `KKI_FUNCTIONAL_ALIGNMENT_THRESHOLD`
+- die Gruppenidentitaets-Studie nutzt zusaetzlich `KKI_GROUP_IDENTITY_REPETITIONS`, `KKI_DNA_SIMILARITY_WEIGHT`, `KKI_OVERLAY_FRAGMENTATION_THRESHOLD` (Standard `0.24`), `KKI_GROUP_IDENTITY_STRESS_STRENGTH` und `KKI_GROUP_IDENTITY_STRESS_SOURCES`
+- die Gruppentalente-Studie nutzt zusaetzlich `KKI_GROUP_TALENT_REPETITIONS`, `KKI_GROUP_TALENT_STRESS_STRENGTH` und `KKI_GROUP_TALENT_STRESS_SOURCES`
+- die Gruppenhandoff-Studie nutzt zusaetzlich `KKI_GROUP_HANDOFF_REPETITIONS`, `KKI_GROUP_HANDOFF_STRESS_STRENGTH` und `KKI_GROUP_HANDOFF_STRESS_SOURCES`
+- die Faehigkeitsarbitrations-Studie nutzt zusaetzlich `KKI_CAPABILITY_ARBITRATION_REPETITIONS`, `KKI_CAPABILITY_ARBITRATION_STRESS_STRENGTH` und `KKI_CAPABILITY_ARBITRATION_STRESS_SOURCES`
+- die Gruppenrobustheits-Studie nutzt zusaetzlich `KKI_GROUP_ROBUSTNESS_REPETITIONS`, `KKI_GROUP_ROBUSTNESS_STRESS_STRENGTH` und `KKI_GROUP_ROBUSTNESS_STRESS_SOURCES`
+- die Vor-Bauphasen-Studie nutzt zusaetzlich `KKI_PREBUILD_REPETITIONS`, `KKI_PREBUILD_STRESS_STRENGTH`, `KKI_PREBUILD_STRESS_SOURCES` und `KKI_FAILURE_ROUND`
+- die DNA-Schema-Studie nutzt zusaetzlich `KKI_DNA_SCHEMA_REPETITIONS`, `KKI_DNA_SCHEMA_STRESS_STRENGTH`, `KKI_DNA_SCHEMA_STRESS_SOURCES` und `KKI_DNA_SCHEMA_FAILURE_FRACTION`
+- die Overlay-Modul-Studie nutzt zusaetzlich `KKI_OVERLAY_MODULE_REPETITIONS`, `KKI_OVERLAY_MODULE_STRESS_STRENGTH`, `KKI_OVERLAY_MODULE_STRESS_SOURCES` und `KKI_OVERLAY_MODULE_FAILURE_FRACTION`
+- die Gruppen-Bootstrap-Studie nutzt zusaetzlich `KKI_GROUP_BOOTSTRAP_REPETITIONS`, `KKI_GROUP_BOOTSTRAP_STRESS_STRENGTH`, `KKI_GROUP_BOOTSTRAP_STRESS_SOURCES` und `KKI_GROUP_BOOTSTRAP_FAILURE_FRACTION`
+- die Protokollstack-Studie nutzt zusaetzlich `KKI_PROTOCOL_STACK_REPETITIONS`, `KKI_PROTOCOL_STACK_STRESS_STRENGTH`, `KKI_PROTOCOL_STACK_STRESS_SOURCES` und `KKI_PROTOCOL_STACK_FAILURE_FRACTION`
+- die Handoff-Vertrags-Studie nutzt zusaetzlich `KKI_HANDOFF_CONTRACT_REPETITIONS`, `KKI_HANDOFF_CONTRACT_STRESS_STRENGTH`, `KKI_HANDOFF_CONTRACT_STRESS_SOURCES` und `KKI_HANDOFF_CONTRACT_FAILURE_FRACTION`
+- die Governance-Layer-Studie nutzt zusaetzlich `KKI_GOVERNANCE_REPETITIONS`, `KKI_GOVERNANCE_STRESS_STRENGTH`, `KKI_GOVERNANCE_STRESS_SOURCES` und `KKI_GOVERNANCE_FAILURE_FRACTION`
+- die Werkzeugbindungs-Studie nutzt zusaetzlich `KKI_TOOL_BINDING_REPETITIONS`, `KKI_TOOL_BINDING_STRESS_STRENGTH`, `KKI_TOOL_BINDING_STRESS_SOURCES` und `KKI_TOOL_BINDING_FAILURE_FRACTION`
+- die Laufzeitsupervisions-Studie nutzt zusaetzlich `KKI_RUNTIME_SUPERVISION_REPETITIONS`, `KKI_RUNTIME_SUPERVISION_STRESS_STRENGTH`, `KKI_RUNTIME_SUPERVISION_STRESS_SOURCES` und `KKI_RUNTIME_SUPERVISION_FAILURE_FRACTION`
+- der Bauphasen-Stresstest nutzt zusaetzlich `KKI_BUILD_STRESS_REPETITIONS`, `KKI_BUILD_STRESS_STRENGTH`, `KKI_BUILD_STRESS_SOURCES` und `KKI_BUILD_STRESS_FAILURE_FRACTION`
+- die Bauphasen-Blueprint-Gesamtstudie nutzt zusaetzlich `KKI_BLUEPRINT_REPETITIONS`, `KKI_BLUEPRINT_STRESS_STRENGTH`, `KKI_BLUEPRINT_STRESS_SOURCES` und `KKI_BLUEPRINT_FAILURE_FRACTION`
+- die Runtime-DNA-Studie nutzt zusaetzlich `KKI_RUNTIME_DNA_REPETITIONS`, `KKI_RUNTIME_DNA_STRESS_STRENGTH`, `KKI_RUNTIME_DNA_STRESS_SOURCES` und `KKI_RUNTIME_DNA_FAILURE_FRACTION`
+- die Rollen-Assembler-Studie nutzt zusaetzlich `KKI_ROLE_ASSEMBLER_REPETITIONS`, `KKI_ROLE_ASSEMBLER_STRESS_STRENGTH`, `KKI_ROLE_ASSEMBLER_STRESS_SOURCES` und `KKI_ROLE_ASSEMBLER_FAILURE_FRACTION`
+- die Werkzeugrouting-Studie nutzt zusaetzlich `KKI_TOOL_ROUTING_REPETITIONS`, `KKI_TOOL_ROUTING_STRESS_STRENGTH`, `KKI_TOOL_ROUTING_STRESS_SOURCES` und `KKI_TOOL_ROUTING_FAILURE_FRACTION`
+- die Wissensspeicher-Studie nutzt zusaetzlich `KKI_MEMORY_REPETITIONS`, `KKI_MEMORY_STRESS_STRENGTH`, `KKI_MEMORY_STRESS_SOURCES`, `KKI_MEMORY_FAILURE_FRACTION`, `KKI_MEMORY_WINDOW` und `KKI_MEMORY_AUDIT_DEPTH`
+- die Freigabe-Workflow-Studie nutzt zusaetzlich `KKI_APPROVAL_REPETITIONS`, `KKI_APPROVAL_STRESS_STRENGTH`, `KKI_APPROVAL_STRESS_SOURCES`, `KKI_APPROVAL_FAILURE_FRACTION` und `KKI_APPROVAL_WINDOW`
+- die Supervisor-Eingriffs-Studie nutzt zusaetzlich `KKI_SUPERVISOR_ACTION_REPETITIONS`, `KKI_SUPERVISOR_ACTION_STRESS_STRENGTH`, `KKI_SUPERVISOR_ACTION_STRESS_SOURCES` und `KKI_SUPERVISOR_ACTION_FAILURE_FRACTION`
+- die Resilienzbudget-Studie nutzt zusaetzlich `KKI_RESILIENCE_BUDGET_REPETITIONS`, `KKI_RESILIENCE_BUDGET_STRESS_STRENGTH`, `KKI_RESILIENCE_BUDGET_STRESS_SOURCES` und `KKI_RESILIENCE_BUDGET_FAILURE_FRACTION`
+- die Sandbox-Zellen-Studie nutzt zusaetzlich `KKI_SANDBOX_CELL_REPETITIONS`, `KKI_SANDBOX_CELL_STRESS_STRENGTH`, `KKI_SANDBOX_CELL_STRESS_SOURCES` und `KKI_SANDBOX_CELL_FAILURE_FRACTION`
+- die Missions-Dry-Run-Studie nutzt zusaetzlich `KKI_MISSION_DRY_RUN_REPETITIONS`, `KKI_MISSION_DRY_RUN_STRESS_STRENGTH`, `KKI_MISSION_DRY_RUN_STRESS_SOURCES`, `KKI_MISSION_DRY_RUN_FAILURE_FRACTION` und `KKI_MISSION_DRY_RUN_ACCEPTANCE_CYCLES`
+- die Bauphasen-Pilotarchitektur-Studie nutzt zusaetzlich `KKI_PILOT_ARCH_REPETITIONS`, `KKI_PILOT_ARCH_STRESS_STRENGTH`, `KKI_PILOT_ARCH_STRESS_SOURCES` und `KKI_PILOT_ARCH_FAILURE_FRACTION`
+- die Instanziierungs-Pipeline-Studie nutzt zusaetzlich `KKI_INSTANTIATION_PIPELINE_REPETITIONS`, `KKI_INSTANTIATION_PIPELINE_STRESS_STRENGTH`, `KKI_INSTANTIATION_PIPELINE_STRESS_SOURCES` und `KKI_INSTANTIATION_PIPELINE_FAILURE_FRACTION`
+- die Wissensbus-Studie nutzt zusaetzlich `KKI_KNOWLEDGE_BUS_REPETITIONS`, `KKI_KNOWLEDGE_BUS_STRESS_STRENGTH`, `KKI_KNOWLEDGE_BUS_STRESS_SOURCES` und `KKI_KNOWLEDGE_BUS_FAILURE_FRACTION`
+- die Werkzeug-Adapter-Studie nutzt zusaetzlich `KKI_TOOL_ADAPTER_REPETITIONS`, `KKI_TOOL_ADAPTER_STRESS_STRENGTH`, `KKI_TOOL_ADAPTER_STRESS_SOURCES` und `KKI_TOOL_ADAPTER_FAILURE_FRACTION`
+- die Rollout-Protokoll-Studie nutzt zusaetzlich `KKI_ROLLOUT_REPETITIONS`, `KKI_ROLLOUT_STRESS_STRENGTH`, `KKI_ROLLOUT_STRESS_SOURCES` und `KKI_ROLLOUT_FAILURE_FRACTION`
+- die Zustandstransfer-Studie nutzt zusaetzlich `KKI_STATE_TRANSFER_REPETITIONS`, `KKI_STATE_TRANSFER_STRESS_STRENGTH`, `KKI_STATE_TRANSFER_STRESS_SOURCES` und `KKI_STATE_TRANSFER_FAILURE_FRACTION`
+- die Ressourcen-Orchestrator-Studie nutzt zusaetzlich `KKI_RESOURCE_ORCHESTRATOR_REPETITIONS`, `KKI_RESOURCE_ORCHESTRATOR_STRESS_STRENGTH`, `KKI_RESOURCE_ORCHESTRATOR_STRESS_SOURCES` und `KKI_RESOURCE_ORCHESTRATOR_FAILURE_FRACTION`
 
 Beispiel für eine reproduzierbare, headless Erzeugung:
 
@@ -734,6 +1428,150 @@ Die Smoke-Tests starten ausgewählte Kernskripte im verkürzten headless Testmod
 
 ![KKI Integrationsstudie](kki_integrationsstudie.png)
 
+### Interaktionsmodell-Studie
+
+![KKI Interaktionsmodelle](kki_interaktionsmodelle.png)
+
+### Modellwechsel-Studie
+
+![KKI Modellwechsel](kki_modellwechsel.png)
+
+### Beziehungsgedaechtnis-Studie
+
+![KKI Beziehungsgedaechtnis](kki_beziehungsgedaechtnis.png)
+
+### Gruppenbildungs-Studie
+
+![KKI Gruppenbildung](kki_gruppenbildung.png)
+
+### Gruppenidentitaets-Studie
+
+![KKI Gruppenidentitaet](kki_gruppenidentitaet.png)
+
+### Gruppentalente-Studie
+
+![KKI Gruppentalente](kki_gruppentalente.png)
+
+### Gruppenhandoff-Studie
+
+![KKI Gruppenhandoff](kki_gruppenhandoff.png)
+
+### Faehigkeitsarbitrations-Studie
+
+![KKI Faehigkeitsarbitration](kki_faehigkeitsarbitration.png)
+
+### Gruppenrobustheits-Studie
+
+![KKI Gruppenrobustheit](kki_gruppenrobustheit.png)
+
+### Vor-Bauphasen-Studie
+
+![KKI Vor-Bauphase](kki_vorbauphase.png)
+
+### DNA-Schema-Studie
+
+![KKI DNA-Schema](kki_dna_schema.png)
+
+### Overlay-Modul-Studie
+
+![KKI Overlay-Module](kki_overlay_module.png)
+
+### Gruppen-Bootstrap-Studie
+
+![KKI Gruppen-Bootstrap](kki_gruppenbootstrap.png)
+
+### Protokollstack-Studie
+
+![KKI Protokollstack](kki_protokollstack.png)
+
+### Handoff-Vertrags-Studie
+
+![KKI Handoff-Vertraege](kki_handoff_vertraege.png)
+
+### Governance-Layer-Studie
+
+![KKI Governance-Layer](kki_governance_layer.png)
+
+### Werkzeugbindungs-Studie
+
+![KKI Werkzeugbindung](kki_werkzeugbindung.png)
+
+### Laufzeitsupervisions-Studie
+
+![KKI Laufzeitsupervision](kki_laufzeitsupervision.png)
+
+### Bauphasen-Stresstest
+
+![KKI Bauphasen-Stresstest](kki_bauphasen_stresstest.png)
+
+### Bauphasen-Blueprint-Gesamtstudie
+
+![KKI Bauphasen-Blueprint](kki_bauphasen_blueprint.png)
+
+### Runtime-DNA-Studie
+
+![KKI Runtime-DNA](kki_runtime_dna.png)
+
+### Rollen-Assembler-Studie
+
+![KKI Rollen-Assembler](kki_rollenassembler.png)
+
+### Werkzeugrouting-Studie
+
+![KKI Werkzeugrouting](kki_werkzeugrouting.png)
+
+### Wissensspeicher-Studie
+
+![KKI Wissensspeicher](kki_wissensspeicher.png)
+
+### Freigabe-Workflow-Studie
+
+![KKI Freigabe-Workflow](kki_freigabe_workflow.png)
+
+### Supervisor-Eingriffs-Studie
+
+![KKI Supervisor-Eingriffe](kki_supervisor_eingriffe.png)
+
+### Resilienzbudget-Studie
+
+![KKI Resilienzbudget](kki_resilienzbudget.png)
+
+### Sandbox-Zellen-Studie
+
+![KKI Sandbox-Zellen](kki_sandbox_zellen.png)
+
+### Missions-Dry-Run-Studie
+
+![KKI Missions-Dry-Run](kki_missions_dry_run.png)
+
+### Bauphasen-Pilotarchitektur-Studie
+
+![KKI Bauphasen-Pilot](kki_bauphasen_pilot.png)
+
+### Instanziierungs-Pipeline-Studie
+
+![KKI Instanziierungs-Pipeline](kki_instanziierungspipeline.png)
+
+### Wissensbus-Studie
+
+![KKI Wissensbus](kki_wissensbus.png)
+
+### Werkzeug-Adapter-Studie
+
+![KKI Werkzeug-Adapter](kki_werkzeugadapter.png)
+
+### Rollout-Protokoll-Studie
+
+![KKI Rollout-Protokolle](kki_rollout_protokolle.png)
+
+### Zustandstransfer-Studie
+
+![KKI Zustandstransfer](kki_zustandstransfer.png)
+
+### Ressourcen-Orchestrator-Studie
+
+![KKI Ressourcen-Orchestrator](kki_ressourcen_orchestrator.png)
+
 ## Zentrale Beobachtungen
 
 Die bisherigen Simulationen illustrieren wiederkehrende Muster:
@@ -757,6 +1595,42 @@ Die bisherigen Simulationen illustrieren wiederkehrende Muster:
 - die Missionskonflikt-Studie untersucht nun, ob adaptive Missionen besser werden, wenn der Schwarm Zielkonflikte explizit erkennt und konkurrierende Aufgaben arbitriert
 - die Arbeitsketten-Studie untersucht nun, ob aus diesen Missionen mehrstufige Arbeitsablaeufe mit Abhaengigkeiten entstehen koennen, statt nur einzelne Aufgaben zu optimieren
 - die Arbeitszellen-Studie untersucht nun, ob spezialisierte Teilteams mit expliziten Uebergaben die Arbeitsketten nochmals koordinierter und skalierbarer machen
+- die Interaktionsmodell-Studie vergleicht nun, ob bounded-confidence, vertrauensgewichtete, gedaechtnisbasierte oder adaptive Hybridregeln die staerksten Kooperations- und Resilienzgewinne liefern
+- die Modellwechsel-Studie prueft nun, ob ein kontextsensitiver Wechsel zwischen diesen Interaktionsmodellen robuster ist als jedes einzelne feste Modell
+- die Beziehungsgedaechtnis-Studie untersucht nun, ob langfristig erinnerte Partnerbeziehungen den Schwarm in stabilere kooperative Kerne ueberfuehren als kurzfristige Signale allein
+- die Gruppenbildungs-Studie untersucht nun, wann aus starken Beziehungen, Rollen und Faehigkeitsmustern erstmals echte Proto-Gruppen und stabile Funktionsgruppen emergieren
+- die Gruppenidentitaets-Studie untersucht nun, wie viel gemeinsame Grund-DNA erhalten bleiben muss, damit Overlay-Spezialisierung nicht in Fragmentierung umschlaegt
+- die Gruppentalente-Studie untersucht nun, welche explizite Talentmischung auf gemeinsamer DNA den groessten Systemvorteil unter Polarisierung, Konsens und Stress bringt
+- die Gruppenhandoff-Studie untersucht nun, welche Uebergabeprotokolle Talentgruppen stabil koppeln, damit Spezialisierung nicht an den Schnittstellen scheitert
+- die Faehigkeitsarbitrations-Studie untersucht nun, wie Konflikte zwischen starken Spezialgruppen durch Mission-, Budget- und Meta-Arbitration begrenzt werden koennen
+- die Gruppenrobustheits-Studie untersucht nun, welche spezialisierten Gruppenprofile trotz Manipulation und Fehlkopplung stabil bleiben statt an Dominanz oder Kompromittierung zu zerbrechen
+- die Vor-Bauphasen-Studie verdichtet nun die Siegerprofile der Reihe zu einem finalen Architekturvergleich fuer den Uebergang aus der Simulation in die spaetere Bauphase
+- die DNA-Schema-Studie untersucht nun, welche explizite gemeinsame Grund-DNA als Bauvertrag genug Pflichtkomponenten bietet, ohne die spaetere Erweiterbarkeit durch Ueberfrachtung zu verlieren
+- die Overlay-Modul-Studie untersucht nun, welche Zusatzfaehigkeiten als kompatible Pakete ueber dieser DNA liegen duerfen, ohne den Bauvertrag durch Bundle-Kopplung oder invasive Seiteneffekte auszuhoehlen
+- die Gruppen-Bootstrap-Studie untersucht nun, welche Initialisierungslogik Rollen, Gruppen und Overlay-Pakete frueh genug ausrichtet, damit Spezialisierung direkt koordiniert statt zufaellig oder fragmentiert startet
+- die Protokollstack-Studie untersucht nun, welche Schichtung aus Handoff, Validierung, Arbitration und Eskalation Gruppenkommunikation nachvollziehbar und zugleich robust gegen Overhead und Stoerungen macht
+- die Handoff-Vertrags-Studie untersucht nun, wie stark formale Quittierung, Validierungsregeln, Eskalationspfade und Rollback-Hilfen Gruppenuebergaben absichern koennen, ohne den Baufluss unnoetig zu blockieren
+- die Governance-Layer-Studie untersucht nun, welche Policy-, Freigabe- und Sicherheitslogik Erweiterbarkeit absichert, Dominanz begrenzt und Manipulation bremst, ohne den Bauphasenfluss in starre Zentralisierung zu kippen
+- die Werkzeugbindungs-Studie untersucht nun, welche Form der Werkzeug-, Speicher- und Umweltkopplung genug Nutzen liefert, aber zugleich Freigaben, Auditspur und Abschirmung stark genug haelt, damit externe Bindungen nicht zum Einfallstor werden
+- die Laufzeitsupervisions-Studie untersucht nun, welche Watchdog-, Triage- und Recovery-Schicht laufende Baugruppen am stabilsten gegen Drift, Ueberlastung und Fehlverhalten absichert, ohne den operativen Fluss zu ersticken
+- der Bauphasen-Stresstest untersucht nun, welche Gesamtarchitektur aus DNA, Overlay, Handoff, Governance, Werkzeugbindung und Supervision selbst unter kombiniertem Fehlstart-, Fehlkopplungs-, Angriffs- und Recovery-Druck tragfaehig bleibt
+- die Bauphasen-Blueprint-Gesamtstudie verdichtet diese Ergebnisse nun zu konkreten Zielarchitekturen und zeigt, welcher finale Blueprint als erster Kandidat fuer die spaetere reale Bauphase uebernommen werden sollte
+- die Runtime-DNA-Studie untersucht nun, welche konkrete Laufzeitbasis aus dem Sieger-Blueprint fuer spaetere Bauagenten instanziierbar bleibt, ohne Identitaet, Erweiterungshooks und Resilienz aus dem Gleichgewicht zu bringen
+- die Rollen-Assembler-Studie untersucht nun, welche Montage- und Besetzungslogik diese Runtime-DNA in konkrete Baugruppen ueberfuehrt, ohne Rollenfit, Uebergabefaehigkeit und Kohaesion durch zu starre oder zu zufaellige Zuteilung zu verlieren
+- die Werkzeugrouting-Studie untersucht nun, welche operative Broker-Schicht Aufgaben auf Analyse-, Speicher-, Ausfuehrungs- und Sicherheitswerkzeuge verteilt, ohne den Gewinner-Blueprint durch unkontrollierte Zugriffe oder zu viel Vermittlungs-Overhead wieder zu verlieren
+- die Wissensspeicher-Studie untersucht nun, welche Speicherarchitektur diese Broker-Schicht um dauerhaftes Arbeits- und Gruppenwissen erweitert, ohne Lernfluss, Auditierbarkeit und Wiederanlauf gegeneinander auszuspielen
+- die Freigabe-Workflow-Studie untersucht nun, wo operative Baugruppen explizite Freigabepunkte, Reviews und Eskalationen brauchen, damit Governance sichtbar eingreift, ohne den Arbeitsfluss des Sieger-Blueprints zu ersticken
+- die Supervisor-Eingriffs-Studie untersucht nun, welche konkrete Eingriffslogik diese Freigabeschicht im Laufbetrieb braucht, damit Drift, Ueberlastung und Fehlverhalten stabilisiert werden, ohne die Gruppenautonomie durch Uebersteuerung zu zerdruecken
+- die Resilienzbudget-Studie untersucht nun, wie viel Schutzbudget gegen Stress und Recovery adaptiv zugeschaltet werden sollte, damit der operative Blueprint staerker gesichert wird, ohne in maximalen Schutz-Overhead zurueckzufallen
+- die Sandbox-Zellen-Studie untersucht nun, welche kontrollierte Zell- und Sandbox-Struktur Routing, Wissen und Supervisorik so zusammenfasst, dass starke Abschirmung moeglich wird, ohne in die Traegheit maximal versiegelter Zellen abzugleiten; Sieger sind foederierte Sandbox-Zellen statt offener oder maximal abgeschirmter Ausfuehrung
+- die Missions-Dry-Run-Studie untersucht nun, welche Vorabnahme diese foederierten Sandboxen mit Freigabe, Routing und Leitplanken zu einer realistisch startbaren Missionsprobe verdichtet; dabei gewinnen resiliente Dry-Runs durch die staerkste Launch- und Recovery-Sicherheit, muessen ihren Zusatzschutz aber gegen spuerbaren Abnahme-Overhead rechtfertigen
+- die Bauphasen-Pilotarchitektur-Studie verdichtet nun alle Siegerbausteine des Blocks zur finalen Pilotsynthese und zeigt, dass eine integrierte Pilot-Architektur aus resilienzfaehiger Runtime, Capability-Broker, Wissensspeicher, foederierter Sandbox und Dry-Run-Schicht den besten Gesamtuebergang liefert, waehrend maximaler Schutz allein wieder etwas zu viel operativen Preis kostet
+- die Instanziierungs-Pipeline-Studie untersucht nun, welche Erzeugungslogik diese Pilot-Architektur in konkrete Agenten und Zellstarts ueberfuehrt; im Voll-Lauf gewinnt die foederierte Instanziierung, weil sie die beste Kombination aus Template-Fidelity und Startintegritaet liefert, ohne schon in der Erzeugungsphase zu viel Absicherungs-Overhead aufzubauen
+- die Wissensbus-Studie untersucht nun, wie dieses foederierte Startmodell Wissen ueber Zellen, Auditpfade und Recovery verbindet; der resiliente Wissensbus gewinnt hier knapp, weil er Speicherkonsistenz und Wiederanlauf staerker haelt als rein foederierte Replikation, den Zusatzschutz aber sichtbar bezahlen muss
+- die Werkzeug-Adapter-Studie untersucht nun, wie dieser Bus an reale Schnittstellen gekoppelt wird; im Voll-Lauf gewinnt das Audit-Gateway, weil es Audit-Kontinuitaet und Recovery ueber reale IO-Schleusen am besten verbindet, ohne bereits in den Overhead einer maximal abgesicherten Adapterkette zu kippen
+- die Rollout-Protokoll-Studie untersucht nun, wie auf diesem Audit-Gateway Updates kontrolliert eingefuehrt werden; im Voll-Lauf gewinnt der foederierte Rollout, weil er Update-Readiness, Audit und Recovery am besten balanciert, waehrend noch haertere oder schattigere Verfahren zwar einzelne Spitzenwerte liefern, aber mehr operativen Preis kosten
+- die Zustandstransfer-Studie untersucht nun, wie diese rolloutfaehigen Pfade Zustandswechsel ueber Zellen halten; im Voll-Lauf gewinnt der foederierte Zustandstransfer, weil er Transfer-Fidelity, Audit und Migrationsstabilitaet besser balanciert, waehrend haertere Restart-Ketten zwar mehr Recovery liefern, dafuer aber mehr operativen Preis zahlen
+- die Ressourcen-Orchestrator-Studie untersucht nun, wie diese transferfaehigen Zustaende budgetiert werden; im Voll-Lauf gewinnt der foederierte Orchestrator, weil er Allokation, Zustands-Retention und Recovery besser balanciert, waehrend maximaler Ressourcenschutz zwar noch etwas mehr Retention haelt, dafuer aber den operativen Preis staerker erhoeht
 
 ## Projektstruktur und Ausrichtung
 

@@ -12,6 +12,14 @@ from .runtime_state import (
     advance_orchestration_state,
     orchestration_state_for_runtime,
 )
+from .dispatch import (
+    DispatchAssignment,
+    DispatchLane,
+    DispatchPlan,
+    DispatchTriageMode,
+    build_dispatch_plan,
+    dispatch_priority_score,
+)
 from .work_units import (
     ClaimStatus,
     HandoffMode,
@@ -45,9 +53,15 @@ __all__ = [
     "WorkPriority",
     "WorkStatus",
     "WorkUnit",
+    "DispatchAssignment",
+    "DispatchLane",
+    "DispatchPlan",
+    "DispatchTriageMode",
     "advance_orchestration_state",
     "advance_work_unit",
+    "build_dispatch_plan",
     "claim_for_work_unit",
+    "dispatch_priority_score",
     "handoff_for_work_unit",
     "orchestration_state_for_runtime",
     "work_unit_for_state",

@@ -22,6 +22,8 @@ from kki import (
     DelegationGrant,
     DeliveryGuarantee,
     DeliveryMode,
+    DispatchLane,
+    DispatchTriageMode,
     EvidenceRecord,
     EventEnvelope,
     GateReadiness,
@@ -61,6 +63,7 @@ from kki import (
     advance_work_unit,
     audit_entry_for_artifact,
     audit_entry_for_message,
+    build_dispatch_plan,
     build_telemetry_snapshot,
     claim_for_work_unit,
     command_message,
@@ -422,6 +425,135 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(exported["retry_budget"], 3)
         self.assertEqual(exported["mode"], "recovery")
         self.assertEqual(exported["causation_id"], "shadow-drift")
+
+    def test_kki_dispatch_plan_admits_high_priority_within_budget(self) -> None:
+        dna = runtime_dna_for_profile("pilot-runtime-dna", stage=RuntimeStage.PILOT)
+        state = orchestration_state_for_runtime(
+            dna,
+            mission_ref="mission-133",
+            status=OrchestrationStatus.ACTIVE,
+            budget_available=0.8,
+            budget_reserved=0.22,
+            pressure=OperationalPressure(0.41, 0.58, 0.24, 0.19),
+        )
+        work_units = (
+            work_unit_for_state(
+                state,
+                title="shadow verify",
+                boundary="shadow",
+                correlation_id="dispatch-1",
+                priority=WorkPriority.HIGH,
+                budget_share=0.18,
+            ),
+            work_unit_for_state(
+                state,
+                title="telemetry aggregate",
+                boundary="telemetry",
+                correlation_id="dispatch-2",
+                priority=WorkPriority.NORMAL,
+                budget_share=0.16,
+            ),
+            work_unit_for_state(
+                state,
+                title="recovery hold",
+                boundary="recovery",
+                correlation_id="dispatch-3",
+                priority=WorkPriority.CRITICAL,
+                budget_share=0.2,
+            ),
+        )
+
+        plan = build_dispatch_plan(
+            state,
+            work_units,
+            available_roles=(RoleName.EXECUTOR, RoleName.SUPERVISOR),
+            max_parallel=2,
+        )
+
+        self.assertEqual(plan.triage_mode, DispatchTriageMode.BACKLOG)
+        self.assertEqual(len(plan.admitted_unit_ids), 2)
+        self.assertIn(work_units[2].unit_id, plan.admitted_unit_ids)
+        self.assertLessEqual(plan.consumed_budget, plan.effective_budget)
+
+    def test_kki_dispatch_plan_holds_work_when_dispatch_guarded(self) -> None:
+        dna = runtime_dna_for_profile("pilot-runtime-dna", stage=RuntimeStage.PILOT)
+        state = orchestration_state_for_runtime(
+            dna,
+            mission_ref="mission-133",
+            status=OrchestrationStatus.THROTTLED,
+            gates=GateReadiness(dispatch=GateState.GUARDED),
+            pressure=OperationalPressure(0.52, 0.44, 0.2, 0.18),
+        )
+        normal_work = work_unit_for_state(
+            state,
+            title="normal rollout sync",
+            boundary="rollout",
+            correlation_id="dispatch-guarded",
+            priority=WorkPriority.NORMAL,
+            budget_share=0.14,
+        )
+
+        plan = build_dispatch_plan(state, (normal_work,))
+
+        self.assertEqual(plan.assignments[0].lane, DispatchLane.HOLD)
+        self.assertIn(normal_work.unit_id, plan.held_unit_ids)
+
+    def test_kki_dispatch_plan_blocks_when_gate_blocked(self) -> None:
+        dna = runtime_dna_for_profile("balanced-runtime-dna", stage=RuntimeStage.SHADOW)
+        state = orchestration_state_for_runtime(
+            dna,
+            mission_ref="mission-133",
+            gates=GateReadiness(dispatch=GateState.BLOCKED, blockers=("operator stop",)),
+        )
+        work_unit = work_unit_for_state(
+            state,
+            title="shadow replay",
+            boundary="shadow",
+            correlation_id="dispatch-blocked",
+            priority=WorkPriority.HIGH,
+        )
+
+        plan = build_dispatch_plan(state, (work_unit,))
+
+        self.assertEqual(plan.assignments[0].lane, DispatchLane.BLOCK)
+        self.assertEqual(plan.assignments[0].rationale, "dispatch gate is blocked")
+
+    def test_kki_dispatch_plan_protects_reserve_gap(self) -> None:
+        dna = runtime_dna_for_profile("pilot-runtime-dna", stage=RuntimeStage.PILOT)
+        state = orchestration_state_for_runtime(
+            dna,
+            mission_ref="mission-133",
+            status=OrchestrationStatus.DEGRADED,
+            budget_available=0.76,
+            budget_reserved=0.12,
+            pressure=OperationalPressure(0.67, 0.48, 0.41, 0.54),
+        )
+        work_units = (
+            work_unit_for_state(
+                state,
+                title="recovery checkpoint sync",
+                boundary="recovery",
+                correlation_id="dispatch-gap-1",
+                priority=WorkPriority.CRITICAL,
+                budget_share=0.22,
+            ),
+            work_unit_for_state(
+                state,
+                title="shadow backlog cleanup",
+                boundary="shadow",
+                correlation_id="dispatch-gap-2",
+                priority=WorkPriority.NORMAL,
+                budget_share=0.18,
+                recovery_weight=0.18,
+            ),
+        )
+
+        plan = build_dispatch_plan(state, work_units, max_parallel=2)
+
+        self.assertEqual(plan.triage_mode, DispatchTriageMode.RECOVERY_PRIORITY)
+        self.assertEqual(plan.assignments[0].lane, DispatchLane.ADMIT)
+        self.assertEqual(plan.assignments[1].lane, DispatchLane.HOLD)
+        self.assertLess(plan.effective_budget, plan.dispatch_budget)
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

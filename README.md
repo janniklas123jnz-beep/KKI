@@ -229,6 +229,13 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `WorkClaim` modelliert zeitlich gebundene Ownership-Leases ohne stilles Uebernehmen
 - `WorkHandoff` traegt Retry-, Replay- und Boundary-Wechsel als expliziten Handoff-Vertrag weiter
 
+`#133` fuehrt darauf den ersten Dispatch- und Priorisierungsplaner ein:
+
+- `DispatchTriageMode` wechselt deterministisch zwischen Balanced-, Backlog-, Reserve-Protected- und Recovery-Priority-Fahrweise
+- `DispatchAssignment` und `DispatchPlan` machen Admit-, Hold-, Defer- und Block-Entscheide pro Work Unit nachvollziehbar exportierbar
+- `dispatch_priority_score()` priorisiert kritischere und guenstigere Arbeit ohne Budget- und Reserve-Schutz zu verlieren
+- `build_dispatch_plan()` koppelt Gate-Lage, Rollenverfuegbarkeit, Parallelitaet und Recovery-Reserve zu einem ersten operativen Dispatcher
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

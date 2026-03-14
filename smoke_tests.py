@@ -12,17 +12,28 @@ from pathlib import Path
 
 from kki import (
     CoreState,
+    DeliveryGuarantee,
+    DeliveryMode,
     EvidenceRecord,
+    EventEnvelope,
+    MessageEnvelope,
+    MessageKind,
     ModuleBoundaryName,
     PersistenceRecord,
+    ProtocolContext,
     RuntimeStage,
     RuntimeThresholds,
     TransferEnvelope,
+    command_message,
     core_state_for_runtime,
+    event_message,
+    evidence_message,
     module_boundaries,
     module_dependency_graph,
+    protocol_context,
     runtime_dna_for_profile,
     runtime_dna_from_env,
+    transfer_message,
     transfer_envelope_for_state,
 )
 
@@ -178,6 +189,79 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(exported["audit_ref"], "audit-42")
         self.assertEqual(exported["commitment_ref"], "commit-7")
         self.assertEqual(exported["payload"]["decision"], "approved")
+
+    def test_kki_protocol_context_defaults_idempotency(self) -> None:
+        context = protocol_context("corr-001", sequence=3)
+
+        self.assertIsInstance(context, ProtocolContext)
+        self.assertEqual(context.correlation_id, "corr-001")
+        self.assertTrue(context.idempotency_key.startswith("msg-"))
+        self.assertEqual(context.sequence, 3)
+
+    def test_kki_command_message_is_acknowledged(self) -> None:
+        message = command_message(
+            name="approve-rollout",
+            source_boundary="governance",
+            target_boundary="rollout",
+            correlation_id="corr-cmd",
+            payload={"decision": "approve"},
+        )
+
+        self.assertIsInstance(message, MessageEnvelope)
+        self.assertEqual(message.kind, MessageKind.COMMAND)
+        self.assertEqual(message.delivery_mode, DeliveryMode.SYNC)
+        self.assertEqual(message.delivery_guarantee, DeliveryGuarantee.ACKNOWLEDGED)
+
+    def test_kki_event_message_is_replayable(self) -> None:
+        event = event_message(
+            name="shadow-drift-detected",
+            event_class="shadow",
+            severity="warning",
+            source_boundary="shadow",
+            target_boundary="telemetry",
+            correlation_id="corr-evt",
+            payload={"delta": 0.12},
+        )
+
+        self.assertIsInstance(event, EventEnvelope)
+        self.assertEqual(event.message.kind, MessageKind.EVENT)
+        self.assertEqual(event.message.delivery_mode, DeliveryMode.ASYNC)
+        self.assertEqual(event.message.delivery_guarantee, DeliveryGuarantee.REPLAYABLE)
+        self.assertTrue(event.replayable)
+
+    def test_kki_transfer_message_wraps_transfer_envelope(self) -> None:
+        dna = runtime_dna_for_profile("balanced-runtime-dna", stage=RuntimeStage.SHADOW)
+        state = core_state_for_runtime(dna, module="orchestration", status="handoff", budget=0.54)
+        envelope = transfer_envelope_for_state(
+            state,
+            target_boundary="recovery",
+            correlation_id="corr-transfer",
+            sequence=4,
+        )
+        message = transfer_message(envelope, name="state-handoff")
+
+        self.assertEqual(message.kind, MessageKind.TRANSFER)
+        self.assertEqual(message.delivery_guarantee, DeliveryGuarantee.REPLAYABLE)
+        self.assertEqual(message.context.sequence, 4)
+        self.assertEqual(message.payload["payload"]["status"], "handoff")
+
+    def test_kki_evidence_message_is_proof_bound(self) -> None:
+        evidence = EvidenceRecord(
+            evidence_type="recovery-approval",
+            subject="restart-sequence",
+            correlation_id="corr-proof",
+            audit_ref="audit-proof",
+            payload={"approved": True},
+        )
+        message = evidence_message(
+            evidence,
+            source_boundary="governance",
+            target_boundary="telemetry",
+        )
+
+        self.assertEqual(message.kind, MessageKind.EVIDENCE)
+        self.assertEqual(message.delivery_guarantee, DeliveryGuarantee.PROOF_BOUND)
+        self.assertEqual(message.integrity_status, "attested")
 
     def test_kooperation_test_is_reproducible(self) -> None:
         with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:

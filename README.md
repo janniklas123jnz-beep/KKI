@@ -167,6 +167,13 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `PersistenceRecord` fuer Restart-, Wissens- und Auditpersistenz
 - `EvidenceRecord` fuer Freigabe-, Commitment- und Recovery-Nachweise
 
+`#124` legt darauf die erste Nachrichten- und Eventschicht:
+
+- `ProtocolContext` fuer Korrelation, Kausalbezug, Idempotenz und Sequenz
+- `MessageEnvelope` fuer Befehls-, Transfer- und Nachweisnachrichten
+- `EventEnvelope` fuer asynchrone Replay- und Beobachtungsevents
+- Helfer fuer kanonische Command-, Event-, Transfer- und Evidence-Nachrichten
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

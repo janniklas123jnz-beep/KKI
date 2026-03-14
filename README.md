@@ -102,6 +102,7 @@ Die Simulationen basieren auf wiederholten Interaktionen im Stil des Gefangenend
 | `schwarm_audit_telemetrie.py` | Studie zu Audit-Telemetrie und Nachvollziehbarkeitskanaelen zwischen Ressourcen-Orchestrierung, Diagnose und Recovery |
 | `schwarm_sicherheits_policies.py` | Studie zu Sicherheits-Policies und Injektionsabwehrketten zwischen Telemetrie, Governance und realen Schnittstellen |
 | `schwarm_schattenbetrieb.py` | Studie zu Schattenbetrieb und Parallelvalidierung zwischen Telemetrie, Sicherheitskette und Live-naher Vorhersage |
+| `schwarm_bauphasen_rollout.py` | Finale Rollout-Studie zur ersten realnahen Einfuehrungsarchitektur aus Instanziierung, Sicherheitskette, Schattenvalidierung und Recovery |
 | `commitment_protokoll.py` | Commit-Reveal-Verify-Protokoll gegen Manipulation |
 
 ## Features
@@ -242,6 +243,7 @@ python3 schwarm_ressourcen_orchestrator.py
 python3 schwarm_audit_telemetrie.py
 python3 schwarm_sicherheits_policies.py
 python3 schwarm_schattenbetrieb.py
+python3 schwarm_bauphasen_rollout.py
 python3 commitment_protokoll.py
 ```
 
@@ -1187,6 +1189,21 @@ KKI_SHADOW_MODE_FAILURE_FRACTION=0.18 \
 python3 schwarm_schattenbetrieb.py
 ```
 
+Die Bauphasen-Rollout-Studie schliesst den Block ab und vergleicht, welche integrierte Einfuehrungsarchitektur aus Instanziierung, Telemetrie, Sicherheitskette und Parallelvalidierung den besten ersten Realbetrieb ermoeglicht:
+
+```bash
+python3 schwarm_bauphasen_rollout.py
+```
+
+Optional lassen sich Wiederholungen, Stress und Recovery anpassen:
+
+```bash
+KKI_BUILD_ROLLOUT_REPETITIONS=2 \
+KKI_BUILD_ROLLOUT_STRESS_STRENGTH=0.49 \
+KKI_BUILD_ROLLOUT_FAILURE_FRACTION=0.18 \
+python3 schwarm_bauphasen_rollout.py
+```
+
 Optional lassen sich Wiederholungen und gemeinsame Basisparameter anpassen:
 
 ```bash
@@ -1293,6 +1310,7 @@ Die folgenden Skripte erzeugen die im Repository abgelegten PNG-Dateien:
 | `schwarm_audit_telemetrie.py` | `kki_audit_telemetrie.png` | `KKI_SEED=42 python3 schwarm_audit_telemetrie.py` |
 | `schwarm_sicherheits_policies.py` | `kki_sicherheits_policies.png` | `KKI_SEED=42 python3 schwarm_sicherheits_policies.py` |
 | `schwarm_schattenbetrieb.py` | `kki_schattenbetrieb.png` | `KKI_SEED=42 python3 schwarm_schattenbetrieb.py` |
+| `schwarm_bauphasen_rollout.py` | `kki_bauphasen_rollout.png` | `KKI_SEED=42 python3 schwarm_bauphasen_rollout.py` |
 | `commitment_protokoll.py` | `kki_commitment_protokoll.png` | `KKI_SEED=42 python3 commitment_protokoll.py` |
 
 Hinweise zur Reproduktion:
@@ -1638,6 +1656,10 @@ Die Smoke-Tests starten ausgewählte Kernskripte im verkürzten headless Testmod
 
 ![KKI Schattenbetrieb](kki_schattenbetrieb.png)
 
+### Bauphasen-Rollout-Studie
+
+![KKI Bauphasen-Rollout](kki_bauphasen_rollout.png)
+
 ## Zentrale Beobachtungen
 
 Die bisherigen Simulationen illustrieren wiederkehrende Muster:
@@ -1700,6 +1722,7 @@ Die bisherigen Simulationen illustrieren wiederkehrende Muster:
 - die Audit-Telemetrie-Studie untersucht nun, welche Beobachtungs- und Diagnosekanaele ueber diesem foederierten Orchestrator liegen sollten; im Voll-Lauf gewinnt der Forensische Kanal, weil er Sichtbarkeit, Diagnoseguete und Recovery-Forensik besser balanciert als lokales Logging oder maximale Vollbeobachtung, ohne in deren Overhead-Falle zu kippen
 - die Sicherheits-Policies-Studie untersucht nun, welche Policy-, Filter- und Eskalationskette auf diesem forensischen Kanal aufsetzen sollte; im Voll-Lauf gewinnt die Foederierte Sicherheitskette, weil sie Abwehr, Eskalation und Recovery etwas besser balanciert als die haertere resiliente Injektionsabwehr, ohne deren zusaetzlichen Schutz-Overhead voll mitzuschleppen
 - die Schattenbetriebs-Studie untersucht nun, welche beobachtete Parallelvalidierung auf dieser Sicherheitskette aufsetzen sollte; im Voll-Lauf gewinnt die Parallelvalidierung, weil sie Preview-Guete, Live-nahe Validierung und Replay-Recovery besser balanciert als stilles Monitoring oder ein maximaler Schattenstack, ohne dessen Zusatz-Overhead mitzuschleppen
+- die Bauphasen-Rollout-Studie verdichtet diese Siegerpfade nun zur ersten realnahen Einfuehrungsarchitektur; im Voll-Lauf gewinnt der Bauphasen-Rollout, weil er Instanziierung, forensische Telemetrie, foederierte Sicherheitskette und Parallelvalidierung besser zu einem startfaehigen Gesamtpfad verbindet als ein direkter oder maximal abgesicherter Rollout
 
 ## Projektstruktur und Ausrichtung
 

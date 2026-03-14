@@ -1320,6 +1320,29 @@ class SmokeTests(unittest.TestCase):
             self.assertTrue((output_dir / "kki_schattenbetrieb.png").exists())
             self.assertIn("Bester Schattenbetrieb", result.stdout)
 
+    def test_schwarm_bauphasen_rollout_smoke(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:
+            output_dir = Path(tmpdir)
+            result = self.run_script(
+                "schwarm_bauphasen_rollout.py",
+                output_dir,
+                seed=503,
+                extra_env={
+                    "KKI_BUILD_ROLLOUT_FAST": "1",
+                    "KKI_BUILD_ROLLOUT_REPETITIONS": "1",
+                    "KKI_BUILD_ROLLOUT_AGENT_COUNT": "12",
+                    "KKI_WORKFLOW_STAGE_MIN_TENURE": "1",
+                    "KKI_MISSION_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_MIN_TENURE": "2",
+                    "KKI_INJECTION_ATTACK_ROUND": "3",
+                    "KKI_FAILURE_ROUND": "4",
+                },
+            )
+            self.assert_successful_run(result)
+            self.assertTrue((output_dir / "kki_bauphasen_rollout.png").exists())
+            self.assertIn("Bester Bauphasen-Rollout", result.stdout)
+
 
 if __name__ == "__main__":
     unittest.main()

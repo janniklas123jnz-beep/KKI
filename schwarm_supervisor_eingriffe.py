@@ -353,6 +353,28 @@ def intervention_metrics(config, result, params, profile):
             ]
         )
     )
+    intervention_integrity = clamp01(
+        mittelwert(
+            [
+                detection_strength,
+                precision_quality,
+                1.0 - workflow.get('misinformation_corruption_mean', 0.0),
+                1.0 - workflow.get('cluster_compromise_mean', 0.0),
+                workflow.get('trust_shield_mean', 0.0),
+            ]
+        )
+    )
+    stabilization_adaptivity = clamp01(
+        mittelwert(
+            [
+                stabilization_gain,
+                recovery_strength,
+                autonomy_preservation,
+                workflow.get('sync_strength_mean', 0.0),
+                workflow.get('resource_efficiency', 0.0),
+            ]
+        )
+    )
     intervention_overhead = clamp01(
         mittelwert(
             [
@@ -385,6 +407,8 @@ def intervention_metrics(config, result, params, profile):
         'stabilization_gain': stabilization_gain,
         'autonomy_preservation': autonomy_preservation,
         'recovery_strength': recovery_strength,
+        'intervention_integrity': intervention_integrity,
+        'stabilization_adaptivity': stabilization_adaptivity,
         'intervention_overhead': intervention_overhead,
     }
 
@@ -450,16 +474,14 @@ def context_score(kontext_name, result, agent_count):
     if kontext_name == 'stress':
         return (
             base
-            + 0.16 * metrics['detection_strength']
-            + 0.14 * metrics['precision_quality']
-            + 0.10 * metrics['stabilization_gain']
-            - 0.12 * metrics['corruption_mean']
-            - 0.10 * metrics['cluster_compromise_mean']
+            + 0.16 * metrics['intervention_integrity']
+            + 0.14 * metrics['stabilization_adaptivity']
+            + 0.10 * metrics['precision_quality']
             - 0.08 * metrics['intervention_overhead']
         )
     return (
         base
-        + 0.18 * metrics['recovery_strength']
+        + 0.18 * metrics['stabilization_adaptivity']
         + 0.12 * metrics['stabilization_gain']
         + 0.08 * metrics['autonomy_preservation']
         - 0.12 * failed_share
@@ -475,6 +497,8 @@ def summarize_runs(runs, profile, context_list, agent_count):
         'stabilization_gain': {},
         'autonomy_preservation': {},
         'recovery_strength': {},
+        'intervention_integrity': {},
+        'stabilization_adaptivity': {},
         'intervention_overhead': {},
     }
 
@@ -528,9 +552,9 @@ def main():
         summaries.append(summary)
         print(
             f"{summary['label']:<31} Score={summary['combined_score']:+.3f} | "
-            f"Detect={summary['detection_strength']['stress']:.2f} | "
+            f"Integritaet={summary['intervention_integrity']['stress']:.2f} | "
             f"Autonomie={summary['autonomy_preservation']['operations']:.2f} | "
-            f"Recovery={summary['recovery_strength']['recovery']:.2f}"
+            f"Adaptivitaet={summary['stabilization_adaptivity']['recovery']:.2f}"
         )
 
     best = max(summaries, key=lambda item: item['combined_score'])
@@ -542,9 +566,9 @@ def main():
         f"Delta zum Hinweis-Supervisor {best['combined_score'] - baseline['combined_score']:+.3f}"
     )
     print(
-        f"Detection {best['detection_strength']['stress']:.2f}, "
+        f"Integritaet {best['intervention_integrity']['stress']:.2f}, "
         f"Autonomie {best['autonomy_preservation']['operations']:.2f}, "
-        f"Recovery {best['recovery_strength']['recovery']:.2f}"
+        f"Adaptivitaet {best['stabilization_adaptivity']['recovery']:.2f}"
     )
 
     labels = [item['label'] for item in summaries]
@@ -562,9 +586,9 @@ def main():
 
     axes[0, 1].bar(
         x - width / 2,
-        [item['detection_strength']['stress'] for item in summaries],
+        [item['intervention_integrity']['stress'] for item in summaries],
         width,
-        label='Detection',
+        label='Eingriffs-Integritaet',
         color='#4e79a7',
     )
     axes[0, 1].bar(
@@ -574,7 +598,7 @@ def main():
         label='Praezision',
         color='#59a14f',
     )
-    axes[0, 1].set_title('Erkennung und Praezision')
+    axes[0, 1].set_title('Integritaet und Praezision')
     axes[0, 1].set_xticks(x)
     axes[0, 1].set_xticklabels(labels, rotation=18)
     axes[0, 1].legend()
@@ -602,9 +626,9 @@ def main():
 
     axes[1, 0].bar(
         x - width / 2,
-        [item['recovery_strength']['recovery'] for item in summaries],
+        [item['stabilization_adaptivity']['recovery'] for item in summaries],
         width,
-        label='Recovery',
+        label='Stabilisierungs-Adaptivitaet',
         color='#76b7b2',
     )
     axes[1, 0].bar(
@@ -614,7 +638,7 @@ def main():
         label='Overhead',
         color='#bab0ab',
     )
-    axes[1, 0].set_title('Recovery gegen Overhead')
+    axes[1, 0].set_title('Adaptivitaet gegen Overhead')
     axes[1, 0].set_xticks(x)
     axes[1, 0].set_xticklabels(labels, rotation=18)
     axes[1, 0].legend()

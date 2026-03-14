@@ -185,6 +185,23 @@ def arbitration_profiles(katalog):
 
 def arbitration_metrics(result):
     workflow = result['workflow_metrics']
+    mission_conflicts = float(result.get('mission_conflict_total', 0.0))
+    mission_arbitrations = float(result.get('mission_arbitration_total', 0.0))
+    arbitration_activity = min(1.0, mission_arbitrations / 60.0)
+    conflict_pressure = min(1.0, mission_conflicts / 60.0)
+    resolution_balance = (
+        max(0.0, 1.0 - abs(arbitration_activity - conflict_pressure))
+        if mission_conflicts > 0.0 or mission_arbitrations > 0.0
+        else 0.0
+    )
+    coordination_reserve = mittelwert(
+        [
+            min(1.0, workflow.get('resource_efficiency', 0.0)),
+            min(1.0, workflow.get('bottleneck_relief_rate', 0.0)),
+            min(1.0, workflow.get('meta_alignment_rate', 0.0)),
+            min(1.0, float(result.get('mission_switch_stability', 0.0))),
+        ]
+    )
     return {
         'completion_rate': workflow.get('completion_rate', 0.0),
         'resource_efficiency': workflow.get('resource_efficiency', 0.0),
@@ -195,12 +212,15 @@ def arbitration_metrics(result):
         'skill_alignment_rate': workflow.get('skill_alignment_rate', 0.0),
         'detection_rate': workflow.get('misinformation_detection_rate', 0.0),
         'corruption_mean': workflow.get('misinformation_corruption_mean', 0.0),
+        'stress_integrity': max(0.0, 1.0 - workflow.get('misinformation_corruption_mean', 0.0)),
         'cross_group_cooperation': result['cross_group_cooperation_rate'],
         'mission_success': mittelwert(list(result.get('mission_success_rates', {}).values())),
-        'mission_conflicts': float(result.get('mission_conflict_total', 0.0)),
-        'mission_arbitrations': float(result.get('mission_arbitration_total', 0.0)),
+        'mission_conflicts': mission_conflicts,
+        'mission_arbitrations': mission_arbitrations,
         'arbitration_gain': float(result.get('mission_arbitration_mean_gain', 0.0)),
         'switch_stability': float(result.get('mission_switch_stability', 0.0)),
+        'resolution_balance': resolution_balance,
+        'coordination_reserve': coordination_reserve,
         'consensus': result['final_consensus_score'],
         'polarization': result['final_polarization_index'],
     }
@@ -284,6 +304,9 @@ def summarize_runs(runs, eintrag, context_list):
         'mission_arbitrations': {},
         'arbitration_gain': {},
         'switch_stability': {},
+        'stress_integrity': {},
+        'resolution_balance': {},
+        'coordination_reserve': {},
     }
 
     for kontext in context_list:
@@ -338,7 +361,8 @@ def main():
             f"{summary['label']:<26} Score={summary['combined_score']:+.3f} | "
             f"Mission={summary['mission_success']['polarization']:.1%} | "
             f"Arb={summary['mission_arbitrations']['consensus']:.1f} | "
-            f"Meta={summary['meta_alignment_rate']['consensus']:.1%}"
+            f"Balance={summary['resolution_balance']['consensus']:.1%} | "
+            f"Reserve={summary['coordination_reserve']['stress']:.1%}"
         )
 
     best = max(summaries, key=lambda item: item['combined_score'])
@@ -350,7 +374,8 @@ def main():
     )
     print(
         f"Missionserfolg {best['mission_success']['polarization']:.1%}, "
-        f"Meta-Ausrichtung {best['meta_alignment_rate']['consensus']:.1%}, "
+        f"Balance {best['resolution_balance']['consensus']:.1%}, "
+        f"Reserve {best['coordination_reserve']['stress']:.1%}, "
         f"Arbitrationsgewinn {best['arbitration_gain']['consensus']:.3f}"
     )
 
@@ -413,8 +438,9 @@ def main():
                 item['context_scores']['polarization'],
                 item['context_scores']['consensus'],
                 item['context_scores']['stress'],
-                item['meta_alignment_rate']['consensus'],
-                item['bottleneck_relief_rate']['stress'],
+                item['resolution_balance']['consensus'],
+                item['coordination_reserve']['stress'],
+                item['stress_integrity']['stress'],
             ]
             for item in summaries
         ],
@@ -422,8 +448,8 @@ def main():
     )
     heatmap = axes[1, 0].imshow(heatmap_data, cmap='viridis', aspect='auto')
     axes[1, 0].set_title('Kontextprofil')
-    axes[1, 0].set_xticks([0, 1, 2, 3, 4])
-    axes[1, 0].set_xticklabels(['Pol', 'Kon', 'Stress', 'Meta', 'Relief'])
+    axes[1, 0].set_xticks([0, 1, 2, 3, 4, 5])
+    axes[1, 0].set_xticklabels(['Pol', 'Kon', 'Stress', 'Balance', 'Reserve', 'Int'])
     axes[1, 0].set_yticks(range(len(labels)))
     axes[1, 0].set_yticklabels(labels)
     for row in range(heatmap_data.shape[0]):
@@ -433,19 +459,19 @@ def main():
 
     axes[1, 1].bar(
         x - width / 2,
-        [item['resource_efficiency']['stress'] for item in summaries],
+        [item['resolution_balance']['consensus'] * 100.0 for item in summaries],
         width,
-        label='Effizienz',
+        label='Balance (%)',
         color='#4e79a7',
     )
     axes[1, 1].bar(
         x + width / 2,
-        [item['resource_share_rate']['stress'] for item in summaries],
+        [item['coordination_reserve']['stress'] * 100.0 for item in summaries],
         width,
-        label='Ressourcen/Runde',
+        label='Reserve (%)',
         color='#9c755f',
     )
-    axes[1, 1].set_title('Ressourcen-Arbitration')
+    axes[1, 1].set_title('Arbitrationsstabilitaet')
     axes[1, 1].set_xticks(x)
     axes[1, 1].set_xticklabels(labels, rotation=18)
     axes[1, 1].legend()
@@ -463,8 +489,9 @@ def main():
             f"- Konflikte: {best['mission_conflicts']['polarization']:.1f}\n"
             f"- Arbitrierungen: {best['mission_arbitrations']['consensus']:.1f}\n"
             f"- Arbitrationsgewinn: {best['arbitration_gain']['consensus']:.3f}\n"
-            f"- Meta-Ausrichtung: {best['meta_alignment_rate']['consensus']:.1%}\n"
-            f"- Stress-Detektion: {best['detection_rate']['stress']:.1%}"
+            f"- Balance: {best['resolution_balance']['consensus']:.1%}\n"
+            f"- Reserve: {best['coordination_reserve']['stress']:.1%}\n"
+            f"- Stress-Integritaet: {best['stress_integrity']['stress']:.1%}"
         ),
         va='top',
         fontsize=10,

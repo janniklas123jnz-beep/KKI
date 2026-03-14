@@ -395,6 +395,10 @@ def overlay_module_metrics(config, base_contract, eintrag, key_overlap):
 
 def experiment_metrics(result):
     workflow = result['workflow_metrics']
+    corruption_mean = workflow.get('misinformation_corruption_mean', 0.0)
+    cluster_compromise_mean = workflow.get('cluster_compromise_mean', 0.0)
+    recovery_events_total = workflow.get('recovery_events_total', 0.0)
+    failed_agents_mean = workflow.get('failed_agents_mean', 0.0)
     return {
         'completion_rate': workflow.get('completion_rate', 0.0),
         'resource_efficiency': workflow.get('resource_efficiency', 0.0),
@@ -404,12 +408,14 @@ def experiment_metrics(result):
         'resource_share_rate': workflow.get('resource_share_rate', 0.0),
         'bottleneck_relief_rate': workflow.get('bottleneck_relief_rate', 0.0),
         'detection_rate': workflow.get('misinformation_detection_rate', 0.0),
-        'corruption_mean': workflow.get('misinformation_corruption_mean', 0.0),
-        'cluster_compromise_mean': workflow.get('cluster_compromise_mean', 0.0),
+        'corruption_mean': corruption_mean,
+        'stress_integrity': max(0.0, 1.0 - corruption_mean),
+        'cluster_compromise_mean': cluster_compromise_mean,
+        'compromise_reserve': max(0.0, 1.0 - cluster_compromise_mean),
         'trust_shield_mean': workflow.get('trust_shield_mean', 0.0),
-        'recovery_events_total': workflow.get('recovery_events_total', 0.0),
+        'recovery_events_total': recovery_events_total,
         'sync_strength_mean': workflow.get('sync_strength_mean', 0.0),
-        'failed_agents_mean': workflow.get('failed_agents_mean', 0.0),
+        'failed_agents_mean': failed_agents_mean,
         'mission_success': mittelwert(list(result.get('mission_success_rates', {}).values())),
         'cross_group_cooperation': result['cross_group_cooperation_rate'],
         'consensus': result['final_consensus_score'],
@@ -524,6 +530,8 @@ def summarize_runs(runs, eintrag, context_list, agent_count):
         'handoff_rate': {},
         'detection_rate': {},
         'corruption_mean': {},
+        'stress_integrity': {},
+        'compromise_reserve': {},
         'trust_shield_mean': {},
         'sync_strength_mean': {},
         'compatibility_score': {},
@@ -537,7 +545,7 @@ def summarize_runs(runs, eintrag, context_list, agent_count):
     for kontext in context_list:
         name = kontext['name']
         context_scores[name] = mittelwert([context_score(name, run[name], agent_count) for run in runs])
-        for metric_name in ['completion_rate', 'resource_efficiency', 'handoff_rate', 'detection_rate', 'corruption_mean', 'trust_shield_mean', 'sync_strength_mean']:
+        for metric_name in ['completion_rate', 'resource_efficiency', 'handoff_rate', 'detection_rate', 'corruption_mean', 'stress_integrity', 'compromise_reserve', 'trust_shield_mean', 'sync_strength_mean']:
             metrics[metric_name][name] = mittelwert([run[name]['overlay_metrics'][metric_name] for run in runs])
         for metric_name in ['compatibility_score', 'side_effect_risk', 'module_coverage', 'integration_score', 'rollback_safety', 'module_synergy']:
             metrics[metric_name][name] = mittelwert([run[name]['module_metrics'][metric_name] for run in runs])
@@ -588,8 +596,8 @@ def main():
         print(
             f"{summary['label']:<28} Score={summary['combined_score']:+.3f} | "
             f"Kompat={summary['compatibility_score']['bootstrap']:.2f} | "
-            f"Integration={summary['integration_score']['bootstrap']:.2f} | "
-            f"Seiteneffekte={summary['side_effect_risk']['bootstrap']:.2f}"
+            f"Rollback={summary['rollback_safety']['recovery']:.2f} | "
+            f"Stress-Int={summary['stress_integrity']['stress']:.1%}"
         )
 
     best = max(summaries, key=lambda item: item['combined_score'])
@@ -602,8 +610,8 @@ def main():
     )
     print(
         f"Kompatibilitaet {best['compatibility_score']['bootstrap']:.2f}, "
-        f"Integration {best['integration_score']['bootstrap']:.2f}, "
-        f"Seiteneffekte {best['side_effect_risk']['bootstrap']:.2f}"
+        f"Rollback-Sicherheit {best['rollback_safety']['recovery']:.2f}, "
+        f"Stress-Integritaet {best['stress_integrity']['stress']:.1%}"
     )
 
     labels = [item['label'] for item in summaries]
@@ -667,6 +675,7 @@ def main():
                 item['context_scores']['stress'],
                 item['context_scores']['recovery'],
                 item['rollback_safety']['recovery'],
+                item['stress_integrity']['stress'],
             ]
             for item in summaries
         ],
@@ -674,8 +683,8 @@ def main():
     )
     heatmap = axes[1, 0].imshow(heatmap_data, cmap='viridis', aspect='auto')
     axes[1, 0].set_title('Kontextprofil')
-    axes[1, 0].set_xticks([0, 1, 2, 3, 4])
-    axes[1, 0].set_xticklabels(['Boot', 'Kon', 'Stress', 'Rec', 'Rollback'])
+    axes[1, 0].set_xticks([0, 1, 2, 3, 4, 5])
+    axes[1, 0].set_xticklabels(['Boot', 'Kon', 'Stress', 'Rec', 'Rollback', 'Int'])
     axes[1, 0].set_yticks(range(len(labels)))
     axes[1, 0].set_yticklabels(labels)
     for row in range(heatmap_data.shape[0]):
@@ -685,16 +694,16 @@ def main():
 
     axes[1, 1].bar(
         x - width / 2,
-        [item['detection_rate']['stress'] * 100.0 for item in summaries],
+        [item['stress_integrity']['stress'] * 100.0 for item in summaries],
         width,
-        label='Detektion (%)',
+        label='Stress-Integritaet (%)',
         color='#edc948',
     )
     axes[1, 1].bar(
         x + width / 2,
-        [item['trust_shield_mean']['stress'] for item in summaries],
+        [item['compromise_reserve']['stress'] * 100.0 for item in summaries],
         width,
-        label='Abschirmung',
+        label='Reserve (%)',
         color='#b07aa1',
     )
     axes[1, 1].set_title('Stressabwehr')
@@ -715,7 +724,8 @@ def main():
             f"- Integration: {best['integration_score']['bootstrap']:.2f}\n"
             f"- Rollback-Sicherheit: {best['rollback_safety']['recovery']:.2f}\n"
             f"- Modulsynergie: {best['module_synergy']['consensus']:.2f}\n"
-            f"- Stress-Detektion: {best['detection_rate']['stress']:.1%}\n"
+            f"- Stress-Integritaet: {best['stress_integrity']['stress']:.1%}\n"
+            f"- Reserve: {best['compromise_reserve']['stress']:.1%}\n"
             f"- Seiteneffekte: {best['side_effect_risk']['bootstrap']:.2f}"
         ),
         va='top',

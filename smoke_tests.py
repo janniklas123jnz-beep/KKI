@@ -12,7 +12,10 @@ from pathlib import Path
 
 from kki import (
     ActionName,
+    ArtifactKind,
+    ArtifactScope,
     AuthorizationIdentity,
+    ControlArtifact,
     CoreState,
     DelegationGrant,
     DeliveryGuarantee,
@@ -20,6 +23,7 @@ from kki import (
     EvidenceRecord,
     EventEnvelope,
     IdentityKind,
+    LoadedControlPlane,
     MessageEnvelope,
     MessageKind,
     ModuleBoundaryName,
@@ -31,11 +35,14 @@ from kki import (
     RuntimeThresholds,
     TransferEnvelope,
     TrustLevel,
+    ValidationStep,
     authorize_action,
+    authorize_artifact,
     command_message,
     core_state_for_runtime,
     event_message,
     evidence_message,
+    load_control_plane,
     module_boundaries,
     module_dependency_graph,
     protocol_context,
@@ -412,6 +419,121 @@ class SmokeTests(unittest.TestCase):
         )
 
         self.assertFalse(decision.allowed)
+
+    def test_kki_control_plane_loads_scoped_artifacts(self) -> None:
+        artifacts = (
+            ControlArtifact(
+                artifact_id="base-runtime",
+                kind=ArtifactKind.BASE_CONFIG,
+                version="1.0",
+                scope=ArtifactScope.GLOBAL,
+                payload={"budget": 0.7, "telemetry": True},
+            ),
+            ControlArtifact(
+                artifact_id="pilot-runtime",
+                kind=ArtifactKind.BASE_CONFIG,
+                version="1.1",
+                scope=ArtifactScope.STAGE,
+                runtime_stage=RuntimeStage.PILOT,
+                validations=(ValidationStep.STATIC, ValidationStep.CONSISTENCY, ValidationStep.SHADOW),
+                payload={"budget": 0.76},
+            ),
+            ControlArtifact(
+                artifact_id="security-policy",
+                kind=ArtifactKind.POLICY,
+                version="2.0",
+                scope=ArtifactScope.BOUNDARY,
+                runtime_stage=RuntimeStage.PILOT,
+                boundary="security",
+                validations=(ValidationStep.STATIC, ValidationStep.CONSISTENCY, ValidationStep.SHADOW),
+                evidence_ref="audit-policy-1",
+                payload={"quarantine_mode": "strict"},
+            ),
+        )
+
+        loaded = load_control_plane(artifacts, runtime_stage=RuntimeStage.PILOT, boundary="security")
+
+        self.assertIsInstance(loaded, LoadedControlPlane)
+        self.assertEqual(loaded.effective_payload["budget"], 0.76)
+        self.assertEqual(loaded.effective_payload["quarantine_mode"], "strict")
+        self.assertEqual(len(loaded.applied_artifacts), 3)
+
+    def test_kki_policy_artifacts_require_evidence(self) -> None:
+        with self.assertRaises(ValueError):
+            ControlArtifact(
+                artifact_id="security-policy",
+                kind=ArtifactKind.POLICY,
+                version="2.0",
+                scope=ArtifactScope.BOUNDARY,
+                boundary="security",
+                validations=(ValidationStep.STATIC, ValidationStep.CONSISTENCY),
+                payload={"quarantine_mode": "strict"},
+            )
+
+    def test_kki_emergency_override_requires_rollback(self) -> None:
+        with self.assertRaises(ValueError):
+            ControlArtifact(
+                artifact_id="emergency-stop",
+                kind=ArtifactKind.EMERGENCY_OVERRIDE,
+                version="3.0",
+                scope=ArtifactScope.ROLE,
+                runtime_stage=RuntimeStage.PRODUCTION,
+                boundary="governance",
+                role_scope="supervisor",
+                validations=(ValidationStep.STATIC, ValidationStep.CONSISTENCY, ValidationStep.SHADOW),
+                evidence_ref="audit-stop-1",
+                commitment_ref="commit-stop-1",
+                payload={"stop_rollout": True},
+            )
+
+    def test_kki_policy_distribution_uses_gatekeeper_approval(self) -> None:
+        identity = AuthorizationIdentity(
+            slug="gatekeeper-2",
+            kind=IdentityKind.OPERATOR,
+            role=RoleName.GATEKEEPER,
+            trust_level=TrustLevel.PRIVILEGED,
+            boundary_scope=("security",),
+        )
+        artifact = ControlArtifact(
+            artifact_id="security-policy",
+            kind=ArtifactKind.POLICY,
+            version="2.1",
+            scope=ArtifactScope.BOUNDARY,
+            boundary="security",
+            validations=(ValidationStep.STATIC, ValidationStep.CONSISTENCY),
+            evidence_ref="audit-policy-2",
+            payload={"quarantine_mode": "strict"},
+        )
+
+        decision = authorize_artifact(identity, artifact)
+
+        self.assertTrue(decision.allowed)
+        self.assertEqual(decision.action, ActionName.APPROVE)
+
+    def test_kki_loader_rejects_inconsistent_distribution_versions(self) -> None:
+        artifacts = (
+            ControlArtifact(
+                artifact_id="pilot-runtime",
+                kind=ArtifactKind.BASE_CONFIG,
+                version="1.0",
+                scope=ArtifactScope.STAGE,
+                runtime_stage=RuntimeStage.PILOT,
+                validations=(ValidationStep.STATIC, ValidationStep.CONSISTENCY, ValidationStep.SHADOW),
+                payload={"budget": 0.74},
+            ),
+            ControlArtifact(
+                artifact_id="pilot-runtime",
+                kind=ArtifactKind.BASE_CONFIG,
+                version="1.1",
+                scope=ArtifactScope.STAGE,
+                runtime_stage=RuntimeStage.PILOT,
+                validations=(ValidationStep.STATIC, ValidationStep.CONSISTENCY, ValidationStep.SHADOW),
+                payload={"budget": 0.76},
+            ),
+        )
+
+        with self.assertRaises(ValueError):
+            load_control_plane(artifacts, runtime_stage=RuntimeStage.PILOT)
 
     def test_kooperation_test_is_reproducible(self) -> None:
         with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:

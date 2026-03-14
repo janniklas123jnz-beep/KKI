@@ -181,6 +181,13 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `DelegationGrant` fuer zeitlich und kontextuell begrenzte Delegation
 - `authorize_action()` fuer explizite Freigabeentscheidungen mit Evidence- und Commitment-Bindung
 
+`#126` fuehrt darauf versionierte Steuerartefakte und einen Loader ein:
+
+- `ControlArtifact` fuer Basis-Konfiguration, Policies, Feature-Flags und Notfall-Overrides
+- `ArtifactScope` und `ValidationStep` fuer Reichweite, Konsistenz- und Schattenvalidierung
+- `authorize_artifact()` fuer rollen- und evidence-gebundene Ausbringungspruefung
+- `load_control_plane()` fuer konsistente, rueckholbare Aufloesung ohne stille Versionskonflikte
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

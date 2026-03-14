@@ -220,6 +220,7 @@ def protocol_stack_metrics(config, result, params, bias):
     workflow = result['workflow_metrics']
     groups = gruppenmetriken(result['agents'], params)
     schema = schema_metrics(config)
+    agent_count = max(1.0, float(len(result['agents'])))
 
     protocol_layers = [
         config.get('enable_workflow_stages', False),
@@ -296,6 +297,28 @@ def protocol_stack_metrics(config, result, params, bias):
             ]
         )
     )
+    stress_integrity = clamp01(
+        mittelwert(
+            [
+                workflow.get('misinformation_detection_rate', 0.0),
+                1.0 - workflow.get('misinformation_corruption_mean', 0.0),
+                1.0 - workflow.get('cluster_compromise_mean', 0.0),
+                workflow.get('trust_shield_mean', 0.0),
+                workflow.get('sync_strength_mean', 0.0),
+            ]
+        )
+    )
+    recovery_resilience = clamp01(
+        mittelwert(
+            [
+                workflow.get('sync_strength_mean', 0.0),
+                workflow.get('resource_efficiency', 0.0),
+                1.0 - normalize(workflow.get('failed_agents_mean', 0.0), 0.0, agent_count * 0.35),
+                normalize(workflow.get('recovery_events_total', 0.0), 0.0, agent_count * 0.30),
+                workflow.get('completion_rate', 0.0),
+            ]
+        )
+    )
 
     return {
         'completion_rate': workflow.get('completion_rate', 0.0),
@@ -326,6 +349,8 @@ def protocol_stack_metrics(config, result, params, bias):
         'escalation_readiness': escalation_readiness,
         'stack_cohesion': stack_cohesion,
         'protocol_overhead': protocol_overhead,
+        'stress_integrity': stress_integrity,
+        'recovery_resilience': recovery_resilience,
         'layer_depth': normalized_depth,
     }
 
@@ -395,24 +420,21 @@ def context_score(kontext_name, result, agent_count):
     if kontext_name == 'stress':
         return (
             base
-            + 0.16 * metrics['detection_rate']
+            + 0.16 * metrics['stress_integrity']
             + 0.12 * metrics['escalation_readiness']
             + 0.10 * metrics['validation_coverage']
             + 0.08 * metrics['traceability']
             + 0.08 * metrics['mission_success']
-            - 0.14 * metrics['corruption_mean']
-            - 0.10 * metrics['cluster_compromise_mean']
             - 0.08 * metrics['protocol_overhead']
         )
     return (
         base
-        + 0.18 * metrics['sync_strength_mean']
+        + 0.18 * metrics['recovery_resilience']
         + 0.16 * recoveries
         + 0.12 * metrics['escalation_readiness']
         + 0.10 * metrics['traceability']
         + 0.08 * metrics['stack_cohesion']
         - 0.12 * failed_share
-        - 0.10 * metrics['cluster_compromise_mean']
         - 0.08 * metrics['protocol_overhead']
     )
 
@@ -426,6 +448,8 @@ def summarize_runs(runs, eintrag, context_list, agent_count):
         'escalation_readiness': {},
         'stack_cohesion': {},
         'protocol_overhead': {},
+        'stress_integrity': {},
+        'recovery_resilience': {},
         'handoff_rate': {},
         'detection_rate': {},
         'sync_strength_mean': {},
@@ -484,7 +508,7 @@ def main():
             f"{summary['label']:<28} Score={summary['combined_score']:+.3f} | "
             f"Trace={summary['traceability']['startup']:.2f} | "
             f"Validierung={summary['validation_coverage']['startup']:.2f} | "
-            f"Overhead={summary['protocol_overhead']['startup']:.2f}"
+            f"Stress-Integritaet={summary['stress_integrity']['stress']:.2f}"
         )
 
     best = max(summaries, key=lambda item: item['combined_score'])
@@ -498,7 +522,7 @@ def main():
     print(
         f"Traceability {best['traceability']['startup']:.2f}, "
         f"Validierung {best['validation_coverage']['startup']:.2f}, "
-        f"Overhead {best['protocol_overhead']['startup']:.2f}"
+        f"Stress-Integritaet {best['stress_integrity']['stress']:.2f}"
     )
 
     labels = [item['label'] for item in summaries]
@@ -580,19 +604,19 @@ def main():
 
     axes[1, 1].bar(
         x - width / 2,
-        [item['handoff_rate']['consensus'] * 100.0 for item in summaries],
+        [item['stress_integrity']['stress'] * 100.0 for item in summaries],
         width,
-        label='Handoffs (%)',
-        color='#edc948',
+        label='Stress-Integritaet (%)',
+        color='#b07aa1',
     )
     axes[1, 1].bar(
         x + width / 2,
-        [item['detection_rate']['stress'] * 100.0 for item in summaries],
+        [item['recovery_resilience']['recovery'] * 100.0 for item in summaries],
         width,
-        label='Detektion (%)',
-        color='#b07aa1',
+        label='Recovery-Resilienz (%)',
+        color='#edc948',
     )
-    axes[1, 1].set_title('Kommunikation und Abwehr')
+    axes[1, 1].set_title('Abwehr- und Recovery-Profil')
     axes[1, 1].set_xticks(x)
     axes[1, 1].set_xticklabels(labels, rotation=18)
     axes[1, 1].legend()
@@ -602,17 +626,18 @@ def main():
     axes[1, 2].text(
         0.0,
         0.98,
-        (
-            "Zusammenfassung\n"
-            f"- Bestes Profil: {best['label']}\n"
-            f"- Delta zum Direktprotokoll: {best['combined_score'] - baseline['combined_score']:+.3f}\n"
-            f"- Traceability: {best['traceability']['startup']:.2f}\n"
-            f"- Validierung: {best['validation_coverage']['startup']:.2f}\n"
-            f"- Eskalation: {best['escalation_readiness']['recovery']:.2f}\n"
-            f"- Stack-Kohäsion: {best['stack_cohesion']['consensus']:.2f}\n"
-            f"- Recovery-Sync: {best['sync_strength_mean']['recovery']:.2f}\n"
-            f"- Overhead: {best['protocol_overhead']['startup']:.2f}"
-        ),
+            (
+                "Zusammenfassung\n"
+                f"- Bestes Profil: {best['label']}\n"
+                f"- Delta zum Direktprotokoll: {best['combined_score'] - baseline['combined_score']:+.3f}\n"
+                f"- Traceability: {best['traceability']['startup']:.2f}\n"
+                f"- Validierung: {best['validation_coverage']['startup']:.2f}\n"
+                f"- Stress-Integritaet: {best['stress_integrity']['stress']:.2f}\n"
+                f"- Eskalation: {best['escalation_readiness']['recovery']:.2f}\n"
+                f"- Stack-Kohäsion: {best['stack_cohesion']['consensus']:.2f}\n"
+                f"- Recovery-Resilienz: {best['recovery_resilience']['recovery']:.2f}\n"
+                f"- Overhead: {best['protocol_overhead']['startup']:.2f}"
+            ),
         va='top',
         fontsize=10,
     )

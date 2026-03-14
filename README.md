@@ -160,6 +160,13 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `kki.recovery`
 - `kki.governance`
 
+`#123` fuehrt darauf die ersten kanonischen Vertragsobjekte ein:
+
+- `CoreState` fuer exportierbaren Modulzustand
+- `TransferEnvelope` fuer Zustands-, Replay- und Rollout-Uebergaben
+- `PersistenceRecord` fuer Restart-, Wissens- und Auditpersistenz
+- `EvidenceRecord` fuer Freigabe-, Commitment- und Recovery-Nachweise
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

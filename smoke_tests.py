@@ -11,13 +11,19 @@ from unittest import mock
 from pathlib import Path
 
 from kki import (
+    CoreState,
+    EvidenceRecord,
     ModuleBoundaryName,
+    PersistenceRecord,
     RuntimeStage,
     RuntimeThresholds,
+    TransferEnvelope,
+    core_state_for_runtime,
     module_boundaries,
     module_dependency_graph,
     runtime_dna_for_profile,
     runtime_dna_from_env,
+    transfer_envelope_for_state,
 )
 
 REPO_ROOT = Path(__file__).resolve().parent
@@ -113,6 +119,65 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(graph["telemetry"], ("orchestration",))
         self.assertEqual(graph["shadow"], ("telemetry", "security"))
         self.assertEqual(graph["governance"], ("security", "rollout", "recovery"))
+
+    def test_kki_core_state_snapshot_is_canonical(self) -> None:
+        dna = runtime_dna_for_profile("balanced-runtime-dna", stage=RuntimeStage.SHADOW)
+        state = core_state_for_runtime(
+            dna,
+            module=ModuleBoundaryName.ORCHESTRATION,
+            status="ready",
+            budget=0.61,
+            labels={"owner": "build-phase"},
+        )
+
+        self.assertIsInstance(state, CoreState)
+        exported = state.to_dict()
+        self.assertEqual(exported["module_boundary"], "orchestration")
+        self.assertEqual(exported["runtime_stage"], "shadow")
+        self.assertEqual(exported["labels"]["owner"], "build-phase")
+
+    def test_kki_transfer_envelope_wraps_state(self) -> None:
+        dna = runtime_dna_for_profile("pilot-runtime-dna", stage=RuntimeStage.PILOT)
+        state = core_state_for_runtime(dna, module="orchestration", status="promoting", budget=0.7)
+        envelope = transfer_envelope_for_state(
+            state,
+            target_boundary="rollout",
+            correlation_id="corr-123",
+            causation_id="cause-1",
+            sequence=2,
+        )
+
+        self.assertIsInstance(envelope, TransferEnvelope)
+        exported = envelope.to_dict()
+        self.assertEqual(exported["target_boundary"], "rollout")
+        self.assertEqual(exported["payload_type"], "core-state")
+        self.assertEqual(exported["payload"]["status"], "promoting")
+        self.assertEqual(exported["sequence"], 2)
+
+    def test_kki_persistence_record_rejects_invalid_retention(self) -> None:
+        with self.assertRaises(ValueError):
+            PersistenceRecord(
+                record_type="snapshot",
+                boundary=ModuleBoundaryName.RECOVERY,
+                schema_version="1.0",
+                retention_class="permanent",
+                payload={"restart": True},
+            )
+
+    def test_kki_evidence_record_is_exportable(self) -> None:
+        evidence = EvidenceRecord(
+            evidence_type="approval",
+            subject="cutover-gate",
+            correlation_id="corr-9",
+            audit_ref="audit-42",
+            commitment_ref="commit-7",
+            payload={"decision": "approved"},
+        )
+
+        exported = evidence.to_dict()
+        self.assertEqual(exported["audit_ref"], "audit-42")
+        self.assertEqual(exported["commitment_ref"], "commit-7")
+        self.assertEqual(exported["payload"]["decision"], "approved")
 
     def test_kooperation_test_is_reproducible(self) -> None:
         with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:

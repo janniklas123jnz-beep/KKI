@@ -30,10 +30,12 @@ from kki import (
     ModuleBoundaryName,
     OperatingMode,
     PersistenceRecord,
+    PreviewMode,
     ProtocolContext,
     RoleName,
     RuntimeStage,
     RuntimeThresholds,
+    ShadowPreview,
     TelemetryAlert,
     TelemetrySignal,
     TelemetrySnapshot,
@@ -47,6 +49,7 @@ from kki import (
     build_telemetry_snapshot,
     command_message,
     core_state_for_runtime,
+    evaluate_dry_run,
     event_message,
     evidence_message,
     load_control_plane,
@@ -55,6 +58,9 @@ from kki import (
     protocol_context,
     runtime_dna_for_profile,
     runtime_dna_from_env,
+    shadow_event,
+    shadow_preview_for_command,
+    shadow_snapshot,
     telemetry_alert,
     telemetry_signal_from_event,
     transfer_message,
@@ -643,6 +649,124 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(snapshot.highest_severity(), "warning")
         self.assertEqual(snapshot.status_counts()["observed"], 1)
         self.assertIn("security-policy", snapshot.to_dict()["active_controls"])
+
+    def test_kki_shadow_preview_tracks_controls_and_invariants(self) -> None:
+        dna = runtime_dna_for_profile("pilot-runtime-dna", stage=RuntimeStage.PILOT)
+        state = core_state_for_runtime(dna, module="orchestration", status="ready", budget=0.72)
+        control_plane = load_control_plane(
+            (
+                ControlArtifact(
+                    artifact_id="pilot-runtime",
+                    kind=ArtifactKind.BASE_CONFIG,
+                    version="1.1",
+                    scope=ArtifactScope.STAGE,
+                    runtime_stage=RuntimeStage.PILOT,
+                    validations=(ValidationStep.STATIC, ValidationStep.CONSISTENCY, ValidationStep.SHADOW),
+                    payload={"budget": 0.76},
+                ),
+            ),
+            runtime_stage=RuntimeStage.PILOT,
+        )
+        command = command_message(
+            name="promote-shadow-build",
+            source_boundary="governance",
+            target_boundary="rollout",
+            correlation_id="corr-shadow-1",
+            payload={"wave": "pilot"},
+        )
+
+        preview = shadow_preview_for_command(
+            state,
+            command,
+            control_plane,
+            mode=PreviewMode.SHADOW,
+            invariants=("no-live-cutover",),
+        )
+
+        self.assertIsInstance(preview, ShadowPreview)
+        self.assertEqual(preview.control_versions, ("1.1",))
+        self.assertIn("no-live-cutover", preview.invariants)
+
+    def test_kki_dry_run_evaluation_emits_warning_on_drift(self) -> None:
+        dna = runtime_dna_for_profile("balanced-runtime-dna", stage=RuntimeStage.SHADOW)
+        state = core_state_for_runtime(dna, module="orchestration", status="ready", budget=0.6)
+        control_plane = load_control_plane((), runtime_stage=RuntimeStage.SHADOW)
+        command = command_message(
+            name="replay-state",
+            source_boundary="orchestration",
+            target_boundary="shadow",
+            correlation_id="corr-shadow-2",
+            payload={"replay": True},
+        )
+        preview = shadow_preview_for_command(state, command, control_plane, mode=PreviewMode.DRY_RUN)
+
+        evaluation = evaluate_dry_run(preview, observed_budget=0.78, drift_threshold=0.1)
+
+        self.assertEqual(evaluation.status, "drift")
+        self.assertFalse(evaluation.replay_ready)
+        self.assertIsNotNone(evaluation.alert)
+
+    def test_kki_shadow_snapshot_builds_drilldown_view(self) -> None:
+        dna = runtime_dna_for_profile("pilot-runtime-dna", stage=RuntimeStage.PILOT)
+        state = core_state_for_runtime(dna, module="orchestration", status="ready", budget=0.7)
+        artifacts = (
+            ControlArtifact(
+                artifact_id="pilot-runtime",
+                kind=ArtifactKind.BASE_CONFIG,
+                version="1.1",
+                scope=ArtifactScope.STAGE,
+                runtime_stage=RuntimeStage.PILOT,
+                validations=(ValidationStep.STATIC, ValidationStep.CONSISTENCY, ValidationStep.SHADOW),
+                payload={"budget": 0.76},
+            ),
+            ControlArtifact(
+                artifact_id="shadow-policy",
+                kind=ArtifactKind.POLICY,
+                version="2.0",
+                scope=ArtifactScope.BOUNDARY,
+                runtime_stage=RuntimeStage.PILOT,
+                boundary="shadow",
+                validations=(ValidationStep.STATIC, ValidationStep.CONSISTENCY, ValidationStep.SHADOW),
+                evidence_ref="audit-shadow-1",
+                payload={"dry_run_mode": "strict"},
+            ),
+        )
+        control_plane = load_control_plane(artifacts, runtime_stage=RuntimeStage.PILOT, boundary="shadow")
+        command = command_message(
+            name="validate-cutover",
+            source_boundary="governance",
+            target_boundary="shadow",
+            correlation_id="corr-shadow-3",
+            payload={"cutover": "candidate"},
+        )
+        preview = shadow_preview_for_command(state, command, control_plane)
+        evaluation = evaluate_dry_run(preview, observed_budget=0.68, drift_threshold=0.05)
+
+        snapshot = shadow_snapshot(preview, evaluation, control_plane)
+
+        self.assertIsInstance(snapshot, TelemetrySnapshot)
+        self.assertIn("shadow-policy", snapshot.to_dict()["active_controls"])
+        self.assertGreaterEqual(len(snapshot.audit_entries), 2)
+
+    def test_kki_shadow_event_emits_shadow_classification(self) -> None:
+        dna = runtime_dna_for_profile("balanced-runtime-dna", stage=RuntimeStage.SHADOW)
+        state = core_state_for_runtime(dna, module="orchestration", status="preview", budget=0.64)
+        control_plane = load_control_plane((), runtime_stage=RuntimeStage.SHADOW)
+        command = command_message(
+            name="preview-rollout",
+            source_boundary="orchestration",
+            target_boundary="shadow",
+            correlation_id="corr-shadow-4",
+            payload={"wave": "preview"},
+        )
+        preview = shadow_preview_for_command(state, command, control_plane)
+        evaluation = evaluate_dry_run(preview, observed_budget=0.63, drift_threshold=0.05)
+
+        event = shadow_event(preview, evaluation)
+
+        self.assertIsInstance(event, EventEnvelope)
+        self.assertEqual(event.event_class, "shadow")
+        self.assertEqual(event.message.target_boundary, ModuleBoundaryName.TELEMETRY)
 
     def test_kooperation_test_is_reproducible(self) -> None:
         with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:

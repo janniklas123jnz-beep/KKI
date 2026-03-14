@@ -195,6 +195,13 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `TelemetrySnapshot` fuer verdichtete Dashboard- und Drill-down-Sichten
 - Helfer fuer Event-Projektion, Audit-Erzeugung und Snapshot-Bildung
 
+`#128` fuehrt darauf Shadow- und Dry-Run-Schnittstellen ein:
+
+- `ShadowPreview` und `PreviewMode` fuer kontrollierte Vorschaupfade
+- `DryRunEvaluation` fuer Divergenzbewertung und Replay-Freigabe
+- `shadow_snapshot()` fuer verdichtete Shadow-Drill-down-Sichten
+- `shadow_event()` fuer protokollierte Shadow-Auswertung an die Telemetrieschicht
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

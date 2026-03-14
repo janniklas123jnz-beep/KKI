@@ -222,6 +222,13 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `OrchestrationState` haelt Mission, Budgetlage, Risiken, Gates und abgeleitete Gesundheitsmarker in einer gemeinsamen Laufzeitsicht zusammen
 - `orchestration_state_for_runtime()` und `advance_orchestration_state()` liefern validierte Aufbau- und Uebergangspfade fuer den operativen Kern
 
+`#132` fuehrt darauf kanonische Arbeitsauftraege, Claims und Handoffs ein:
+
+- `WorkUnit` beschreibt die gemeinsame operative Arbeitseinheit fuer Planung, Dispatch, Audit und Recovery
+- `WorkCostProfile` haelt Last, Koordinationsaufwand, Recovery-Gewicht und Budgetanteil als spaetere Dispatch-Eingaben zusammen
+- `WorkClaim` modelliert zeitlich gebundene Ownership-Leases ohne stilles Uebernehmen
+- `WorkHandoff` traegt Retry-, Replay- und Boundary-Wechsel als expliziten Handoff-Vertrag weiter
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

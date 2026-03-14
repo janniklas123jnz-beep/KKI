@@ -16,6 +16,7 @@ from kki import (
     ArtifactScope,
     AuthorizationIdentity,
     AuditTrailEntry,
+    ClaimStatus,
     ControlArtifact,
     CoreState,
     DelegationGrant,
@@ -25,6 +26,7 @@ from kki import (
     EventEnvelope,
     GateReadiness,
     GateState,
+    HandoffMode,
     IdentityKind,
     IntegratedSmokeBuild,
     LoadedControlPlane,
@@ -51,12 +53,16 @@ from kki import (
     TransferEnvelope,
     TrustLevel,
     ValidationStep,
+    WorkPriority,
+    WorkStatus,
     authorize_action,
     authorize_artifact,
     advance_orchestration_state,
+    advance_work_unit,
     audit_entry_for_artifact,
     audit_entry_for_message,
     build_telemetry_snapshot,
+    claim_for_work_unit,
     command_message,
     core_state_for_runtime,
     evaluate_dry_run,
@@ -73,6 +79,7 @@ from kki import (
     run_integrated_smoke_build,
     runtime_dna_for_profile,
     runtime_dna_from_env,
+    handoff_for_work_unit,
     shadow_event,
     shadow_preview_for_command,
     shadow_snapshot,
@@ -80,6 +87,7 @@ from kki import (
     telemetry_signal_from_event,
     transfer_message,
     transfer_envelope_for_state,
+    work_unit_for_state,
 )
 
 REPO_ROOT = Path(__file__).resolve().parent
@@ -307,6 +315,113 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(exported["status"], "throttled")
         self.assertEqual(exported["labels"]["pressure_level"], "elevated")
         self.assertEqual(exported["labels"]["health_status"], "degraded")
+
+    def test_kki_work_unit_is_built_from_orchestration_state(self) -> None:
+        dna = runtime_dna_for_profile("pilot-runtime-dna", stage=RuntimeStage.PILOT)
+        state = orchestration_state_for_runtime(
+            dna,
+            mission_ref="mission-132",
+            status=OrchestrationStatus.ACTIVE,
+            budget_available=0.79,
+            budget_reserved=0.21,
+            pressure=OperationalPressure(0.54, 0.48, 0.29, 0.22),
+        )
+        work_unit = work_unit_for_state(
+            state,
+            title="shadow preview dispatch",
+            boundary="shadow",
+            correlation_id="corr-wu",
+            priority=WorkPriority.HIGH,
+            required_capabilities=("preview", "drift-check"),
+        )
+
+        exported = work_unit.to_dict()
+        self.assertEqual(exported["boundary"], "shadow")
+        self.assertEqual(exported["priority"], "high")
+        self.assertEqual(exported["status"], "planned")
+        self.assertTrue(exported["ready_for_claim"])
+        self.assertEqual(exported["labels"]["pressure_level"], "elevated")
+
+    def test_kki_claim_uses_handoff_target_boundary(self) -> None:
+        dna = runtime_dna_for_profile("pilot-runtime-dna", stage=RuntimeStage.PILOT)
+        state = orchestration_state_for_runtime(dna, mission_ref="mission-132")
+        work_unit = work_unit_for_state(
+            state,
+            title="rollout evaluation",
+            boundary="shadow",
+            correlation_id="corr-claim",
+        )
+        handoff = handoff_for_work_unit(
+            work_unit,
+            target_boundary="rollout",
+            reason="promotion review path",
+            mode=HandoffMode.SHADOW,
+            retry_budget=2,
+        )
+        transferred = advance_work_unit(
+            work_unit,
+            status=WorkStatus.HANDED_OFF,
+            handoff_ref=handoff.handoff_id,
+            labels={"handoff_mode": handoff.mode.value},
+        )
+        claim = claim_for_work_unit(
+            transferred,
+            owner_ref="rollout-planner",
+            boundary="rollout",
+            handoff=handoff,
+        )
+
+        self.assertEqual(claim.status, ClaimStatus.ACTIVE)
+        self.assertEqual(claim.boundary, ModuleBoundaryName.ROLLOUT)
+        self.assertEqual(claim.handoff_ref, handoff.handoff_id)
+
+    def test_kki_work_unit_transition_rejects_invalid_reset(self) -> None:
+        dna = runtime_dna_for_profile("balanced-runtime-dna", stage=RuntimeStage.SHADOW)
+        state = orchestration_state_for_runtime(dna, mission_ref="mission-132")
+        work_unit = work_unit_for_state(
+            state,
+            title="telemetry stitching",
+            boundary="telemetry",
+            correlation_id="corr-transition",
+        )
+        claimed = advance_work_unit(work_unit, status=WorkStatus.CLAIMED)
+        active = advance_work_unit(claimed, status=WorkStatus.IN_PROGRESS, attempt=1)
+
+        self.assertEqual(active.status, WorkStatus.IN_PROGRESS)
+        self.assertEqual(active.attempt, 1)
+
+        with self.assertRaises(ValueError):
+            advance_work_unit(active, status=WorkStatus.PLANNED)
+
+    def test_kki_handoff_contract_preserves_retry_metadata(self) -> None:
+        dna = runtime_dna_for_profile("pilot-runtime-dna", stage=RuntimeStage.PILOT)
+        state = orchestration_state_for_runtime(
+            dna,
+            mission_ref="mission-132",
+            status=OrchestrationStatus.THROTTLED,
+            pressure=OperationalPressure(0.55, 0.62, 0.31, 0.47),
+        )
+        work_unit = work_unit_for_state(
+            state,
+            title="recovery staging",
+            boundary="shadow",
+            correlation_id="corr-handoff",
+            priority=WorkPriority.CRITICAL,
+            max_retries=3,
+        )
+        handoff = handoff_for_work_unit(
+            work_unit,
+            target_boundary="recovery",
+            reason="critical drift escalation",
+            mode=HandoffMode.RECOVERY,
+            causation_id="shadow-drift",
+        )
+
+        exported = handoff.to_dict()
+        self.assertEqual(exported["target_boundary"], "recovery")
+        self.assertEqual(exported["retry_budget"], 3)
+        self.assertEqual(exported["mode"], "recovery")
+        self.assertEqual(exported["causation_id"], "shadow-drift")
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

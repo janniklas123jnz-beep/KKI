@@ -187,8 +187,32 @@ def robustness_profiles(katalog):
     ]
 
 
-def robustness_metrics(result):
+def robustness_metrics(result, params):
     workflow = result['workflow_metrics']
+    cluster_compromise_mean = workflow.get('cluster_compromise_mean', 0.0)
+    quarantined_agents_mean = workflow.get('quarantined_agents_mean', 0.0)
+    trust_shield_mean = workflow.get('trust_shield_mean', 0.0)
+    isolation_relief_rate = workflow.get('isolation_relief_rate', 0.0)
+    corruption_mean = workflow.get('misinformation_corruption_mean', 0.0)
+    stress_integrity = max(0.0, 1.0 - corruption_mean)
+    isolation_burden = min(1.0, quarantined_agents_mean / max(1.0, params['agent_count'] * 0.35))
+    mission_success = mittelwert(list(result.get('mission_success_rates', {}).values()))
+    compromise_reserve = mittelwert(
+        [
+            max(0.0, 1.0 - cluster_compromise_mean),
+            min(1.0, workflow.get('resource_efficiency', 0.0)),
+            min(1.0, mission_success),
+            max(0.0, 1.0 - isolation_burden),
+        ]
+    )
+    containment_quality = mittelwert(
+        [
+            max(0.0, 1.0 - cluster_compromise_mean),
+            stress_integrity,
+            trust_shield_mean,
+            isolation_relief_rate,
+        ]
+    )
     return {
         'completion_rate': workflow.get('completion_rate', 0.0),
         'resource_efficiency': workflow.get('resource_efficiency', 0.0),
@@ -196,12 +220,16 @@ def robustness_metrics(result):
         'bottleneck_relief_rate': workflow.get('bottleneck_relief_rate', 0.0),
         'skill_alignment_rate': workflow.get('skill_alignment_rate', 0.0),
         'detection_rate': workflow.get('misinformation_detection_rate', 0.0),
-        'corruption_mean': workflow.get('misinformation_corruption_mean', 0.0),
-        'cluster_compromise_mean': workflow.get('cluster_compromise_mean', 0.0),
-        'quarantined_agents_mean': workflow.get('quarantined_agents_mean', 0.0),
-        'trust_shield_mean': workflow.get('trust_shield_mean', 0.0),
-        'isolation_relief_rate': workflow.get('isolation_relief_rate', 0.0),
-        'mission_success': mittelwert(list(result.get('mission_success_rates', {}).values())),
+        'corruption_mean': corruption_mean,
+        'stress_integrity': stress_integrity,
+        'cluster_compromise_mean': cluster_compromise_mean,
+        'compromise_reserve': compromise_reserve,
+        'quarantined_agents_mean': quarantined_agents_mean,
+        'isolation_burden': isolation_burden,
+        'trust_shield_mean': trust_shield_mean,
+        'isolation_relief_rate': isolation_relief_rate,
+        'containment_quality': containment_quality,
+        'mission_success': mission_success,
         'cross_group_cooperation': result['cross_group_cooperation_rate'],
         'consensus': result['final_consensus_score'],
         'polarization': result['final_polarization_index'],
@@ -228,7 +256,7 @@ def run_context(seed, params, eintrag, kontext):
         config['enable_prompt_injection'] = False
 
     result = run_polarization_experiment(config, make_plot=False, print_summary=False)
-    result['robustness_metrics'] = robustness_metrics(result)
+    result['robustness_metrics'] = robustness_metrics(result, params)
     return result
 
 
@@ -274,10 +302,14 @@ def summarize_runs(runs, eintrag, context_list):
         'skill_alignment_rate': {},
         'detection_rate': {},
         'corruption_mean': {},
+        'stress_integrity': {},
         'cluster_compromise_mean': {},
+        'compromise_reserve': {},
         'quarantined_agents_mean': {},
+        'isolation_burden': {},
         'trust_shield_mean': {},
         'isolation_relief_rate': {},
+        'containment_quality': {},
         'mission_success': {},
         'cross_group_cooperation': {},
     }
@@ -332,9 +364,9 @@ def main():
         summaries.append(summary)
         print(
             f"{summary['label']:<26} Score={summary['combined_score']:+.3f} | "
-            f"Det={summary['detection_rate']['stress']:.1%} | "
-            f"Corr={summary['corruption_mean']['stress']:.2f} | "
-            f"Shield={summary['trust_shield_mean']['stress']:.2f}"
+            f"Containment={summary['containment_quality']['stress']:.1%} | "
+            f"Reserve={summary['compromise_reserve']['stress']:.1%} | "
+            f"Isolationslast={summary['isolation_burden']['stress']:.1%}"
         )
 
     best = max(summaries, key=lambda item: item['combined_score'])
@@ -345,9 +377,9 @@ def main():
         f"Delta zur gemeinsamen DNA {best['combined_score'] - baseline['combined_score']:+.3f}"
     )
     print(
-        f"Detektionsrate {best['detection_rate']['stress']:.1%}, "
-        f"Korruption {best['corruption_mean']['stress']:.2f}, "
-        f"Abschirmung {best['trust_shield_mean']['stress']:.2f}"
+        f"Containment {best['containment_quality']['stress']:.1%}, "
+        f"Reserve {best['compromise_reserve']['stress']:.1%}, "
+        f"Isolationslast {best['isolation_burden']['stress']:.1%}"
     )
 
     labels = [item['label'] for item in summaries]
@@ -365,16 +397,16 @@ def main():
 
     axes[0, 1].bar(
         x - width / 2,
-        [item['detection_rate']['stress'] * 100.0 for item in summaries],
+        [item['containment_quality']['stress'] * 100.0 for item in summaries],
         width,
-        label='Detektion',
+        label='Containment',
         color='#59a14f',
     )
     axes[0, 1].bar(
         x + width / 2,
-        [item['corruption_mean']['stress'] for item in summaries],
+        [item['compromise_reserve']['stress'] * 100.0 for item in summaries],
         width,
-        label='Korruption',
+        label='Reserve',
         color='#e15759',
     )
     axes[0, 1].set_title('Manipulationsdruck')
@@ -392,9 +424,9 @@ def main():
     )
     axes[0, 2].bar(
         x + width / 2,
-        [item['quarantined_agents_mean']['stress'] for item in summaries],
+        [item['isolation_burden']['stress'] * 100.0 for item in summaries],
         width,
-        label='Quarantaene',
+        label='Isolationslast',
         color='#f28e2b',
     )
     axes[0, 2].set_title('Schutzmechanismen')
@@ -409,8 +441,10 @@ def main():
                 item['context_scores']['polarization'],
                 item['context_scores']['consensus'],
                 item['context_scores']['stress'],
-                item['cluster_compromise_mean']['stress'],
+                item['containment_quality']['stress'],
+                item['compromise_reserve']['stress'],
                 item['isolation_relief_rate']['stress'],
+                item['isolation_burden']['stress'],
             ]
             for item in summaries
         ],
@@ -418,8 +452,8 @@ def main():
     )
     heatmap = axes[1, 0].imshow(heatmap_data, cmap='viridis', aspect='auto')
     axes[1, 0].set_title('Kontextprofil')
-    axes[1, 0].set_xticks([0, 1, 2, 3, 4])
-    axes[1, 0].set_xticklabels(['Pol', 'Kon', 'Stress', 'Comp', 'Relief'])
+    axes[1, 0].set_xticks([0, 1, 2, 3, 4, 5])
+    axes[1, 0].set_xticklabels(['Pol', 'Kon', 'Stress', 'Contain', 'Reserve', 'Burden'])
     axes[1, 0].set_yticks(range(len(labels)))
     axes[1, 0].set_yticklabels(labels)
     for row in range(heatmap_data.shape[0]):
@@ -455,11 +489,12 @@ def main():
             "Zusammenfassung\n"
             f"- Bestes Profil: {best['label']}\n"
             f"- Delta zur gemeinsamen DNA: {best['combined_score'] - baseline['combined_score']:+.3f}\n"
-            f"- Detektionsrate: {best['detection_rate']['stress']:.1%}\n"
-            f"- Korruption: {best['corruption_mean']['stress']:.2f}\n"
+            f"- Containment: {best['containment_quality']['stress']:.1%}\n"
+            f"- Reserve: {best['compromise_reserve']['stress']:.1%}\n"
             f"- Kompromittierung: {best['cluster_compromise_mean']['stress']:.2f}\n"
             f"- Abschirmung: {best['trust_shield_mean']['stress']:.2f}\n"
             f"- Isolation Relief: {best['isolation_relief_rate']['stress']:.2f}\n"
+            f"- Isolationslast: {best['isolation_burden']['stress']:.1%}\n"
             f"- Missionserfolg: {best['mission_success']['polarization']:.1%}"
         ),
         va='top',

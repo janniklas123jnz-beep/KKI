@@ -58,6 +58,17 @@ from .security import (
     permission_catalog,
     role_permissions,
 )
+from .telemetry import (
+    AuditTrailEntry,
+    TelemetryAlert,
+    TelemetrySignal,
+    TelemetrySnapshot,
+    audit_entry_for_artifact,
+    audit_entry_for_message,
+    build_telemetry_snapshot,
+    telemetry_alert,
+    telemetry_signal_from_event,
+)
 
 __all__ = [
     "CoreState",
@@ -72,6 +83,7 @@ __all__ = [
     "ArtifactScope",
     "AuthorizationDecision",
     "AuthorizationIdentity",
+    "AuditTrailEntry",
     "ControlArtifact",
     "DelegationGrant",
     "IdentityKind",
@@ -88,11 +100,17 @@ __all__ = [
     "RuntimeIdentity",
     "RuntimeStage",
     "RuntimeThresholds",
+    "TelemetryAlert",
+    "TelemetrySignal",
+    "TelemetrySnapshot",
     "TransferEnvelope",
     "TrustLevel",
     "ValidationStep",
     "authorize_action",
     "authorize_artifact",
+    "audit_entry_for_artifact",
+    "audit_entry_for_message",
+    "build_telemetry_snapshot",
     "command_message",
     "core_state_for_runtime",
     "event_message",
@@ -106,6 +124,8 @@ __all__ = [
     "role_permissions",
     "runtime_dna_for_profile",
     "runtime_dna_from_env",
+    "telemetry_alert",
+    "telemetry_signal_from_event",
     "transfer_message",
     "transfer_envelope_for_state",
 ]

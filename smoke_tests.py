@@ -15,6 +15,7 @@ from kki import (
     ArtifactKind,
     ArtifactScope,
     AuthorizationIdentity,
+    AuditTrailEntry,
     ControlArtifact,
     CoreState,
     DelegationGrant,
@@ -33,11 +34,17 @@ from kki import (
     RoleName,
     RuntimeStage,
     RuntimeThresholds,
+    TelemetryAlert,
+    TelemetrySignal,
+    TelemetrySnapshot,
     TransferEnvelope,
     TrustLevel,
     ValidationStep,
     authorize_action,
     authorize_artifact,
+    audit_entry_for_artifact,
+    audit_entry_for_message,
+    build_telemetry_snapshot,
     command_message,
     core_state_for_runtime,
     event_message,
@@ -48,6 +55,8 @@ from kki import (
     protocol_context,
     runtime_dna_for_profile,
     runtime_dna_from_env,
+    telemetry_alert,
+    telemetry_signal_from_event,
     transfer_message,
     transfer_envelope_for_state,
 )
@@ -534,6 +543,106 @@ class SmokeTests(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             load_control_plane(artifacts, runtime_stage=RuntimeStage.PILOT)
+
+    def test_kki_telemetry_signal_projects_event(self) -> None:
+        event = event_message(
+            name="policy-drift",
+            event_class="telemetry",
+            severity="warning",
+            source_boundary="telemetry",
+            target_boundary="governance",
+            correlation_id="corr-telemetry",
+            payload={"drift": 0.18},
+        )
+
+        signal = telemetry_signal_from_event(
+            event,
+            metrics={"drift_ratio": 0.18},
+            labels={"dashboard": "ops"},
+        )
+
+        self.assertIsInstance(signal, TelemetrySignal)
+        self.assertEqual(signal.boundary, ModuleBoundaryName.TELEMETRY)
+        self.assertEqual(signal.metrics["drift_ratio"], 0.18)
+        self.assertEqual(signal.labels["event_class"], "telemetry")
+
+    def test_kki_telemetry_alert_tracks_thresholds(self) -> None:
+        alert = telemetry_alert(
+            alert_key="policy-drift-warning",
+            boundary="security",
+            severity="warning",
+            summary="Policy drift exceeds warning budget",
+            observed_value=0.18,
+            threshold=0.1,
+            correlation_id="corr-alert",
+        )
+
+        self.assertIsInstance(alert, TelemetryAlert)
+        self.assertEqual(alert.status, "open")
+        self.assertEqual(alert.boundary, ModuleBoundaryName.SECURITY)
+
+    def test_kki_audit_entry_is_created_from_message(self) -> None:
+        message = command_message(
+            name="promote-artifact",
+            source_boundary="governance",
+            target_boundary="rollout",
+            correlation_id="corr-audit-msg",
+            payload={"artifact": "pilot-runtime"},
+        )
+
+        entry = audit_entry_for_message(message)
+
+        self.assertIsInstance(entry, AuditTrailEntry)
+        self.assertEqual(entry.subject, "promote-artifact")
+        self.assertEqual(entry.payload["delivery_guarantee"], "acknowledged")
+
+    def test_kki_audit_entry_is_created_from_artifact(self) -> None:
+        artifact = ControlArtifact(
+            artifact_id="security-policy",
+            kind=ArtifactKind.POLICY,
+            version="2.2",
+            scope=ArtifactScope.BOUNDARY,
+            boundary="security",
+            validations=(ValidationStep.STATIC, ValidationStep.CONSISTENCY),
+            evidence_ref="audit-policy-22",
+            payload={"quarantine_mode": "strict"},
+        )
+
+        entry = audit_entry_for_artifact(artifact)
+
+        self.assertEqual(entry.entry_type, "control-artifact")
+        self.assertEqual(entry.payload["artifact_kind"], "policy")
+        self.assertEqual(entry.evidence_ref, "audit-policy-22")
+
+    def test_kki_telemetry_snapshot_aggregates_views(self) -> None:
+        signal = TelemetrySignal(
+            signal_name="policy-drift",
+            boundary=ModuleBoundaryName.TELEMETRY,
+            correlation_id="corr-snapshot",
+            severity="warning",
+            status="observed",
+            metrics={"drift_ratio": 0.15},
+        )
+        alert = TelemetryAlert(
+            alert_key="policy-drift-warning",
+            boundary=ModuleBoundaryName.SECURITY,
+            severity="warning",
+            summary="Policy drift exceeds warning budget",
+            observed_value=0.15,
+            threshold=0.1,
+            correlation_id="corr-snapshot",
+        )
+        snapshot = build_telemetry_snapshot(
+            runtime_stage=RuntimeStage.PILOT,
+            signals=(signal,),
+            alerts=(alert,),
+            active_controls=("pilot-runtime", "security-policy"),
+        )
+
+        self.assertIsInstance(snapshot, TelemetrySnapshot)
+        self.assertEqual(snapshot.highest_severity(), "warning")
+        self.assertEqual(snapshot.status_counts()["observed"], 1)
+        self.assertIn("security-policy", snapshot.to_dict()["active_controls"])
 
     def test_kooperation_test_is_reproducible(self) -> None:
         with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:

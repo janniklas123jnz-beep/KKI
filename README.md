@@ -188,6 +188,13 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `authorize_artifact()` fuer rollen- und evidence-gebundene Ausbringungspruefung
 - `load_control_plane()` fuer konsistente, rueckholbare Aufloesung ohne stille Versionskonflikte
 
+`#127` fuehrt darauf das Telemetrie-Grundgeruest ein:
+
+- `TelemetrySignal` und `TelemetryAlert` fuer Beobachtung, Schwellwerte und Alarme
+- `AuditTrailEntry` fuer Nachrichten- und Steuerartefaktspuren
+- `TelemetrySnapshot` fuer verdichtete Dashboard- und Drill-down-Sichten
+- Helfer fuer Event-Projektion, Audit-Erzeugung und Snapshot-Bildung
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

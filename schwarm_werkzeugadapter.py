@@ -414,6 +414,28 @@ def adapter_metrics(config, result, params, profile, kontext):
             ]
         )
     )
+    adapter_integrity = clamp01(
+        mittelwert(
+            [
+                adapter_fit,
+                gateway_safety,
+                audit_continuity,
+                1.0 - workflow.get('misinformation_corruption_mean', 0.0),
+                route_traceability,
+            ]
+        )
+    )
+    operational_resilience = clamp01(
+        mittelwert(
+            [
+                io_flow,
+                recovery_bridge,
+                gateway_safety,
+                workflow.get('sync_strength_mean', 0.0),
+                1.0 - adapter_overhead,
+            ]
+        )
+    )
 
     return {
         'completion_rate': workflow.get('completion_rate', 0.0),
@@ -435,6 +457,8 @@ def adapter_metrics(config, result, params, profile, kontext):
         'audit_continuity': audit_continuity,
         'io_flow': io_flow,
         'recovery_bridge': recovery_bridge,
+        'adapter_integrity': adapter_integrity,
+        'operational_resilience': operational_resilience,
         'adapter_overhead': adapter_overhead,
         'route_exposure': route_exposure,
     }
@@ -484,35 +508,34 @@ def context_score(kontext_name, result, agent_count):
 
     if kontext_name == 'integration':
         return (
-            metrics['completion_rate']
-            + 0.18 * metrics['adapter_fit']
+            metrics['adapter_integrity']
+            + 0.18 * metrics['operational_resilience']
             + 0.14 * metrics['io_flow']
             + 0.08 * metrics['audit_continuity']
             - 0.10 * metrics['adapter_overhead']
         )
     if kontext_name == 'operations':
         return (
-            metrics['completion_rate']
+            metrics['operational_resilience']
             + 0.18 * metrics['io_flow']
-            + 0.14 * metrics['audit_continuity']
-            + 0.10 * metrics['adapter_fit']
+            + 0.14 * metrics['adapter_integrity']
+            + 0.10 * metrics['audit_continuity']
             - 0.10 * metrics['adapter_overhead']
         )
     if kontext_name == 'stress':
         return (
             base
-            + 0.18 * metrics['gateway_safety']
-            + 0.14 * metrics['audit_continuity']
-            + 0.10 * metrics['recovery_bridge']
-            - 0.12 * metrics['corruption_mean']
+            + 0.18 * metrics['adapter_integrity']
+            + 0.14 * metrics['operational_resilience']
+            + 0.10 * metrics['gateway_safety']
             - 0.10 * metrics['route_exposure']
             - 0.08 * metrics['adapter_overhead']
         )
     return (
         base
-        + 0.20 * metrics['recovery_bridge']
-        + 0.12 * metrics['gateway_safety']
-        + 0.08 * metrics['audit_continuity']
+        + 0.20 * metrics['operational_resilience']
+        + 0.12 * metrics['adapter_integrity']
+        + 0.08 * metrics['gateway_safety']
         - 0.12 * failed_share
         - 0.08 * metrics['adapter_overhead']
     )
@@ -526,6 +549,8 @@ def summarize_runs(runs, profile, context_list, agent_count):
         'audit_continuity': {},
         'io_flow': {},
         'recovery_bridge': {},
+        'adapter_integrity': {},
+        'operational_resilience': {},
         'adapter_overhead': {},
         'route_exposure': {},
     }
@@ -580,8 +605,8 @@ def main():
         summaries.append(summary)
         print(
             f"{summary['label']:<28} Score={summary['combined_score']:+.3f} | "
-            f"Fit={summary['adapter_fit']['integration']:.2f} | "
-            f"Safety={summary['gateway_safety']['stress']:.2f} | "
+            f"Integritaet={summary['adapter_integrity']['stress']:.2f} | "
+            f"Betriebs-Resilienz={summary['operational_resilience']['recovery']:.2f} | "
             f"Flow={summary['io_flow']['operations']:.2f}"
         )
 
@@ -594,9 +619,9 @@ def main():
         f"Delta zu Direkter IO-Zugriff {best['combined_score'] - baseline['combined_score']:+.3f}"
     )
     print(
-        f"Fit {best['adapter_fit']['integration']:.2f}, "
+        f"Integritaet {best['adapter_integrity']['stress']:.2f}, "
         f"Audit {best['audit_continuity']['stress']:.2f}, "
-        f"Recovery {best['recovery_bridge']['recovery']:.2f}"
+        f"Betriebs-Resilienz {best['operational_resilience']['recovery']:.2f}"
     )
 
     labels = [item['label'] for item in summaries]
@@ -614,9 +639,9 @@ def main():
 
     axes[0, 1].bar(
         x - width / 2,
-        [item['adapter_fit']['integration'] for item in summaries],
+        [item['adapter_integrity']['stress'] for item in summaries],
         width,
-        label='Adapter-Fit',
+        label='Adapter-Integritaet',
         color='#4e79a7',
     )
     axes[0, 1].bar(
@@ -626,7 +651,7 @@ def main():
         label='IO-Flow',
         color='#59a14f',
     )
-    axes[0, 1].set_title('Fit und Fluss')
+    axes[0, 1].set_title('Integritaet und Fluss')
     axes[0, 1].set_xticks(x)
     axes[0, 1].set_xticklabels(labels, rotation=18)
     axes[0, 1].legend()
@@ -654,9 +679,9 @@ def main():
 
     axes[1, 0].bar(
         x - width / 2,
-        [item['recovery_bridge']['recovery'] for item in summaries],
+        [item['operational_resilience']['recovery'] for item in summaries],
         width,
-        label='Recovery-Bruecke',
+        label='Betriebs-Resilienz',
         color='#76b7b2',
     )
     axes[1, 0].bar(
@@ -666,7 +691,7 @@ def main():
         label='Adapter-Overhead',
         color='#bab0ab',
     )
-    axes[1, 0].set_title('Recovery gegen Overhead')
+    axes[1, 0].set_title('Betriebs-Resilienz gegen Overhead')
     axes[1, 0].set_xticks(x)
     axes[1, 0].set_xticklabels(labels, rotation=18)
     axes[1, 0].legend()

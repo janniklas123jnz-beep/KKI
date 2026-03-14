@@ -364,6 +364,28 @@ def knowledge_bus_metrics(config, result, params, profile):
             ]
         )
     )
+    knowledge_integrity = clamp01(
+        mittelwert(
+            [
+                retention_quality,
+                bus_consistency,
+                audit_signal,
+                1.0 - workflow.get('misinformation_corruption_mean', 0.0),
+                traceability,
+            ]
+        )
+    )
+    bus_resilience = clamp01(
+        mittelwert(
+            [
+                sync_strength,
+                recovery_memory,
+                bus_consistency,
+                workflow.get('sync_strength_mean', 0.0),
+                1.0 - bus_overhead,
+            ]
+        )
+    )
 
     return {
         'completion_rate': workflow.get('completion_rate', 0.0),
@@ -385,6 +407,8 @@ def knowledge_bus_metrics(config, result, params, profile):
         'audit_signal': audit_signal,
         'sync_strength': sync_strength,
         'recovery_memory': recovery_memory,
+        'knowledge_integrity': knowledge_integrity,
+        'bus_resilience': bus_resilience,
         'bus_overhead': bus_overhead,
     }
 
@@ -451,17 +475,16 @@ def context_score(kontext_name, result, agent_count):
     if kontext_name == 'stress':
         return (
             base
-            + 0.18 * metrics['audit_signal']
-            + 0.12 * metrics['bus_consistency']
-            + 0.10 * metrics['recovery_memory']
-            - 0.12 * metrics['corruption_mean']
+            + 0.18 * metrics['knowledge_integrity']
+            + 0.12 * metrics['bus_resilience']
+            + 0.10 * metrics['audit_signal']
             - 0.10 * metrics['bus_overhead']
         )
     return (
         base
-        + 0.20 * metrics['recovery_memory']
-        + 0.12 * metrics['audit_signal']
-        + 0.08 * metrics['sync_strength']
+        + 0.20 * metrics['bus_resilience']
+        + 0.12 * metrics['knowledge_integrity']
+        + 0.08 * metrics['audit_signal']
         - 0.12 * failed_share
         - 0.08 * metrics['bus_overhead']
     )
@@ -475,6 +498,8 @@ def summarize_runs(runs, profile, context_list, agent_count):
         'audit_signal': {},
         'sync_strength': {},
         'recovery_memory': {},
+        'knowledge_integrity': {},
+        'bus_resilience': {},
         'bus_overhead': {},
     }
 
@@ -529,9 +554,9 @@ def main():
         summaries.append(summary)
         print(
             f"{summary['label']:<28} Score={summary['combined_score']:+.3f} | "
-            f"Retention={summary['retention_quality']['startup']:.2f} | "
-            f"Sync={summary['sync_strength']['sync']:.2f} | "
-            f"Audit={summary['audit_signal']['stress']:.2f}"
+            f"Integritaet={summary['knowledge_integrity']['stress']:.2f} | "
+            f"Bus-Resilienz={summary['bus_resilience']['recovery']:.2f} | "
+            f"Sync={summary['sync_strength']['sync']:.2f}"
         )
 
     best = max(summaries, key=lambda item: item['combined_score'])
@@ -543,9 +568,9 @@ def main():
         f"Delta zu Zellnotizen {best['combined_score'] - baseline['combined_score']:+.3f}"
     )
     print(
-        f"Consistency {best['bus_consistency']['sync']:.2f}, "
-        f"Audit {best['audit_signal']['stress']:.2f}, "
-        f"Recovery {best['recovery_memory']['recovery']:.2f}"
+        f"Integritaet {best['knowledge_integrity']['stress']:.2f}, "
+        f"Sync {best['sync_strength']['sync']:.2f}, "
+        f"Bus-Resilienz {best['bus_resilience']['recovery']:.2f}"
     )
 
     labels = [item['label'] for item in summaries]
@@ -563,9 +588,9 @@ def main():
 
     axes[0, 1].bar(
         x - width / 2,
-        [item['retention_quality']['startup'] for item in summaries],
+        [item['knowledge_integrity']['stress'] for item in summaries],
         width,
-        label='Retention',
+        label='Integritaet',
         color='#4e79a7',
     )
     axes[0, 1].bar(
@@ -575,7 +600,7 @@ def main():
         label='Konsistenz',
         color='#59a14f',
     )
-    axes[0, 1].set_title('Retention und Konsistenz')
+    axes[0, 1].set_title('Wissens-Integritaet und Konsistenz')
     axes[0, 1].set_xticks(x)
     axes[0, 1].set_xticklabels(labels, rotation=18)
     axes[0, 1].legend()
@@ -603,9 +628,9 @@ def main():
 
     axes[1, 0].bar(
         x - width / 2,
-        [item['recovery_memory']['recovery'] for item in summaries],
+        [item['bus_resilience']['recovery'] for item in summaries],
         width,
-        label='Recovery',
+        label='Bus-Resilienz',
         color='#e15759',
     )
     axes[1, 0].bar(
@@ -615,7 +640,7 @@ def main():
         label='Overhead',
         color='#bab0ab',
     )
-    axes[1, 0].set_title('Recovery gegen Overhead')
+    axes[1, 0].set_title('Bus-Resilienz gegen Overhead')
     axes[1, 0].set_xticks(x)
     axes[1, 0].set_xticklabels(labels, rotation=18)
     axes[1, 0].legend()

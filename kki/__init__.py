@@ -8,6 +8,7 @@ from .data_models import (
     core_state_for_runtime,
     transfer_envelope_for_state,
 )
+from .governance import GateDecision, GateOutcome, evaluate_gate
 from .integrated_smoke import IntegratedSmokeBuild, run_integrated_smoke_build
 from .message_protocols import (
     DeliveryGuarantee,
@@ -139,8 +140,10 @@ __all__ = [
     "DispatchLane",
     "DispatchPlan",
     "DispatchTriageMode",
+    "GateDecision",
     "GateReadiness",
     "GateState",
+    "GateOutcome",
     "HandoffMode",
     "IdentityKind",
     "IntegratedSmokeBuild",
@@ -192,6 +195,7 @@ __all__ = [
     "core_state_for_runtime",
     "evaluate_dry_run",
     "event_message",
+    "evaluate_gate",
     "evidence_message",
     "dispatch_priority_score",
     "load_control_plane",

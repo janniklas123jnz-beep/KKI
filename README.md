@@ -236,6 +236,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `dispatch_priority_score()` priorisiert kritischere und guenstigere Arbeit ohne Budget- und Reserve-Schutz zu verlieren
 - `build_dispatch_plan()` koppelt Gate-Lage, Rollenverfuegbarkeit, Parallelitaet und Recovery-Reserve zu einem ersten operativen Dispatcher
 
+`#134` fuehrt darauf die erste ausfuehrbare Gate- und Policy-Entscheidung ein:
+
+- `GateDecision` und `GateOutcome` machen Go-, Hold-, Block- und Escalate-Urteile als exportierbare Governance-Objekte sichtbar
+- `evaluate_gate()` verbindet Autorisierung, aktive Policy-Artefakte, Nachrichtenintegritaet und Dispatch-Lage zu einem begruendeten Gate-Urteil
+- strikte Shadow-Policies, Rollout-Promotionsregeln und Scope-/Evidence-Anforderungen greifen dabei direkt in die Entscheidung ein
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

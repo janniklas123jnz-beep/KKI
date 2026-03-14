@@ -298,10 +298,14 @@ def knowledge_bus_metrics(config, result, params, profile):
     sync_score = normalize(profile['sync_layers'], 1.0, 4.0)
     replication_score = normalize(profile['replication_depth'], 1.0, 4.0)
     memory_window_score = normalize(config.get('analyzer_memory_window', 16), 16.0, max(40.0, float(params['memory_window'])))
+    schema_integrity = clamp01(
+        mittelwert([schema['mandatory_coverage'], schema['invariant_compliance'], schema['startup_readiness']])
+    )
 
     retention_quality = clamp01(
         mittelwert(
             [
+                schema_integrity,
                 memory_window_score,
                 relationships['relationship_depth_mean'] / max(1.0, float(params['memory_window'])),
                 relationships['stable_bond_rate'],
@@ -353,6 +357,16 @@ def knowledge_bus_metrics(config, result, params, profile):
             ]
         )
     )
+    recovery_readiness = clamp01(
+        mittelwert(
+            [
+                recovery_memory,
+                replication_score,
+                workflow.get('sync_strength_mean', 0.0),
+                1.0 - workflow.get('cluster_compromise_mean', 0.0),
+            ]
+        )
+    )
     bus_overhead = clamp01(
         mittelwert(
             [
@@ -367,11 +381,11 @@ def knowledge_bus_metrics(config, result, params, profile):
     knowledge_integrity = clamp01(
         mittelwert(
             [
+                schema_integrity,
                 retention_quality,
                 bus_consistency,
                 audit_signal,
                 1.0 - workflow.get('misinformation_corruption_mean', 0.0),
-                traceability,
             ]
         )
     )
@@ -380,6 +394,7 @@ def knowledge_bus_metrics(config, result, params, profile):
             [
                 sync_strength,
                 recovery_memory,
+                recovery_readiness,
                 bus_consistency,
                 workflow.get('sync_strength_mean', 0.0),
                 1.0 - bus_overhead,
@@ -402,11 +417,13 @@ def knowledge_bus_metrics(config, result, params, profile):
         'failed_agents_mean': workflow.get('failed_agents_mean', 0.0),
         'consensus': result['final_consensus_score'],
         'polarization': result['final_polarization_index'],
+        'schema_integrity': schema_integrity,
         'retention_quality': retention_quality,
         'bus_consistency': bus_consistency,
         'audit_signal': audit_signal,
         'sync_strength': sync_strength,
         'recovery_memory': recovery_memory,
+        'recovery_readiness': recovery_readiness,
         'knowledge_integrity': knowledge_integrity,
         'bus_resilience': bus_resilience,
         'bus_overhead': bus_overhead,
@@ -480,24 +497,33 @@ def context_score(kontext_name, result, agent_count):
             + 0.10 * metrics['audit_signal']
             - 0.10 * metrics['bus_overhead']
         )
+    if kontext_name == 'recovery':
+        return (
+            base
+            + 0.20 * metrics['bus_resilience']
+            + 0.14 * metrics['recovery_memory']
+            + 0.08 * metrics['knowledge_integrity']
+            - 0.12 * failed_share
+            - 0.08 * metrics['bus_overhead']
+        )
     return (
-        base
-        + 0.20 * metrics['bus_resilience']
-        + 0.12 * metrics['knowledge_integrity']
-        + 0.08 * metrics['audit_signal']
-        - 0.12 * failed_share
-        - 0.08 * metrics['bus_overhead']
+        metrics['bus_consistency']
+        + 0.18 * metrics['sync_strength']
+        + 0.12 * metrics['audit_signal']
+        - 0.12 * metrics['bus_overhead']
     )
 
 
 def summarize_runs(runs, profile, context_list, agent_count):
     context_scores = {}
     metrics = {
+        'schema_integrity': {},
         'retention_quality': {},
         'bus_consistency': {},
         'audit_signal': {},
         'sync_strength': {},
         'recovery_memory': {},
+        'recovery_readiness': {},
         'knowledge_integrity': {},
         'bus_resilience': {},
         'bus_overhead': {},
@@ -615,12 +641,12 @@ def main():
     )
     axes[0, 2].bar(
         x + width / 2,
-        [item['audit_signal']['stress'] for item in summaries],
+        [item['schema_integrity']['startup'] for item in summaries],
         width,
-        label='Audit',
+        label='Schema-Integritaet',
         color='#f28e2b',
     )
-    axes[0, 2].set_title('Synchronisierung und Audit')
+    axes[0, 2].set_title('Synchronisierung und Schema-Integritaet')
     axes[0, 2].set_xticks(x)
     axes[0, 2].set_xticklabels(labels, rotation=18)
     axes[0, 2].legend()
@@ -646,10 +672,24 @@ def main():
     axes[1, 0].legend()
     axes[1, 0].grid(True, axis='y', alpha=0.3)
 
-    axes[1, 1].bar(x, [item['context_scores']['stress'] for item in summaries], color=colors)
-    axes[1, 1].set_title('Stress-Score')
+    axes[1, 1].bar(
+        x - width / 2,
+        [item['context_scores']['stress'] for item in summaries],
+        width,
+        label='Stress',
+        color='#e15759',
+    )
+    axes[1, 1].bar(
+        x + width / 2,
+        [item['context_scores']['recovery'] for item in summaries],
+        width,
+        label='Recovery',
+        color='#59a14f',
+    )
+    axes[1, 1].set_title('Stress- und Recovery-Score')
     axes[1, 1].set_xticks(x)
     axes[1, 1].set_xticklabels(labels, rotation=18)
+    axes[1, 1].legend()
     axes[1, 1].grid(True, axis='y', alpha=0.3)
 
     axes[1, 2].bar(
@@ -661,12 +701,12 @@ def main():
     )
     axes[1, 2].bar(
         x + width / 2,
-        [item['recovery_memory']['recovery'] for item in summaries],
+        [item['recovery_readiness']['recovery'] for item in summaries],
         width,
-        label='Recovery',
+        label='Recovery-Bereitschaft',
         color='#4e79a7',
     )
-    axes[1, 2].set_title('Sync- und Recovery-Score')
+    axes[1, 2].set_title('Sync- und Recovery-Bereitschaft')
     axes[1, 2].set_xticks(x)
     axes[1, 2].set_xticklabels(labels, rotation=18)
     axes[1, 2].legend()

@@ -320,11 +320,12 @@ def mission_metrics(config, result, params, profile):
     rehearsal_depth_score = normalize(profile['rehearsal_depth'], 1.0, 5.0)
     acceptance_score = normalize(profile['acceptance_layers'], 0.0, 4.0)
     launch_buffer_score = normalize(profile['launch_buffer'], 1.0, 4.0)
+    schema_integrity = clamp01(mittelwert([schema['mandatory_coverage'], schema['invariant_compliance']]))
 
     briefing_reliability = clamp01(
         mittelwert(
             [
-                schema['mandatory_coverage'],
+                schema_integrity,
                 workflow.get('meta_alignment_rate', 0.0),
                 groups['functional_group_share'],
                 rehearsal_depth_score,
@@ -391,11 +392,11 @@ def mission_metrics(config, result, params, profile):
     start_integrity = clamp01(
         mittelwert(
             [
+                schema_integrity,
                 briefing_reliability,
                 approval_readiness,
                 1.0 - workflow.get('misinformation_corruption_mean', 0.0),
                 1.0 - workflow.get('cluster_compromise_mean', 0.0),
-                traceability,
             ]
         )
     )
@@ -426,6 +427,7 @@ def mission_metrics(config, result, params, profile):
         'failed_agents_mean': workflow.get('failed_agents_mean', 0.0),
         'consensus': result['final_consensus_score'],
         'polarization': result['final_polarization_index'],
+        'schema_integrity': schema_integrity,
         'briefing_reliability': briefing_reliability,
         'rehearsal_fidelity': rehearsal_fidelity,
         'approval_readiness': approval_readiness,
@@ -504,19 +506,27 @@ def context_score(kontext_name, result, agent_count):
             + 0.10 * metrics['approval_readiness']
             - 0.10 * metrics['dry_run_overhead']
         )
+    if kontext_name == 'recovery':
+        return (
+            base
+            + 0.20 * metrics['launch_resilience']
+            + 0.14 * metrics['recovery_assurance']
+            + 0.10 * metrics['approval_readiness']
+            - 0.12 * failed_share
+            - 0.08 * metrics['dry_run_overhead']
+        )
     return (
-        base
-        + 0.20 * metrics['launch_resilience']
-        + 0.12 * metrics['approval_readiness']
-        + 0.08 * metrics['launch_confidence']
-        - 0.12 * failed_share
-        - 0.08 * metrics['dry_run_overhead']
+        metrics['launch_confidence']
+        + 0.18 * metrics['start_integrity']
+        + 0.12 * metrics['rehearsal_fidelity']
+        - 0.12 * metrics['dry_run_overhead']
     )
 
 
 def summarize_runs(runs, profile, context_list, agent_count):
     context_scores = {}
     metrics = {
+        'schema_integrity': {},
         'briefing_reliability': {},
         'rehearsal_fidelity': {},
         'approval_readiness': {},
@@ -639,12 +649,12 @@ def main():
     )
     axes[0, 2].bar(
         x + width / 2,
-        [item['rehearsal_fidelity']['acceptance'] for item in summaries],
+        [item['schema_integrity']['briefing'] for item in summaries],
         width,
-        label='Fidelity',
+        label='Schema-Integritaet',
         color='#f28e2b',
     )
-    axes[0, 2].set_title('Vorabnahme und Probenqualitaet')
+    axes[0, 2].set_title('Freigabe und Schema-Integritaet')
     axes[0, 2].set_xticks(x)
     axes[0, 2].set_xticklabels(labels, rotation=18)
     axes[0, 2].legend()

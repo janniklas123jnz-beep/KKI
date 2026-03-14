@@ -388,6 +388,28 @@ def mission_metrics(config, result, params, profile):
             ]
         )
     )
+    start_integrity = clamp01(
+        mittelwert(
+            [
+                briefing_reliability,
+                approval_readiness,
+                1.0 - workflow.get('misinformation_corruption_mean', 0.0),
+                1.0 - workflow.get('cluster_compromise_mean', 0.0),
+                traceability,
+            ]
+        )
+    )
+    launch_resilience = clamp01(
+        mittelwert(
+            [
+                launch_confidence,
+                recovery_assurance,
+                rehearsal_fidelity,
+                workflow.get('sync_strength_mean', 0.0),
+                1.0 - dry_run_overhead,
+            ]
+        )
+    )
 
     return {
         'completion_rate': workflow.get('completion_rate', 0.0),
@@ -409,6 +431,8 @@ def mission_metrics(config, result, params, profile):
         'approval_readiness': approval_readiness,
         'launch_confidence': launch_confidence,
         'recovery_assurance': recovery_assurance,
+        'start_integrity': start_integrity,
+        'launch_resilience': launch_resilience,
         'dry_run_overhead': dry_run_overhead,
     }
 
@@ -475,15 +499,14 @@ def context_score(kontext_name, result, agent_count):
     if kontext_name == 'stress':
         return (
             base
-            + 0.18 * metrics['approval_readiness']
-            + 0.14 * metrics['launch_confidence']
-            + 0.10 * metrics['recovery_assurance']
-            - 0.12 * metrics['corruption_mean']
+            + 0.18 * metrics['start_integrity']
+            + 0.14 * metrics['launch_resilience']
+            + 0.10 * metrics['approval_readiness']
             - 0.10 * metrics['dry_run_overhead']
         )
     return (
         base
-        + 0.20 * metrics['recovery_assurance']
+        + 0.20 * metrics['launch_resilience']
         + 0.12 * metrics['approval_readiness']
         + 0.08 * metrics['launch_confidence']
         - 0.12 * failed_share
@@ -499,6 +522,8 @@ def summarize_runs(runs, profile, context_list, agent_count):
         'approval_readiness': {},
         'launch_confidence': {},
         'recovery_assurance': {},
+        'start_integrity': {},
+        'launch_resilience': {},
         'dry_run_overhead': {},
     }
 
@@ -553,9 +578,9 @@ def main():
         summaries.append(summary)
         print(
             f"{summary['label']:<31} Score={summary['combined_score']:+.3f} | "
-            f"Start={summary['briefing_reliability']['briefing']:.2f} | "
+            f"Start-Integritaet={summary['start_integrity']['stress']:.2f} | "
             f"Freigabe={summary['approval_readiness']['acceptance']:.2f} | "
-            f"Recovery={summary['recovery_assurance']['recovery']:.2f}"
+            f"Launch-Resilienz={summary['launch_resilience']['recovery']:.2f}"
         )
 
     best = max(summaries, key=lambda item: item['combined_score'])
@@ -567,9 +592,9 @@ def main():
         f"Delta zum direkten Missionsstart {best['combined_score'] - baseline['combined_score']:+.3f}"
     )
     print(
-        f"Freigabe {best['approval_readiness']['acceptance']:.2f}, "
+        f"Start-Integritaet {best['start_integrity']['stress']:.2f}, "
         f"Launch {best['launch_confidence']['acceptance']:.2f}, "
-        f"Recovery {best['recovery_assurance']['recovery']:.2f}"
+        f"Launch-Resilienz {best['launch_resilience']['recovery']:.2f}"
     )
 
     labels = [item['label'] for item in summaries]
@@ -587,9 +612,9 @@ def main():
 
     axes[0, 1].bar(
         x - width / 2,
-        [item['briefing_reliability']['briefing'] for item in summaries],
+        [item['start_integrity']['stress'] for item in summaries],
         width,
-        label='Briefing',
+        label='Start-Integritaet',
         color='#4e79a7',
     )
     axes[0, 1].bar(
@@ -599,7 +624,7 @@ def main():
         label='Launch',
         color='#59a14f',
     )
-    axes[0, 1].set_title('Start- und Launch-Reife')
+    axes[0, 1].set_title('Start-Integritaet und Launch-Reife')
     axes[0, 1].set_xticks(x)
     axes[0, 1].set_xticklabels(labels, rotation=18)
     axes[0, 1].legend()
@@ -627,9 +652,9 @@ def main():
 
     axes[1, 0].bar(
         x - width / 2,
-        [item['recovery_assurance']['recovery'] for item in summaries],
+        [item['launch_resilience']['recovery'] for item in summaries],
         width,
-        label='Recovery',
+        label='Launch-Resilienz',
         color='#e15759',
     )
     axes[1, 0].bar(
@@ -639,7 +664,7 @@ def main():
         label='Overhead',
         color='#bab0ab',
     )
-    axes[1, 0].set_title('Recovery gegen Overhead')
+    axes[1, 0].set_title('Launch-Resilienz gegen Overhead')
     axes[1, 0].set_xticks(x)
     axes[1, 0].set_xticklabels(labels, rotation=18)
     axes[1, 0].legend()

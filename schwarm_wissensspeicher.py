@@ -333,6 +333,28 @@ def memory_metrics(config, result, params, profile):
             ]
         )
     )
+    knowledge_integrity = clamp01(
+        mittelwert(
+            [
+                auditability,
+                1.0 - workflow.get('misinformation_corruption_mean', 0.0),
+                1.0 - workflow.get('cluster_compromise_mean', 0.0),
+                workflow.get('trust_shield_mean', 0.0),
+                memory_consistency,
+            ]
+        )
+    )
+    learning_resilience = clamp01(
+        mittelwert(
+            [
+                learning_continuity,
+                recovery_memory,
+                workflow.get('resource_efficiency', 0.0),
+                workflow.get('sync_strength_mean', 0.0),
+                retention_quality,
+            ]
+        )
+    )
     memory_overhead = clamp01(
         mittelwert(
             [
@@ -366,6 +388,8 @@ def memory_metrics(config, result, params, profile):
         'auditability': auditability,
         'learning_continuity': learning_continuity,
         'recovery_memory': recovery_memory,
+        'knowledge_integrity': knowledge_integrity,
+        'learning_resilience': learning_resilience,
         'memory_overhead': memory_overhead,
     }
 
@@ -431,16 +455,14 @@ def context_score(kontext_name, result, agent_count):
     if kontext_name == 'stress':
         return (
             base
-            + 0.16 * metrics['auditability']
+            + 0.16 * metrics['knowledge_integrity']
             + 0.12 * metrics['retention_quality']
-            + 0.08 * metrics['memory_consistency']
-            - 0.12 * metrics['corruption_mean']
-            - 0.10 * metrics['cluster_compromise_mean']
+            + 0.08 * metrics['learning_resilience']
             - 0.08 * metrics['memory_overhead']
         )
     return (
         base
-        + 0.18 * metrics['recovery_memory']
+        + 0.18 * metrics['learning_resilience']
         + 0.12 * metrics['memory_consistency']
         + 0.08 * metrics['auditability']
         - 0.12 * failed_share
@@ -456,6 +478,8 @@ def summarize_runs(runs, profile, context_list, agent_count):
         'auditability': {},
         'learning_continuity': {},
         'recovery_memory': {},
+        'knowledge_integrity': {},
+        'learning_resilience': {},
         'memory_overhead': {},
     }
 
@@ -510,8 +534,8 @@ def main():
         print(
             f"{summary['label']:<28} Score={summary['combined_score']:+.3f} | "
             f"Retention={summary['retention_quality']['startup']:.2f} | "
-            f"Audit={summary['auditability']['stress']:.2f} | "
-            f"Recovery={summary['recovery_memory']['recovery']:.2f}"
+            f"Integritaet={summary['knowledge_integrity']['stress']:.2f} | "
+            f"Lern-Resilienz={summary['learning_resilience']['recovery']:.2f}"
         )
 
     best = max(summaries, key=lambda item: item['combined_score'])
@@ -524,8 +548,8 @@ def main():
     )
     print(
         f"Retention {best['retention_quality']['startup']:.2f}, "
-        f"Audit {best['auditability']['stress']:.2f}, "
-        f"Recovery {best['recovery_memory']['recovery']:.2f}"
+        f"Integritaet {best['knowledge_integrity']['stress']:.2f}, "
+        f"Lern-Resilienz {best['learning_resilience']['recovery']:.2f}"
     )
 
     labels = [item['label'] for item in summaries]
@@ -563,19 +587,19 @@ def main():
 
     axes[0, 2].bar(
         x - width / 2,
-        [item['auditability']['stress'] for item in summaries],
+        [item['knowledge_integrity']['stress'] for item in summaries],
         width,
-        label='Audit',
+        label='Wissens-Integritaet',
         color='#e15759',
     )
     axes[0, 2].bar(
         x + width / 2,
-        [item['recovery_memory']['recovery'] for item in summaries],
+        [item['learning_resilience']['recovery'] for item in summaries],
         width,
-        label='Recovery',
+        label='Lern-Resilienz',
         color='#76b7b2',
     )
-    axes[0, 2].set_title('Audit und Recovery')
+    axes[0, 2].set_title('Integritaet und Lern-Resilienz')
     axes[0, 2].set_xticks(x)
     axes[0, 2].set_xticklabels(labels, rotation=18)
     axes[0, 2].legend()

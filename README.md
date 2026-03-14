@@ -100,6 +100,7 @@ Die Simulationen basieren auf wiederholten Interaktionen im Stil des Gefangenend
 | `schwarm_zustandstransfer.py` | Studie zu Zustandstransfer und Wiederanlaufketten zwischen Wissensbus, Rollout und Zellmigration |
 | `schwarm_ressourcen_orchestrator.py` | Studie zu Ressourcen-Orchestrator und Budgetzuteilung zwischen Zustandstransfer, Engpass-Triage und Rollout |
 | `schwarm_audit_telemetrie.py` | Studie zu Audit-Telemetrie und Nachvollziehbarkeitskanaelen zwischen Ressourcen-Orchestrierung, Diagnose und Recovery |
+| `schwarm_sicherheits_policies.py` | Studie zu Sicherheits-Policies und Injektionsabwehrketten zwischen Telemetrie, Governance und realen Schnittstellen |
 | `commitment_protokoll.py` | Commit-Reveal-Verify-Protokoll gegen Manipulation |
 
 ## Features
@@ -238,6 +239,7 @@ python3 schwarm_rollout_protokolle.py
 python3 schwarm_zustandstransfer.py
 python3 schwarm_ressourcen_orchestrator.py
 python3 schwarm_audit_telemetrie.py
+python3 schwarm_sicherheits_policies.py
 python3 commitment_protokoll.py
 ```
 
@@ -1153,6 +1155,21 @@ KKI_AUDIT_TELEMETRY_FAILURE_FRACTION=0.18 \
 python3 schwarm_audit_telemetrie.py
 ```
 
+Die Sicherheits-Policies-Studie setzt darauf auf und vergleicht Policy-Gates, Eskalationsketten und Injektionsabwehr vor realen Schnittstellen:
+
+```bash
+python3 schwarm_sicherheits_policies.py
+```
+
+Optional lassen sich Wiederholungen, Stress und Recovery anpassen:
+
+```bash
+KKI_SECURITY_POLICY_REPETITIONS=2 \
+KKI_SECURITY_POLICY_STRESS_STRENGTH=0.49 \
+KKI_SECURITY_POLICY_FAILURE_FRACTION=0.18 \
+python3 schwarm_sicherheits_policies.py
+```
+
 Optional lassen sich Wiederholungen und gemeinsame Basisparameter anpassen:
 
 ```bash
@@ -1257,6 +1274,7 @@ Die folgenden Skripte erzeugen die im Repository abgelegten PNG-Dateien:
 | `schwarm_zustandstransfer.py` | `kki_zustandstransfer.png` | `KKI_SEED=42 python3 schwarm_zustandstransfer.py` |
 | `schwarm_ressourcen_orchestrator.py` | `kki_ressourcen_orchestrator.png` | `KKI_SEED=42 python3 schwarm_ressourcen_orchestrator.py` |
 | `schwarm_audit_telemetrie.py` | `kki_audit_telemetrie.png` | `KKI_SEED=42 python3 schwarm_audit_telemetrie.py` |
+| `schwarm_sicherheits_policies.py` | `kki_sicherheits_policies.png` | `KKI_SEED=42 python3 schwarm_sicherheits_policies.py` |
 | `commitment_protokoll.py` | `kki_commitment_protokoll.png` | `KKI_SEED=42 python3 commitment_protokoll.py` |
 
 Hinweise zur Reproduktion:
@@ -1594,6 +1612,10 @@ Die Smoke-Tests starten ausgewählte Kernskripte im verkürzten headless Testmod
 
 ![KKI Audit-Telemetrie](kki_audit_telemetrie.png)
 
+### Sicherheits-Policies-Studie
+
+![KKI Sicherheits-Policies](kki_sicherheits_policies.png)
+
 ## Zentrale Beobachtungen
 
 Die bisherigen Simulationen illustrieren wiederkehrende Muster:
@@ -1654,6 +1676,7 @@ Die bisherigen Simulationen illustrieren wiederkehrende Muster:
 - die Zustandstransfer-Studie untersucht nun, wie diese rolloutfaehigen Pfade Zustandswechsel ueber Zellen halten; im Voll-Lauf gewinnt der foederierte Zustandstransfer, weil er Transfer-Fidelity, Audit und Migrationsstabilitaet besser balanciert, waehrend haertere Restart-Ketten zwar mehr Recovery liefern, dafuer aber mehr operativen Preis zahlen
 - die Ressourcen-Orchestrator-Studie untersucht nun, wie diese transferfaehigen Zustaende budgetiert werden; im Voll-Lauf gewinnt der foederierte Orchestrator, weil er Allokation, Zustands-Retention und Recovery besser balanciert, waehrend maximaler Ressourcenschutz zwar noch etwas mehr Retention haelt, dafuer aber den operativen Preis staerker erhoeht
 - die Audit-Telemetrie-Studie untersucht nun, welche Beobachtungs- und Diagnosekanaele ueber diesem foederierten Orchestrator liegen sollten; im Voll-Lauf gewinnt der Forensische Kanal, weil er Sichtbarkeit, Diagnoseguete und Recovery-Forensik besser balanciert als lokales Logging oder maximale Vollbeobachtung, ohne in deren Overhead-Falle zu kippen
+- die Sicherheits-Policies-Studie untersucht nun, welche Policy-, Filter- und Eskalationskette auf diesem forensischen Kanal aufsetzen sollte; im Voll-Lauf gewinnt die Foederierte Sicherheitskette, weil sie Abwehr, Eskalation und Recovery etwas besser balanciert als die haertere resiliente Injektionsabwehr, ohne deren zusaetzlichen Schutz-Overhead voll mitzuschleppen
 
 ## Projektstruktur und Ausrichtung
 

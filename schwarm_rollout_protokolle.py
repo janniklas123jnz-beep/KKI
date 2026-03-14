@@ -418,6 +418,28 @@ def rollout_metrics(config, result, params, profile, kontext):
             ]
         )
     )
+    rollout_integrity = clamp01(
+        mittelwert(
+            [
+                rollout_readiness,
+                rollout_safety,
+                audit_rollout,
+                1.0 - workflow.get('misinformation_corruption_mean', 0.0),
+                traceability,
+            ]
+        )
+    )
+    protocol_resilience = clamp01(
+        mittelwert(
+            [
+                continuity_strength,
+                rollback_recovery,
+                rollout_safety,
+                workflow.get('sync_strength_mean', 0.0),
+                1.0 - rollout_overhead,
+            ]
+        )
+    )
 
     return {
         'completion_rate': workflow.get('completion_rate', 0.0),
@@ -439,6 +461,8 @@ def rollout_metrics(config, result, params, profile, kontext):
         'audit_rollout': audit_rollout,
         'continuity_strength': continuity_strength,
         'rollback_recovery': rollback_recovery,
+        'rollout_integrity': rollout_integrity,
+        'protocol_resilience': protocol_resilience,
         'rollout_overhead': rollout_overhead,
         'route_exposure': exposure,
     }
@@ -491,35 +515,34 @@ def context_score(kontext_name, result, agent_count):
 
     if kontext_name == 'patching':
         return (
-            metrics['completion_rate']
-            + 0.18 * metrics['rollout_readiness']
+            metrics['rollout_integrity']
+            + 0.18 * metrics['protocol_resilience']
             + 0.14 * metrics['continuity_strength']
             + 0.08 * metrics['audit_rollout']
             - 0.10 * metrics['rollout_overhead']
         )
     if kontext_name == 'window':
         return (
-            metrics['completion_rate']
-            + 0.18 * metrics['rollout_safety']
-            + 0.14 * metrics['audit_rollout']
-            + 0.10 * metrics['rollout_readiness']
+            metrics['protocol_resilience']
+            + 0.18 * metrics['rollout_integrity']
+            + 0.14 * metrics['rollout_safety']
+            + 0.10 * metrics['audit_rollout']
             - 0.10 * metrics['rollout_overhead']
         )
     if kontext_name == 'stress':
         return (
             base
-            + 0.18 * metrics['rollout_safety']
-            + 0.14 * metrics['audit_rollout']
-            + 0.10 * metrics['rollback_recovery']
-            - 0.12 * metrics['corruption_mean']
+            + 0.18 * metrics['rollout_integrity']
+            + 0.14 * metrics['protocol_resilience']
+            + 0.10 * metrics['rollout_safety']
             - 0.10 * metrics['route_exposure']
             - 0.08 * metrics['rollout_overhead']
         )
     return (
         base
-        + 0.20 * metrics['rollback_recovery']
-        + 0.12 * metrics['rollout_safety']
-        + 0.08 * metrics['continuity_strength']
+        + 0.20 * metrics['protocol_resilience']
+        + 0.12 * metrics['rollout_integrity']
+        + 0.08 * metrics['rollout_safety']
         - 0.12 * failed_share
         - 0.08 * metrics['rollout_overhead']
     )
@@ -533,6 +556,8 @@ def summarize_runs(runs, profile, context_list, agent_count):
         'audit_rollout': {},
         'continuity_strength': {},
         'rollback_recovery': {},
+        'rollout_integrity': {},
+        'protocol_resilience': {},
         'rollout_overhead': {},
         'route_exposure': {},
     }
@@ -587,9 +612,9 @@ def main():
         summaries.append(summary)
         print(
             f"{summary['label']:<30} Score={summary['combined_score']:+.3f} | "
-            f"Readiness={summary['rollout_readiness']['patching']:.2f} | "
-            f"Audit={summary['audit_rollout']['window']:.2f} | "
-            f"Recovery={summary['rollback_recovery']['recovery']:.2f}"
+            f"Integritaet={summary['rollout_integrity']['stress']:.2f} | "
+            f"Protokoll-Resilienz={summary['protocol_resilience']['recovery']:.2f} | "
+            f"Audit={summary['audit_rollout']['window']:.2f}"
         )
 
     best = max(summaries, key=lambda item: item['combined_score'])
@@ -601,9 +626,9 @@ def main():
         f"Delta zu Heisses Patchen {best['combined_score'] - baseline['combined_score']:+.3f}"
     )
     print(
-        f"Readiness {best['rollout_readiness']['patching']:.2f}, "
+        f"Integritaet {best['rollout_integrity']['stress']:.2f}, "
         f"Audit {best['audit_rollout']['window']:.2f}, "
-        f"Recovery {best['rollback_recovery']['recovery']:.2f}"
+        f"Protokoll-Resilienz {best['protocol_resilience']['recovery']:.2f}"
     )
 
     labels = [item['label'] for item in summaries]
@@ -621,9 +646,9 @@ def main():
 
     axes[0, 1].bar(
         x - width / 2,
-        [item['rollout_readiness']['patching'] for item in summaries],
+        [item['rollout_integrity']['stress'] for item in summaries],
         width,
-        label='Rollout-Readiness',
+        label='Rollout-Integritaet',
         color='#4e79a7',
     )
     axes[0, 1].bar(
@@ -633,7 +658,7 @@ def main():
         label='Kontinuitaet',
         color='#59a14f',
     )
-    axes[0, 1].set_title('Readiness und Kontinuitaet')
+    axes[0, 1].set_title('Integritaet und Kontinuitaet')
     axes[0, 1].set_xticks(x)
     axes[0, 1].set_xticklabels(labels, rotation=18)
     axes[0, 1].legend()
@@ -661,9 +686,9 @@ def main():
 
     axes[1, 0].bar(
         x - width / 2,
-        [item['rollback_recovery']['recovery'] for item in summaries],
+        [item['protocol_resilience']['recovery'] for item in summaries],
         width,
-        label='Rollback-Recovery',
+        label='Protokoll-Resilienz',
         color='#76b7b2',
     )
     axes[1, 0].bar(
@@ -673,7 +698,7 @@ def main():
         label='Rollout-Overhead',
         color='#bab0ab',
     )
-    axes[1, 0].set_title('Recovery gegen Overhead')
+    axes[1, 0].set_title('Protokoll-Resilienz gegen Overhead')
     axes[1, 0].set_xticks(x)
     axes[1, 0].set_xticklabels(labels, rotation=18)
     axes[1, 0].legend()

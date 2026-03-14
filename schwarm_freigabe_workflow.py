@@ -362,6 +362,28 @@ def approval_metrics(config, result, params, profile):
             ]
         )
     )
+    approval_integrity = clamp01(
+        mittelwert(
+            [
+                gate_quality,
+                trace_quality,
+                1.0 - workflow.get('misinformation_corruption_mean', 0.0),
+                1.0 - workflow.get('cluster_compromise_mean', 0.0),
+                workflow.get('trust_shield_mean', 0.0),
+            ]
+        )
+    )
+    intervention_adaptivity = clamp01(
+        mittelwert(
+            [
+                intervention_quality,
+                recovery_safety,
+                workflow_flow,
+                workflow.get('sync_strength_mean', 0.0),
+                workflow.get('resource_efficiency', 0.0),
+            ]
+        )
+    )
     approval_overhead = clamp01(
         mittelwert(
             [
@@ -394,6 +416,8 @@ def approval_metrics(config, result, params, profile):
         'intervention_quality': intervention_quality,
         'workflow_flow': workflow_flow,
         'recovery_safety': recovery_safety,
+        'approval_integrity': approval_integrity,
+        'intervention_adaptivity': intervention_adaptivity,
         'approval_overhead': approval_overhead,
     }
 
@@ -459,16 +483,14 @@ def context_score(kontext_name, result, agent_count):
     if kontext_name == 'stress':
         return (
             base
-            + 0.16 * metrics['gate_quality']
-            + 0.14 * metrics['intervention_quality']
+            + 0.16 * metrics['approval_integrity']
+            + 0.14 * metrics['intervention_adaptivity']
             + 0.08 * metrics['trace_quality']
-            - 0.12 * metrics['corruption_mean']
-            - 0.10 * metrics['cluster_compromise_mean']
             - 0.08 * metrics['approval_overhead']
         )
     return (
         base
-        + 0.18 * metrics['recovery_safety']
+        + 0.18 * metrics['intervention_adaptivity']
         + 0.12 * metrics['intervention_quality']
         + 0.08 * metrics['workflow_flow']
         - 0.12 * failed_share
@@ -484,6 +506,8 @@ def summarize_runs(runs, profile, context_list, agent_count):
         'intervention_quality': {},
         'workflow_flow': {},
         'recovery_safety': {},
+        'approval_integrity': {},
+        'intervention_adaptivity': {},
         'approval_overhead': {},
     }
 
@@ -538,8 +562,8 @@ def main():
         print(
             f"{summary['label']:<30} Score={summary['combined_score']:+.3f} | "
             f"Gate={summary['gate_quality']['startup']:.2f} | "
-            f"Trace={summary['trace_quality']['operations']:.2f} | "
-            f"Recovery={summary['recovery_safety']['recovery']:.2f}"
+            f"Integritaet={summary['approval_integrity']['stress']:.2f} | "
+            f"Adaptivitaet={summary['intervention_adaptivity']['recovery']:.2f}"
         )
 
     best = max(summaries, key=lambda item: item['combined_score'])
@@ -552,8 +576,8 @@ def main():
     )
     print(
         f"Gate {best['gate_quality']['startup']:.2f}, "
-        f"Trace {best['trace_quality']['operations']:.2f}, "
-        f"Recovery {best['recovery_safety']['recovery']:.2f}"
+        f"Integritaet {best['approval_integrity']['stress']:.2f}, "
+        f"Adaptivitaet {best['intervention_adaptivity']['recovery']:.2f}"
     )
 
     labels = [item['label'] for item in summaries]
@@ -591,19 +615,19 @@ def main():
 
     axes[0, 2].bar(
         x - width / 2,
-        [item['intervention_quality']['stress'] for item in summaries],
+        [item['approval_integrity']['stress'] for item in summaries],
         width,
-        label='Intervention',
+        label='Freigabe-Integritaet',
         color='#e15759',
     )
     axes[0, 2].bar(
         x + width / 2,
-        [item['recovery_safety']['recovery'] for item in summaries],
+        [item['intervention_adaptivity']['recovery'] for item in summaries],
         width,
-        label='Recovery',
+        label='Eingriffs-Adaptivitaet',
         color='#76b7b2',
     )
-    axes[0, 2].set_title('Eingriffe und Recovery')
+    axes[0, 2].set_title('Integritaet und Adaptivitaet')
     axes[0, 2].set_xticks(x)
     axes[0, 2].set_xticklabels(labels, rotation=18)
     axes[0, 2].legend()

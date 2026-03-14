@@ -420,6 +420,28 @@ def transfer_metrics(config, result, params, profile, kontext):
             ]
         )
     )
+    transfer_integrity = clamp01(
+        mittelwert(
+            [
+                transfer_fidelity,
+                continuity_memory,
+                audit_transfer,
+                1.0 - workflow.get('misinformation_corruption_mean', 0.0),
+                traceability,
+            ]
+        )
+    )
+    restart_resilience = clamp01(
+        mittelwert(
+            [
+                migration_stability,
+                recovery_chain,
+                continuity_memory,
+                workflow.get('sync_strength_mean', 0.0),
+                1.0 - transfer_overhead,
+            ]
+        )
+    )
 
     return {
         'completion_rate': workflow.get('completion_rate', 0.0),
@@ -441,6 +463,8 @@ def transfer_metrics(config, result, params, profile, kontext):
         'audit_transfer': audit_transfer,
         'migration_stability': migration_stability,
         'recovery_chain': recovery_chain,
+        'transfer_integrity': transfer_integrity,
+        'restart_resilience': restart_resilience,
         'transfer_overhead': transfer_overhead,
         'route_exposure': exposure,
     }
@@ -493,32 +517,31 @@ def context_score(kontext_name, result, agent_count):
 
     if kontext_name == 'handoff':
         return (
-            metrics['transfer_fidelity']
-            + 0.18 * metrics['continuity_memory']
+            metrics['transfer_integrity']
+            + 0.18 * metrics['restart_resilience']
             + 0.12 * metrics['audit_transfer']
             - 0.10 * metrics['transfer_overhead']
         )
     if kontext_name == 'migration':
         return (
-            metrics['migration_stability']
-            + 0.18 * metrics['continuity_memory']
-            + 0.12 * metrics['transfer_fidelity']
+            metrics['restart_resilience']
+            + 0.18 * metrics['migration_stability']
+            + 0.12 * metrics['transfer_integrity']
             - 0.10 * metrics['transfer_overhead']
         )
     if kontext_name == 'stress':
         return (
             base
-            + 0.18 * metrics['audit_transfer']
-            + 0.12 * metrics['transfer_fidelity']
-            + 0.10 * metrics['recovery_chain']
-            - 0.12 * metrics['corruption_mean']
+            + 0.18 * metrics['transfer_integrity']
+            + 0.12 * metrics['restart_resilience']
+            + 0.10 * metrics['audit_transfer']
             - 0.10 * metrics['route_exposure']
             - 0.08 * metrics['transfer_overhead']
         )
     return (
         base
-        + 0.20 * metrics['recovery_chain']
-        + 0.12 * metrics['continuity_memory']
+        + 0.20 * metrics['restart_resilience']
+        + 0.12 * metrics['transfer_integrity']
         + 0.08 * metrics['audit_transfer']
         - 0.12 * failed_share
         - 0.08 * metrics['transfer_overhead']
@@ -533,6 +556,8 @@ def summarize_runs(runs, profile, context_list, agent_count):
         'audit_transfer': {},
         'migration_stability': {},
         'recovery_chain': {},
+        'transfer_integrity': {},
+        'restart_resilience': {},
         'transfer_overhead': {},
         'route_exposure': {},
     }
@@ -587,9 +612,9 @@ def main():
         summaries.append(summary)
         print(
             f"{summary['label']:<30} Score={summary['combined_score']:+.3f} | "
-            f"Fidelity={summary['transfer_fidelity']['handoff']:.2f} | "
-            f"Migration={summary['migration_stability']['migration']:.2f} | "
-            f"Recovery={summary['recovery_chain']['recovery']:.2f}"
+            f"Integritaet={summary['transfer_integrity']['stress']:.2f} | "
+            f"Restart-Resilienz={summary['restart_resilience']['recovery']:.2f} | "
+            f"Migration={summary['migration_stability']['migration']:.2f}"
         )
 
     best = max(summaries, key=lambda item: item['combined_score'])
@@ -601,9 +626,9 @@ def main():
         f"Delta zu Zustandsschnappschuss {best['combined_score'] - baseline['combined_score']:+.3f}"
     )
     print(
-        f"Fidelity {best['transfer_fidelity']['handoff']:.2f}, "
+        f"Integritaet {best['transfer_integrity']['stress']:.2f}, "
         f"Audit {best['audit_transfer']['stress']:.2f}, "
-        f"Recovery {best['recovery_chain']['recovery']:.2f}"
+        f"Restart-Resilienz {best['restart_resilience']['recovery']:.2f}"
     )
 
     labels = [item['label'] for item in summaries]
@@ -621,9 +646,9 @@ def main():
 
     axes[0, 1].bar(
         x - width / 2,
-        [item['transfer_fidelity']['handoff'] for item in summaries],
+        [item['transfer_integrity']['stress'] for item in summaries],
         width,
-        label='Transfer-Fidelity',
+        label='Transfer-Integritaet',
         color='#4e79a7',
     )
     axes[0, 1].bar(
@@ -633,7 +658,7 @@ def main():
         label='Kontinuitaet',
         color='#59a14f',
     )
-    axes[0, 1].set_title('Fidelity und Kontinuitaet')
+    axes[0, 1].set_title('Integritaet und Kontinuitaet')
     axes[0, 1].set_xticks(x)
     axes[0, 1].set_xticklabels(labels, rotation=18)
     axes[0, 1].legend()
@@ -648,12 +673,12 @@ def main():
     )
     axes[0, 2].bar(
         x + width / 2,
-        [item['recovery_chain']['recovery'] for item in summaries],
+        [item['restart_resilience']['recovery'] for item in summaries],
         width,
-        label='Recovery-Kette',
+        label='Restart-Resilienz',
         color='#76b7b2',
     )
-    axes[0, 2].set_title('Audit und Recovery')
+    axes[0, 2].set_title('Audit und Restart-Resilienz')
     axes[0, 2].set_xticks(x)
     axes[0, 2].set_xticklabels(labels, rotation=18)
     axes[0, 2].legend()

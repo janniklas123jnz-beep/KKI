@@ -325,6 +325,17 @@ def sandbox_metrics(config, result, params, profile):
             ]
         )
     )
+    projected_overhead = clamp01(
+        mittelwert(
+            [
+                normalize(config.get('resource_share_factor', 0.28), 0.28, 0.30),
+                cell_depth_score,
+                boundary_score,
+                1.0 - relay_score,
+                profile['bias']['overhead'],
+            ]
+        )
+    )
     operational_flow = clamp01(
         mittelwert(
             [
@@ -358,6 +369,28 @@ def sandbox_metrics(config, result, params, profile):
             ]
         )
     )
+    sandbox_integrity = clamp01(
+        mittelwert(
+            [
+                containment_strength,
+                sandbox_safety,
+                1.0 - workflow.get('misinformation_corruption_mean', 0.0),
+                1.0 - workflow.get('cluster_compromise_mean', 0.0),
+                knowledge_partition,
+            ]
+        )
+    )
+    recovery_permeability = clamp01(
+        mittelwert(
+            [
+                recovery_margin,
+                routing_integrity,
+                operational_flow,
+                workflow.get('sync_strength_mean', 0.0),
+                1.0 - projected_overhead,
+            ]
+        )
+    )
 
     return {
         'completion_rate': workflow.get('completion_rate', 0.0),
@@ -381,6 +414,8 @@ def sandbox_metrics(config, result, params, profile):
         'operational_flow': operational_flow,
         'sandbox_overhead': sandbox_overhead,
         'recovery_margin': recovery_margin,
+        'sandbox_integrity': sandbox_integrity,
+        'recovery_permeability': recovery_permeability,
     }
 
 
@@ -445,15 +480,14 @@ def context_score(kontext_name, result, agent_count):
     if kontext_name == 'stress':
         return (
             base
-            + 0.18 * metrics['containment_strength']
+            + 0.18 * metrics['sandbox_integrity']
             + 0.14 * metrics['sandbox_safety']
-            + 0.08 * metrics['routing_integrity']
-            - 0.12 * metrics['corruption_mean']
+            + 0.08 * metrics['recovery_permeability']
             - 0.10 * metrics['sandbox_overhead']
         )
     return (
         base
-        + 0.18 * metrics['recovery_margin']
+        + 0.18 * metrics['recovery_permeability']
         + 0.12 * metrics['containment_strength']
         + 0.08 * metrics['operational_flow']
         - 0.12 * failed_share
@@ -471,6 +505,8 @@ def summarize_runs(runs, profile, context_list, agent_count):
         'operational_flow': {},
         'sandbox_overhead': {},
         'recovery_margin': {},
+        'sandbox_integrity': {},
+        'recovery_permeability': {},
     }
 
     for kontext in context_list:
@@ -524,9 +560,9 @@ def main():
         summaries.append(summary)
         print(
             f"{summary['label']:<31} Score={summary['combined_score']:+.3f} | "
-            f"Contain={summary['containment_strength']['stress']:.2f} | "
+            f"Integritaet={summary['sandbox_integrity']['stress']:.2f} | "
             f"Routing={summary['routing_integrity']['operations']:.2f} | "
-            f"Flow={summary['operational_flow']['operations']:.2f}"
+            f"Recovery-Durchlass={summary['recovery_permeability']['recovery']:.2f}"
         )
 
     best = max(summaries, key=lambda item: item['combined_score'])
@@ -538,9 +574,9 @@ def main():
         f"Delta zur offenen Ausfuehrung {best['combined_score'] - baseline['combined_score']:+.3f}"
     )
     print(
-        f"Containment {best['containment_strength']['stress']:.2f}, "
+        f"Integritaet {best['sandbox_integrity']['stress']:.2f}, "
         f"Routing {best['routing_integrity']['operations']:.2f}, "
-        f"Recovery {best['recovery_margin']['recovery']:.2f}"
+        f"Recovery-Durchlass {best['recovery_permeability']['recovery']:.2f}"
     )
 
     labels = [item['label'] for item in summaries]
@@ -558,9 +594,9 @@ def main():
 
     axes[0, 1].bar(
         x - width / 2,
-        [item['containment_strength']['stress'] for item in summaries],
+        [item['sandbox_integrity']['stress'] for item in summaries],
         width,
-        label='Containment',
+        label='Sandbox-Integritaet',
         color='#4e79a7',
     )
     axes[0, 1].bar(
@@ -570,7 +606,7 @@ def main():
         label='Sicherheit',
         color='#59a14f',
     )
-    axes[0, 1].set_title('Containment und Sicherheit')
+    axes[0, 1].set_title('Integritaet und Sicherheit')
     axes[0, 1].set_xticks(x)
     axes[0, 1].set_xticklabels(labels, rotation=18)
     axes[0, 1].legend()
@@ -598,9 +634,9 @@ def main():
 
     axes[1, 0].bar(
         x - width / 2,
-        [item['operational_flow']['operations'] for item in summaries],
+        [item['recovery_permeability']['recovery'] for item in summaries],
         width,
-        label='Flow',
+        label='Recovery-Durchlass',
         color='#76b7b2',
     )
     axes[1, 0].bar(
@@ -610,7 +646,7 @@ def main():
         label='Overhead',
         color='#bab0ab',
     )
-    axes[1, 0].set_title('Flow gegen Overhead')
+    axes[1, 0].set_title('Recovery-Durchlass gegen Overhead')
     axes[1, 0].set_xticks(x)
     axes[1, 0].set_xticklabels(labels, rotation=18)
     axes[1, 0].legend()

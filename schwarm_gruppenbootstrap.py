@@ -257,6 +257,11 @@ def bootstrap_metrics(config, result, params, bias):
     workflow = result['workflow_metrics']
     groups = gruppenmetriken(result['agents'], params)
     schema = schema_metrics(config)
+    corruption_mean = workflow.get('misinformation_corruption_mean', 0.0)
+    cluster_compromise_mean = workflow.get('cluster_compromise_mean', 0.0)
+    recovery_events_total = workflow.get('recovery_events_total', 0.0)
+    sync_strength_mean = workflow.get('sync_strength_mean', 0.0)
+    failed_agents_mean = workflow.get('failed_agents_mean', 0.0)
 
     proto_share = groups['proto_group_share']
     functional_share = groups['functional_group_share']
@@ -354,6 +359,21 @@ def bootstrap_metrics(config, result, params, bias):
         + 0.14 * schema['contract_risk']
         + 0.14 * max(0.0, 0.16 - proto_share) / 0.16
     )
+    failed_share = failed_agents_mean / max(1.0, params['agent_count'])
+    recovery_load = min(1.0, recovery_events_total / max(1.0, params['agent_count'] * 0.25))
+    stress_integrity = max(0.0, 1.0 - corruption_mean)
+    compromise_reserve = max(0.0, 1.0 - cluster_compromise_mean)
+    recovery_efficiency = clamp01(
+        mittelwert(
+            [
+                min(1.0, sync_strength_mean),
+                max(0.0, 1.0 - failed_share),
+                max(0.0, 1.0 - recovery_load),
+                recovery_margin,
+                compromise_reserve,
+            ]
+        )
+    )
 
     return {
         'completion_rate': workflow.get('completion_rate', 0.0),
@@ -365,12 +385,16 @@ def bootstrap_metrics(config, result, params, bias):
         'resource_share_rate': workflow.get('resource_share_rate', 0.0),
         'active_cells_mean': workflow.get('active_cells_mean', 0.0),
         'detection_rate': workflow.get('misinformation_detection_rate', 0.0),
-        'corruption_mean': workflow.get('misinformation_corruption_mean', 0.0),
-        'cluster_compromise_mean': workflow.get('cluster_compromise_mean', 0.0),
+        'corruption_mean': corruption_mean,
+        'stress_integrity': stress_integrity,
+        'cluster_compromise_mean': cluster_compromise_mean,
+        'compromise_reserve': compromise_reserve,
         'trust_shield_mean': workflow.get('trust_shield_mean', 0.0),
-        'recovery_events_total': workflow.get('recovery_events_total', 0.0),
-        'sync_strength_mean': workflow.get('sync_strength_mean', 0.0),
-        'failed_agents_mean': workflow.get('failed_agents_mean', 0.0),
+        'recovery_events_total': recovery_events_total,
+        'sync_strength_mean': sync_strength_mean,
+        'failed_agents_mean': failed_agents_mean,
+        'recovery_load': recovery_load,
+        'recovery_efficiency': recovery_efficiency,
         'mission_success': mittelwert(list(result.get('mission_success_rates', {}).values())),
         'cross_group_cooperation': result['cross_group_cooperation_rate'],
         'consensus': result['final_consensus_score'],
@@ -492,8 +516,12 @@ def summarize_runs(runs, eintrag, context_list, agent_count):
         'fragmentation_risk': {},
         'functional_group_share': {},
         'detection_rate': {},
+        'stress_integrity': {},
+        'compromise_reserve': {},
         'recovery_margin': {},
         'sync_strength_mean': {},
+        'recovery_load': {},
+        'recovery_efficiency': {},
     }
 
     for kontext in context_list:
@@ -548,7 +576,7 @@ def main():
             f"{summary['label']:<26} Score={summary['combined_score']:+.3f} | "
             f"Validierung={summary['startup_validation']['bootstrap']:.2f} | "
             f"Kohäsion={summary['startup_cohesion']['bootstrap']:.2f} | "
-            f"Fragmentierung={summary['fragmentation_risk']['bootstrap']:.2f}"
+            f"Recovery-Eff={summary['recovery_efficiency']['recovery']:.2f}"
         )
 
     best = max(summaries, key=lambda item: item['combined_score'])
@@ -562,7 +590,7 @@ def main():
     print(
         f"Validierung {best['startup_validation']['bootstrap']:.2f}, "
         f"Handoff-Reife {best['handoff_readiness']['bootstrap']:.2f}, "
-        f"Fragmentierung {best['fragmentation_risk']['bootstrap']:.2f}"
+        f"Recovery-Effizienz {best['recovery_efficiency']['recovery']:.2f}"
     )
 
     labels = [item['label'] for item in summaries]
@@ -626,6 +654,7 @@ def main():
                 item['context_scores']['stress'],
                 item['context_scores']['recovery'],
                 item['handoff_readiness']['bootstrap'],
+                item['recovery_efficiency']['recovery'],
             ]
             for item in summaries
         ],
@@ -633,8 +662,8 @@ def main():
     )
     heatmap = axes[1, 0].imshow(heatmap_data, cmap='viridis', aspect='auto')
     axes[1, 0].set_title('Kontextprofil')
-    axes[1, 0].set_xticks([0, 1, 2, 3, 4])
-    axes[1, 0].set_xticklabels(['Boot', 'Kon', 'Stress', 'Rec', 'Handoff'])
+    axes[1, 0].set_xticks([0, 1, 2, 3, 4, 5])
+    axes[1, 0].set_xticklabels(['Boot', 'Kon', 'Stress', 'Rec', 'Handoff', 'Eff'])
     axes[1, 0].set_yticks(range(len(labels)))
     axes[1, 0].set_yticklabels(labels)
     for row in range(heatmap_data.shape[0]):
@@ -651,9 +680,9 @@ def main():
     )
     axes[1, 1].bar(
         x + width / 2,
-        [item['detection_rate']['stress'] * 100.0 for item in summaries],
+        [item['stress_integrity']['stress'] * 100.0 for item in summaries],
         width,
-        label='Detektion (%)',
+        label='Stress-Integritaet (%)',
         color='#b07aa1',
     )
     axes[1, 1].set_title('Gruppenfitness')
@@ -674,7 +703,9 @@ def main():
             f"- Start-Kohäsion: {best['startup_cohesion']['bootstrap']:.2f}\n"
             f"- Handoff-Reife: {best['handoff_readiness']['bootstrap']:.2f}\n"
             f"- Recovery-Marge: {best['recovery_margin']['recovery']:.2f}\n"
+            f"- Recovery-Effizienz: {best['recovery_efficiency']['recovery']:.2f}\n"
             f"- Funktionsgruppen: {best['functional_group_share']['consensus']:.1%}\n"
+            f"- Stress-Integritaet: {best['stress_integrity']['stress']:.1%}\n"
             f"- Fragmentierung: {best['fragmentation_risk']['bootstrap']:.2f}"
         ),
         va='top',

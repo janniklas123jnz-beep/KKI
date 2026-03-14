@@ -99,6 +99,7 @@ Die Simulationen basieren auf wiederholten Interaktionen im Stil des Gefangenend
 | `schwarm_rollout_protokolle.py` | Studie zu Rollout-Protokollen und Update-Fenstern zwischen Audit-Gateway, Freigaben und Recovery |
 | `schwarm_zustandstransfer.py` | Studie zu Zustandstransfer und Wiederanlaufketten zwischen Wissensbus, Rollout und Zellmigration |
 | `schwarm_ressourcen_orchestrator.py` | Studie zu Ressourcen-Orchestrator und Budgetzuteilung zwischen Zustandstransfer, Engpass-Triage und Rollout |
+| `schwarm_audit_telemetrie.py` | Studie zu Audit-Telemetrie und Nachvollziehbarkeitskanaelen zwischen Ressourcen-Orchestrierung, Diagnose und Recovery |
 | `commitment_protokoll.py` | Commit-Reveal-Verify-Protokoll gegen Manipulation |
 
 ## Features
@@ -236,6 +237,7 @@ python3 schwarm_werkzeugadapter.py
 python3 schwarm_rollout_protokolle.py
 python3 schwarm_zustandstransfer.py
 python3 schwarm_ressourcen_orchestrator.py
+python3 schwarm_audit_telemetrie.py
 python3 commitment_protokoll.py
 ```
 
@@ -1136,6 +1138,21 @@ KKI_RESOURCE_ORCHESTRATOR_FAILURE_FRACTION=0.18 \
 python3 schwarm_ressourcen_orchestrator.py
 ```
 
+Die Audit-Telemetrie-Studie erweitert diesen Sieger nun um sichtbare Diagnose- und Nachvollziehbarkeitskanaele fuer Budgetfluesse, Rollouts und Recovery:
+
+```bash
+python3 schwarm_audit_telemetrie.py
+```
+
+Optional lassen sich Wiederholungen, Stress und Recovery anpassen:
+
+```bash
+KKI_AUDIT_TELEMETRY_REPETITIONS=2 \
+KKI_AUDIT_TELEMETRY_STRESS_STRENGTH=0.48 \
+KKI_AUDIT_TELEMETRY_FAILURE_FRACTION=0.18 \
+python3 schwarm_audit_telemetrie.py
+```
+
 Optional lassen sich Wiederholungen und gemeinsame Basisparameter anpassen:
 
 ```bash
@@ -1239,6 +1256,7 @@ Die folgenden Skripte erzeugen die im Repository abgelegten PNG-Dateien:
 | `schwarm_rollout_protokolle.py` | `kki_rollout_protokolle.png` | `KKI_SEED=42 python3 schwarm_rollout_protokolle.py` |
 | `schwarm_zustandstransfer.py` | `kki_zustandstransfer.png` | `KKI_SEED=42 python3 schwarm_zustandstransfer.py` |
 | `schwarm_ressourcen_orchestrator.py` | `kki_ressourcen_orchestrator.png` | `KKI_SEED=42 python3 schwarm_ressourcen_orchestrator.py` |
+| `schwarm_audit_telemetrie.py` | `kki_audit_telemetrie.png` | `KKI_SEED=42 python3 schwarm_audit_telemetrie.py` |
 | `commitment_protokoll.py` | `kki_commitment_protokoll.png` | `KKI_SEED=42 python3 commitment_protokoll.py` |
 
 Hinweise zur Reproduktion:
@@ -1572,6 +1590,10 @@ Die Smoke-Tests starten ausgewählte Kernskripte im verkürzten headless Testmod
 
 ![KKI Ressourcen-Orchestrator](kki_ressourcen_orchestrator.png)
 
+### Audit-Telemetrie-Studie
+
+![KKI Audit-Telemetrie](kki_audit_telemetrie.png)
+
 ## Zentrale Beobachtungen
 
 Die bisherigen Simulationen illustrieren wiederkehrende Muster:
@@ -1631,6 +1653,7 @@ Die bisherigen Simulationen illustrieren wiederkehrende Muster:
 - die Rollout-Protokoll-Studie untersucht nun, wie auf diesem Audit-Gateway Updates kontrolliert eingefuehrt werden; im Voll-Lauf gewinnt der foederierte Rollout, weil er Update-Readiness, Audit und Recovery am besten balanciert, waehrend noch haertere oder schattigere Verfahren zwar einzelne Spitzenwerte liefern, aber mehr operativen Preis kosten
 - die Zustandstransfer-Studie untersucht nun, wie diese rolloutfaehigen Pfade Zustandswechsel ueber Zellen halten; im Voll-Lauf gewinnt der foederierte Zustandstransfer, weil er Transfer-Fidelity, Audit und Migrationsstabilitaet besser balanciert, waehrend haertere Restart-Ketten zwar mehr Recovery liefern, dafuer aber mehr operativen Preis zahlen
 - die Ressourcen-Orchestrator-Studie untersucht nun, wie diese transferfaehigen Zustaende budgetiert werden; im Voll-Lauf gewinnt der foederierte Orchestrator, weil er Allokation, Zustands-Retention und Recovery besser balanciert, waehrend maximaler Ressourcenschutz zwar noch etwas mehr Retention haelt, dafuer aber den operativen Preis staerker erhoeht
+- die Audit-Telemetrie-Studie untersucht nun, welche Beobachtungs- und Diagnosekanaele ueber diesem foederierten Orchestrator liegen sollten; im Voll-Lauf gewinnt der Forensische Kanal, weil er Sichtbarkeit, Diagnoseguete und Recovery-Forensik besser balanciert als lokales Logging oder maximale Vollbeobachtung, ohne in deren Overhead-Falle zu kippen
 
 ## Projektstruktur und Ausrichtung
 

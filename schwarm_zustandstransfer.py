@@ -409,6 +409,16 @@ def transfer_metrics(config, result, params, profile, kontext):
             ]
         )
     )
+    recovery_readiness = clamp01(
+        mittelwert(
+            [
+                recovery_chain,
+                audit_transfer,
+                1.0 - exposure,
+                workflow.get('sync_strength_mean', 0.0),
+            ]
+        )
+    )
     transfer_overhead = clamp01(
         mittelwert(
             [
@@ -436,7 +446,7 @@ def transfer_metrics(config, result, params, profile, kontext):
             [
                 migration_stability,
                 recovery_chain,
-                continuity_memory,
+                recovery_readiness,
                 workflow.get('sync_strength_mean', 0.0),
                 1.0 - transfer_overhead,
             ]
@@ -463,6 +473,7 @@ def transfer_metrics(config, result, params, profile, kontext):
         'audit_transfer': audit_transfer,
         'migration_stability': migration_stability,
         'recovery_chain': recovery_chain,
+        'recovery_readiness': recovery_readiness,
         'transfer_integrity': transfer_integrity,
         'restart_resilience': restart_resilience,
         'transfer_overhead': transfer_overhead,
@@ -538,13 +549,20 @@ def context_score(kontext_name, result, agent_count):
             - 0.10 * metrics['route_exposure']
             - 0.08 * metrics['transfer_overhead']
         )
+    if kontext_name == 'recovery':
+        return (
+            base
+            + 0.20 * metrics['restart_resilience']
+            + 0.14 * metrics['recovery_chain']
+            + 0.10 * metrics['recovery_readiness']
+            - 0.12 * failed_share
+            - 0.08 * metrics['transfer_overhead']
+        )
     return (
-        base
-        + 0.20 * metrics['restart_resilience']
-        + 0.12 * metrics['transfer_integrity']
-        + 0.08 * metrics['audit_transfer']
-        - 0.12 * failed_share
-        - 0.08 * metrics['transfer_overhead']
+        metrics['transfer_integrity']
+        + 0.18 * metrics['continuity_memory']
+        + 0.12 * metrics['audit_transfer']
+        - 0.10 * metrics['transfer_overhead']
     )
 
 
@@ -556,6 +574,7 @@ def summarize_runs(runs, profile, context_list, agent_count):
         'audit_transfer': {},
         'migration_stability': {},
         'recovery_chain': {},
+        'recovery_readiness': {},
         'transfer_integrity': {},
         'restart_resilience': {},
         'transfer_overhead': {},
@@ -673,12 +692,12 @@ def main():
     )
     axes[0, 2].bar(
         x + width / 2,
-        [item['restart_resilience']['recovery'] for item in summaries],
+        [item['route_exposure']['stress'] for item in summaries],
         width,
-        label='Restart-Resilienz',
-        color='#76b7b2',
+        label='Route-Exposition',
+        color='#f28e2b',
     )
-    axes[0, 2].set_title('Audit und Restart-Resilienz')
+    axes[0, 2].set_title('Audit und Exposition')
     axes[0, 2].set_xticks(x)
     axes[0, 2].set_xticklabels(labels, rotation=18)
     axes[0, 2].legend()
@@ -719,12 +738,12 @@ def main():
     )
     axes[1, 2].bar(
         x + width / 2,
-        [item['context_scores']['recovery'] for item in summaries],
+        [item['recovery_readiness']['recovery'] for item in summaries],
         width,
-        label='Recovery',
+        label='Recovery-Bereitschaft',
         color='#4e79a7',
     )
-    axes[1, 2].set_title('Stress- und Recovery-Kontexte')
+    axes[1, 2].set_title('Stress und Recovery-Bereitschaft')
     axes[1, 2].set_xticks(x)
     axes[1, 2].set_xticklabels(labels, rotation=18)
     axes[1, 2].legend()

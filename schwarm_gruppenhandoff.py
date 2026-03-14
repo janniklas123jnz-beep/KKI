@@ -133,6 +133,31 @@ def handoff_profiles(katalog):
     ]
 
 
+def handoff_protocol_metrics(config):
+    protocol_depth = mittelwert(
+        [
+            1.0 if config.get('enable_workflow_cells') else 0.0,
+            1.0 if config.get('enable_handoff_coordination') else 0.0,
+            1.0 if config.get('enable_parallel_workflow_cells') else 0.0,
+            1.0 if config.get('enable_resource_coordination') else 0.0,
+            min(1.0, float(config.get('handoff_priority_bonus', 0.0)) / 0.18),
+        ]
+    )
+    resilience_reserve = mittelwert(
+        [
+            1.0 if config.get('enable_parallel_workflow_cells') else 0.0,
+            1.0 if config.get('enable_resource_coordination') else 0.0,
+            min(1.0, float(config.get('resource_budget', 0.0)) / 0.62),
+            min(1.0, float(config.get('resource_share_factor', 0.0)) / 0.24),
+            min(1.0, float(config.get('meta_priority_strength', 0.0)) / 0.40),
+        ]
+    )
+    return {
+        'protocol_depth': protocol_depth,
+        'resilience_reserve': resilience_reserve,
+    }
+
+
 def handoff_metrics(result):
     workflow = result['workflow_metrics']
     return {
@@ -146,6 +171,7 @@ def handoff_metrics(result):
         'skill_alignment_rate': workflow.get('skill_alignment_rate', 0.0),
         'detection_rate': workflow.get('misinformation_detection_rate', 0.0),
         'corruption_mean': workflow.get('misinformation_corruption_mean', 0.0),
+        'stress_integrity': max(0.0, 1.0 - workflow.get('misinformation_corruption_mean', 0.0)),
         'cross_group_cooperation': result['cross_group_cooperation_rate'],
         'consensus': result['final_consensus_score'],
         'polarization': result['final_polarization_index'],
@@ -172,7 +198,9 @@ def run_context(seed, params, eintrag, kontext):
         config['enable_prompt_injection'] = False
 
     result = run_polarization_experiment(config, make_plot=False, print_summary=False)
-    result['handoff_metrics'] = handoff_metrics(result)
+    metrics = handoff_metrics(result)
+    metrics.update(handoff_protocol_metrics(config))
+    result['handoff_metrics'] = metrics
     return result
 
 
@@ -218,7 +246,10 @@ def summarize_runs(runs, eintrag, context_list):
         'skill_alignment_rate': {},
         'detection_rate': {},
         'corruption_mean': {},
+        'stress_integrity': {},
         'cross_group_cooperation': {},
+        'protocol_depth': {},
+        'resilience_reserve': {},
     }
 
     for kontext in context_list:
@@ -273,7 +304,8 @@ def main():
             f"{summary['label']:<30} Score={summary['combined_score']:+.3f} | "
             f"Handoffs={summary['handoff_rate']['consensus']:.2f} | "
             f"Completion={summary['completion_rate']['consensus']:.1%} | "
-            f"Stress-Detektion={summary['detection_rate']['stress']:.1%}"
+            f"Stress-Integritaet={summary['stress_integrity']['stress']:.1%} | "
+            f"Protokolltiefe={summary['protocol_depth']['consensus']:.2f}"
         )
 
     best = max(summaries, key=lambda item: item['combined_score'])
@@ -286,7 +318,8 @@ def main():
     print(
         f"Handoffs/Konsensrunde {best['handoff_rate']['consensus']:.2f}, "
         f"Completion {best['completion_rate']['consensus']:.1%}, "
-        f"Stress-Detektion {best['detection_rate']['stress']:.1%}"
+        f"Stress-Integritaet {best['stress_integrity']['stress']:.1%}, "
+        f"Reserve {best['resilience_reserve']['stress']:.1%}"
     )
 
     labels = [item['label'] for item in summaries]
@@ -349,7 +382,8 @@ def main():
                 item['context_scores']['consensus'],
                 item['context_scores']['stress'],
                 item['meta_alignment_rate']['consensus'],
-                item['detection_rate']['stress'],
+                item['protocol_depth']['consensus'],
+                item['stress_integrity']['stress'],
             ]
             for item in summaries
         ],
@@ -357,8 +391,8 @@ def main():
     )
     heatmap = axes[1, 0].imshow(heatmap_data, cmap='viridis', aspect='auto')
     axes[1, 0].set_title('Kontextprofil')
-    axes[1, 0].set_xticks([0, 1, 2, 3, 4])
-    axes[1, 0].set_xticklabels(['Pol', 'Kon', 'Stress', 'Meta', 'Det'])
+    axes[1, 0].set_xticks([0, 1, 2, 3, 4, 5])
+    axes[1, 0].set_xticklabels(['Pol', 'Kon', 'Stress', 'Meta', 'Proto', 'Int'])
     axes[1, 0].set_yticks(range(len(labels)))
     axes[1, 0].set_yticklabels(labels)
     for row in range(heatmap_data.shape[0]):
@@ -375,12 +409,12 @@ def main():
     )
     axes[1, 1].bar(
         x + width / 2,
-        [item['active_cells_mean']['consensus'] for item in summaries],
+        [item['resilience_reserve']['stress'] * 100.0 for item in summaries],
         width,
-        label='Aktive Zellen',
+        label='Reserve (%)',
         color='#9c755f',
     )
-    axes[1, 1].set_title('Gruppenkopplung')
+    axes[1, 1].set_title('Gruppenkopplung und Reserve')
     axes[1, 1].set_xticks(x)
     axes[1, 1].set_xticklabels(labels, rotation=18)
     axes[1, 1].legend()
@@ -397,8 +431,10 @@ def main():
             f"- Handoffs/Runde (Konsens): {best['handoff_rate']['consensus']:.2f}\n"
             f"- Completion: {best['completion_rate']['consensus']:.1%}\n"
             f"- Meta-Ausrichtung: {best['meta_alignment_rate']['consensus']:.1%}\n"
+            f"- Protokolltiefe: {best['protocol_depth']['consensus']:.2f}\n"
+            f"- Reserve: {best['resilience_reserve']['stress']:.1%}\n"
             f"- Ressourcen/Runde: {best['resource_share_rate']['stress']:.2f}\n"
-            f"- Stress-Detektion: {best['detection_rate']['stress']:.1%}\n"
+            f"- Stress-Integritaet: {best['stress_integrity']['stress']:.1%}\n"
             f"- Stress-Korruption: {best['corruption_mean']['stress']:.2f}"
         ),
         va='top',
@@ -406,7 +442,7 @@ def main():
     )
 
     fig.tight_layout()
-    save_and_maybe_show(plt, 'kki_gruppentalente.png'.replace('talente', 'handoff'), dpi=150)
+    save_and_maybe_show(plt, 'kki_gruppenhandoff.png', dpi=150)
 
 
 if __name__ == '__main__':

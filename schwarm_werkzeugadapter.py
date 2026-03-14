@@ -403,6 +403,16 @@ def adapter_metrics(config, result, params, profile, kontext):
             ]
         )
     )
+    recovery_readiness = clamp01(
+        mittelwert(
+            [
+                recovery_bridge,
+                route_traceability,
+                1.0 - route_exposure,
+                workflow.get('sync_strength_mean', 0.0),
+            ]
+        )
+    )
     adapter_overhead = clamp01(
         mittelwert(
             [
@@ -430,7 +440,7 @@ def adapter_metrics(config, result, params, profile, kontext):
             [
                 io_flow,
                 recovery_bridge,
-                gateway_safety,
+                recovery_readiness,
                 workflow.get('sync_strength_mean', 0.0),
                 1.0 - adapter_overhead,
             ]
@@ -457,6 +467,7 @@ def adapter_metrics(config, result, params, profile, kontext):
         'audit_continuity': audit_continuity,
         'io_flow': io_flow,
         'recovery_bridge': recovery_bridge,
+        'recovery_readiness': recovery_readiness,
         'adapter_integrity': adapter_integrity,
         'operational_resilience': operational_resilience,
         'adapter_overhead': adapter_overhead,
@@ -531,13 +542,20 @@ def context_score(kontext_name, result, agent_count):
             - 0.10 * metrics['route_exposure']
             - 0.08 * metrics['adapter_overhead']
         )
+    if kontext_name == 'recovery':
+        return (
+            base
+            + 0.20 * metrics['operational_resilience']
+            + 0.14 * metrics['recovery_bridge']
+            + 0.10 * metrics['recovery_readiness']
+            - 0.12 * failed_share
+            - 0.08 * metrics['adapter_overhead']
+        )
     return (
-        base
-        + 0.20 * metrics['operational_resilience']
-        + 0.12 * metrics['adapter_integrity']
-        + 0.08 * metrics['gateway_safety']
-        - 0.12 * failed_share
-        - 0.08 * metrics['adapter_overhead']
+        metrics['adapter_integrity']
+        + 0.18 * metrics['io_flow']
+        + 0.12 * metrics['audit_continuity']
+        - 0.10 * metrics['adapter_overhead']
     )
 
 
@@ -549,6 +567,7 @@ def summarize_runs(runs, profile, context_list, agent_count):
         'audit_continuity': {},
         'io_flow': {},
         'recovery_bridge': {},
+        'recovery_readiness': {},
         'adapter_integrity': {},
         'operational_resilience': {},
         'adapter_overhead': {},
@@ -666,12 +685,12 @@ def main():
     )
     axes[0, 2].bar(
         x + width / 2,
-        [item['audit_continuity']['stress'] for item in summaries],
+        [item['route_exposure']['stress'] for item in summaries],
         width,
-        label='Audit-Kontinuitaet',
+        label='Route-Exposition',
         color='#76b7b2',
     )
-    axes[0, 2].set_title('Sicherheit und Audit')
+    axes[0, 2].set_title('Sicherheit und Exposition')
     axes[0, 2].set_xticks(x)
     axes[0, 2].set_xticklabels(labels, rotation=18)
     axes[0, 2].legend()
@@ -697,10 +716,24 @@ def main():
     axes[1, 0].legend()
     axes[1, 0].grid(True, axis='y', alpha=0.3)
 
-    axes[1, 1].bar(x, [item['context_scores']['integration'] for item in summaries], color=colors)
-    axes[1, 1].set_title('Integrations-Kontextscore')
+    axes[1, 1].bar(
+        x - width / 2,
+        [item['context_scores']['integration'] for item in summaries],
+        width,
+        label='Integration',
+        color='#4e79a7',
+    )
+    axes[1, 1].bar(
+        x + width / 2,
+        [item['context_scores']['operations'] for item in summaries],
+        width,
+        label='Operation',
+        color='#59a14f',
+    )
+    axes[1, 1].set_title('Integrations- und Operations-Score')
     axes[1, 1].set_xticks(x)
     axes[1, 1].set_xticklabels(labels, rotation=18)
+    axes[1, 1].legend()
     axes[1, 1].grid(True, axis='y', alpha=0.3)
 
     axes[1, 2].bar(
@@ -712,12 +745,12 @@ def main():
     )
     axes[1, 2].bar(
         x + width / 2,
-        [item['context_scores']['recovery'] for item in summaries],
+        [item['recovery_readiness']['recovery'] for item in summaries],
         width,
-        label='Recovery',
+        label='Recovery-Bereitschaft',
         color='#4e79a7',
     )
-    axes[1, 2].set_title('Stress- und Recovery-Kontexte')
+    axes[1, 2].set_title('Stress und Recovery-Bereitschaft')
     axes[1, 2].set_xticks(x)
     axes[1, 2].set_xticklabels(labels, rotation=18)
     axes[1, 2].legend()

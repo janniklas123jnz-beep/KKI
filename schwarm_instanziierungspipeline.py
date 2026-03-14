@@ -396,6 +396,17 @@ def pipeline_metrics(config, result, params, profile):
             ]
         )
     )
+    instantiation_integrity = clamp01(
+        mittelwert(
+            [
+                template_fidelity,
+                assignment_quality,
+                startup_integrity,
+                1.0 - workflow.get('misinformation_corruption_mean', 0.0),
+                traceability,
+            ]
+        )
+    )
     recovery_margin = clamp01(
         mittelwert(
             [
@@ -404,6 +415,17 @@ def pipeline_metrics(config, result, params, profile):
                 workflow.get('sync_strength_mean', 0.0),
                 1.0 - workflow.get('cluster_compromise_mean', 0.0),
                 profile['bias']['recovery'],
+            ]
+        )
+    )
+    bootstrap_resilience = clamp01(
+        mittelwert(
+            [
+                startup_integrity,
+                recovery_margin,
+                instantiation_flow,
+                workflow.get('sync_strength_mean', 0.0),
+                1.0 - pipeline_overhead,
             ]
         )
     )
@@ -428,6 +450,8 @@ def pipeline_metrics(config, result, params, profile):
         'assignment_quality': assignment_quality,
         'pipeline_safety': pipeline_safety,
         'instantiation_flow': instantiation_flow,
+        'instantiation_integrity': instantiation_integrity,
+        'bootstrap_resilience': bootstrap_resilience,
         'pipeline_overhead': pipeline_overhead,
         'recovery_margin': recovery_margin,
     }
@@ -495,17 +519,16 @@ def context_score(kontext_name, result, agent_count):
     if kontext_name == 'stress':
         return (
             base
-            + 0.18 * metrics['pipeline_safety']
-            + 0.12 * metrics['template_fidelity']
-            + 0.10 * metrics['recovery_margin']
-            - 0.12 * metrics['corruption_mean']
+            + 0.18 * metrics['instantiation_integrity']
+            + 0.12 * metrics['bootstrap_resilience']
+            + 0.10 * metrics['pipeline_safety']
             - 0.10 * metrics['pipeline_overhead']
         )
     return (
         base
-        + 0.20 * metrics['recovery_margin']
-        + 0.12 * metrics['pipeline_safety']
-        + 0.08 * metrics['instantiation_flow']
+        + 0.20 * metrics['bootstrap_resilience']
+        + 0.12 * metrics['instantiation_integrity']
+        + 0.08 * metrics['pipeline_safety']
         - 0.12 * failed_share
         - 0.08 * metrics['pipeline_overhead']
     )
@@ -519,6 +542,8 @@ def summarize_runs(runs, profile, context_list, agent_count):
         'assignment_quality': {},
         'pipeline_safety': {},
         'instantiation_flow': {},
+        'instantiation_integrity': {},
+        'bootstrap_resilience': {},
         'pipeline_overhead': {},
         'recovery_margin': {},
     }
@@ -574,9 +599,9 @@ def main():
         summaries.append(summary)
         print(
             f"{summary['label']:<34} Score={summary['combined_score']:+.3f} | "
-            f"Fidelity={summary['template_fidelity']['bootstrap']:.2f} | "
-            f"Startup={summary['startup_integrity']['startup']:.2f} | "
-            f"Safety={summary['pipeline_safety']['stress']:.2f}"
+            f"Integritaet={summary['instantiation_integrity']['stress']:.2f} | "
+            f"Bootstrap-Resilienz={summary['bootstrap_resilience']['recovery']:.2f} | "
+            f"Startup={summary['startup_integrity']['startup']:.2f}"
         )
 
     best = max(summaries, key=lambda item: item['combined_score'])
@@ -588,9 +613,9 @@ def main():
         f"Delta zum Direktklon {best['combined_score'] - baseline['combined_score']:+.3f}"
     )
     print(
-        f"Fidelity {best['template_fidelity']['bootstrap']:.2f}, "
+        f"Integritaet {best['instantiation_integrity']['stress']:.2f}, "
         f"Startup {best['startup_integrity']['startup']:.2f}, "
-        f"Recovery {best['recovery_margin']['recovery']:.2f}"
+        f"Bootstrap-Resilienz {best['bootstrap_resilience']['recovery']:.2f}"
     )
 
     labels = [item['label'] for item in summaries]
@@ -608,9 +633,9 @@ def main():
 
     axes[0, 1].bar(
         x - width / 2,
-        [item['template_fidelity']['bootstrap'] for item in summaries],
+        [item['instantiation_integrity']['stress'] for item in summaries],
         width,
-        label='Fidelity',
+        label='Integritaet',
         color='#4e79a7',
     )
     axes[0, 1].bar(
@@ -620,7 +645,7 @@ def main():
         label='Startup',
         color='#59a14f',
     )
-    axes[0, 1].set_title('Template-Fidelity und Startup')
+    axes[0, 1].set_title('Instanziierungs-Integritaet und Startup')
     axes[0, 1].set_xticks(x)
     axes[0, 1].set_xticklabels(labels, rotation=18)
     axes[0, 1].legend()
@@ -648,9 +673,9 @@ def main():
 
     axes[1, 0].bar(
         x - width / 2,
-        [item['pipeline_safety']['stress'] for item in summaries],
+        [item['bootstrap_resilience']['recovery'] for item in summaries],
         width,
-        label='Safety',
+        label='Bootstrap-Resilienz',
         color='#e15759',
     )
     axes[1, 0].bar(
@@ -660,7 +685,7 @@ def main():
         label='Overhead',
         color='#bab0ab',
     )
-    axes[1, 0].set_title('Safety gegen Overhead')
+    axes[1, 0].set_title('Bootstrap-Resilienz gegen Overhead')
     axes[1, 0].set_xticks(x)
     axes[1, 0].set_xticklabels(labels, rotation=18)
     axes[1, 0].legend()

@@ -263,7 +263,7 @@ def main():
         dtype=float,
     )
 
-    fig, axes = plt.subplots(2, 2, figsize=(16, 11))
+    fig, axes = plt.subplots(2, 3, figsize=(18, 11))
     fig.suptitle(
         'KKI Grossstudie: Polarisierung, Invasion und Commitment-Angriffe',
         fontsize=14,
@@ -289,10 +289,16 @@ def main():
 
     heatmaps = [
         (
-            axes[1, 0],
+            axes[0, 2],
             primary_matrix,
             'Primaermetriken\n(statisch | adaptiv)',
             'Blues',
+        ),
+        (
+            axes[1, 0],
+            threat_matrix,
+            'Bedrohungs- / Diagnosemetriken\n(statisch | adaptiv)',
+            'OrRd',
         ),
         (
             axes[1, 1],
@@ -316,14 +322,19 @@ def main():
 
         fig.colorbar(image, ax=axis, fraction=0.046, pad=0.04)
 
-    fig.text(
-        0.5,
-        0.02,
+    axes[1, 2].axis('off')
+    axes[1, 2].text(
+        0.0,
+        0.95,
         (
-            f"Gemitteltes adaptive Score-Delta: {combined_delta:+.3f} | "
-            f"Staerkster Vorteil: {best_scenario}"
+            "Zusammenfassung\n"
+            f"- Gemitteltes Score-Delta: {combined_delta:+.3f}\n"
+            f"- Gemitteltes Kanten-Delta: {combined_edge_delta:+.3f}\n"
+            f"- Staerkster Vorteil: {best_scenario}\n"
+            f"- Adaptive Score ({best_scenario}): {aggregated[best_scenario]['adaptive_score']:+.3f}\n"
+            f"- Statischer Score ({best_scenario}): {aggregated[best_scenario]['static_score']:+.3f}"
         ),
-        ha='center',
+        va='top',
         fontsize=10,
     )
     plt.tight_layout(rect=(0, 0.04, 1, 0.98))

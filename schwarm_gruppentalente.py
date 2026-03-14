@@ -152,6 +152,40 @@ def build_profile(katalog, eintrag):
     return profile
 
 
+def talent_identity_metrics(config):
+    shared = basis_dna()
+    share_keys = [
+        'generalist_share',
+        'connector_share',
+        'sentinel_share',
+        'mediator_share',
+        'analyzer_share',
+    ]
+    capability_keys = [
+        'group_learning_rate',
+        'meta_priority_strength',
+        'cluster_budget_skew',
+        'rewire_cross_group_bonus',
+        'connector_bridge_bonus',
+        'connector_cross_group_learning_bonus',
+        'mediator_bridge_bonus',
+        'sentinel_rep_threshold',
+        'analyzer_memory_window',
+    ]
+    deviations = []
+    for key in share_keys + capability_keys:
+        baseline = float(shared[key])
+        current = float(config.get(key, baseline))
+        deviations.append(abs(current - baseline) / max(0.05, abs(baseline)))
+
+    specialization_intensity = mittelwert(deviations)
+    dna_retention = max(0.0, 1.0 - specialization_intensity * 0.45)
+    return {
+        'specialization_intensity': specialization_intensity,
+        'dna_retention': dna_retention,
+    }
+
+
 def talent_metrics(result):
     workflow = result['workflow_metrics']
     return {
@@ -162,6 +196,7 @@ def talent_metrics(result):
         'learning_gain_rate': workflow.get('group_learning_gain_rate', 0.0),
         'detection_rate': workflow.get('misinformation_detection_rate', 0.0),
         'corruption_mean': workflow.get('misinformation_corruption_mean', 0.0),
+        'stress_integrity': max(0.0, 1.0 - workflow.get('misinformation_corruption_mean', 0.0)),
         'cross_group_cooperation': result['cross_group_cooperation_rate'],
         'consensus': result['final_consensus_score'],
         'polarization': result['final_polarization_index'],
@@ -188,7 +223,9 @@ def run_context(seed, params, katalog, eintrag, kontext):
         config['enable_prompt_injection'] = False
 
     result = run_polarization_experiment(config, make_plot=False, print_summary=False)
-    result['talent_metrics'] = talent_metrics(result)
+    metrics = talent_metrics(result)
+    metrics.update(talent_identity_metrics(config))
+    result['talent_metrics'] = metrics
     return result
 
 
@@ -231,7 +268,10 @@ def summarize_runs(runs, eintrag, context_list):
         'learning_gain_rate': {},
         'detection_rate': {},
         'corruption_mean': {},
+        'stress_integrity': {},
         'cross_group_cooperation': {},
+        'specialization_intensity': {},
+        'dna_retention': {},
     }
 
     for kontext in context_list:
@@ -287,7 +327,8 @@ def main():
             f"{summary['label']:<24} Score={summary['combined_score']:+.3f} | "
             f"Koop={summary['cross_group_cooperation']['polarization']:.1%} | "
             f"Skill={summary['skill_alignment_rate']['polarization']:.1%} | "
-            f"Stress-Detektion={summary['detection_rate']['stress']:.1%}"
+            f"Stress-Integritaet={summary['stress_integrity']['stress']:.1%} | "
+            f"Talent-Fokus={summary['specialization_intensity']['consensus']:.2f}"
         )
 
     best = max(summaries, key=lambda item: item['combined_score'])
@@ -300,7 +341,8 @@ def main():
     print(
         f"Kooperation {best['cross_group_cooperation']['polarization']:.1%}, "
         f"Meta-Ausrichtung {best['meta_alignment_rate']['consensus']:.1%}, "
-        f"Stress-Detektion {best['detection_rate']['stress']:.1%}"
+        f"Stress-Integritaet {best['stress_integrity']['stress']:.1%}, "
+        f"DNA-Bindung {best['dna_retention']['consensus']:.1%}"
     )
 
     labels = [item['label'] for item in summaries]
@@ -362,8 +404,9 @@ def main():
                 item['context_scores']['polarization'],
                 item['context_scores']['consensus'],
                 item['context_scores']['stress'],
-                item['resource_efficiency']['stress'],
-                item['detection_rate']['stress'],
+                item['specialization_intensity']['consensus'],
+                item['dna_retention']['consensus'],
+                item['stress_integrity']['stress'],
             ]
             for item in summaries
         ],
@@ -371,8 +414,8 @@ def main():
     )
     heatmap = axes[1, 0].imshow(heatmap_data, cmap='viridis', aspect='auto')
     axes[1, 0].set_title('Kontextprofil')
-    axes[1, 0].set_xticks([0, 1, 2, 3, 4])
-    axes[1, 0].set_xticklabels(['Pol', 'Kon', 'Stress', 'Eff', 'Det'])
+    axes[1, 0].set_xticks([0, 1, 2, 3, 4, 5])
+    axes[1, 0].set_xticklabels(['Pol', 'Kon', 'Stress', 'Fokus', 'DNA', 'Int'])
     axes[1, 0].set_yticks(range(len(labels)))
     axes[1, 0].set_yticklabels(labels)
     for row in range(heatmap_data.shape[0]):
@@ -382,19 +425,19 @@ def main():
 
     axes[1, 1].bar(
         x - width / 2,
-        [item['detection_rate']['stress'] * 100.0 for item in summaries],
+        [item['stress_integrity']['stress'] * 100.0 for item in summaries],
         width,
-        label='Detektion',
+        label='Stress-Integritaet',
         color='#e15759',
     )
     axes[1, 1].bar(
         x + width / 2,
-        [(1.0 - item['corruption_mean']['stress']) * 100.0 for item in summaries],
+        [item['dna_retention']['consensus'] * 100.0 for item in summaries],
         width,
-        label='Integritaet',
+        label='DNA-Bindung',
         color='#59a14f',
     )
-    axes[1, 1].set_title('Stressrobustheit')
+    axes[1, 1].set_title('Stress- und DNA-Reserven')
     axes[1, 1].set_xticks(x)
     axes[1, 1].set_xticklabels(labels, rotation=18)
     axes[1, 1].legend()
@@ -410,8 +453,10 @@ def main():
             f"- Delta zur gemeinsamen DNA: {best['combined_score'] - baseline['combined_score']:+.3f}\n"
             f"- Cross-Group-Kooperation: {best['cross_group_cooperation']['polarization']:.1%}\n"
             f"- Skill-Ausrichtung: {best['skill_alignment_rate']['polarization']:.1%}\n"
+            f"- Talent-Fokus: {best['specialization_intensity']['consensus']:.2f}\n"
+            f"- DNA-Bindung: {best['dna_retention']['consensus']:.1%}\n"
             f"- Completion im Konsens: {best['completion_rate']['consensus']:.1%}\n"
-            f"- Stress-Detektion: {best['detection_rate']['stress']:.1%}\n"
+            f"- Stress-Integritaet: {best['stress_integrity']['stress']:.1%}\n"
             f"- Stress-Korruption: {best['corruption_mean']['stress']:.2f}"
         ),
         va='top',

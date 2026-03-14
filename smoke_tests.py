@@ -1299,6 +1299,27 @@ class SmokeTests(unittest.TestCase):
             self.assertTrue((output_dir / "kki_sicherheits_policies.png").exists())
             self.assertIn("Beste Sicherheitskette", result.stdout)
 
+    def test_schwarm_schattenbetrieb_smoke(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:
+            output_dir = Path(tmpdir)
+            result = self.run_script(
+                "schwarm_schattenbetrieb.py",
+                output_dir,
+                seed=491,
+                extra_env={
+                    "KKI_SHADOW_MODE_REPETITIONS": "1",
+                    "KKI_WORKFLOW_STAGE_MIN_TENURE": "1",
+                    "KKI_MISSION_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_INTERVAL": "2",
+                    "KKI_ROLE_SWITCH_MIN_TENURE": "2",
+                    "KKI_INJECTION_ATTACK_ROUND": "3",
+                    "KKI_FAILURE_ROUND": "4",
+                },
+            )
+            self.assert_successful_run(result)
+            self.assertTrue((output_dir / "kki_schattenbetrieb.png").exists())
+            self.assertIn("Bester Schattenbetrieb", result.stdout)
+
 
 if __name__ == "__main__":
     unittest.main()

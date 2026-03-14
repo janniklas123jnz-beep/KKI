@@ -358,6 +358,17 @@ def pilot_metrics(config, result, params, profile):
             ]
         )
     )
+    pilot_overhead = clamp01(
+        mittelwert(
+            [
+                normalize(config.get('resource_share_factor', 0.28), 0.28, 0.30),
+                integration_score,
+                safety_score,
+                1.0 - readiness_score,
+                profile['bias']['overhead'],
+            ]
+        )
+    )
     pilot_readiness = clamp01(
         mittelwert(
             [
@@ -370,14 +381,14 @@ def pilot_metrics(config, result, params, profile):
             ]
         )
     )
-    pilot_overhead = clamp01(
+    transition_integrity = clamp01(
         mittelwert(
             [
-                normalize(config.get('resource_share_factor', 0.28), 0.28, 0.30),
-                integration_score,
-                safety_score,
-                1.0 - readiness_score,
-                profile['bias']['overhead'],
+                architecture_fit,
+                coordination_quality,
+                safety_posture,
+                1.0 - workflow.get('misinformation_corruption_mean', 0.0),
+                traceability,
             ]
         )
     )
@@ -389,6 +400,17 @@ def pilot_metrics(config, result, params, profile):
                 workflow.get('sync_strength_mean', 0.0),
                 1.0 - workflow.get('bottleneck_rate', 0.0),
                 safety_score,
+            ]
+        )
+    )
+    pilot_resilience = clamp01(
+        mittelwert(
+            [
+                pilot_readiness,
+                recovery_strength,
+                launch_readiness,
+                workflow.get('sync_strength_mean', 0.0),
+                1.0 - pilot_overhead,
             ]
         )
     )
@@ -413,6 +435,8 @@ def pilot_metrics(config, result, params, profile):
         'coordination_quality': coordination_quality,
         'safety_posture': safety_posture,
         'pilot_readiness': pilot_readiness,
+        'transition_integrity': transition_integrity,
+        'pilot_resilience': pilot_resilience,
         'pilot_overhead': pilot_overhead,
         'recovery_strength': recovery_strength,
     }
@@ -480,25 +504,24 @@ def context_score(kontext_name, result, agent_count):
     if kontext_name == 'stress':
         return (
             base
-            + 0.18 * metrics['safety_posture']
-            + 0.14 * metrics['pilot_readiness']
-            + 0.08 * metrics['recovery_strength']
-            - 0.12 * metrics['corruption_mean']
+            + 0.18 * metrics['transition_integrity']
+            + 0.14 * metrics['pilot_resilience']
+            + 0.08 * metrics['safety_posture']
             - 0.10 * metrics['pilot_overhead']
         )
     if kontext_name == 'recovery':
         return (
             base
-            + 0.20 * metrics['recovery_strength']
-            + 0.12 * metrics['safety_posture']
-            + 0.08 * metrics['pilot_readiness']
+            + 0.20 * metrics['pilot_resilience']
+            + 0.12 * metrics['transition_integrity']
+            + 0.08 * metrics['safety_posture']
             - 0.12 * failed_share
             - 0.08 * metrics['pilot_overhead']
         )
     return (
-        metrics['pilot_readiness']
+        metrics['pilot_resilience']
         + 0.18 * metrics['launch_readiness']
-        + 0.12 * metrics['safety_posture']
+        + 0.12 * metrics['transition_integrity']
         - 0.12 * metrics['pilot_overhead']
     )
 
@@ -511,6 +534,8 @@ def summarize_runs(runs, profile, context_list, agent_count):
         'coordination_quality': {},
         'safety_posture': {},
         'pilot_readiness': {},
+        'transition_integrity': {},
+        'pilot_resilience': {},
         'pilot_overhead': {},
         'recovery_strength': {},
     }
@@ -566,8 +591,8 @@ def main():
         summaries.append(summary)
         print(
             f"{summary['label']:<28} Score={summary['combined_score']:+.3f} | "
-            f"Pilot={summary['pilot_readiness']['pilot']:.2f} | "
-            f"Safety={summary['safety_posture']['stress']:.2f} | "
+            f"Uebergang={summary['transition_integrity']['stress']:.2f} | "
+            f"Pilot-Resilienz={summary['pilot_resilience']['pilot']:.2f} | "
             f"Launch={summary['launch_readiness']['operations']:.2f}"
         )
 
@@ -580,9 +605,9 @@ def main():
         f"Delta zum minimalen Piloten {best['combined_score'] - baseline['combined_score']:+.3f}"
     )
     print(
-        f"Pilotreife {best['pilot_readiness']['pilot']:.2f}, "
-        f"Safety {best['safety_posture']['stress']:.2f}, "
-        f"Recovery {best['recovery_strength']['recovery']:.2f}"
+        f"Uebergangs-Integritaet {best['transition_integrity']['stress']:.2f}, "
+        f"Launch {best['launch_readiness']['operations']:.2f}, "
+        f"Pilot-Resilienz {best['pilot_resilience']['pilot']:.2f}"
     )
 
     labels = [item['label'] for item in summaries]
@@ -600,9 +625,9 @@ def main():
 
     axes[0, 1].bar(
         x - width / 2,
-        [item['pilot_readiness']['pilot'] for item in summaries],
+        [item['transition_integrity']['stress'] for item in summaries],
         width,
-        label='Pilotreife',
+        label='Uebergangs-Integritaet',
         color='#4e79a7',
     )
     axes[0, 1].bar(
@@ -612,7 +637,7 @@ def main():
         label='Launch',
         color='#59a14f',
     )
-    axes[0, 1].set_title('Pilotreife und Launch')
+    axes[0, 1].set_title('Uebergang und Launch')
     axes[0, 1].set_xticks(x)
     axes[0, 1].set_xticklabels(labels, rotation=18)
     axes[0, 1].legend()
@@ -640,9 +665,9 @@ def main():
 
     axes[1, 0].bar(
         x - width / 2,
-        [item['safety_posture']['stress'] for item in summaries],
+        [item['pilot_resilience']['pilot'] for item in summaries],
         width,
-        label='Safety',
+        label='Pilot-Resilienz',
         color='#e15759',
     )
     axes[1, 0].bar(
@@ -652,7 +677,7 @@ def main():
         label='Overhead',
         color='#bab0ab',
     )
-    axes[1, 0].set_title('Safety gegen Overhead')
+    axes[1, 0].set_title('Pilot-Resilienz gegen Overhead')
     axes[1, 0].set_xticks(x)
     axes[1, 0].set_xticklabels(labels, rotation=18)
     axes[1, 0].legend()
@@ -666,9 +691,9 @@ def main():
 
     axes[1, 2].bar(
         x - width / 2,
-        [item['context_scores']['pilot'] for item in summaries],
+        [item['pilot_readiness']['pilot'] for item in summaries],
         width,
-        label='Pilot',
+        label='Pilotreife',
         color='#59a14f',
     )
     axes[1, 2].bar(
@@ -678,7 +703,7 @@ def main():
         label='Recovery',
         color='#4e79a7',
     )
-    axes[1, 2].set_title('Pilot- und Recovery-Score')
+    axes[1, 2].set_title('Pilotreife und Recovery-Score')
     axes[1, 2].set_xticks(x)
     axes[1, 2].set_xticklabels(labels, rotation=18)
     axes[1, 2].legend()

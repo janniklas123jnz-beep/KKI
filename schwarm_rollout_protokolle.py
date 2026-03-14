@@ -407,6 +407,16 @@ def rollout_metrics(config, result, params, profile, kontext):
             ]
         )
     )
+    recovery_readiness = clamp01(
+        mittelwert(
+            [
+                rollback_recovery,
+                audit_rollout,
+                1.0 - exposure,
+                workflow.get('sync_strength_mean', 0.0),
+            ]
+        )
+    )
     rollout_overhead = clamp01(
         mittelwert(
             [
@@ -434,7 +444,7 @@ def rollout_metrics(config, result, params, profile, kontext):
             [
                 continuity_strength,
                 rollback_recovery,
-                rollout_safety,
+                recovery_readiness,
                 workflow.get('sync_strength_mean', 0.0),
                 1.0 - rollout_overhead,
             ]
@@ -461,6 +471,7 @@ def rollout_metrics(config, result, params, profile, kontext):
         'audit_rollout': audit_rollout,
         'continuity_strength': continuity_strength,
         'rollback_recovery': rollback_recovery,
+        'recovery_readiness': recovery_readiness,
         'rollout_integrity': rollout_integrity,
         'protocol_resilience': protocol_resilience,
         'rollout_overhead': rollout_overhead,
@@ -538,13 +549,20 @@ def context_score(kontext_name, result, agent_count):
             - 0.10 * metrics['route_exposure']
             - 0.08 * metrics['rollout_overhead']
         )
+    if kontext_name == 'recovery':
+        return (
+            base
+            + 0.20 * metrics['protocol_resilience']
+            + 0.14 * metrics['rollback_recovery']
+            + 0.10 * metrics['recovery_readiness']
+            - 0.12 * failed_share
+            - 0.08 * metrics['rollout_overhead']
+        )
     return (
-        base
-        + 0.20 * metrics['protocol_resilience']
-        + 0.12 * metrics['rollout_integrity']
-        + 0.08 * metrics['rollout_safety']
-        - 0.12 * failed_share
-        - 0.08 * metrics['rollout_overhead']
+        metrics['rollout_integrity']
+        + 0.18 * metrics['continuity_strength']
+        + 0.12 * metrics['audit_rollout']
+        - 0.10 * metrics['rollout_overhead']
     )
 
 
@@ -556,6 +574,7 @@ def summarize_runs(runs, profile, context_list, agent_count):
         'audit_rollout': {},
         'continuity_strength': {},
         'rollback_recovery': {},
+        'recovery_readiness': {},
         'rollout_integrity': {},
         'protocol_resilience': {},
         'rollout_overhead': {},
@@ -673,12 +692,12 @@ def main():
     )
     axes[0, 2].bar(
         x + width / 2,
-        [item['audit_rollout']['window'] for item in summaries],
+        [item['route_exposure']['stress'] for item in summaries],
         width,
-        label='Audit-Rollout',
-        color='#76b7b2',
+        label='Route-Exposition',
+        color='#f28e2b',
     )
-    axes[0, 2].set_title('Sicherheit und Audit')
+    axes[0, 2].set_title('Sicherheit und Exposition')
     axes[0, 2].set_xticks(x)
     axes[0, 2].set_xticklabels(labels, rotation=18)
     axes[0, 2].legend()
@@ -719,12 +738,12 @@ def main():
     )
     axes[1, 2].bar(
         x + width / 2,
-        [item['context_scores']['recovery'] for item in summaries],
+        [item['recovery_readiness']['recovery'] for item in summaries],
         width,
-        label='Recovery',
+        label='Recovery-Bereitschaft',
         color='#4e79a7',
     )
-    axes[1, 2].set_title('Stress- und Recovery-Kontexte')
+    axes[1, 2].set_title('Stress und Recovery-Bereitschaft')
     axes[1, 2].set_xticks(x)
     axes[1, 2].set_xticklabels(labels, rotation=18)
     axes[1, 2].legend()

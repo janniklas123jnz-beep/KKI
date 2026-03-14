@@ -411,6 +411,28 @@ def routing_metrics(config, result, params, profile, kontext):
             ]
         )
     )
+    routing_integrity = clamp01(
+        mittelwert(
+            [
+                approval_safety,
+                1.0 - workflow.get('misinformation_corruption_mean', 0.0),
+                1.0 - workflow.get('cluster_compromise_mean', 0.0),
+                workflow.get('trust_shield_mean', 0.0),
+                route_traceability,
+            ]
+        )
+    )
+    routing_adaptivity = clamp01(
+        mittelwert(
+            [
+                fallback_resilience,
+                routing_flow,
+                workflow.get('resource_efficiency', 0.0),
+                workflow.get('sync_strength_mean', 0.0),
+                dispatch_quality,
+            ]
+        )
+    )
     routing_overhead = clamp01(
         mittelwert(
             [
@@ -444,6 +466,8 @@ def routing_metrics(config, result, params, profile, kontext):
         'approval_safety': approval_safety,
         'fallback_resilience': fallback_resilience,
         'routing_flow': routing_flow,
+        'routing_integrity': routing_integrity,
+        'routing_adaptivity': routing_adaptivity,
         'routing_overhead': routing_overhead,
         'route_traceability': route_traceability,
         'route_exposure': route_exposure,
@@ -511,16 +535,14 @@ def context_score(kontext_name, result, agent_count):
     if kontext_name == 'stress':
         return (
             base
-            + 0.16 * metrics['approval_safety']
-            + 0.12 * metrics['fallback_resilience']
+            + 0.16 * metrics['routing_integrity']
+            + 0.12 * metrics['routing_adaptivity']
             + 0.08 * metrics['route_coverage']
-            - 0.12 * metrics['corruption_mean']
-            - 0.10 * metrics['route_exposure']
             - 0.08 * metrics['routing_overhead']
         )
     return (
         base
-        + 0.18 * metrics['fallback_resilience']
+        + 0.18 * metrics['routing_adaptivity']
         + 0.12 * metrics['routing_flow']
         + 0.08 * metrics['approval_safety']
         - 0.12 * failed_share
@@ -536,6 +558,8 @@ def summarize_runs(runs, profile, context_list, agent_count):
         'approval_safety': {},
         'fallback_resilience': {},
         'routing_flow': {},
+        'routing_integrity': {},
+        'routing_adaptivity': {},
         'routing_overhead': {},
         'route_exposure': {},
     }
@@ -591,8 +615,8 @@ def main():
         print(
             f"{summary['label']:<30} Score={summary['combined_score']:+.3f} | "
             f"Coverage={summary['route_coverage']['startup']:.2f} | "
-            f"Approval={summary['approval_safety']['stress']:.2f} | "
-            f"Flow={summary['routing_flow']['operations']:.2f}"
+            f"Integritaet={summary['routing_integrity']['stress']:.2f} | "
+            f"Adaptivitaet={summary['routing_adaptivity']['recovery']:.2f}"
         )
 
     best = max(summaries, key=lambda item: item['combined_score'])
@@ -605,8 +629,8 @@ def main():
     )
     print(
         f"Coverage {best['route_coverage']['startup']:.2f}, "
-        f"Approval {best['approval_safety']['stress']:.2f}, "
-        f"Recovery {best['fallback_resilience']['recovery']:.2f}"
+        f"Integritaet {best['routing_integrity']['stress']:.2f}, "
+        f"Adaptivitaet {best['routing_adaptivity']['recovery']:.2f}"
     )
 
     labels = [item['label'] for item in summaries]
@@ -644,19 +668,19 @@ def main():
 
     axes[0, 2].bar(
         x - width / 2,
-        [item['approval_safety']['stress'] for item in summaries],
+        [item['routing_integrity']['stress'] for item in summaries],
         width,
-        label='Approval-Sicherheit',
+        label='Routing-Integritaet',
         color='#e15759',
     )
     axes[0, 2].bar(
         x + width / 2,
-        [item['fallback_resilience']['recovery'] for item in summaries],
+        [item['routing_adaptivity']['recovery'] for item in summaries],
         width,
-        label='Fallback-Resilienz',
+        label='Routing-Adaptivitaet',
         color='#76b7b2',
     )
-    axes[0, 2].set_title('Sicherheit und Recovery')
+    axes[0, 2].set_title('Integritaet und Adaptivitaet')
     axes[0, 2].set_xticks(x)
     axes[0, 2].set_xticklabels(labels, rotation=18)
     axes[0, 2].legend()

@@ -329,12 +329,21 @@ def pipeline_metrics(config, result, params, profile):
     stage_score = normalize(profile['template_stages'], 1.0, 4.0)
     bootstrap_score = normalize(profile['bootstrap_checks'], 0.0, 4.0)
     role_fit = role_target_distance(config, profile['targets'])
+    schema_integrity = clamp01(mittelwert([schema['mandatory_coverage'], schema['invariant_compliance']]))
+    recovery_readiness = clamp01(
+        mittelwert(
+            [
+                recoveries,
+                workflow.get('sync_strength_mean', 0.0),
+                1.0 - workflow.get('cluster_compromise_mean', 0.0),
+            ]
+        )
+    )
 
     template_fidelity = clamp01(
         mittelwert(
             [
-                schema['mandatory_coverage'],
-                schema['invariant_compliance'],
+                schema_integrity,
                 role_fit,
                 stage_score,
                 profile['bias']['fidelity'],
@@ -423,6 +432,7 @@ def pipeline_metrics(config, result, params, profile):
             [
                 startup_integrity,
                 recovery_margin,
+                recovery_readiness,
                 instantiation_flow,
                 workflow.get('sync_strength_mean', 0.0),
                 1.0 - pipeline_overhead,
@@ -445,6 +455,8 @@ def pipeline_metrics(config, result, params, profile):
         'failed_agents_mean': workflow.get('failed_agents_mean', 0.0),
         'consensus': result['final_consensus_score'],
         'polarization': result['final_polarization_index'],
+        'schema_integrity': schema_integrity,
+        'recovery_readiness': recovery_readiness,
         'template_fidelity': template_fidelity,
         'startup_integrity': startup_integrity,
         'assignment_quality': assignment_quality,
@@ -524,19 +536,28 @@ def context_score(kontext_name, result, agent_count):
             + 0.10 * metrics['pipeline_safety']
             - 0.10 * metrics['pipeline_overhead']
         )
+    if kontext_name == 'recovery':
+        return (
+            base
+            + 0.20 * metrics['bootstrap_resilience']
+            + 0.14 * metrics['recovery_margin']
+            + 0.08 * metrics['instantiation_integrity']
+            - 0.12 * failed_share
+            - 0.08 * metrics['pipeline_overhead']
+        )
     return (
-        base
-        + 0.20 * metrics['bootstrap_resilience']
-        + 0.12 * metrics['instantiation_integrity']
-        + 0.08 * metrics['pipeline_safety']
-        - 0.12 * failed_share
-        - 0.08 * metrics['pipeline_overhead']
+        metrics['startup_integrity']
+        + 0.18 * metrics['instantiation_flow']
+        + 0.12 * metrics['assignment_quality']
+        - 0.10 * metrics['pipeline_overhead']
     )
 
 
 def summarize_runs(runs, profile, context_list, agent_count):
     context_scores = {}
     metrics = {
+        'schema_integrity': {},
+        'recovery_readiness': {},
         'template_fidelity': {},
         'startup_integrity': {},
         'assignment_quality': {},
@@ -600,7 +621,7 @@ def main():
         print(
             f"{summary['label']:<34} Score={summary['combined_score']:+.3f} | "
             f"Integritaet={summary['instantiation_integrity']['stress']:.2f} | "
-            f"Bootstrap-Resilienz={summary['bootstrap_resilience']['recovery']:.2f} | "
+            f"Recovery-Resilienz={summary['bootstrap_resilience']['recovery']:.2f} | "
             f"Startup={summary['startup_integrity']['startup']:.2f}"
         )
 
@@ -615,7 +636,7 @@ def main():
     print(
         f"Integritaet {best['instantiation_integrity']['stress']:.2f}, "
         f"Startup {best['startup_integrity']['startup']:.2f}, "
-        f"Bootstrap-Resilienz {best['bootstrap_resilience']['recovery']:.2f}"
+        f"Recovery-Resilienz {best['bootstrap_resilience']['recovery']:.2f}"
     )
 
     labels = [item['label'] for item in summaries]
@@ -660,12 +681,12 @@ def main():
     )
     axes[0, 2].bar(
         x + width / 2,
-        [item['instantiation_flow']['startup'] for item in summaries],
+        [item['schema_integrity']['bootstrap'] for item in summaries],
         width,
-        label='Flow',
+        label='Schema-Integritaet',
         color='#f28e2b',
     )
-    axes[0, 2].set_title('Rollenfit und Flow')
+    axes[0, 2].set_title('Rollenfit und Schema-Integritaet')
     axes[0, 2].set_xticks(x)
     axes[0, 2].set_xticklabels(labels, rotation=18)
     axes[0, 2].legend()
@@ -675,7 +696,7 @@ def main():
         x - width / 2,
         [item['bootstrap_resilience']['recovery'] for item in summaries],
         width,
-        label='Bootstrap-Resilienz',
+        label='Recovery-Resilienz',
         color='#e15759',
     )
     axes[1, 0].bar(
@@ -685,16 +706,30 @@ def main():
         label='Overhead',
         color='#bab0ab',
     )
-    axes[1, 0].set_title('Bootstrap-Resilienz gegen Overhead')
+    axes[1, 0].set_title('Recovery-Resilienz gegen Overhead')
     axes[1, 0].set_xticks(x)
     axes[1, 0].set_xticklabels(labels, rotation=18)
     axes[1, 0].legend()
     axes[1, 0].grid(True, axis='y', alpha=0.3)
 
-    axes[1, 1].bar(x, [item['context_scores']['stress'] for item in summaries], color=colors)
-    axes[1, 1].set_title('Stress-Score')
+    axes[1, 1].bar(
+        x - width / 2,
+        [item['context_scores']['stress'] for item in summaries],
+        width,
+        label='Stress',
+        color='#e15759',
+    )
+    axes[1, 1].bar(
+        x + width / 2,
+        [item['context_scores']['recovery'] for item in summaries],
+        width,
+        label='Recovery',
+        color='#59a14f',
+    )
+    axes[1, 1].set_title('Stress- und Recovery-Score')
     axes[1, 1].set_xticks(x)
     axes[1, 1].set_xticklabels(labels, rotation=18)
+    axes[1, 1].legend()
     axes[1, 1].grid(True, axis='y', alpha=0.3)
 
     axes[1, 2].bar(
@@ -706,12 +741,12 @@ def main():
     )
     axes[1, 2].bar(
         x + width / 2,
-        [item['recovery_margin']['recovery'] for item in summaries],
+        [item['recovery_readiness']['recovery'] for item in summaries],
         width,
-        label='Recovery',
+        label='Recovery-Bereitschaft',
         color='#4e79a7',
     )
-    axes[1, 2].set_title('Bootstrap- und Recovery-Score')
+    axes[1, 2].set_title('Bootstrap- und Recovery-Bereitschaft')
     axes[1, 2].set_xticks(x)
     axes[1, 2].set_xticklabels(labels, rotation=18)
     axes[1, 2].legend()

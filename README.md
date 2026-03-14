@@ -105,6 +105,45 @@ Die Simulationen basieren auf wiederholten Interaktionen im Stil des Gefangenend
 | `schwarm_bauphasen_rollout.py` | Finale Rollout-Studie zur ersten realnahen Einfuehrungsarchitektur aus Instanziierung, Sicherheitskette, Schattenvalidierung und Recovery |
 | `commitment_protokoll.py` | Commit-Reveal-Verify-Protokoll gegen Manipulation |
 
+## Architektur- und Planungsphase `#101` bis `#120`
+
+Nach dem Abschluss der Simulationsphase wurde der Block `#101` bis `#120` als persistenter Blueprint fuer die spaetere reale Bauphase verdichtet.
+
+Die Punkte `#101` bis `#106` bleiben die README-benannten Studien des Architekturuebergangs:
+
+- `#101` Ressourcen-Orchestrator als Budget-, Triage- und Recovery-Kern
+- `#102` Audit-Telemetrie als Beobachtungs-, Diagnose- und Forensikschicht
+- `#103` Sicherheits-Policies als foederierte Gate-, Filter- und Eskalationskette
+- `#104` Schattenbetrieb als Preview-, Parallelvalidierungs-, Replay- und Recovery-Probe-Schicht
+- `#105` Bauphasen-Rollout als erste integrierte Einfuehrungsarchitektur
+- `#106` Commitment-Protokoll als manipulationsresistenter Nachweis- und Freigabeanker
+
+Die Punkte `#107` bis `#110` sind bewusst als Architektur-Synthese ohne eigene Skriptdatei definiert:
+
+- `#107` Kontroll- und Datenebenen als Gesamtlandkarte fuer Daten-, Kontroll-, Audit- und Freigabefluss
+- `#108` Betriebs- und Supervisorik-Leitfaden mit Rollen, Eskalationsstufen und Eingriffsrechten
+- `#109` Recovery-, Isolation- und Engpass-Playbook fuer Drift, Kompromittierung, Teilausfall und Wiedereintritt
+- `#110` Master-Blueprint fuer die Bauphase mit Modulgrenzen, Baufolge, Integrationsgates und Abnahme-Checkliste
+
+Darauf aufbauend erweitert `#111` bis `#120` die Planungsphase von Architektur zu Realisierungsreife:
+
+- `#111` Modulvertraege und API-Grenzen
+- `#112` Datenmodelle und Zustandsformate
+- `#113` Ereignis- und Nachrichtenprotokolle
+- `#114` Identitaet, Rollen und Berechtigungen
+- `#115` Konfigurations- und Policy-Verteilung
+- `#116` Deployment-, Umgebungs- und Secret-Strategie
+- `#117` Testarchitektur und Abnahme-Matrix
+- `#118` Observability-Operations-Handbuch
+- `#119` Human-in-the-loop und Eingriffsgovernance
+- `#120` Build- und Migrationsfahrplan
+
+Damit endet die Planungsphase nicht nur in einzelnen Studienergebnissen, sondern in einem zusammenhaengenden Bau- und Migrationspfad:
+
+- erst Architektur und Kontrollschichten aus `#101` bis `#110`
+- dann Vertraege, Daten-, Betriebs- und Freigaberegeln aus `#111` bis `#119`
+- schliesslich ein konkreter Realisierungsfahrplan in `#120`
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

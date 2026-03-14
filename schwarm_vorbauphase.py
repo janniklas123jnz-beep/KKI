@@ -162,25 +162,69 @@ def prebuild_profiles(katalog, params):
     ]
 
 
-def prebuild_metrics(result):
+def prebuild_metrics(result, params):
     workflow = result['workflow_metrics']
+    completion_rate = workflow.get('completion_rate', 0.0)
+    resource_efficiency = workflow.get('resource_efficiency', 0.0)
+    meta_alignment_rate = workflow.get('meta_alignment_rate', 0.0)
+    skill_alignment_rate = workflow.get('skill_alignment_rate', 0.0)
+    handoff_rate = workflow.get('handoff_rate', 0.0)
+    resource_share_rate = workflow.get('resource_share_rate', 0.0)
+    bottleneck_relief_rate = workflow.get('bottleneck_relief_rate', 0.0)
+    detection_rate = workflow.get('misinformation_detection_rate', 0.0)
+    corruption_mean = workflow.get('misinformation_corruption_mean', 0.0)
+    cluster_compromise_mean = workflow.get('cluster_compromise_mean', 0.0)
+    trust_shield_mean = workflow.get('trust_shield_mean', 0.0)
+    recovery_events_total = workflow.get('recovery_events_total', 0.0)
+    sync_strength_mean = workflow.get('sync_strength_mean', 0.0)
+    reconfiguration_switch_total = workflow.get('reconfiguration_switch_total', 0.0)
+    failed_agents_mean = workflow.get('failed_agents_mean', 0.0)
+    mission_success = mittelwert(list(result.get('mission_success_rates', {}).values()))
+    stress_integrity = max(0.0, 1.0 - corruption_mean)
+    compromise_reserve = max(0.0, 1.0 - cluster_compromise_mean)
+    failed_share = failed_agents_mean / max(1.0, params['agent_count'])
+    recovery_load = min(1.0, recovery_events_total / max(1.0, params['agent_count'] * 0.25))
+    recovery_efficiency = mittelwert(
+        [
+            min(1.0, sync_strength_mean),
+            max(0.0, 1.0 - failed_share),
+            max(0.0, 1.0 - recovery_load),
+            min(1.0, bottleneck_relief_rate),
+        ]
+    )
+    build_readiness = mittelwert(
+        [
+            completion_rate,
+            resource_efficiency,
+            meta_alignment_rate,
+            mission_success,
+            compromise_reserve,
+            stress_integrity,
+            recovery_efficiency,
+        ]
+    )
     return {
-        'completion_rate': workflow.get('completion_rate', 0.0),
-        'resource_efficiency': workflow.get('resource_efficiency', 0.0),
-        'meta_alignment_rate': workflow.get('meta_alignment_rate', 0.0),
-        'skill_alignment_rate': workflow.get('skill_alignment_rate', 0.0),
-        'handoff_rate': workflow.get('handoff_rate', 0.0),
-        'resource_share_rate': workflow.get('resource_share_rate', 0.0),
-        'bottleneck_relief_rate': workflow.get('bottleneck_relief_rate', 0.0),
-        'detection_rate': workflow.get('misinformation_detection_rate', 0.0),
-        'corruption_mean': workflow.get('misinformation_corruption_mean', 0.0),
-        'cluster_compromise_mean': workflow.get('cluster_compromise_mean', 0.0),
-        'trust_shield_mean': workflow.get('trust_shield_mean', 0.0),
-        'recovery_events_total': workflow.get('recovery_events_total', 0.0),
-        'sync_strength_mean': workflow.get('sync_strength_mean', 0.0),
-        'reconfiguration_switch_total': workflow.get('reconfiguration_switch_total', 0.0),
-        'failed_agents_mean': workflow.get('failed_agents_mean', 0.0),
-        'mission_success': mittelwert(list(result.get('mission_success_rates', {}).values())),
+        'completion_rate': completion_rate,
+        'resource_efficiency': resource_efficiency,
+        'meta_alignment_rate': meta_alignment_rate,
+        'skill_alignment_rate': skill_alignment_rate,
+        'handoff_rate': handoff_rate,
+        'resource_share_rate': resource_share_rate,
+        'bottleneck_relief_rate': bottleneck_relief_rate,
+        'detection_rate': detection_rate,
+        'corruption_mean': corruption_mean,
+        'stress_integrity': stress_integrity,
+        'cluster_compromise_mean': cluster_compromise_mean,
+        'compromise_reserve': compromise_reserve,
+        'trust_shield_mean': trust_shield_mean,
+        'recovery_events_total': recovery_events_total,
+        'sync_strength_mean': sync_strength_mean,
+        'reconfiguration_switch_total': reconfiguration_switch_total,
+        'failed_agents_mean': failed_agents_mean,
+        'recovery_load': recovery_load,
+        'recovery_efficiency': recovery_efficiency,
+        'build_readiness': build_readiness,
+        'mission_success': mission_success,
         'cross_group_cooperation': result['cross_group_cooperation_rate'],
         'consensus': result['final_consensus_score'],
         'polarization': result['final_polarization_index'],
@@ -215,7 +259,7 @@ def run_context(seed, params, eintrag, kontext):
         config.setdefault('resync_strength', params['resync_strength'])
 
     result = run_polarization_experiment(config, make_plot=False, print_summary=False)
-    result['prebuild_metrics'] = prebuild_metrics(result)
+    result['prebuild_metrics'] = prebuild_metrics(result, params)
     return result
 
 
@@ -275,12 +319,17 @@ def summarize_runs(runs, eintrag, context_list, agent_count):
         'bottleneck_relief_rate': {},
         'detection_rate': {},
         'corruption_mean': {},
+        'stress_integrity': {},
         'cluster_compromise_mean': {},
+        'compromise_reserve': {},
         'trust_shield_mean': {},
         'recovery_events_total': {},
         'sync_strength_mean': {},
         'reconfiguration_switch_total': {},
         'failed_agents_mean': {},
+        'recovery_load': {},
+        'recovery_efficiency': {},
+        'build_readiness': {},
         'mission_success': {},
         'cross_group_cooperation': {},
     }
@@ -335,9 +384,9 @@ def main():
         summaries.append(summary)
         print(
             f"{summary['label']:<28} Score={summary['combined_score']:+.3f} | "
-            f"Stress-Det={summary['detection_rate']['stress']:.1%} | "
-            f"Recovery={summary['recovery_events_total']['recovery']:.2f} | "
-            f"Shield={summary['trust_shield_mean']['recovery']:.2f}"
+            f"Readiness={summary['build_readiness']['recovery']:.1%} | "
+            f"Recovery-Eff={summary['recovery_efficiency']['recovery']:.1%} | "
+            f"Stress-Int={summary['stress_integrity']['stress']:.1%}"
         )
 
     best = max(summaries, key=lambda item: item['combined_score'])
@@ -348,9 +397,9 @@ def main():
         f"Delta zur gemeinsamen DNA {best['combined_score'] - baseline['combined_score']:+.3f}"
     )
     print(
-        f"Stress-Detektion {best['detection_rate']['stress']:.1%}, "
-        f"Recovery-Events {best['recovery_events_total']['recovery']:.2f}, "
-        f"Resync {best['sync_strength_mean']['recovery']:.2f}"
+        f"Build-Readiness {best['build_readiness']['recovery']:.1%}, "
+        f"Recovery-Effizienz {best['recovery_efficiency']['recovery']:.1%}, "
+        f"Stress-Integritaet {best['stress_integrity']['stress']:.1%}"
     )
 
     labels = [item['label'] for item in summaries]
@@ -388,16 +437,16 @@ def main():
 
     axes[0, 2].bar(
         x - width / 2,
-        [item['detection_rate']['stress'] * 100.0 for item in summaries],
+        [item['stress_integrity']['stress'] * 100.0 for item in summaries],
         width,
-        label='Detektion',
+        label='Stress-Integritaet',
         color='#76b7b2',
     )
     axes[0, 2].bar(
         x + width / 2,
-        [item['trust_shield_mean']['stress'] for item in summaries],
+        [item['compromise_reserve']['stress'] * 100.0 for item in summaries],
         width,
-        label='Abschirmung',
+        label='Reserve',
         color='#e15759',
     )
     axes[0, 2].set_title('Stressabwehr')
@@ -413,7 +462,8 @@ def main():
                 item['context_scores']['consensus'],
                 item['context_scores']['stress'],
                 item['context_scores']['recovery'],
-                item['sync_strength_mean']['recovery'],
+                item['build_readiness']['recovery'],
+                item['recovery_efficiency']['recovery'],
             ]
             for item in summaries
         ],
@@ -421,8 +471,8 @@ def main():
     )
     heatmap = axes[1, 0].imshow(heatmap_data, cmap='viridis', aspect='auto')
     axes[1, 0].set_title('Kontextprofil')
-    axes[1, 0].set_xticks([0, 1, 2, 3, 4])
-    axes[1, 0].set_xticklabels(['Pol', 'Kon', 'Stress', 'Rec', 'Sync'])
+    axes[1, 0].set_xticks([0, 1, 2, 3, 4, 5])
+    axes[1, 0].set_xticklabels(['Pol', 'Kon', 'Stress', 'Rec', 'Ready', 'Eff'])
     axes[1, 0].set_yticks(range(len(labels)))
     axes[1, 0].set_yticklabels(labels)
     for row in range(heatmap_data.shape[0]):
@@ -439,9 +489,9 @@ def main():
     )
     axes[1, 1].bar(
         x + width / 2,
-        [item['failed_agents_mean']['recovery'] for item in summaries],
+        [item['recovery_load']['recovery'] * 100.0 for item in summaries],
         width,
-        label='Ø Ausfaelle',
+        label='Recovery-Last',
         color='#9c755f',
     )
     axes[1, 1].set_title('Wiederherstellung')
@@ -460,10 +510,12 @@ def main():
             f"- Delta zur gemeinsamen DNA: {best['combined_score'] - baseline['combined_score']:+.3f}\n"
             f"- Completion: {best['completion_rate']['consensus']:.1%}\n"
             f"- Meta-Ausrichtung: {best['meta_alignment_rate']['consensus']:.1%}\n"
-            f"- Stress-Detektion: {best['detection_rate']['stress']:.1%}\n"
-            f"- Abschirmung: {best['trust_shield_mean']['stress']:.2f}\n"
+            f"- Build-Readiness: {best['build_readiness']['recovery']:.1%}\n"
+            f"- Stress-Integritaet: {best['stress_integrity']['stress']:.1%}\n"
+            f"- Reserve: {best['compromise_reserve']['stress']:.1%}\n"
             f"- Recovery-Events: {best['recovery_events_total']['recovery']:.2f}\n"
-            f"- Sync-Staerke: {best['sync_strength_mean']['recovery']:.2f}"
+            f"- Recovery-Effizienz: {best['recovery_efficiency']['recovery']:.1%}\n"
+            f"- Recovery-Last: {best['recovery_load']['recovery']:.1%}"
         ),
         va='top',
         fontsize=10,

@@ -215,6 +215,13 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `run_integrated_smoke_build()` prueft die Kopplung von Preview, Driftbewertung, Rollback-Safeguard und finalem Snapshot
 - der integrierte Lauf liefert damit den ersten kompakten Go/No-Go-Pfad fuer das neue `kki/`-Fundament
 
+`#131` fuehrt darauf den ersten laufenden Orchestrierungszustand ein:
+
+- `OperationalPressure` verdichtet Last, Queue-Druck, Risikolage und Recovery-Zug zu einer gemeinsamen Drucksicht
+- `GateReadiness` beschreibt Dispatch-, Shadow-, Rollout- und Recovery-Freigaben samt Blockern
+- `OrchestrationState` haelt Mission, Budgetlage, Risiken, Gates und abgeleitete Gesundheitsmarker in einer gemeinsamen Laufzeitsicht zusammen
+- `orchestration_state_for_runtime()` und `advance_orchestration_state()` liefern validierte Aufbau- und Uebergangspfade fuer den operativen Kern
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

@@ -23,13 +23,17 @@ from kki import (
     DeliveryMode,
     EvidenceRecord,
     EventEnvelope,
+    GateReadiness,
+    GateState,
     IdentityKind,
     IntegratedSmokeBuild,
     LoadedControlPlane,
     MessageEnvelope,
     MessageKind,
     ModuleBoundaryName,
+    OperationalPressure,
     OperatingMode,
+    OrchestrationStatus,
     PersistenceRecord,
     PreviewMode,
     ProtocolContext,
@@ -49,6 +53,7 @@ from kki import (
     ValidationStep,
     authorize_action,
     authorize_artifact,
+    advance_orchestration_state,
     audit_entry_for_artifact,
     audit_entry_for_message,
     build_telemetry_snapshot,
@@ -60,6 +65,7 @@ from kki import (
     load_control_plane,
     module_boundaries,
     module_dependency_graph,
+    orchestration_state_for_runtime,
     protocol_context,
     recovery_checkpoint_for_state,
     recovery_outcome,
@@ -228,6 +234,79 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(exported["audit_ref"], "audit-42")
         self.assertEqual(exported["commitment_ref"], "commit-7")
         self.assertEqual(exported["payload"]["decision"], "approved")
+
+    def test_kki_orchestration_state_tracks_health_markers(self) -> None:
+        dna = runtime_dna_for_profile("pilot-runtime-dna", stage=RuntimeStage.PILOT)
+        state = orchestration_state_for_runtime(
+            dna,
+            mission_ref="mission-131",
+            status=OrchestrationStatus.ACTIVE,
+            budget_available=0.78,
+            budget_reserved=0.22,
+            pressure=OperationalPressure(0.44, 0.41, 0.28, 0.18),
+            open_risks=("drift-watch",),
+            labels={"wave": "131"},
+        )
+
+        exported = state.to_dict()
+        self.assertEqual(exported["status"], "active")
+        self.assertEqual(exported["health_status"], "healthy")
+        self.assertIn("pressure:elevated", exported["health_markers"])
+        self.assertEqual(exported["dispatch_budget"], 0.56)
+        self.assertTrue(state.recovery_ready)
+
+    def test_kki_orchestration_state_detects_blocked_recovery(self) -> None:
+        dna = runtime_dna_for_profile("pilot-runtime-dna", stage=RuntimeStage.PILOT)
+        state = orchestration_state_for_runtime(
+            dna,
+            mission_ref="mission-131",
+            status=OrchestrationStatus.DEGRADED,
+            budget_available=0.72,
+            budget_reserved=0.14,
+            pressure=OperationalPressure(0.78, 0.72, 0.67, 0.58),
+            gates=GateReadiness(recovery=GateState.BLOCKED, blockers=("reserve breach",)),
+            open_risks=("drift", "queue-backlog", "operator-gate"),
+        )
+
+        self.assertFalse(state.recovery_ready)
+        self.assertEqual(state.health_status(), "gated")
+        self.assertIn("gates:blocked", state.health_markers())
+        self.assertIn("risks-hot", state.health_markers())
+
+    def test_kki_orchestration_state_validates_transitions(self) -> None:
+        dna = runtime_dna_for_profile("balanced-runtime-dna", stage=RuntimeStage.SHADOW)
+        staged = orchestration_state_for_runtime(dna, mission_ref="mission-131")
+        active = advance_orchestration_state(
+            staged,
+            status=OrchestrationStatus.ACTIVE,
+            pressure=OperationalPressure(0.31, 0.22, 0.18, 0.12),
+            labels={"handoff": "accepted"},
+        )
+
+        self.assertEqual(active.status, OrchestrationStatus.ACTIVE)
+        self.assertEqual(active.labels["handoff"], "accepted")
+        self.assertEqual(active.health_status(), "healthy")
+
+        with self.assertRaises(ValueError):
+            advance_orchestration_state(active, status=OrchestrationStatus.BOOTSTRAPPING)
+
+    def test_kki_orchestration_state_exports_core_state(self) -> None:
+        dna = runtime_dna_for_profile("pilot-runtime-dna", stage=RuntimeStage.PILOT)
+        state = orchestration_state_for_runtime(
+            dna,
+            mission_ref="mission-131",
+            status=OrchestrationStatus.THROTTLED,
+            budget_available=0.75,
+            budget_reserved=0.19,
+            pressure=OperationalPressure(0.64, 0.57, 0.33, 0.21),
+        )
+        core_state = state.to_core_state()
+        exported = core_state.to_dict()
+
+        self.assertEqual(exported["module_boundary"], "orchestration")
+        self.assertEqual(exported["status"], "throttled")
+        self.assertEqual(exported["labels"]["pressure_level"], "elevated")
+        self.assertEqual(exported["labels"]["health_status"], "degraded")
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

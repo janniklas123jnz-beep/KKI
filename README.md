@@ -174,6 +174,13 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `EventEnvelope` fuer asynchrone Replay- und Beobachtungsevents
 - Helfer fuer kanonische Command-, Event-, Transfer- und Evidence-Nachrichten
 
+`#125` setzt darauf die erste Autorisierungsbasis:
+
+- `AuthorizationIdentity` fuer Modul-, Laufzeit-, Operator-, Supervisor- und Werkzeugidentitaeten
+- `PermissionRule` und `permission_catalog()` fuer die kanonische Rollenmatrix
+- `DelegationGrant` fuer zeitlich und kontextuell begrenzte Delegation
+- `authorize_action()` fuer explizite Freigabeentscheidungen mit Evidence- und Commitment-Bindung
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

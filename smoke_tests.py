@@ -11,19 +11,27 @@ from unittest import mock
 from pathlib import Path
 
 from kki import (
+    ActionName,
+    AuthorizationIdentity,
     CoreState,
+    DelegationGrant,
     DeliveryGuarantee,
     DeliveryMode,
     EvidenceRecord,
     EventEnvelope,
+    IdentityKind,
     MessageEnvelope,
     MessageKind,
     ModuleBoundaryName,
+    OperatingMode,
     PersistenceRecord,
     ProtocolContext,
+    RoleName,
     RuntimeStage,
     RuntimeThresholds,
     TransferEnvelope,
+    TrustLevel,
+    authorize_action,
     command_message,
     core_state_for_runtime,
     event_message,
@@ -262,6 +270,148 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(message.kind, MessageKind.EVIDENCE)
         self.assertEqual(message.delivery_guarantee, DeliveryGuarantee.PROOF_BOUND)
         self.assertEqual(message.integrity_status, "attested")
+
+    def test_kki_observer_identity_can_observe_events(self) -> None:
+        identity = AuthorizationIdentity(
+            slug="observer-1",
+            kind=IdentityKind.OPERATOR,
+            role=RoleName.OBSERVER,
+            trust_level=TrustLevel.RESTRICTED,
+            boundary_scope=("telemetry",),
+        )
+        event = event_message(
+            name="telemetry-pulse",
+            event_class="telemetry",
+            severity="info",
+            source_boundary="telemetry",
+            target_boundary="governance",
+            correlation_id="corr-observe",
+            payload={"heartbeat": True},
+        )
+
+        decision = authorize_action(
+            identity,
+            action=ActionName.OBSERVE,
+            boundary="telemetry",
+            message=event.message,
+        )
+
+        self.assertTrue(decision.allowed)
+        self.assertEqual(decision.permission_source, "role-policy")
+
+    def test_kki_gatekeeper_quarantine_requires_evidence(self) -> None:
+        identity = AuthorizationIdentity(
+            slug="gatekeeper-1",
+            kind=IdentityKind.OPERATOR,
+            role=RoleName.GATEKEEPER,
+            trust_level=TrustLevel.PRIVILEGED,
+            boundary_scope=("security", "shadow", "rollout"),
+        )
+
+        denied = authorize_action(
+            identity,
+            action="quarantine",
+            boundary="security",
+        )
+        allowed = authorize_action(
+            identity,
+            action="quarantine",
+            boundary="security",
+            evidence_ref="audit-quarantine-1",
+        )
+
+        self.assertFalse(denied.allowed)
+        self.assertTrue(allowed.allowed)
+        self.assertTrue(allowed.requires_evidence)
+
+    def test_kki_supervisor_override_requires_commitment(self) -> None:
+        identity = AuthorizationIdentity(
+            slug="supervisor-1",
+            kind=IdentityKind.SUPERVISOR,
+            role=RoleName.SUPERVISOR,
+            trust_level=TrustLevel.EMERGENCY,
+            boundary_scope=("security", "governance", "recovery"),
+        )
+
+        denied = authorize_action(
+            identity,
+            action="override",
+            boundary="governance",
+            operating_mode=OperatingMode.EMERGENCY,
+            evidence_ref="audit-override-1",
+        )
+        allowed = authorize_action(
+            identity,
+            action="override",
+            boundary="governance",
+            operating_mode=OperatingMode.EMERGENCY,
+            evidence_ref="audit-override-1",
+            commitment_ref="commit-override-1",
+        )
+
+        self.assertFalse(denied.allowed)
+        self.assertTrue(allowed.allowed)
+        self.assertTrue(allowed.escalation_required)
+
+    def test_kki_delegation_is_bounded_and_time_limited(self) -> None:
+        identity = AuthorizationIdentity(
+            slug="runtime-cell-1",
+            kind=IdentityKind.RUNTIME,
+            role=RoleName.OBSERVER,
+            trust_level=TrustLevel.VERIFIED,
+            boundary_scope=("orchestration",),
+        )
+        delegation = DelegationGrant(
+            grantor_slug="operator-1",
+            delegate_slug="runtime-cell-1",
+            action=ActionName.EXECUTE,
+            boundaries=("orchestration",),
+            operating_modes=(OperatingMode.NORMAL,),
+            message_kinds=(MessageKind.COMMAND,),
+            expires_at="2099-01-01T00:00:00+00:00",
+            justification="temporary rollout assist",
+        )
+
+        decision = authorize_action(
+            identity,
+            action="execute",
+            boundary="orchestration",
+            delegation=delegation,
+        )
+
+        self.assertTrue(decision.allowed)
+        self.assertEqual(decision.permission_source, "delegation")
+
+    def test_kki_delegation_does_not_grant_critical_override(self) -> None:
+        identity = AuthorizationIdentity(
+            slug="operator-2",
+            kind=IdentityKind.OPERATOR,
+            role=RoleName.OBSERVER,
+            trust_level=TrustLevel.EMERGENCY,
+            boundary_scope=("governance",),
+        )
+        delegation = DelegationGrant(
+            grantor_slug="supervisor-2",
+            delegate_slug="operator-2",
+            action=ActionName.OVERRIDE,
+            boundaries=("governance",),
+            operating_modes=(OperatingMode.EMERGENCY,),
+            message_kinds=(MessageKind.COMMAND,),
+            expires_at="2099-01-01T00:00:00+00:00",
+            justification="should remain disallowed",
+        )
+
+        decision = authorize_action(
+            identity,
+            action="override",
+            boundary="governance",
+            operating_mode=OperatingMode.EMERGENCY,
+            evidence_ref="audit-override-2",
+            commitment_ref="commit-override-2",
+            delegation=delegation,
+        )
+
+        self.assertFalse(decision.allowed)
 
     def test_kooperation_test_is_reproducible(self) -> None:
         with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:

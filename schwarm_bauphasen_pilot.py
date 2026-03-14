@@ -312,13 +312,15 @@ def pilot_metrics(config, result, params, profile):
     integration_score = normalize(profile['integration_depth'], 1.0, 5.0)
     readiness_score = normalize(profile['pilot_readiness'], 1.0, 4.0)
     safety_score = normalize(profile['safety_depth'], 1.0, 5.0)
+    schema_integrity = clamp01(mittelwert([schema['mandatory_coverage'], schema['invariant_compliance']]))
+    startup_alignment = clamp01(mittelwert([schema['startup_readiness'], readiness_score]))
 
     architecture_fit = clamp01(
         mittelwert(
             [
-                schema['mandatory_coverage'],
-                schema['invariant_compliance'],
+                schema_integrity,
                 workflow.get('meta_alignment_rate', 0.0),
+                schema['startup_readiness'],
                 integration_score,
                 profile['bias']['architecture'],
             ]
@@ -330,7 +332,7 @@ def pilot_metrics(config, result, params, profile):
                 workflow.get('completion_rate', 0.0),
                 workflow.get('resource_efficiency', 0.0),
                 workflow.get('handoff_rate', 0.0),
-                readiness_score,
+                startup_alignment,
                 profile['bias']['launch'],
             ]
         )
@@ -388,7 +390,7 @@ def pilot_metrics(config, result, params, profile):
                 coordination_quality,
                 safety_posture,
                 1.0 - workflow.get('misinformation_corruption_mean', 0.0),
-                traceability,
+                startup_alignment,
             ]
         )
     )
@@ -430,6 +432,8 @@ def pilot_metrics(config, result, params, profile):
         'failed_agents_mean': workflow.get('failed_agents_mean', 0.0),
         'consensus': result['final_consensus_score'],
         'polarization': result['final_polarization_index'],
+        'schema_integrity': schema_integrity,
+        'startup_alignment': startup_alignment,
         'architecture_fit': architecture_fit,
         'launch_readiness': launch_readiness,
         'coordination_quality': coordination_quality,
@@ -518,10 +522,18 @@ def context_score(kontext_name, result, agent_count):
             - 0.12 * failed_share
             - 0.08 * metrics['pilot_overhead']
         )
+    if kontext_name == 'pilot':
+        return (
+            metrics['pilot_resilience']
+            + 0.18 * metrics['launch_readiness']
+            + 0.12 * metrics['transition_integrity']
+            + 0.10 * metrics['pilot_readiness']
+            - 0.12 * metrics['pilot_overhead']
+        )
     return (
-        metrics['pilot_resilience']
-        + 0.18 * metrics['launch_readiness']
-        + 0.12 * metrics['transition_integrity']
+        metrics['launch_readiness']
+        + 0.18 * metrics['coordination_quality']
+        + 0.12 * metrics['architecture_fit']
         - 0.12 * metrics['pilot_overhead']
     )
 
@@ -529,6 +541,8 @@ def context_score(kontext_name, result, agent_count):
 def summarize_runs(runs, profile, context_list, agent_count):
     context_scores = {}
     metrics = {
+        'schema_integrity': {},
+        'startup_alignment': {},
         'architecture_fit': {},
         'launch_readiness': {},
         'coordination_quality': {},
@@ -652,12 +666,12 @@ def main():
     )
     axes[0, 2].bar(
         x + width / 2,
-        [item['architecture_fit']['blueprint'] for item in summaries],
+        [item['startup_alignment']['pilot'] for item in summaries],
         width,
-        label='Architekturfit',
+        label='Pilot-Start',
         color='#f28e2b',
     )
-    axes[0, 2].set_title('Architektur und Koordination')
+    axes[0, 2].set_title('Koordination und Pilot-Start')
     axes[0, 2].set_xticks(x)
     axes[0, 2].set_xticklabels(labels, rotation=18)
     axes[0, 2].legend()
@@ -683,10 +697,24 @@ def main():
     axes[1, 0].legend()
     axes[1, 0].grid(True, axis='y', alpha=0.3)
 
-    axes[1, 1].bar(x, [item['context_scores']['stress'] for item in summaries], color=colors)
-    axes[1, 1].set_title('Stress-Score')
+    axes[1, 1].bar(
+        x - width / 2,
+        [item['context_scores']['stress'] for item in summaries],
+        width,
+        label='Stress',
+        color='#e15759',
+    )
+    axes[1, 1].bar(
+        x + width / 2,
+        [item['context_scores']['pilot'] for item in summaries],
+        width,
+        label='Pilot',
+        color='#59a14f',
+    )
+    axes[1, 1].set_title('Stress- und Pilot-Score')
     axes[1, 1].set_xticks(x)
     axes[1, 1].set_xticklabels(labels, rotation=18)
+    axes[1, 1].legend()
     axes[1, 1].grid(True, axis='y', alpha=0.3)
 
     axes[1, 2].bar(

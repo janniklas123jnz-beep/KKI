@@ -358,6 +358,28 @@ def budget_metrics(config, result, params, profile, kontext):
             ]
         )
     )
+    budget_integrity = clamp01(
+        mittelwert(
+            [
+                protection_strength,
+                1.0 - workflow.get('misinformation_corruption_mean', 0.0),
+                1.0 - workflow.get('cluster_compromise_mean', 0.0),
+                workflow.get('trust_shield_mean', 0.0),
+                efficiency_value,
+            ]
+        )
+    )
+    protection_return = clamp01(
+        mittelwert(
+            [
+                adaptive_fit,
+                operational_retention,
+                recovery_margin,
+                efficiency_value,
+                1.0 - budget_overhead if 'budget_overhead' in locals() else 0.0,
+            ]
+        )
+    )
     budget_overhead = clamp01(
         mittelwert(
             [
@@ -389,6 +411,8 @@ def budget_metrics(config, result, params, profile, kontext):
         'operational_retention': operational_retention,
         'recovery_margin': recovery_margin,
         'efficiency_value': efficiency_value,
+        'budget_integrity': budget_integrity,
+        'protection_return': protection_return,
         'budget_overhead': budget_overhead,
     }
 
@@ -443,16 +467,15 @@ def context_score(kontext_name, result, agent_count):
     if kontext_name == 'stress':
         return (
             base
-            + 0.18 * metrics['protection_strength']
+            + 0.18 * metrics['budget_integrity']
             + 0.12 * metrics['adaptive_fit']
-            + 0.08 * metrics['efficiency_value']
-            - 0.12 * metrics['corruption_mean']
+            + 0.08 * metrics['protection_return']
             - 0.10 * metrics['budget_overhead']
         )
     if kontext_name == 'recovery':
         return (
             base
-            + 0.18 * metrics['recovery_margin']
+            + 0.18 * metrics['protection_return']
             + 0.12 * metrics['adaptive_fit']
             + 0.08 * metrics['operational_retention']
             - 0.12 * failed_share
@@ -460,9 +483,9 @@ def context_score(kontext_name, result, agent_count):
         )
     return (
         base
-        + 0.22 * metrics['protection_strength']
+        + 0.22 * metrics['budget_integrity']
         + 0.16 * metrics['adaptive_fit']
-        + 0.12 * metrics['recovery_margin']
+        + 0.12 * metrics['protection_return']
         - 0.12 * metrics['budget_overhead']
         - 0.10 * failed_share
     )
@@ -476,6 +499,8 @@ def summarize_runs(runs, profile, context_list, agent_count):
         'operational_retention': {},
         'recovery_margin': {},
         'efficiency_value': {},
+        'budget_integrity': {},
+        'protection_return': {},
         'budget_overhead': {},
     }
 
@@ -530,9 +555,9 @@ def main():
         summaries.append(summary)
         print(
             f"{summary['label']:<29} Score={summary['combined_score']:+.3f} | "
-            f"Schutz={summary['protection_strength']['stress']:.2f} | "
+            f"Integritaet={summary['budget_integrity']['stress']:.2f} | "
             f"Adaptiv={summary['adaptive_fit']['surge']:.2f} | "
-            f"Betrieb={summary['operational_retention']['operations']:.2f}"
+            f"Rendite={summary['protection_return']['recovery']:.2f}"
         )
 
     best = max(summaries, key=lambda item: item['combined_score'])
@@ -544,9 +569,9 @@ def main():
         f"Delta zum operativen Budget {best['combined_score'] - baseline['combined_score']:+.3f}"
     )
     print(
-        f"Schutz {best['protection_strength']['stress']:.2f}, "
+        f"Integritaet {best['budget_integrity']['stress']:.2f}, "
         f"Adaptiv {best['adaptive_fit']['surge']:.2f}, "
-        f"Betrieb {best['operational_retention']['operations']:.2f}"
+        f"Rendite {best['protection_return']['recovery']:.2f}"
     )
 
     labels = [item['label'] for item in summaries]
@@ -564,9 +589,9 @@ def main():
 
     axes[0, 1].bar(
         x - width / 2,
-        [item['protection_strength']['stress'] for item in summaries],
+        [item['budget_integrity']['stress'] for item in summaries],
         width,
-        label='Schutz',
+        label='Budget-Integritaet',
         color='#4e79a7',
     )
     axes[0, 1].bar(
@@ -576,7 +601,7 @@ def main():
         label='Adaptive Passung',
         color='#59a14f',
     )
-    axes[0, 1].set_title('Schutz und Adaptivitaet')
+    axes[0, 1].set_title('Integritaet und Adaptivitaet')
     axes[0, 1].set_xticks(x)
     axes[0, 1].set_xticklabels(labels, rotation=18)
     axes[0, 1].legend()
@@ -604,9 +629,9 @@ def main():
 
     axes[1, 0].bar(
         x - width / 2,
-        [item['recovery_margin']['recovery'] for item in summaries],
+        [item['protection_return']['recovery'] for item in summaries],
         width,
-        label='Recovery',
+        label='Schutzrendite',
         color='#e15759',
     )
     axes[1, 0].bar(
@@ -616,7 +641,7 @@ def main():
         label='Overhead',
         color='#bab0ab',
     )
-    axes[1, 0].set_title('Recovery gegen Overhead')
+    axes[1, 0].set_title('Schutzrendite gegen Overhead')
     axes[1, 0].set_xticks(x)
     axes[1, 0].set_xticklabels(labels, rotation=18)
     axes[1, 0].legend()

@@ -209,6 +209,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `RecoveryOutcome` fuer evidence-gebundene Recovery-Ergebnisse
 - Helfer fuer Checkpoint-Erzeugung, Rollback-Ketten und Snapshot-gebundene Recovery-Telemetrie
 
+`#130` schliesst den Fundamentblock mit einem integrierten Smoke-Build:
+
+- `IntegratedSmokeBuild` fasst Runtime, Control-Plane, Shadow, Recovery und Telemetrie in einem End-to-End-Pfad zusammen
+- `run_integrated_smoke_build()` prueft die Kopplung von Preview, Driftbewertung, Rollback-Safeguard und finalem Snapshot
+- der integrierte Lauf liefert damit den ersten kompakten Go/No-Go-Pfad fuer das neue `kki/`-Fundament
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

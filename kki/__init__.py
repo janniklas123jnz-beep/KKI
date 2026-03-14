@@ -8,6 +8,7 @@ from .data_models import (
     core_state_for_runtime,
     transfer_envelope_for_state,
 )
+from .integrated_smoke import IntegratedSmokeBuild, run_integrated_smoke_build
 from .message_protocols import (
     DeliveryGuarantee,
     DeliveryMode,
@@ -96,6 +97,7 @@ __all__ = [
     "EventEnvelope",
     "MessageEnvelope",
     "MessageKind",
+    "IntegratedSmokeBuild",
     "ActionName",
     "ArtifactKind",
     "ArtifactScope",
@@ -148,6 +150,7 @@ __all__ = [
     "permission_catalog",
     "protocol_context",
     "role_permissions",
+    "run_integrated_smoke_build",
     "recovery_checkpoint_for_state",
     "recovery_outcome",
     "rollback_directive_for_checkpoint",

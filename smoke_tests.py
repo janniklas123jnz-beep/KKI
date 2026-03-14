@@ -24,6 +24,7 @@ from kki import (
     EvidenceRecord,
     EventEnvelope,
     IdentityKind,
+    IntegratedSmokeBuild,
     LoadedControlPlane,
     MessageEnvelope,
     MessageKind,
@@ -63,6 +64,7 @@ from kki import (
     recovery_checkpoint_for_state,
     recovery_outcome,
     rollback_directive_for_checkpoint,
+    run_integrated_smoke_build,
     runtime_dna_for_profile,
     runtime_dna_from_env,
     shadow_event,
@@ -864,6 +866,23 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(outcome.status, "reentry-ready")
         self.assertEqual(outcome.evidence.commitment_ref, "commit-recovery-4")
         self.assertIn("rollout-policy", outcome.snapshot.to_dict()["active_controls"])
+
+    def test_kki_integrated_smoke_build_runs_end_to_end(self) -> None:
+        smoke = run_integrated_smoke_build(correlation_id="corr-integrated-1")
+
+        self.assertIsInstance(smoke, IntegratedSmokeBuild)
+        self.assertTrue(smoke.success)
+        self.assertEqual(smoke.shadow_event.event_class, "shadow")
+        self.assertEqual(smoke.recovery_outcome.status, "reentry-ready")
+
+    def test_kki_integrated_smoke_build_keeps_controls_and_audit_visible(self) -> None:
+        smoke = run_integrated_smoke_build(correlation_id="corr-integrated-2")
+        exported = smoke.to_dict()
+
+        self.assertIn("shadow-policy", exported["final_snapshot"]["active_controls"])
+        self.assertIn("rollout-policy", exported["final_snapshot"]["active_controls"])
+        self.assertGreaterEqual(len(exported["final_snapshot"]["audit_entries"]), 3)
+        self.assertEqual(exported["final_snapshot"]["highest_severity"], "info")
 
     def test_kooperation_test_is_reproducible(self) -> None:
         with tempfile.TemporaryDirectory(prefix="kki-smoke-") as tmpdir:

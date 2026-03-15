@@ -88,6 +88,11 @@ from kki import (
     IncidentSeverity,
     IntegratedOperationsRun,
     IntegratedSmokeBuild,
+    InterventionFallback,
+    InterventionMode,
+    InterventionSimulation,
+    InterventionSimulationStatus,
+    InterventionSimulator,
     LearningPatternType,
     LearningRecord,
     LearningRegister,
@@ -209,6 +214,7 @@ from kki import (
     build_governance_agenda,
     build_guardrail_portfolio,
     build_improvement_orchestrator,
+    build_intervention_simulator,
     build_learning_register,
     build_operations_cockpit,
     build_operations_steward,
@@ -4142,6 +4148,43 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(governor.autonomous_case_ids, ("pilot-ready",))
         self.assertEqual(governor.governance_required_case_ids, ("shadow-guarded",))
         self.assertAlmostEqual(governor.governor_signal.metrics["assignment_count"], 4.0)
+
+    def test_kki_intervention_simulator_projects_ready_autonomous_case(self) -> None:
+        simulator = build_intervention_simulator(simulator_id="intervention-176-ready")
+        simulation = next(item for item in simulator.simulations if item.case_id == "pilot-ready")
+
+        self.assertIsInstance(simulator, InterventionSimulator)
+        self.assertIsInstance(simulation, InterventionSimulation)
+        self.assertEqual(simulation.intervention_mode, InterventionMode.AUTONOMOUS)
+        self.assertEqual(simulation.projected_status, InterventionSimulationStatus.READY)
+        self.assertEqual(simulation.fallback_path, InterventionFallback.OBSERVE_ONLY)
+
+    def test_kki_intervention_simulator_projects_guarded_governance_case(self) -> None:
+        simulator = build_intervention_simulator(simulator_id="intervention-176-guarded")
+        simulation = next(item for item in simulator.simulations if item.case_id == "shadow-guarded")
+
+        self.assertEqual(simulation.intervention_mode, InterventionMode.GOVERNED)
+        self.assertEqual(simulation.projected_status, InterventionSimulationStatus.GUARDED)
+        self.assertEqual(simulation.fallback_path, InterventionFallback.APPROVAL_GATE)
+
+    def test_kki_intervention_simulator_flags_risk_and_rollback_cases(self) -> None:
+        simulator = build_intervention_simulator(simulator_id="intervention-176-risk")
+
+        rollback_case = next(item for item in simulator.simulations if item.case_id == "pilot-containment")
+        at_risk_case = next(item for item in simulator.simulations if item.case_id == "recovery-resume")
+        self.assertEqual(rollback_case.projected_status, InterventionSimulationStatus.ROLLBACK_RECOMMENDED)
+        self.assertEqual(rollback_case.fallback_path, InterventionFallback.ROLLBACK)
+        self.assertEqual(at_risk_case.projected_status, InterventionSimulationStatus.AT_RISK)
+        self.assertTrue(at_risk_case.regression_risk)
+
+    def test_kki_intervention_simulator_aggregates_simulation_signal(self) -> None:
+        simulator = build_intervention_simulator(simulator_id="intervention-176-signal")
+
+        self.assertEqual(simulator.simulator_signal.status, "rollback-recommended")
+        self.assertEqual(simulator.ready_case_ids, ("pilot-ready",))
+        self.assertEqual(simulator.guarded_case_ids, ("shadow-guarded",))
+        self.assertEqual(simulator.at_risk_case_ids, ("recovery-resume",))
+        self.assertEqual(simulator.rollback_case_ids, ("pilot-containment",))
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

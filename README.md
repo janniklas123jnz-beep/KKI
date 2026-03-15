@@ -488,6 +488,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `build_autonomy_governor()` koppelt `PlaybookCatalog`, `GovernanceAgenda` und `ExceptionRegister`, damit nur bounded-autonomy-faehige Rezepte ohne Sonderlage wirklich delegiert werden
 - der Governor erweitert den Snapshot um ein explizites `autonomy-governor`-Signal fuer kontrollierte Delegation mit Approval-Gates und Exception-Eskalationen
 
+`#176` simuliert nun Eingriffe vorab:
+
+- `InterventionSimulation`, `InterventionSimulator`, `InterventionMode`, `InterventionSimulationStatus` und `InterventionFallback` modellieren geplante autonome, governance- oder steward-gefuehrte Eingriffe vor ihrer Ausfuehrung
+- `build_intervention_simulator()` koppelt `AutonomyGovernor`, `OutcomeLedger` und `ExceptionRegister`, um pro Fall eine Projektion auf `ready`, `guarded`, `at-risk` oder `rollback-recommended` samt Fallback-Pfad zu erzeugen
+- der Simulator erweitert den Snapshot um ein explizites `intervention-simulator`-Signal fuer vorab erkannte Rueckfallmuster, Rollback-Bedarf und stabile Autonomie-Fenster
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

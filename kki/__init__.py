@@ -66,6 +66,14 @@ from .improvement_orchestrator import (
     ImprovementWave,
     build_improvement_orchestrator,
 )
+from .intervention_simulator import (
+    InterventionFallback,
+    InterventionMode,
+    InterventionSimulation,
+    InterventionSimulationStatus,
+    InterventionSimulator,
+    build_intervention_simulator,
+)
 from .guardrail_portfolio import (
     Guardrail,
     GuardrailDomain,
@@ -324,6 +332,11 @@ __all__ = [
     "IncidentSeverity",
     "IntegratedOperationsRun",
     "IntegratedSmokeBuild",
+    "InterventionFallback",
+    "InterventionMode",
+    "InterventionSimulation",
+    "InterventionSimulationStatus",
+    "InterventionSimulator",
     "LearningPatternType",
     "LearningRecord",
     "LearningRegister",
@@ -454,6 +467,7 @@ __all__ = [
     "build_exception_register",
     "build_governance_agenda",
     "build_improvement_orchestrator",
+    "build_intervention_simulator",
     "build_learning_register",
     "build_operations_cockpit",
     "build_operations_steward",

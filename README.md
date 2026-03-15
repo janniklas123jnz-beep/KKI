@@ -338,6 +338,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `build_readiness_review()` verbindet `BenchmarkHarness` und `RuntimeScorecard` zu einer finalen Healthy-/Attention-/Blocked-Abnahmesicht
 - der finale Review erweitert den Snapshot um ein explizites `readiness-review`-Signal fuer Abschlussstatus, Findings und Release-Readiness
 
+`#151` uebersetzt diese Befunde nun in konkrete Folgearbeit:
+
+- `ReviewActionItem`, `ReviewActionPlan`, `ReviewActionPriority` und `ReviewActionType` modellieren priorisierte operative Action-Items mit Owner, Zielstatus und Release-Blockade
+- `build_review_action_plan()` leitet aus `ReadinessReview`-Findings konkrete Governance-, Recovery-, Remediation- und Monitoring-Massnahmen ab
+- der Aktionsplan erweitert den Snapshot um ein explizites `review-action-plan`-Signal fuer priorisierte Folgearbeit nach dem Abschlussreview
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

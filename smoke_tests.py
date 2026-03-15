@@ -79,6 +79,10 @@ from kki import (
     ReleaseCampaignStage,
     ReleaseCampaignStageType,
     ReleaseCampaignStatus,
+    ReviewActionItem,
+    ReviewActionPlan,
+    ReviewActionPriority,
+    ReviewActionType,
     RoleName,
     RolloutPhase,
     RolloutState,
@@ -107,8 +111,9 @@ from kki import (
     audit_entry_for_message,
     benchmark_case_matrix,
     build_dispatch_plan,
-    build_release_campaign,
     build_readiness_review,
+    build_release_campaign,
+    build_review_action_plan,
     build_runtime_scorecard,
     build_telemetry_snapshot,
     claim_for_work_unit,
@@ -3046,6 +3051,89 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(review.healthy_case_ids, ("pilot-ready",))
         self.assertEqual(review.blocked_case_ids, ("pilot-containment",))
         self.assertFalse(review.release_ready)
+
+    def test_kki_review_action_plan_creates_monitoring_for_ready_case(self) -> None:
+        review = build_readiness_review(
+            build_runtime_scorecard(
+                run_benchmark_harness(
+                    (
+                        BenchmarkCase(
+                            case_id="action-ready",
+                            title="action ready",
+                            missions=(mission_profile_for_name("pilot-cutover"),),
+                            release_mode=BenchmarkReleaseMode.READY,
+                        ),
+                    ),
+                    harness_id="harness-151-ready",
+                ),
+                scorecard_id="scorecard-151-ready",
+            ),
+            review_id="review-151-ready",
+        )
+        plan = build_review_action_plan(review, plan_id="plan-151-ready")
+
+        self.assertIsInstance(plan, ReviewActionPlan)
+        self.assertIsInstance(plan.actions[0], ReviewActionItem)
+        self.assertEqual(plan.plan_signal.status, "planned")
+        self.assertEqual(plan.actions[0].priority, ReviewActionPriority.LOW)
+        self.assertEqual(plan.actions[0].action_type, ReviewActionType.MONITOR)
+
+    def test_kki_review_action_plan_routes_governance_findings(self) -> None:
+        review = build_readiness_review(
+            build_runtime_scorecard(
+                run_benchmark_harness(
+                    (
+                        BenchmarkCase(
+                            case_id="action-guarded",
+                            title="action guarded",
+                            missions=(benchmark_case_matrix()[1].missions[0],),
+                            release_mode=BenchmarkReleaseMode.GUARDED,
+                        ),
+                    ),
+                    harness_id="harness-151-guarded",
+                ),
+                scorecard_id="scorecard-151-guarded",
+            ),
+            review_id="review-151-guarded",
+        )
+        plan = build_review_action_plan(review, plan_id="plan-151-guarded")
+
+        self.assertEqual(plan.plan_signal.status, "priority-actions")
+        self.assertEqual(plan.actions[0].owner, ModuleBoundaryName.GOVERNANCE)
+        self.assertEqual(plan.actions[0].target_status, "governance-reviewed")
+
+    def test_kki_review_action_plan_routes_critical_remediation(self) -> None:
+        review = build_readiness_review(
+            build_runtime_scorecard(
+                run_benchmark_harness(
+                    (
+                        BenchmarkCase(
+                            case_id="action-blocked",
+                            title="action blocked",
+                            missions=(mission_profile_for_name("pilot-cutover"),),
+                            release_mode=BenchmarkReleaseMode.BLOCKED,
+                        ),
+                    ),
+                    harness_id="harness-151-blocked",
+                ),
+                scorecard_id="scorecard-151-blocked",
+            ),
+            review_id="review-151-blocked",
+        )
+        plan = build_review_action_plan(review, plan_id="plan-151-blocked")
+
+        self.assertEqual(plan.plan_signal.status, "critical-actions")
+        self.assertEqual(plan.critical_case_ids, ("action-blocked",))
+        self.assertEqual(plan.blocked_case_ids, ("action-blocked",))
+        self.assertEqual(plan.actions[0].owner, ModuleBoundaryName.RECOVERY)
+
+    def test_kki_review_action_plan_aggregates_default_review(self) -> None:
+        plan = build_review_action_plan(plan_id="plan-151-matrix")
+
+        self.assertEqual(plan.plan_signal.status, "critical-actions")
+        self.assertEqual(plan.critical_case_ids, ("pilot-containment",))
+        self.assertIn(ModuleBoundaryName.GOVERNANCE, plan.owner_boundaries)
+        self.assertIn(ModuleBoundaryName.RECOVERY, plan.owner_boundaries)
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

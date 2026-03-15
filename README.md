@@ -386,6 +386,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `build_operations_cockpit()` koppelt `ReadinessReview`, `RiskRegister`, `DriftMonitor` und `RemediationCampaign`, um pro Fall eine operative Gesamtlage zu bilden
 - das Cockpit erweitert den Snapshot um ein explizites `operations-cockpit`-Signal fuer die verdichtete Leitwarte ueber Freigabe, Risiko, Drift und Behebung
 
+`#159` leitet daraus nun konkrete Portfolio-Entscheidungen ab:
+
+- `PortfolioRecommendation`, `PortfolioOptimizer`, `PortfolioPriority` und `PortfolioAction` modellieren die naechsten Verbesserungs-, Freigabe- und Beobachtungsschritte
+- `build_portfolio_optimizer()` koppelt `OperationsCockpit` und `RemediationCampaign`, um Nutzen, Risiko, Kapazitaetskosten und Release-Kandidaten pro Fall abzuwiegen
+- der Optimierer erweitert den Snapshot um ein explizites `portfolio-optimizer`-Signal fuer priorisierte Queues, kritische Eingriffe und freigabefaehige Kandidaten
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

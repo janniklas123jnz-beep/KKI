@@ -76,6 +76,10 @@ from kki import (
     OperatingMode,
     OperationsIncident,
     OrchestrationStatus,
+    PortfolioAction,
+    PortfolioOptimizer,
+    PortfolioPriority,
+    PortfolioRecommendation,
     PersistenceRecord,
     PreviewMode,
     ShadowCoordination,
@@ -142,6 +146,7 @@ from kki import (
     build_guardrail_portfolio,
     build_improvement_orchestrator,
     build_operations_cockpit,
+    build_portfolio_optimizer,
     build_remediation_campaign,
     build_readiness_review,
     build_release_campaign,
@@ -3479,6 +3484,39 @@ class SmokeTests(unittest.TestCase):
         self.assertIn("pilot-ready", cockpit.healthy_case_ids)
         self.assertIn("shadow-guarded", cockpit.attention_case_ids)
         self.assertIn("pilot-containment", cockpit.critical_case_ids)
+
+    def test_kki_portfolio_optimizer_prioritizes_blocked_case(self) -> None:
+        optimizer = build_portfolio_optimizer(optimizer_id="optimizer-159-critical")
+        blocked_recommendation = next(rec for rec in optimizer.recommendations if rec.case_id == "pilot-containment")
+
+        self.assertIsInstance(optimizer, PortfolioOptimizer)
+        self.assertIsInstance(blocked_recommendation, PortfolioRecommendation)
+        self.assertEqual(blocked_recommendation.priority, PortfolioPriority.CRITICAL)
+        self.assertEqual(blocked_recommendation.action, PortfolioAction.CONTAIN)
+        self.assertIn("pilot-containment", optimizer.critical_case_ids)
+
+    def test_kki_portfolio_optimizer_recommends_governance_approval(self) -> None:
+        optimizer = build_portfolio_optimizer(optimizer_id="optimizer-159-governed")
+        governance_recommendation = next(rec for rec in optimizer.recommendations if rec.case_id == "shadow-guarded")
+
+        self.assertEqual(governance_recommendation.priority, PortfolioPriority.HIGH)
+        self.assertEqual(governance_recommendation.action, PortfolioAction.APPROVE)
+        self.assertEqual(governance_recommendation.owner, ModuleBoundaryName.GOVERNANCE)
+
+    def test_kki_portfolio_optimizer_recommends_release_candidate(self) -> None:
+        optimizer = build_portfolio_optimizer(optimizer_id="optimizer-159-release")
+        ready_recommendation = next(rec for rec in optimizer.recommendations if rec.case_id == "pilot-ready")
+
+        self.assertEqual(ready_recommendation.action, PortfolioAction.ADVANCE)
+        self.assertTrue(ready_recommendation.release_candidate)
+        self.assertIn("pilot-ready", optimizer.release_candidate_ids)
+
+    def test_kki_portfolio_optimizer_aggregates_priority_queue(self) -> None:
+        optimizer = build_portfolio_optimizer(optimizer_id="optimizer-159-matrix")
+
+        self.assertEqual(optimizer.optimizer_signal.status, "critical-priorities")
+        self.assertEqual(optimizer.recommendations[0].case_id, "pilot-containment")
+        self.assertGreaterEqual(optimizer.recommendations[0].net_value, 0.0)
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

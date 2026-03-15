@@ -46,6 +46,7 @@ from .integrated_smoke import IntegratedSmokeBuild, run_integrated_smoke_build
 from .mission_profiles import MissionPolicy, MissionProfile, MissionScenario, mission_profile_catalog, mission_profile_for_name
 from .operations_run import IntegratedOperationsRun, run_integrated_operations
 from .operations_cockpit import CockpitEntry, CockpitStatus, OperationsCockpit, build_operations_cockpit
+from .portfolio_optimizer import PortfolioAction, PortfolioOptimizer, PortfolioPriority, PortfolioRecommendation, build_portfolio_optimizer
 from .release_campaigns import (
     ReleaseCampaign,
     ReleaseCampaignStage,
@@ -278,6 +279,10 @@ __all__ = [
     "OperatingMode",
     "OrchestrationState",
     "OrchestrationStatus",
+    "PortfolioAction",
+    "PortfolioOptimizer",
+    "PortfolioPriority",
+    "PortfolioRecommendation",
     "PermissionRule",
     "PersistenceRecord",
     "PressureLevel",
@@ -353,6 +358,7 @@ __all__ = [
     "build_drift_monitor",
     "build_improvement_orchestrator",
     "build_operations_cockpit",
+    "build_portfolio_optimizer",
     "build_remediation_campaign",
     "build_release_campaign",
     "build_readiness_review",

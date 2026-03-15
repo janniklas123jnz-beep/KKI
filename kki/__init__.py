@@ -32,6 +32,13 @@ from .convergence_simulator import (
     build_convergence_simulator,
 )
 from .exception_register import ExceptionCase, ExceptionKind, ExceptionRegister, ExceptionSeverity, build_exception_register
+from .executive_watchtower import (
+    ExecutiveOrder,
+    ExecutiveOrderMode,
+    ExecutiveWatchStatus,
+    ExecutiveWatchtower,
+    build_executive_watchtower,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -328,6 +335,10 @@ __all__ = [
     "EvidenceLedger",
     "EvidenceLedgerEntry",
     "EvidenceLedgerSource",
+    "ExecutiveOrder",
+    "ExecutiveOrderMode",
+    "ExecutiveWatchStatus",
+    "ExecutiveWatchtower",
     "ExceptionCase",
     "ExceptionKind",
     "ExceptionRegister",
@@ -503,6 +514,7 @@ __all__ = [
     "build_drift_monitor",
     "build_escalation_router",
     "build_evidence_ledger",
+    "build_executive_watchtower",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

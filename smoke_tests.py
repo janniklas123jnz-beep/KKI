@@ -61,6 +61,10 @@ from kki import (
     EvidenceLedger,
     EvidenceLedgerEntry,
     EvidenceLedgerSource,
+    ExecutiveOrder,
+    ExecutiveOrderMode,
+    ExecutiveWatchStatus,
+    ExecutiveWatchtower,
     ExceptionCase,
     ExceptionKind,
     ExceptionRegister,
@@ -225,6 +229,7 @@ from kki import (
     build_drift_monitor,
     build_escalation_router,
     build_evidence_ledger,
+    build_executive_watchtower,
     build_exception_register,
     build_federation_coordination,
     build_governance_agenda,
@@ -4304,6 +4309,39 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(constitution.steward_article_ids, ("constitution-179-signal-resilience-program",))
         self.assertEqual(constitution.governance_article_ids, ("constitution-179-signal-governance-program",))
         self.assertEqual(constitution.autonomy_article_ids, ("constitution-179-signal-routine-program",))
+
+    def test_kki_executive_watchtower_builds_locked_resilience_order(self) -> None:
+        watchtower = build_executive_watchtower(watchtower_id="executive-180-resilience")
+        order = next(item for item in watchtower.orders if item.track_type is ProgramTrackType.RESILIENCE)
+
+        self.assertIsInstance(watchtower, ExecutiveWatchtower)
+        self.assertIsInstance(order, ExecutiveOrder)
+        self.assertEqual(order.mode, ExecutiveOrderMode.EXECUTIVE_OVERRIDE)
+        self.assertEqual(order.watch_status, ExecutiveWatchStatus.LOCKED)
+
+    def test_kki_executive_watchtower_builds_commanding_governance_order(self) -> None:
+        watchtower = build_executive_watchtower(watchtower_id="executive-180-governance")
+        order = next(item for item in watchtower.orders if item.track_type is ProgramTrackType.GOVERNANCE)
+
+        self.assertEqual(order.mode, ExecutiveOrderMode.GOVERNED_EXECUTION)
+        self.assertEqual(order.watch_status, ExecutiveWatchStatus.COMMANDING)
+        self.assertFalse(order.release_ready)
+
+    def test_kki_executive_watchtower_builds_ready_autonomy_order(self) -> None:
+        watchtower = build_executive_watchtower(watchtower_id="executive-180-autonomy")
+        order = next(item for item in watchtower.orders if item.track_type is ProgramTrackType.ROUTINE)
+
+        self.assertEqual(order.mode, ExecutiveOrderMode.AUTONOMY_WINDOW)
+        self.assertEqual(order.watch_status, ExecutiveWatchStatus.READY)
+        self.assertTrue(order.release_ready)
+
+    def test_kki_executive_watchtower_aggregates_watchtower_signal(self) -> None:
+        watchtower = build_executive_watchtower(watchtower_id="executive-180-signal")
+
+        self.assertEqual(watchtower.watchtower_signal.status, "executive-locked")
+        self.assertEqual(watchtower.locked_order_ids, ("executive-180-signal-resilience-program",))
+        self.assertEqual(watchtower.commanding_order_ids, ("executive-180-signal-governance-program",))
+        self.assertEqual(watchtower.ready_order_ids, ("executive-180-signal-routine-program",))
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

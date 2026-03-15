@@ -512,6 +512,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `build_operating_constitution()` koppelt `ProgramController`, `AutonomyGovernor` und `ExceptionRegister`, um resilienz-, governance- und autonomy-bezogene Rechte und Grenzen als verbindliche Artikel abzuleiten
 - die Betriebs-Verfassung erweitert den Snapshot um ein explizites `operating-constitution`-Signal fuer chartered stewardship, governed change und bounded autonomy
 
+`#180` setzt abschließend die exekutive Leitwarte oben drauf:
+
+- `ExecutiveOrder`, `ExecutiveWatchtower`, `ExecutiveOrderMode` und `ExecutiveWatchStatus` modellieren die oberste Fuehrungsschicht fuer resilienz-, governance- und routineorientierte Programme
+- `build_executive_watchtower()` koppelt `ProgramController`, `OperatingConstitution` und `OperationsCockpit`, um aus Programmen und Artikeln konkrete exekutive Orders mit Freigabemodus, Fuehrungsstatus und Release-Reife abzuleiten
+- die Leitwarte-Exekutive erweitert den Snapshot um ein explizites `executive-watchtower`-Signal fuer gelockte Sonderlagen, commanding Governance-Pfade und freigegebene bounded-autonomy-Fenster
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

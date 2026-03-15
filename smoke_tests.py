@@ -50,6 +50,8 @@ from kki import (
     RecoveryMode,
     RecoveryOutcome,
     RoleName,
+    RolloutPhase,
+    RolloutState,
     RollbackDirective,
     RuntimeStage,
     RuntimeThresholds,
@@ -65,6 +67,7 @@ from kki import (
     authorize_action,
     authorize_artifact,
     advance_orchestration_state,
+    advance_rollout_state,
     advance_work_unit,
     audit_entry_for_artifact,
     audit_entry_for_message,
@@ -87,6 +90,7 @@ from kki import (
     recovery_checkpoint_for_state,
     recovery_outcome,
     rollback_directive_for_checkpoint,
+    rollout_state_for_shadow,
     run_integrated_smoke_build,
     runtime_dna_for_profile,
     runtime_dna_from_env,
@@ -1111,6 +1115,296 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(coordination.release_signal.status, "blocked")
         self.assertEqual(coordination.release_signal.severity, "critical")
         self.assertEqual(coordination.gate_decision.outcome, GateOutcome.BLOCK)
+
+    def test_kki_rollout_state_promotes_release_ready_shadow(self) -> None:
+        artifacts = (
+            ControlArtifact(
+                artifact_id="shadow-policy",
+                kind=ArtifactKind.POLICY,
+                version="2.0",
+                scope=ArtifactScope.BOUNDARY,
+                runtime_stage=RuntimeStage.PILOT,
+                boundary="shadow",
+                validations=(ValidationStep.STATIC, ValidationStep.CONSISTENCY, ValidationStep.SHADOW),
+                evidence_ref="audit-shadow-policy",
+                payload={"preview_gate": "strict", "drift_threshold": 0.05},
+            ),
+            ControlArtifact(
+                artifact_id="rollout-policy",
+                kind=ArtifactKind.POLICY,
+                version="2.1",
+                scope=ArtifactScope.BOUNDARY,
+                runtime_stage=RuntimeStage.PILOT,
+                boundary="rollout",
+                validations=(ValidationStep.STATIC, ValidationStep.CONSISTENCY, ValidationStep.SHADOW),
+                evidence_ref="audit-rollout-policy",
+                payload={"promotion_gate": "hold-until-shadow-green"},
+            ),
+        )
+        shadow_plane = load_control_plane(artifacts, runtime_stage=RuntimeStage.PILOT, boundary="shadow")
+        rollout_plane = load_control_plane(artifacts, runtime_stage=RuntimeStage.PILOT, boundary="rollout")
+        state = orchestration_state_for_runtime(
+            runtime_dna_for_profile("pilot-runtime-dna", stage=RuntimeStage.PILOT),
+            mission_ref="mission-137",
+        )
+        work_unit = work_unit_for_state(
+            state,
+            title="promote release",
+            boundary="rollout",
+            correlation_id="corr-137-promote",
+            priority=WorkPriority.HIGH,
+            budget_share=0.15,
+        )
+        shadow_identity = AuthorizationIdentity(
+            slug="executor-shadow",
+            kind=IdentityKind.MODULE,
+            role=RoleName.EXECUTOR,
+            trust_level=TrustLevel.VERIFIED,
+            boundary_scope=("shadow", "rollout"),
+        )
+        rollout_identity = AuthorizationIdentity(
+            slug="gatekeeper-rollout",
+            kind=IdentityKind.OPERATOR,
+            role=RoleName.GATEKEEPER,
+            trust_level=TrustLevel.VERIFIED,
+            boundary_scope=("rollout", "governance"),
+        )
+        coordination = coordinate_shadow_work(
+            state,
+            work_unit,
+            control_plane=shadow_plane,
+            identity=shadow_identity,
+            available_roles=(RoleName.EXECUTOR,),
+            observed_budget=0.15,
+        )
+
+        rollout_state = rollout_state_for_shadow(
+            coordination,
+            control_plane=rollout_plane,
+            identity=rollout_identity,
+            evidence_ref="audit-rollout-policy",
+        )
+
+        self.assertIsInstance(rollout_state, RolloutState)
+        self.assertEqual(rollout_state.phase, RolloutPhase.PROMOTING)
+        self.assertTrue(rollout_state.promotion_ready)
+        self.assertEqual(rollout_state.promotion_signal.status, "promoting")
+        self.assertEqual(rollout_state.to_core_state().module_boundary, ModuleBoundaryName.ROLLOUT)
+
+    def test_kki_rollout_state_stages_parallel_shadow_release(self) -> None:
+        artifacts = (
+            ControlArtifact(
+                artifact_id="shadow-policy",
+                kind=ArtifactKind.POLICY,
+                version="2.0",
+                scope=ArtifactScope.BOUNDARY,
+                runtime_stage=RuntimeStage.PILOT,
+                boundary="shadow",
+                validations=(ValidationStep.STATIC, ValidationStep.CONSISTENCY, ValidationStep.SHADOW),
+                evidence_ref="audit-shadow-policy",
+                payload={"preview_gate": "strict", "drift_threshold": 0.05},
+            ),
+            ControlArtifact(
+                artifact_id="rollout-policy",
+                kind=ArtifactKind.POLICY,
+                version="2.1",
+                scope=ArtifactScope.BOUNDARY,
+                runtime_stage=RuntimeStage.PILOT,
+                boundary="rollout",
+                validations=(ValidationStep.STATIC, ValidationStep.CONSISTENCY, ValidationStep.SHADOW),
+                evidence_ref="audit-rollout-policy",
+                payload={"promotion_gate": "hold-until-shadow-green"},
+            ),
+        )
+        shadow_plane = load_control_plane(artifacts, runtime_stage=RuntimeStage.PILOT, boundary="shadow")
+        rollout_plane = load_control_plane(artifacts, runtime_stage=RuntimeStage.PILOT, boundary="rollout")
+        state = orchestration_state_for_runtime(
+            runtime_dna_for_profile("pilot-runtime-dna", stage=RuntimeStage.PILOT),
+            mission_ref="mission-137",
+            gates=GateReadiness(shadow=GateState.GUARDED),
+        )
+        work_unit = work_unit_for_state(
+            state,
+            title="parallel rollout staging",
+            boundary="rollout",
+            correlation_id="corr-137-stage",
+            priority=WorkPriority.NORMAL,
+            budget_share=0.14,
+        )
+        shadow_identity = AuthorizationIdentity(
+            slug="executor-shadow",
+            kind=IdentityKind.MODULE,
+            role=RoleName.EXECUTOR,
+            trust_level=TrustLevel.VERIFIED,
+            boundary_scope=("shadow", "rollout"),
+        )
+        rollout_identity = AuthorizationIdentity(
+            slug="gatekeeper-rollout",
+            kind=IdentityKind.OPERATOR,
+            role=RoleName.GATEKEEPER,
+            trust_level=TrustLevel.VERIFIED,
+            boundary_scope=("rollout", "governance"),
+        )
+        coordination = coordinate_shadow_work(
+            state,
+            work_unit,
+            control_plane=shadow_plane,
+            identity=shadow_identity,
+            available_roles=(RoleName.EXECUTOR,),
+            observed_budget=0.14,
+        )
+
+        rollout_state = rollout_state_for_shadow(
+            coordination,
+            control_plane=rollout_plane,
+            identity=rollout_identity,
+            evidence_ref="audit-rollout-policy",
+        )
+
+        self.assertEqual(coordination.release_signal.status, "parallel-required")
+        self.assertEqual(rollout_state.phase, RolloutPhase.STAGED)
+        self.assertFalse(rollout_state.promotion_ready)
+
+    def test_kki_rollout_state_moves_replay_release_into_canary(self) -> None:
+        artifacts = (
+            ControlArtifact(
+                artifact_id="shadow-policy",
+                kind=ArtifactKind.POLICY,
+                version="2.0",
+                scope=ArtifactScope.BOUNDARY,
+                runtime_stage=RuntimeStage.PILOT,
+                boundary="shadow",
+                validations=(ValidationStep.STATIC, ValidationStep.CONSISTENCY, ValidationStep.SHADOW),
+                evidence_ref="audit-shadow-policy",
+                payload={"preview_gate": "strict", "drift_threshold": 0.05},
+            ),
+            ControlArtifact(
+                artifact_id="rollout-policy",
+                kind=ArtifactKind.POLICY,
+                version="2.1",
+                scope=ArtifactScope.BOUNDARY,
+                runtime_stage=RuntimeStage.PILOT,
+                boundary="rollout",
+                validations=(ValidationStep.STATIC, ValidationStep.CONSISTENCY, ValidationStep.SHADOW),
+                evidence_ref="audit-rollout-policy",
+                payload={"promotion_gate": "hold-until-shadow-green"},
+            ),
+        )
+        shadow_plane = load_control_plane(artifacts, runtime_stage=RuntimeStage.PILOT, boundary="shadow")
+        rollout_plane = load_control_plane(artifacts, runtime_stage=RuntimeStage.PILOT, boundary="rollout")
+        state = orchestration_state_for_runtime(
+            runtime_dna_for_profile("pilot-runtime-dna", stage=RuntimeStage.PILOT),
+            mission_ref="mission-137",
+        )
+        work_unit = work_unit_for_state(
+            state,
+            title="replay release",
+            boundary="rollout",
+            correlation_id="corr-137-canary",
+            priority=WorkPriority.HIGH,
+            budget_share=0.12,
+        )
+        replay_unit = advance_work_unit(
+            work_unit,
+            status=WorkStatus.HANDED_OFF,
+            attempt=1,
+            handoff_ref="handoff-rollout-replay",
+        )
+        shadow_identity = AuthorizationIdentity(
+            slug="executor-shadow",
+            kind=IdentityKind.MODULE,
+            role=RoleName.EXECUTOR,
+            trust_level=TrustLevel.VERIFIED,
+            boundary_scope=("shadow", "rollout"),
+        )
+        rollout_identity = AuthorizationIdentity(
+            slug="gatekeeper-rollout",
+            kind=IdentityKind.OPERATOR,
+            role=RoleName.GATEKEEPER,
+            trust_level=TrustLevel.VERIFIED,
+            boundary_scope=("rollout", "governance"),
+        )
+        coordination = coordinate_shadow_work(
+            state,
+            replay_unit,
+            control_plane=shadow_plane,
+            identity=shadow_identity,
+            available_roles=(RoleName.EXECUTOR,),
+            observed_budget=0.12,
+        )
+
+        rollout_state = rollout_state_for_shadow(
+            coordination,
+            control_plane=rollout_plane,
+            identity=rollout_identity,
+            evidence_ref="audit-rollout-policy",
+        )
+        active_state = advance_rollout_state(rollout_state, phase=RolloutPhase.ACTIVE)
+
+        self.assertEqual(rollout_state.phase, RolloutPhase.CANARY)
+        self.assertEqual(active_state.phase, RolloutPhase.ACTIVE)
+        self.assertTrue(active_state.promotion_ready)
+
+    def test_kki_rollout_state_marks_blocked_promotion_as_rollback_ready(self) -> None:
+        artifacts = (
+            ControlArtifact(
+                artifact_id="shadow-policy",
+                kind=ArtifactKind.POLICY,
+                version="2.0",
+                scope=ArtifactScope.BOUNDARY,
+                runtime_stage=RuntimeStage.PILOT,
+                boundary="shadow",
+                validations=(ValidationStep.STATIC, ValidationStep.CONSISTENCY, ValidationStep.SHADOW),
+                evidence_ref="audit-shadow-policy",
+                payload={"preview_gate": "strict", "drift_threshold": 0.05},
+            ),
+        )
+        shadow_plane = load_control_plane(artifacts, runtime_stage=RuntimeStage.PILOT, boundary="shadow")
+        rollout_plane = load_control_plane(artifacts, runtime_stage=RuntimeStage.PILOT, boundary="rollout")
+        state = orchestration_state_for_runtime(
+            runtime_dna_for_profile("pilot-runtime-dna", stage=RuntimeStage.PILOT),
+            mission_ref="mission-137",
+        )
+        work_unit = work_unit_for_state(
+            state,
+            title="blocked promotion",
+            boundary="rollout",
+            correlation_id="corr-137-blocked",
+            priority=WorkPriority.HIGH,
+            budget_share=0.15,
+        )
+        shadow_identity = AuthorizationIdentity(
+            slug="executor-shadow",
+            kind=IdentityKind.MODULE,
+            role=RoleName.EXECUTOR,
+            trust_level=TrustLevel.VERIFIED,
+            boundary_scope=("shadow", "rollout"),
+        )
+        denied_rollout_identity = AuthorizationIdentity(
+            slug="observer-rollout",
+            kind=IdentityKind.OPERATOR,
+            role=RoleName.OBSERVER,
+            trust_level=TrustLevel.RESTRICTED,
+            boundary_scope=("rollout",),
+        )
+        coordination = coordinate_shadow_work(
+            state,
+            work_unit,
+            control_plane=shadow_plane,
+            identity=shadow_identity,
+            available_roles=(RoleName.EXECUTOR,),
+            observed_budget=0.15,
+        )
+
+        rollout_state = rollout_state_for_shadow(
+            coordination,
+            control_plane=rollout_plane,
+            identity=denied_rollout_identity,
+        )
+
+        self.assertEqual(rollout_state.phase, RolloutPhase.ROLLBACK_READY)
+        self.assertTrue(rollout_state.rollback_required)
+        self.assertEqual(rollout_state.promotion_signal.severity, "critical")
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

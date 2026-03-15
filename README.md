@@ -254,6 +254,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `coordinate_shadow_work()` koppelt Dispatch, Shadow-Gate, Dry-Run-Bewertung und Telemetrie-Korrelation zu einem expliziten Freigabepfad
 - Release-Signale markieren dabei nachvollziehbar, ob ein Auftrag blockiert, gehalten, fuer Parallelvalidierung vorgemerkt oder nach Replay freigegeben ist
 
+`#137` fuehrt darauf eine Rollout-Zustandsmaschine fuer Shadow-Freigaben ein:
+
+- `RolloutState` und `RolloutPhase` ueberfuehren Shadow-Entscheide in valide Zustandsphasen wie `staged`, `promoting`, `canary`, `active`, `held` und `rollback-ready`
+- `rollout_state_for_shadow()` koppelt Shadow-Release, Rollout-Gate und operative Korrelation zu einem expliziten Promotionszustand
+- `advance_rollout_state()` validiert die weiteren Uebergaenge Richtung Canary, Aktivierung, Hold oder Rollback-Bereitschaft
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

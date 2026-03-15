@@ -76,6 +76,12 @@ from .recovery import (
     recovery_outcome,
     rollback_directive_for_checkpoint,
 )
+from .rollout import (
+    RolloutPhase,
+    RolloutState,
+    advance_rollout_state,
+    rollout_state_for_shadow,
+)
 from .security import (
     ActionName,
     ArtifactKind,
@@ -171,6 +177,8 @@ __all__ = [
     "RecoveryMode",
     "RecoveryOutcome",
     "RoleName",
+    "RolloutPhase",
+    "RolloutState",
     "RollbackDirective",
     "RuntimeDNA",
     "RuntimeHooks",
@@ -196,6 +204,7 @@ __all__ = [
     "authorize_action",
     "authorize_artifact",
     "advance_orchestration_state",
+    "advance_rollout_state",
     "advance_work_unit",
     "audit_entry_for_artifact",
     "audit_entry_for_message",
@@ -222,6 +231,7 @@ __all__ = [
     "permission_catalog",
     "protocol_context",
     "role_permissions",
+    "rollout_state_for_shadow",
     "run_integrated_smoke_build",
     "recovery_checkpoint_for_state",
     "recovery_outcome",

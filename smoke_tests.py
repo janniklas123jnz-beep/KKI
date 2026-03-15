@@ -37,6 +37,10 @@ from kki import (
     ConvergenceSimulator,
     ConvergenceStatus,
     CorrelatedOperation,
+    CourseCorrector,
+    CourseCorrectionAction,
+    CourseCorrectionDirective,
+    CourseCorrectionStatus,
     CockpitEntry,
     CockpitStatus,
     ConstitutionArticle,
@@ -244,6 +248,7 @@ from kki import (
     build_capacity_planner,
     build_continuous_readiness_cycle,
     build_convergence_simulator,
+    build_course_corrector,
     build_dispatch_plan,
     build_drift_monitor,
     build_escalation_router,
@@ -4500,6 +4505,39 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(chancery.locked_option_ids, ("scenario-184-signal-stability-lane",))
         self.assertEqual(chancery.review_option_ids, ("scenario-184-signal-governance-lane",))
         self.assertEqual(chancery.ready_option_ids, ("scenario-184-signal-expansion-lane",))
+
+    def test_kki_course_corrector_builds_enforced_contain_directive(self) -> None:
+        corrector = build_course_corrector(corrector_id="course-185-stability")
+        directive = next(item for item in corrector.directives if item.action is CourseCorrectionAction.CONTAIN)
+
+        self.assertIsInstance(corrector, CourseCorrector)
+        self.assertIsInstance(directive, CourseCorrectionDirective)
+        self.assertEqual(directive.status, CourseCorrectionStatus.ENFORCED)
+        self.assertFalse(directive.release_ready)
+
+    def test_kki_course_corrector_builds_directed_rebalance_directive(self) -> None:
+        corrector = build_course_corrector(corrector_id="course-185-governance")
+        directive = next(item for item in corrector.directives if item.action is CourseCorrectionAction.REBALANCE)
+
+        self.assertEqual(directive.status, CourseCorrectionStatus.DIRECTED)
+        self.assertGreater(directive.correction_score, 0.7)
+        self.assertFalse(directive.release_ready)
+
+    def test_kki_course_corrector_builds_cleared_accelerate_directive(self) -> None:
+        corrector = build_course_corrector(corrector_id="course-185-expansion")
+        directive = next(item for item in corrector.directives if item.action is CourseCorrectionAction.ACCELERATE)
+
+        self.assertEqual(directive.status, CourseCorrectionStatus.CLEARED)
+        self.assertTrue(directive.release_ready)
+        self.assertGreater(directive.stress_index, 0.2)
+
+    def test_kki_course_corrector_aggregates_corrector_signal(self) -> None:
+        corrector = build_course_corrector(corrector_id="course-185-signal")
+
+        self.assertEqual(corrector.corrector_signal.status, "course-enforced")
+        self.assertEqual(corrector.enforced_directive_ids, ("course-185-signal-stability-lane",))
+        self.assertEqual(corrector.directed_directive_ids, ("course-185-signal-governance-lane",))
+        self.assertEqual(corrector.cleared_directive_ids, ("course-185-signal-expansion-lane",))
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

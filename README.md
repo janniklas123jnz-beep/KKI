@@ -542,6 +542,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `build_scenario_chancery()` koppelt das `PortfolioRadar`, um Radar-Lagen vor der Ausfuehrung in vergleichbare Szenario-Optionen mit Vergleichs- und Konfidenzwerten zu ueberfuehren
 - die Szenario-Kanzlei erweitert den Snapshot um ein explizites `scenario-chancery`-Signal fuer gelockte Stabilisierung, review-pflichtige Governance-Optionen und bereite Expansionspfade
 
+`#185` macht daraus nun den Kurs-Korrektor:
+
+- `CourseCorrectionDirective`, `CourseCorrector`, `CourseCorrectionAction` und `CourseCorrectionStatus` modellieren deterministische Kurskorrekturen als contain-, rebalance- und accelerate-Entscheidungen
+- `build_course_corrector()` koppelt die `ScenarioChancery` mit den Portfolio-Stressindikatoren, um Vergleichslagen in erzwungene, gerichtete oder freigegebene Korrekturpfade zu ueberfuehren
+- der Kurs-Korrektor erweitert den Snapshot um ein explizites `course-corrector`-Signal fuer enforced containment, directed rebalancing und cleared acceleration
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

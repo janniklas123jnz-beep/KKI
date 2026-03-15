@@ -70,6 +70,13 @@ from .scenario_chancery import (
     ScenarioOption,
     build_scenario_chancery,
 )
+from .course_corrector import (
+    CourseCorrector,
+    CourseCorrectionAction,
+    CourseCorrectionDirective,
+    CourseCorrectionStatus,
+    build_course_corrector,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -389,6 +396,10 @@ __all__ = [
     "ScenarioOfficeMode",
     "ScenarioOfficeStatus",
     "ScenarioOption",
+    "CourseCorrector",
+    "CourseCorrectionAction",
+    "CourseCorrectionDirective",
+    "CourseCorrectionStatus",
     "ExceptionCase",
     "ExceptionKind",
     "ExceptionRegister",
@@ -569,6 +580,7 @@ __all__ = [
     "build_mandate_card_deck",
     "build_portfolio_radar",
     "build_scenario_chancery",
+    "build_course_corrector",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

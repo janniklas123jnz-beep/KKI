@@ -374,6 +374,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `build_improvement_orchestrator()` koppelt `ReviewActionPlan`, `RiskRegister`, `GuardrailPortfolio` und `DriftMonitor`, um konkrete Verbesserungswellen fuer kritische, priorisierte und beobachtete Faelle zu erzeugen
 - der Orchestrator erweitert den Snapshot um ein explizites `improvement-orchestrator`-Signal fuer geplante, priorisierte und kritische Verbesserungswellen
 
+`#157` fasst diese Wellen nun zu koordinierten Remediation-Kampagnen zusammen:
+
+- `RemediationCampaign`, `RemediationCampaignStage`, `RemediationCampaignStageType` und `RemediationCampaignStatus` modellieren Evidence-Pack, Governance-Approval, Recovery-Safeguards, Containment und eigentliche Behebungswellen
+- `build_remediation_campaign()` koppelt den `ImprovementOrchestrator` mit Commitments, Evidence und Schutzstufen zu einem ausfuehrbaren Mehrphasenlauf
+- die Kampagne erweitert den Snapshot um ein explizites `remediation-campaign`-Signal fuer koordinierte Behebung, Freigaben und Recovery-Absicherung
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

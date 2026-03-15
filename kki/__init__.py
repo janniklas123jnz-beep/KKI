@@ -52,6 +52,13 @@ from .release_campaigns import (
     ReleaseCampaignStatus,
     build_release_campaign,
 )
+from .remediation_campaigns import (
+    RemediationCampaign,
+    RemediationCampaignStage,
+    RemediationCampaignStageType,
+    RemediationCampaignStatus,
+    build_remediation_campaign,
+)
 from .review_action_plan import (
     ReviewActionItem,
     ReviewActionPlan,
@@ -275,6 +282,10 @@ __all__ = [
     "ReadinessFindingSeverity",
     "ReadinessReview",
     "RecoveryCheckpoint",
+    "RemediationCampaign",
+    "RemediationCampaignStage",
+    "RemediationCampaignStageType",
+    "RemediationCampaignStatus",
     "ReleaseCampaign",
     "ReleaseCampaignStage",
     "ReleaseCampaignStageType",
@@ -337,6 +348,7 @@ __all__ = [
     "build_dispatch_plan",
     "build_drift_monitor",
     "build_improvement_orchestrator",
+    "build_remediation_campaign",
     "build_release_campaign",
     "build_readiness_review",
     "build_review_action_plan",

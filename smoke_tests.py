@@ -82,6 +82,10 @@ from kki import (
     ReadinessFinding,
     ReadinessFindingSeverity,
     ReadinessReview,
+    RemediationCampaign,
+    RemediationCampaignStage,
+    RemediationCampaignStageType,
+    RemediationCampaignStatus,
     RecoveryDisposition,
     RecoveryMode,
     RecoveryOrchestration,
@@ -134,6 +138,7 @@ from kki import (
     build_drift_monitor,
     build_guardrail_portfolio,
     build_improvement_orchestrator,
+    build_remediation_campaign,
     build_readiness_review,
     build_release_campaign,
     build_review_action_plan,
@@ -3394,6 +3399,49 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(orchestrator.orchestration_signal.status, "critical-waves")
         self.assertIn(ModuleBoundaryName.GOVERNANCE, orchestrator.owner_boundaries)
         self.assertIn(ModuleBoundaryName.RECOVERY, orchestrator.owner_boundaries)
+
+    def test_kki_remediation_campaign_contains_blocked_case(self) -> None:
+        campaign = build_remediation_campaign(campaign_id="campaign-157-blocked")
+        blocked_stage = next(
+            stage for stage in campaign.stages if stage.case_id == "pilot-containment" and stage.stage_type is RemediationCampaignStageType.CONTAINMENT
+        )
+
+        self.assertIsInstance(campaign, RemediationCampaign)
+        self.assertIsInstance(blocked_stage, RemediationCampaignStage)
+        self.assertEqual(campaign.status, RemediationCampaignStatus.BLOCKED)
+        self.assertEqual(blocked_stage.status, RemediationCampaignStatus.BLOCKED)
+        self.assertIn("pilot-containment", campaign.blocked_case_ids)
+
+    def test_kki_remediation_campaign_governs_shadow_case(self) -> None:
+        campaign = build_remediation_campaign(campaign_id="campaign-157-governed")
+        governance_stage = next(
+            stage
+            for stage in campaign.stages
+            if stage.case_id == "shadow-guarded" and stage.stage_type is RemediationCampaignStageType.GOVERNANCE_APPROVAL
+        )
+
+        self.assertEqual(governance_stage.status, RemediationCampaignStatus.GUARDED)
+        self.assertTrue(governance_stage.governance_refs)
+        self.assertIn("shadow-guarded", campaign.governance_case_ids)
+
+    def test_kki_remediation_campaign_tracks_recovery_case(self) -> None:
+        campaign = build_remediation_campaign(campaign_id="campaign-157-recovery")
+        recovery_stage = next(
+            stage
+            for stage in campaign.stages
+            if stage.case_id == "recovery-resume" and stage.stage_type is RemediationCampaignStageType.RECOVERY_SAFEGUARD
+        )
+
+        self.assertEqual(recovery_stage.status, RemediationCampaignStatus.RECOVERY_ONLY)
+        self.assertTrue(recovery_stage.safeguard_refs)
+        self.assertIn("recovery-resume", campaign.recovery_case_ids)
+
+    def test_kki_remediation_campaign_aggregates_commitments(self) -> None:
+        campaign = build_remediation_campaign(campaign_id="campaign-157-matrix")
+
+        self.assertTrue(campaign.commitment_refs)
+        self.assertGreaterEqual(len(campaign.evidence_records), len(campaign.stages))
+        self.assertEqual(campaign.campaign_signal.status, "blocked")
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

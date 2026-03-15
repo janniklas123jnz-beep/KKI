@@ -22,6 +22,13 @@ from .incident_detector import IncidentCause, IncidentReport, IncidentSeverity, 
 from .integrated_smoke import IntegratedSmokeBuild, run_integrated_smoke_build
 from .mission_profiles import MissionPolicy, MissionProfile, MissionScenario, mission_profile_catalog, mission_profile_for_name
 from .operations_run import IntegratedOperationsRun, run_integrated_operations
+from .release_campaigns import (
+    ReleaseCampaign,
+    ReleaseCampaignStage,
+    ReleaseCampaignStageType,
+    ReleaseCampaignStatus,
+    build_release_campaign,
+)
 from .run_ledger import OperationsRunLedger, RunLedgerEntry, ledger_for_wave
 from .message_protocols import (
     DeliveryGuarantee,
@@ -209,6 +216,10 @@ __all__ = [
     "PressureLevel",
     "ProtocolContext",
     "RecoveryCheckpoint",
+    "ReleaseCampaign",
+    "ReleaseCampaignStage",
+    "ReleaseCampaignStageType",
+    "ReleaseCampaignStatus",
     "RecoveryDisposition",
     "RecoveryMode",
     "RecoveryOrchestration",
@@ -249,6 +260,7 @@ __all__ = [
     "audit_entry_for_artifact",
     "audit_entry_for_message",
     "build_dispatch_plan",
+    "build_release_campaign",
     "build_telemetry_snapshot",
     "claim_for_work_unit",
     "coordinate_escalations",

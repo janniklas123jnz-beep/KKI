@@ -69,6 +69,10 @@ from kki import (
     RecoveryMode,
     RecoveryOrchestration,
     RecoveryOutcome,
+    ReleaseCampaign,
+    ReleaseCampaignStage,
+    ReleaseCampaignStageType,
+    ReleaseCampaignStatus,
     RoleName,
     RolloutPhase,
     RolloutState,
@@ -94,6 +98,7 @@ from kki import (
     audit_entry_for_artifact,
     audit_entry_for_message,
     build_dispatch_plan,
+    build_release_campaign,
     build_telemetry_snapshot,
     claim_for_work_unit,
     coordinate_escalations,
@@ -2731,6 +2736,126 @@ class SmokeTests(unittest.TestCase):
 
         self.assertEqual(window.status, ChangeWindowStatus.BLOCKED)
         self.assertEqual(window.blocked_refs, ("pilot-cutover",))
+
+    def test_kki_release_campaign_builds_ready_promotion_path(self) -> None:
+        window = open_change_window(
+            (
+                coordinate_escalations(
+                    detect_incidents(ledger_for_wave(run_operations_wave(("pilot-cutover",), wave_id="wave-147-ready")))
+                ),
+            ),
+            window_id="window-147-ready",
+        )
+        campaign = build_release_campaign((window,), campaign_id="campaign-147-ready")
+
+        self.assertIsInstance(campaign, ReleaseCampaign)
+        self.assertIsInstance(campaign.stages[0], ReleaseCampaignStage)
+        self.assertEqual(campaign.status, ReleaseCampaignStatus.READY)
+        self.assertEqual(campaign.promotion_refs, ("pilot-cutover",))
+        self.assertIn(ReleaseCampaignStageType.PROMOTION_WAVE, {stage.stage_type for stage in campaign.stages})
+
+    def test_kki_release_campaign_routes_governance_review_stage(self) -> None:
+        window = open_change_window(
+            (
+                coordinate_escalations(
+                    detect_incidents(
+                        ledger_for_wave(
+                            run_operations_wave(
+                                (
+                                    MissionProfile(
+                                        mission_ref="campaign-governance",
+                                        title="campaign governance",
+                                        scenario=MissionScenario.CUTOVER,
+                                        runtime_stage=RuntimeStage.PILOT,
+                                        runtime_profile="pilot-runtime-dna",
+                                        target_boundary=ModuleBoundaryName.ROLLOUT,
+                                        governance_decision=HumanDecision.ESCALATE,
+                                    ),
+                                ),
+                                wave_id="wave-147-guarded",
+                            )
+                        )
+                    )
+                ),
+            ),
+            window_id="window-147-guarded",
+        )
+        campaign = build_release_campaign((window,), campaign_id="campaign-147-guarded")
+
+        self.assertEqual(campaign.status, ReleaseCampaignStatus.GUARDED)
+        self.assertEqual(campaign.governance_review_refs, ("campaign-governance",))
+        self.assertIn(ReleaseCampaignStageType.GOVERNANCE_REVIEW, {stage.stage_type for stage in campaign.stages})
+
+    def test_kki_release_campaign_preserves_recovery_only_stage(self) -> None:
+        base_report = detect_incidents(ledger_for_wave(run_operations_wave(("pilot-cutover",), wave_id="wave-147-recovery")))
+        recovery_plan = coordinate_escalations(
+            IncidentReport(
+                wave_id=base_report.wave_id,
+                ledger=base_report.ledger,
+                incidents=(
+                    OperationsIncident(
+                        incident_id="incident-wave-147-restart",
+                        wave_id=base_report.wave_id,
+                        severity=IncidentSeverity.WARNING,
+                        cause=IncidentCause.RECOVERY,
+                        summary="restart recovery path",
+                        mission_refs=("pilot-cutover",),
+                        trigger_statuses=("restart-active",),
+                        escalation_required=True,
+                    ),
+                ),
+                incident_signal=TelemetrySignal(
+                    signal_name="incident-report",
+                    boundary=ModuleBoundaryName.TELEMETRY,
+                    correlation_id=base_report.wave_id,
+                    severity="warning",
+                    status="attention-required",
+                ),
+                final_snapshot=base_report.final_snapshot,
+            )
+        )
+        window = open_change_window((recovery_plan,), window_id="window-147-recovery")
+        campaign = build_release_campaign((window,), campaign_id="campaign-147-recovery")
+
+        self.assertEqual(campaign.status, ReleaseCampaignStatus.RECOVERY_ONLY)
+        self.assertEqual(campaign.recovery_only_refs, ("pilot-cutover",))
+        self.assertNotIn(ReleaseCampaignStageType.PROMOTION_WAVE, {stage.stage_type for stage in campaign.stages})
+        self.assertIn(ReleaseCampaignStageType.RECOVERY_WAVE, {stage.stage_type for stage in campaign.stages})
+
+    def test_kki_release_campaign_blocks_containment_stage(self) -> None:
+        base_report = detect_incidents(ledger_for_wave(run_operations_wave(("pilot-cutover",), wave_id="wave-147-blocked")))
+        critical_plan = coordinate_escalations(
+            IncidentReport(
+                wave_id=base_report.wave_id,
+                ledger=base_report.ledger,
+                incidents=(
+                    OperationsIncident(
+                        incident_id="incident-wave-147-critical",
+                        wave_id=base_report.wave_id,
+                        severity=IncidentSeverity.CRITICAL,
+                        cause=IncidentCause.RECOVERY,
+                        summary="critical rollback containment",
+                        mission_refs=("pilot-cutover",),
+                        trigger_statuses=("rollback-active",),
+                        escalation_required=True,
+                    ),
+                ),
+                incident_signal=TelemetrySignal(
+                    signal_name="incident-report",
+                    boundary=ModuleBoundaryName.TELEMETRY,
+                    correlation_id=base_report.wave_id,
+                    severity="critical",
+                    status="critical-incidents",
+                ),
+                final_snapshot=base_report.final_snapshot,
+            )
+        )
+        window = open_change_window((critical_plan,), window_id="window-147-blocked")
+        campaign = build_release_campaign((window,), campaign_id="campaign-147-blocked")
+
+        self.assertEqual(campaign.status, ReleaseCampaignStatus.BLOCKED)
+        self.assertEqual(campaign.blocked_refs, ("pilot-cutover",))
+        self.assertIn(ReleaseCampaignStageType.CONTAINMENT, {stage.stage_type for stage in campaign.stages})
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

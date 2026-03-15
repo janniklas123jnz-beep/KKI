@@ -314,6 +314,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `open_change_window()` verdichtet mehrere Eskalationsplaene zu einem gemeinsamen Change-Fenster ueber mehrere Wellen
 - das Change-Fenster erweitert den Snapshot um ein explizites `change-window`-Signal fuer Promotions, Canary-Uebergaenge und Wiederanlauf-Freigaben
 
+`#147` buendelt diese Freigaben nun zu operativen Kampagnen:
+
+- `ReleaseCampaign`, `ReleaseCampaignStage`, `ReleaseCampaignStageType` und `ReleaseCampaignStatus` modellieren mehrstufige Evidence-, Governance-, Promotion- und Recovery-Pfade ueber mehrere Change-Fenster
+- `build_release_campaign()` verdichtet offene, guarded, recovery-only und blockierte Fenster zu einer gemeinsamen Freigabe-Kampagne
+- die Kampagne fuehrt Evidence-Records und Commitment-Refs pro Stage zusammen und erweitert den Snapshot um ein explizites `release-campaign`-Signal
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

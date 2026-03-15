@@ -55,6 +55,14 @@ from .mandate_card_deck import (
     MandateReviewCadence,
     build_mandate_card_deck,
 )
+from .portfolio_radar import (
+    PortfolioConcentration,
+    PortfolioExposure,
+    PortfolioOperatingSpread,
+    PortfolioRadar,
+    PortfolioRadarEntry,
+    build_portfolio_radar,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -365,6 +373,11 @@ __all__ = [
     "MandateCardDeck",
     "MandateExecutionScope",
     "MandateReviewCadence",
+    "PortfolioConcentration",
+    "PortfolioExposure",
+    "PortfolioOperatingSpread",
+    "PortfolioRadar",
+    "PortfolioRadarEntry",
     "ExceptionCase",
     "ExceptionKind",
     "ExceptionRegister",
@@ -543,6 +556,7 @@ __all__ = [
     "build_executive_watchtower",
     "build_strategy_council",
     "build_mandate_card_deck",
+    "build_portfolio_radar",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

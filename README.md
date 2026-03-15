@@ -530,6 +530,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `build_mandate_card_deck()` koppelt den `StrategyCouncil`, um Stabilitaet an Steward-Containment, Governance an kontrollierte Aenderung und Expansion an bounded autonomy mit jeweiliger Cadence zu binden
 - die Mandats-Karten erweitern den Snapshot um ein explizites `mandate-card-deck`-Signal fuer containment-owned, governed und expansionsbereite Kartenpakete
 
+`#183` macht daraus nun ein Portfolio-Radar:
+
+- `PortfolioRadarEntry`, `PortfolioRadar`, `PortfolioConcentration`, `PortfolioExposure` und `PortfolioOperatingSpread` modellieren pro strategischer Karte die sichtbare Konzentration, Exponierung und operative Streuung
+- `build_portfolio_radar()` koppelt das `MandateCardDeck`, um Budgetanteile, Scope und Review-Fenster in konzentrierte Stabilitaet, balancierte Governance und distribuierte Expansion zu ueberfuehren
+- das Portfolio-Radar erweitert den Snapshot um ein explizites `portfolio-radar`-Signal fuer konzentrierte Schwerpunktlagen, governed exposure und expansionsbereite Portfolio-Fenster
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

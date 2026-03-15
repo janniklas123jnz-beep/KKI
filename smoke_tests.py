@@ -138,8 +138,13 @@ from kki import (
     PlaybookReadiness,
     PlaybookType,
     PortfolioAction,
+    PortfolioConcentration,
+    PortfolioExposure,
+    PortfolioOperatingSpread,
     PortfolioOptimizer,
     PortfolioPriority,
+    PortfolioRadar,
+    PortfolioRadarEntry,
     PortfolioRecommendation,
     PolicyTuneAction,
     PolicyTuneEntry,
@@ -254,6 +259,7 @@ from kki import (
     build_outcome_ledger,
     build_playbook_catalog,
     build_portfolio_optimizer,
+    build_portfolio_radar,
     build_policy_tuner,
     build_program_controller,
     build_readiness_cadence,
@@ -4423,6 +4429,39 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(deck.steward_card_ids, ("mandate-182-signal-stability-lane",))
         self.assertEqual(deck.governance_card_ids, ("mandate-182-signal-governance-lane",))
         self.assertEqual(deck.autonomy_card_ids, ("mandate-182-signal-expansion-lane",))
+
+    def test_kki_portfolio_radar_builds_concentrated_stability_entry(self) -> None:
+        radar = build_portfolio_radar(radar_id="portfolio-183-stability")
+        entry = next(item for item in radar.entries if item.exposure is PortfolioExposure.CONTAINED)
+
+        self.assertIsInstance(radar, PortfolioRadar)
+        self.assertIsInstance(entry, PortfolioRadarEntry)
+        self.assertEqual(entry.concentration, PortfolioConcentration.CONCENTRATED)
+        self.assertEqual(entry.operating_spread, PortfolioOperatingSpread.NARROW)
+
+    def test_kki_portfolio_radar_builds_governed_balanced_entry(self) -> None:
+        radar = build_portfolio_radar(radar_id="portfolio-183-governance")
+        entry = next(item for item in radar.entries if item.exposure is PortfolioExposure.GOVERNED)
+
+        self.assertEqual(entry.concentration, PortfolioConcentration.BALANCED)
+        self.assertEqual(entry.operating_spread, PortfolioOperatingSpread.COORDINATED)
+        self.assertFalse(entry.release_ready)
+
+    def test_kki_portfolio_radar_builds_expansive_distributed_entry(self) -> None:
+        radar = build_portfolio_radar(radar_id="portfolio-183-expansion")
+        entry = next(item for item in radar.entries if item.exposure is PortfolioExposure.EXPANSIVE)
+
+        self.assertEqual(entry.concentration, PortfolioConcentration.DISTRIBUTED)
+        self.assertEqual(entry.operating_spread, PortfolioOperatingSpread.BROAD)
+        self.assertTrue(entry.release_ready)
+
+    def test_kki_portfolio_radar_aggregates_radar_signal(self) -> None:
+        radar = build_portfolio_radar(radar_id="portfolio-183-signal")
+
+        self.assertEqual(radar.radar_signal.status, "portfolio-concentrated")
+        self.assertEqual(radar.concentrated_entry_ids, ("portfolio-183-signal-stability-lane",))
+        self.assertEqual(radar.governed_entry_ids, ("portfolio-183-signal-governance-lane",))
+        self.assertEqual(radar.expansive_entry_ids, ("portfolio-183-signal-expansion-lane",))
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

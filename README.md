@@ -272,6 +272,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `govern_recovery_orchestration()` bindet Gatekeeper- bzw. Supervisor-Entscheidungen mitsamt Evidence- und Commitment-Pfaden an die Recovery-Orchestrierung
 - Governance-Signale markieren explizit, ob ein Wiedereintritt autorisiert, gehalten, eskaliert oder nur via Emergency-Override freigegeben wird
 
+`#140` schliesst den Block mit einem integrierten Operations-Run ab:
+
+- `IntegratedOperationsRun` fasst Orchestrierung, Shadow, Rollout, Recovery und Human-Governance in einem einzigen End-to-End-Lauf zusammen
+- `run_integrated_operations()` fuehrt die komplette operative Kette ueber gemeinsame Korrelation, Identitaeten und Policies aus
+- der finale Snapshot macht die gesamte Freigabekette mit Shadow-, Rollout-, Recovery- und Governance-Signalen in einer Sicht pruefbar
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

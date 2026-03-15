@@ -35,6 +35,7 @@ from kki import (
     HumanDecision,
     HumanLoopGovernance,
     IdentityKind,
+    IntegratedOperationsRun,
     IntegratedSmokeBuild,
     LoadedControlPlane,
     MessageEnvelope,
@@ -98,6 +99,7 @@ from kki import (
     rollback_directive_for_checkpoint,
     rollout_state_for_shadow,
     run_integrated_smoke_build,
+    run_integrated_operations,
     runtime_dna_for_profile,
     runtime_dna_from_env,
     handoff_for_work_unit,
@@ -2163,6 +2165,42 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(allowed.gate_decision.outcome, GateOutcome.ESCALATE)
         self.assertTrue(allowed.release_authorized)
         self.assertEqual(allowed.governance_signal.status, "authorized-override")
+
+    def test_kki_integrated_operations_run_succeeds(self) -> None:
+        run = run_integrated_operations(correlation_id="corr-140-ops")
+
+        self.assertIsInstance(run, IntegratedOperationsRun)
+        self.assertTrue(run.success)
+        self.assertTrue(run.shadow_coordination.release_ready)
+        self.assertTrue(run.rollout_state.promotion_ready)
+        self.assertTrue(run.recovery_orchestration.resume_ready)
+        self.assertTrue(run.human_governance.release_authorized)
+
+    def test_kki_integrated_operations_run_exposes_full_chain(self) -> None:
+        run = run_integrated_operations(correlation_id="corr-140-chain")
+
+        self.assertEqual(run.work_unit.correlation_id, "corr-140-chain")
+        self.assertEqual(run.shadow_coordination.work_unit.unit_id, run.work_unit.unit_id)
+        self.assertEqual(run.rollout_state.work_unit_id, run.work_unit.unit_id)
+        self.assertEqual(run.recovery_orchestration.rollout_state.work_unit_id, run.work_unit.unit_id)
+        self.assertEqual(run.human_governance.subject_ref, run.recovery_orchestration.orchestration_id)
+
+    def test_kki_integrated_operations_snapshot_contains_all_signals(self) -> None:
+        run = run_integrated_operations(correlation_id="corr-140-snapshot")
+
+        signal_names = [signal.signal_name for signal in run.final_snapshot.signals]
+        self.assertIn("shadow-release", signal_names)
+        self.assertIn("rollout-phase", signal_names)
+        self.assertIn("recovery-orchestration", signal_names)
+        self.assertIn("human-governance", signal_names)
+        self.assertEqual(run.final_snapshot.highest_severity(), "info")
+
+    def test_kki_integrated_operations_run_serializes_success(self) -> None:
+        payload = run_integrated_operations(correlation_id="corr-140-dict").to_dict()
+
+        self.assertTrue(payload["success"])
+        self.assertEqual(payload["shadow_coordination"]["work_unit"]["correlation_id"], "corr-140-dict")
+        self.assertEqual(payload["human_governance"]["decision"], "approve")
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

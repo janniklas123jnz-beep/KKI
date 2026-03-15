@@ -17,6 +17,7 @@ from .governance import (
     govern_recovery_orchestration,
 )
 from .integrated_smoke import IntegratedSmokeBuild, run_integrated_smoke_build
+from .operations_run import IntegratedOperationsRun, run_integrated_operations
 from .message_protocols import (
     DeliveryGuarantee,
     DeliveryMode,
@@ -173,6 +174,7 @@ __all__ = [
     "HumanDecision",
     "HumanLoopGovernance",
     "IdentityKind",
+    "IntegratedOperationsRun",
     "IntegratedSmokeBuild",
     "LoadedControlPlane",
     "ModuleBoundary",
@@ -263,4 +265,5 @@ __all__ = [
     "transfer_message",
     "transfer_envelope_for_state",
     "work_unit_for_state",
+    "run_integrated_operations",
 ]

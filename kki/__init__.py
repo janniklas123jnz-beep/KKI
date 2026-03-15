@@ -32,6 +32,7 @@ from .readiness_cadence import (
     build_readiness_cadence,
 )
 from .drift_monitor import DriftMonitor, DriftObservation, DriftSeverity, build_drift_monitor
+from .escalation_router import EscalationRoute, EscalationRoutePath, EscalationRouter, build_escalation_router
 from .governance import (
     GateDecision,
     GateOutcome,
@@ -261,6 +262,9 @@ __all__ = [
     "EscalationDirective",
     "EscalationPath",
     "EscalationPlan",
+    "EscalationRoute",
+    "EscalationRoutePath",
+    "EscalationRouter",
     "GateDecision",
     "GateReadiness",
     "GateState",
@@ -379,6 +383,7 @@ __all__ = [
     "build_continuous_readiness_cycle",
     "build_dispatch_plan",
     "build_drift_monitor",
+    "build_escalation_router",
     "build_improvement_orchestrator",
     "build_operations_cockpit",
     "build_portfolio_optimizer",

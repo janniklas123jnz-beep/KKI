@@ -42,6 +42,9 @@ from kki import (
     EscalationDirective,
     EscalationPath,
     EscalationPlan,
+    EscalationRoute,
+    EscalationRoutePath,
+    EscalationRouter,
     EvidenceRecord,
     EventEnvelope,
     GateDecision,
@@ -152,6 +155,7 @@ from kki import (
     build_continuous_readiness_cycle,
     build_dispatch_plan,
     build_drift_monitor,
+    build_escalation_router,
     build_guardrail_portfolio,
     build_improvement_orchestrator,
     build_operations_cockpit,
@@ -3598,6 +3602,42 @@ class SmokeTests(unittest.TestCase):
         self.assertIn("pilot-containment", cadence.immediate_case_ids)
         self.assertIn("shadow-guarded", cadence.focus_case_ids)
         self.assertIn("pilot-ready", cadence.next_window_case_ids)
+
+    def test_kki_escalation_router_routes_blocked_case_to_recovery(self) -> None:
+        router = build_escalation_router(router_id="router-162-blocked")
+        blocked_route = next(route for route in router.routes if route.case_id == "pilot-containment")
+
+        self.assertIsInstance(router, EscalationRouter)
+        self.assertIsInstance(blocked_route, EscalationRoute)
+        self.assertEqual(blocked_route.path, EscalationRoutePath.RECOVERY_CONTAINMENT)
+        self.assertEqual(blocked_route.boundary, ModuleBoundaryName.RECOVERY)
+        self.assertTrue(blocked_route.release_blocked)
+        self.assertIn("pilot-containment", router.recovery_case_ids)
+
+    def test_kki_escalation_router_routes_governed_case_to_governance(self) -> None:
+        router = build_escalation_router(router_id="router-162-governed")
+        governed_route = next(route for route in router.routes if route.case_id == "shadow-guarded")
+
+        self.assertEqual(governed_route.path, EscalationRoutePath.GOVERNANCE_REVIEW)
+        self.assertEqual(governed_route.boundary, ModuleBoundaryName.GOVERNANCE)
+        self.assertIn("shadow-guarded", router.governance_case_ids)
+
+    def test_kki_escalation_router_routes_steady_case_to_telemetry(self) -> None:
+        router = build_escalation_router(router_id="router-162-steady")
+        steady_route = next(route for route in router.routes if route.case_id == "pilot-ready")
+
+        self.assertEqual(steady_route.path, EscalationRoutePath.TELEMETRY_WATCH)
+        self.assertEqual(steady_route.boundary, ModuleBoundaryName.TELEMETRY)
+        self.assertFalse(steady_route.release_blocked)
+        self.assertIn("pilot-ready", router.telemetry_case_ids)
+
+    def test_kki_escalation_router_aggregates_focus_routes(self) -> None:
+        router = build_escalation_router(router_id="router-162-matrix")
+
+        self.assertEqual(router.router_signal.status, "critical-response")
+        self.assertIn("pilot-containment", router.blocked_case_ids)
+        self.assertIn("shadow-guarded", router.focus_case_ids)
+        self.assertIn("pilot-ready", router.telemetry_case_ids)
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

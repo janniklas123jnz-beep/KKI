@@ -404,6 +404,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `build_readiness_cadence()` leitet aus `ContinuousReadinessCycle` deterministische Trigger, Due-Cycles und aktuelle/naechste Fenster fuer jeden Fall ab
 - die Kadenz erweitert den Snapshot um ein explizites `readiness-cadence`-Signal fuer eskalierte, review-required und steady Betriebsrhythmen
 
+`#162` uebersetzt diese Kadenz jetzt in explizite Eskalationspfade:
+
+- `EscalationRoute`, `EscalationRouter` und `EscalationRoutePath` modellieren pro Fall genau eine kanonische Route in Governance-, Recovery- oder Telemetry-Verarbeitung
+- `build_escalation_router()` leitet aus `ReadinessCadence` deterministische Eskalationspfade fuer blocked-, review-required- und steady-Faelle ab
+- der Router erweitert den Snapshot um ein explizites `escalation-router`-Signal fuer kritische Responses, Governance-Follow-ups und reine Telemetry-Watches
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

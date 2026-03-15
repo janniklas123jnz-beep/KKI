@@ -32,6 +32,7 @@ from .readiness_cadence import (
     ReadinessCadenceWindow,
     build_readiness_cadence,
 )
+from .recovery_drills import RecoveryDrill, RecoveryDrillStatus, RecoveryDrillSuite, build_recovery_drill_suite
 from .drift_monitor import DriftMonitor, DriftObservation, DriftSeverity, build_drift_monitor
 from .escalation_router import EscalationRoute, EscalationRoutePath, EscalationRouter, build_escalation_router
 from .evidence_ledger import EvidenceLedger, EvidenceLedgerEntry, EvidenceLedgerSource, build_evidence_ledger
@@ -330,6 +331,9 @@ __all__ = [
     "ReadinessFindingSeverity",
     "ReadinessReview",
     "RecoveryCheckpoint",
+    "RecoveryDrill",
+    "RecoveryDrillStatus",
+    "RecoveryDrillSuite",
     "RemediationCampaign",
     "RemediationCampaignStage",
     "RemediationCampaignStageType",
@@ -407,6 +411,7 @@ __all__ = [
     "build_release_campaign",
     "build_readiness_cadence",
     "build_readiness_review",
+    "build_recovery_drill_suite",
     "build_review_action_plan",
     "build_risk_register",
     "build_scenario_replay",

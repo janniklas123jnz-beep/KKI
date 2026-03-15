@@ -428,6 +428,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `build_governance_agenda()` koppelt `CapacityPlanner` und `EvidenceLedger`, um Governance-Faelle mit Evidenz-Refs, Commitment-Spuren und Beschlussstatus in eine deterministische Agenda zu ueberfuehren
 - die Agenda erweitert den Snapshot um ein explizites `governance-agenda`-Signal fuer scheduled-, queued- und blocked-Entscheidungslaegen
 
+`#166` ueberfuehrt blocked-Faelle nun in wiederkehrende Recovery-Drills:
+
+- `RecoveryDrill`, `RecoveryDrillSuite` und `RecoveryDrillStatus` modellieren wiederkehrende Rollback-/Containment-Drills mit expliziten Wiedereintrittsbedingungen
+- `build_recovery_drill_suite()` koppelt `CapacityPlanner` und `EvidenceLedger`, um blocked-Faelle in aktive oder geplante Recovery-Drills mit Replay-, Remediation- und Review-Bedingungen zu ueberfuehren
+- die Drill-Suite erweitert den Snapshot um ein explizites `recovery-drills`-Signal fuer aktive, geplante und wiedereintrittsbereite Recovery-Pfade
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

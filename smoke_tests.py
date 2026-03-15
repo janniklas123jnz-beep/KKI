@@ -107,6 +107,9 @@ from kki import (
     ReadinessCadenceTrigger,
     ReadinessCadenceWindow,
     RecoveryCheckpoint,
+    RecoveryDrill,
+    RecoveryDrillStatus,
+    RecoveryDrillSuite,
     ReadinessFinding,
     ReadinessFindingSeverity,
     ReadinessReview,
@@ -176,6 +179,7 @@ from kki import (
     build_readiness_cadence,
     build_remediation_campaign,
     build_readiness_review,
+    build_recovery_drill_suite,
     build_release_campaign,
     build_review_action_plan,
     build_risk_register,
@@ -3762,6 +3766,37 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(agenda.agenda_signal.status, "scheduled")
         self.assertEqual(agenda.scheduled_case_ids, ("shadow-guarded",))
         self.assertFalse(agenda.blocked_case_ids)
+
+    def test_kki_recovery_drills_schedule_blocked_case(self) -> None:
+        drills = build_recovery_drill_suite(suite_id="drills-166-blocked")
+        blocked_drill = next(drill for drill in drills.drills if drill.case_id == "pilot-containment")
+
+        self.assertIsInstance(drills, RecoveryDrillSuite)
+        self.assertIsInstance(blocked_drill, RecoveryDrill)
+        self.assertEqual(blocked_drill.mode, RecoveryMode.ROLLBACK)
+        self.assertEqual(blocked_drill.disposition, RecoveryDisposition.CONTAIN)
+
+    def test_kki_recovery_drills_mark_active_blocked_case(self) -> None:
+        drills = build_recovery_drill_suite(suite_id="drills-166-active")
+        blocked_drill = next(drill for drill in drills.drills if drill.case_id == "pilot-containment")
+
+        self.assertEqual(blocked_drill.status, RecoveryDrillStatus.ACTIVE)
+        self.assertIn("pilot-containment", drills.active_case_ids)
+
+    def test_kki_recovery_drills_capture_reentry_conditions(self) -> None:
+        drills = build_recovery_drill_suite(suite_id="drills-166-conditions")
+        blocked_drill = next(drill for drill in drills.drills if drill.case_id == "pilot-containment")
+
+        self.assertIn("replay-evidence-updated", blocked_drill.reentry_conditions)
+        self.assertIn("remediation-commitments-complete", blocked_drill.reentry_conditions)
+        self.assertIn("readiness-review-revalidated", blocked_drill.reentry_conditions)
+
+    def test_kki_recovery_drills_aggregate_suite_status(self) -> None:
+        drills = build_recovery_drill_suite(suite_id="drills-166-matrix")
+
+        self.assertEqual(drills.drill_signal.status, "active")
+        self.assertEqual(drills.active_case_ids, ("pilot-containment",))
+        self.assertFalse(drills.reentry_ready_case_ids)
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

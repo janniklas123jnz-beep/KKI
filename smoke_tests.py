@@ -45,6 +45,7 @@ from kki import (
     MessageKind,
     ModuleBoundaryName,
     OperationalPressure,
+    OperationsWave,
     OperatingMode,
     OrchestrationStatus,
     PersistenceRecord,
@@ -70,6 +71,7 @@ from kki import (
     TransferEnvelope,
     TrustLevel,
     ValidationStep,
+    WaveBudgetPolicy,
     WorkPriority,
     WorkStatus,
     authorize_action,
@@ -105,6 +107,7 @@ from kki import (
     rollout_state_for_shadow,
     run_integrated_smoke_build,
     run_integrated_operations,
+    run_operations_wave,
     runtime_dna_for_profile,
     runtime_dna_from_env,
     handoff_for_work_unit,
@@ -2260,6 +2263,78 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(run.work_unit.priority, WorkPriority.CRITICAL)
         self.assertEqual(run.shadow_control_plane.effective_payload["drift_threshold"], 0.02)
         self.assertEqual(run.rollout_control_plane.effective_payload["promotion_gate"], "strict-shadow-window")
+
+    def test_kki_operations_wave_executes_admitted_runs(self) -> None:
+        wave = run_operations_wave(
+            (
+                "pilot-cutover",
+                MissionProfile(
+                    mission_ref="pilot-hardening",
+                    title="pilot hardening pass",
+                    scenario=MissionScenario.HARDENING,
+                    runtime_stage=RuntimeStage.PILOT,
+                    runtime_profile="pilot-runtime-dna",
+                    target_boundary=ModuleBoundaryName.ROLLOUT,
+                    work_priority=WorkPriority.HIGH,
+                    budget_share=0.11,
+                    observed_budget=0.1,
+                    labels={"campaign": "pilot"},
+                ),
+            ),
+            wave_id="wave-142-pilot",
+        )
+
+        self.assertIsInstance(wave, OperationsWave)
+        self.assertEqual(len(wave.admitted_mission_refs), 2)
+        self.assertEqual(wave.wave_signal.status, "executed")
+        self.assertTrue(wave.success)
+
+    def test_kki_operations_wave_holds_work_when_budget_exhausted(self) -> None:
+        wave = run_operations_wave(
+            (
+                MissionProfile(
+                    mission_ref="pilot-critical",
+                    title="pilot critical cutover",
+                    scenario=MissionScenario.CUTOVER,
+                    runtime_stage=RuntimeStage.PILOT,
+                    runtime_profile="pilot-runtime-dna",
+                    target_boundary=ModuleBoundaryName.ROLLOUT,
+                    work_priority=WorkPriority.CRITICAL,
+                    budget_share=0.14,
+                    observed_budget=0.14,
+                ),
+                MissionProfile(
+                    mission_ref="pilot-normal",
+                    title="pilot normal rollout",
+                    scenario=MissionScenario.ROUTINE,
+                    runtime_stage=RuntimeStage.PILOT,
+                    runtime_profile="pilot-runtime-dna",
+                    target_boundary=ModuleBoundaryName.ROLLOUT,
+                    work_priority=WorkPriority.NORMAL,
+                    budget_share=0.13,
+                    observed_budget=0.12,
+                ),
+            ),
+            wave_id="wave-142-budget",
+            budget_policy=WaveBudgetPolicy(total_budget=0.3, reserve_floor=0.12, max_parallel=2),
+        )
+
+        self.assertEqual(wave.admitted_mission_refs, ("pilot-critical",))
+        self.assertEqual(wave.held_mission_refs, ("pilot-normal",))
+        self.assertEqual(wave.wave_signal.status, "partial")
+
+    def test_kki_operations_wave_rejects_mixed_runtime_stages(self) -> None:
+        with self.assertRaises(ValueError):
+            run_operations_wave(("pilot-cutover", "shadow-hardening"), wave_id="wave-142-mixed")
+
+    def test_kki_operations_wave_snapshot_contains_wave_signal(self) -> None:
+        wave = run_operations_wave(("pilot-cutover",), wave_id="wave-142-signal")
+
+        signal_names = [signal.signal_name for signal in wave.final_snapshot.signals]
+        self.assertIn("operations-wave", signal_names)
+        self.assertIn("shadow-release", signal_names)
+        self.assertEqual(wave.wave_signal.status, "executed")
+        self.assertTrue(wave.to_dict()["success"])
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

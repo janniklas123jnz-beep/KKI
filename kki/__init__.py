@@ -143,6 +143,7 @@ from .telemetry import (
     telemetry_alert,
     telemetry_signal_from_event,
 )
+from .wave_orchestration import OperationsWave, WaveBudgetPolicy, WaveMissionExecution, run_operations_wave
 
 __all__ = [
     "CoreState",
@@ -184,6 +185,7 @@ __all__ = [
     "ModuleBoundary",
     "ModuleBoundaryName",
     "OperationalPressure",
+    "OperationsWave",
     "OperatingMode",
     "OrchestrationState",
     "OrchestrationStatus",
@@ -215,6 +217,8 @@ __all__ = [
     "TransferEnvelope",
     "TrustLevel",
     "ValidationStep",
+    "WaveBudgetPolicy",
+    "WaveMissionExecution",
     "WorkClaim",
     "WorkCostProfile",
     "WorkHandoff",
@@ -272,4 +276,5 @@ __all__ = [
     "transfer_envelope_for_state",
     "work_unit_for_state",
     "run_integrated_operations",
+    "run_operations_wave",
 ]

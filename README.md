@@ -284,6 +284,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `mission_profile_for_name()` und `mission_profile_catalog()` liefern deterministische Presets wie `pilot-cutover`, `shadow-hardening` und `recovery-drill`
 - `run_integrated_operations()` kann diese Missionsprofile direkt ausfuehren und uebernimmt daraus Missionsreferenz, Policy-Parameter, Prioritaet und Budgetsteuerung
 
+`#142` baut darauf eine Wellen-Orchestrierung fuer mehrere Operations-Runs:
+
+- `WaveBudgetPolicy` definiert gemeinsame Budget-, Reserve- und Parallelitaetsgrenzen fuer eine Missionswelle
+- `run_operations_wave()` plant mehrere Missionsprofile ueber den bestehenden Dispatch-Kern, fuehrt admitted Runs aus und haelt oder blockiert Restarbeit deterministisch
+- `OperationsWave` verdichtet Dispatch-Plan, Wave-Ausfuehrungen und einen aggregierten Wave-Snapshot fuer Mehrfachlaeufe
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

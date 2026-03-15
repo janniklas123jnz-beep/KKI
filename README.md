@@ -248,6 +248,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `correlate_operation()` verdichtet aktive Controls, Dispatch-Lane und Gate-Ausgang in einen gemeinsamen Telemetrie-Drill-down
 - `operation_alerts()` hebt Hold-/Block-Lagen aus Dispatch und Governance in explizite Alarme fuer spaetere Betriebsansichten
 
+`#136` fuehrt darauf einen Shadow-Koordinator fuer konkrete Arbeitsauftraege ein:
+
+- `ShadowCoordination` und `ShadowCoordinationMode` fassen Preview-, Parallel- und Replay-Pfade pro Work Unit in eine gemeinsame Steueransicht
+- `coordinate_shadow_work()` koppelt Dispatch, Shadow-Gate, Dry-Run-Bewertung und Telemetrie-Korrelation zu einem expliziten Freigabepfad
+- Release-Signale markieren dabei nachvollziehbar, ob ein Auftrag blockiert, gehalten, fuer Parallelvalidierung vorgemerkt oder nach Replay freigegeben ist
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

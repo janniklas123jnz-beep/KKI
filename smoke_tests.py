@@ -43,6 +43,8 @@ from kki import (
     OrchestrationStatus,
     PersistenceRecord,
     PreviewMode,
+    ShadowCoordination,
+    ShadowCoordinationMode,
     ProtocolContext,
     RecoveryCheckpoint,
     RecoveryMode,
@@ -70,6 +72,7 @@ from kki import (
     build_telemetry_snapshot,
     claim_for_work_unit,
     command_message,
+    coordinate_shadow_work,
     correlate_operation,
     core_state_for_runtime,
     evaluate_dry_run,
@@ -918,6 +921,196 @@ class SmokeTests(unittest.TestCase):
 
         self.assertEqual(gate.outcome, GateOutcome.HOLD)
         self.assertEqual(correlated.snapshot.highest_severity(), "warning")
+
+    def test_kki_shadow_coordination_builds_release_ready_preview(self) -> None:
+        artifacts = (
+            ControlArtifact(
+                artifact_id="shadow-policy",
+                kind=ArtifactKind.POLICY,
+                version="2.0",
+                scope=ArtifactScope.BOUNDARY,
+                runtime_stage=RuntimeStage.PILOT,
+                boundary="shadow",
+                validations=(ValidationStep.STATIC, ValidationStep.CONSISTENCY, ValidationStep.SHADOW),
+                evidence_ref="audit-shadow-policy",
+                payload={"preview_gate": "strict", "drift_threshold": 0.05},
+            ),
+        )
+        control_plane = load_control_plane(artifacts, runtime_stage=RuntimeStage.PILOT, boundary="shadow")
+        state = orchestration_state_for_runtime(
+            runtime_dna_for_profile("pilot-runtime-dna", stage=RuntimeStage.PILOT),
+            mission_ref="mission-136",
+        )
+        work_unit = work_unit_for_state(
+            state,
+            title="shadow preview",
+            boundary="rollout",
+            correlation_id="corr-136-preview",
+            priority=WorkPriority.HIGH,
+            budget_share=0.15,
+        )
+        identity = AuthorizationIdentity(
+            slug="executor-shadow",
+            kind=IdentityKind.MODULE,
+            role=RoleName.EXECUTOR,
+            trust_level=TrustLevel.VERIFIED,
+            boundary_scope=("shadow", "rollout"),
+        )
+
+        coordination = coordinate_shadow_work(
+            state,
+            work_unit,
+            control_plane=control_plane,
+            identity=identity,
+            available_roles=(RoleName.EXECUTOR,),
+            observed_budget=0.15,
+        )
+
+        self.assertIsInstance(coordination, ShadowCoordination)
+        self.assertEqual(coordination.mode, ShadowCoordinationMode.PREVIEW)
+        self.assertTrue(coordination.release_ready)
+        self.assertEqual(coordination.release_signal.status, "release-ready")
+        self.assertEqual(coordination.correlation.snapshot.highest_severity(), "info")
+
+    def test_kki_shadow_coordination_switches_to_parallel_mode(self) -> None:
+        artifacts = (
+            ControlArtifact(
+                artifact_id="shadow-policy",
+                kind=ArtifactKind.POLICY,
+                version="2.0",
+                scope=ArtifactScope.BOUNDARY,
+                runtime_stage=RuntimeStage.PILOT,
+                boundary="shadow",
+                validations=(ValidationStep.STATIC, ValidationStep.CONSISTENCY, ValidationStep.SHADOW),
+                evidence_ref="audit-shadow-policy",
+                payload={"preview_gate": "strict", "drift_threshold": 0.05},
+            ),
+        )
+        control_plane = load_control_plane(artifacts, runtime_stage=RuntimeStage.PILOT, boundary="shadow")
+        state = orchestration_state_for_runtime(
+            runtime_dna_for_profile("pilot-runtime-dna", stage=RuntimeStage.PILOT),
+            mission_ref="mission-136",
+            gates=GateReadiness(shadow=GateState.GUARDED),
+        )
+        work_unit = work_unit_for_state(
+            state,
+            title="parallel validation",
+            boundary="rollout",
+            correlation_id="corr-136-parallel",
+            priority=WorkPriority.NORMAL,
+            budget_share=0.14,
+        )
+        identity = AuthorizationIdentity(
+            slug="executor-shadow",
+            kind=IdentityKind.MODULE,
+            role=RoleName.EXECUTOR,
+            trust_level=TrustLevel.VERIFIED,
+            boundary_scope=("shadow", "rollout"),
+        )
+
+        coordination = coordinate_shadow_work(
+            state,
+            work_unit,
+            control_plane=control_plane,
+            identity=identity,
+            available_roles=(RoleName.EXECUTOR,),
+            observed_budget=0.14,
+        )
+
+        self.assertEqual(coordination.mode, ShadowCoordinationMode.PARALLEL)
+        self.assertFalse(coordination.release_ready)
+        self.assertEqual(coordination.release_signal.status, "parallel-required")
+
+    def test_kki_shadow_coordination_clears_replay_for_handoff_work(self) -> None:
+        artifacts = (
+            ControlArtifact(
+                artifact_id="shadow-policy",
+                kind=ArtifactKind.POLICY,
+                version="2.0",
+                scope=ArtifactScope.BOUNDARY,
+                runtime_stage=RuntimeStage.PILOT,
+                boundary="shadow",
+                validations=(ValidationStep.STATIC, ValidationStep.CONSISTENCY, ValidationStep.SHADOW),
+                evidence_ref="audit-shadow-policy",
+                payload={"preview_gate": "strict", "drift_threshold": 0.05},
+            ),
+        )
+        control_plane = load_control_plane(artifacts, runtime_stage=RuntimeStage.PILOT, boundary="shadow")
+        state = orchestration_state_for_runtime(
+            runtime_dna_for_profile("pilot-runtime-dna", stage=RuntimeStage.PILOT),
+            mission_ref="mission-136",
+        )
+        work_unit = work_unit_for_state(
+            state,
+            title="replay validation",
+            boundary="rollout",
+            correlation_id="corr-136-replay",
+            priority=WorkPriority.HIGH,
+            budget_share=0.12,
+        )
+        replay_unit = advance_work_unit(
+            work_unit,
+            status=WorkStatus.HANDED_OFF,
+            attempt=1,
+            handoff_ref="handoff-replay",
+        )
+        identity = AuthorizationIdentity(
+            slug="executor-shadow",
+            kind=IdentityKind.MODULE,
+            role=RoleName.EXECUTOR,
+            trust_level=TrustLevel.VERIFIED,
+            boundary_scope=("shadow", "rollout"),
+        )
+
+        coordination = coordinate_shadow_work(
+            state,
+            replay_unit,
+            control_plane=control_plane,
+            identity=identity,
+            available_roles=(RoleName.EXECUTOR,),
+            observed_budget=0.12,
+        )
+
+        self.assertEqual(coordination.mode, ShadowCoordinationMode.REPLAY)
+        self.assertTrue(coordination.release_ready)
+        self.assertEqual(coordination.release_signal.status, "replay-cleared")
+        self.assertEqual(coordination.preview.mode, PreviewMode.DRY_RUN)
+
+    def test_kki_shadow_coordination_blocks_release_when_gate_denies(self) -> None:
+        control_plane = load_control_plane((), runtime_stage=RuntimeStage.PILOT, boundary="shadow")
+        state = orchestration_state_for_runtime(
+            runtime_dna_for_profile("pilot-runtime-dna", stage=RuntimeStage.PILOT),
+            mission_ref="mission-136",
+        )
+        work_unit = work_unit_for_state(
+            state,
+            title="blocked shadow run",
+            boundary="rollout",
+            correlation_id="corr-136-blocked",
+            priority=WorkPriority.HIGH,
+            budget_share=0.14,
+        )
+        identity = AuthorizationIdentity(
+            slug="observer-shadow",
+            kind=IdentityKind.OPERATOR,
+            role=RoleName.OBSERVER,
+            trust_level=TrustLevel.RESTRICTED,
+            boundary_scope=("shadow",),
+        )
+
+        coordination = coordinate_shadow_work(
+            state,
+            work_unit,
+            control_plane=control_plane,
+            identity=identity,
+            available_roles=(RoleName.EXECUTOR,),
+            observed_budget=0.14,
+        )
+
+        self.assertFalse(coordination.release_ready)
+        self.assertEqual(coordination.release_signal.status, "blocked")
+        self.assertEqual(coordination.release_signal.severity, "critical")
+        self.assertEqual(coordination.gate_decision.outcome, GateOutcome.BLOCK)
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

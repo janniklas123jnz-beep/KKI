@@ -53,7 +53,12 @@ from kki import (
     MandateMemoryStatus,
     MandateMemoryStore,
     NavigationConstraint,
+    ProgramSenate,
     ReleaseThreshold,
+    SenateBalanceStatus,
+    SenatePriority,
+    SenateResolution,
+    SenateSeat,
     StopCondition,
     CockpitEntry,
     CockpitStatus,
@@ -288,6 +293,7 @@ from kki import (
     build_portfolio_radar,
     build_policy_tuner,
     build_program_controller,
+    build_program_senate,
     build_readiness_cadence,
     build_remediation_campaign,
     build_readiness_review,
@@ -4657,6 +4663,39 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(charter.restricted_clause_ids, ("charter-188-signal-stability-lane",))
         self.assertEqual(charter.guarded_clause_ids, ("charter-188-signal-governance-lane",))
         self.assertEqual(charter.enabled_clause_ids, ("charter-188-signal-expansion-lane",))
+
+    def test_kki_program_senate_builds_contested_stability_seat(self) -> None:
+        senate = build_program_senate(senate_id="senate-189-stability")
+        seat = next(item for item in senate.seats if item.balance_status is SenateBalanceStatus.CONTESTED)
+
+        self.assertIsInstance(senate, ProgramSenate)
+        self.assertIsInstance(seat, SenateSeat)
+        self.assertEqual(seat.priority, SenatePriority.CONSTITUTION_FIRST)
+        self.assertEqual(seat.resolution, SenateResolution.VETO)
+
+    def test_kki_program_senate_builds_balanced_governance_seat(self) -> None:
+        senate = build_program_senate(senate_id="senate-189-governance")
+        seat = next(item for item in senate.seats if item.balance_status is SenateBalanceStatus.BALANCED)
+
+        self.assertEqual(seat.priority, SenatePriority.JOINT_REVIEW)
+        self.assertEqual(seat.resolution, SenateResolution.NEGOTIATE)
+        self.assertGreater(seat.consensus_score, 0.5)
+
+    def test_kki_program_senate_builds_aligned_expansion_seat(self) -> None:
+        senate = build_program_senate(senate_id="senate-189-expansion")
+        seat = next(item for item in senate.seats if item.balance_status is SenateBalanceStatus.ALIGNED)
+
+        self.assertEqual(seat.priority, SenatePriority.PROGRAM_ADVANCE)
+        self.assertEqual(seat.resolution, SenateResolution.ENDORSE)
+        self.assertTrue(seat.release_ready)
+
+    def test_kki_program_senate_aggregates_senate_signal(self) -> None:
+        senate = build_program_senate(senate_id="senate-189-signal")
+
+        self.assertEqual(senate.senate_signal.status, "senate-contested")
+        self.assertEqual(senate.contested_seat_ids, ("senate-189-signal-stability-lane",))
+        self.assertEqual(senate.balanced_seat_ids, ("senate-189-signal-governance-lane",))
+        self.assertEqual(senate.aligned_seat_ids, ("senate-189-signal-expansion-lane",))
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

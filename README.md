@@ -566,6 +566,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `build_intervention_charter()` koppelt den `GuidelineCompass`, um verankerte, gefuehrte und offene Leitlinien in restriktive, guarded oder enabled Charta-Klauseln fuer Folgeeingriffe zu ueberfuehren
 - die Interventions-Charta erweitert den Snapshot um ein explizites `intervention-charter`-Signal fuer restricted veto, guarded review und enabled autonomy windows
 
+`#189` balanciert diese Charta nun im Programm-Senat gegen Programme und Exekutive:
+
+- `SenateSeat`, `ProgramSenate`, `SenatePriority`, `SenateResolution` und `SenateBalanceStatus` modellieren senatsfaehige Ausgleichspunkte zwischen Charter-Klauseln, Programmdirektiven und exekutiven Orders
+- `build_program_senate()` koppelt die `InterventionCharter` direkt an dieselbe Fuehrungskette, um restriktive, balanced und aligned Senate-Sitze fuer Leitstern zu bilden
+- der Programm-Senat erweitert den Snapshot um ein explizites `program-senate`-Signal fuer contested veto, balanced negotiation und aligned endorsement
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

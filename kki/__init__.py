@@ -100,6 +100,14 @@ from .intervention_charter import (
     StopCondition,
     build_intervention_charter,
 )
+from .program_senate import (
+    ProgramSenate,
+    SenateBalanceStatus,
+    SenatePriority,
+    SenateResolution,
+    SenateSeat,
+    build_program_senate,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -437,6 +445,11 @@ __all__ = [
     "InterventionRight",
     "ReleaseThreshold",
     "StopCondition",
+    "ProgramSenate",
+    "SenateBalanceStatus",
+    "SenatePriority",
+    "SenateResolution",
+    "SenateSeat",
     "ExceptionCase",
     "ExceptionKind",
     "ExceptionRegister",
@@ -621,6 +634,7 @@ __all__ = [
     "build_mandate_memory_store",
     "build_guideline_compass",
     "build_intervention_charter",
+    "build_program_senate",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

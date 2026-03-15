@@ -45,6 +45,7 @@ from .incident_detector import IncidentCause, IncidentReport, IncidentSeverity, 
 from .integrated_smoke import IntegratedSmokeBuild, run_integrated_smoke_build
 from .mission_profiles import MissionPolicy, MissionProfile, MissionScenario, mission_profile_catalog, mission_profile_for_name
 from .operations_run import IntegratedOperationsRun, run_integrated_operations
+from .operations_cockpit import CockpitEntry, CockpitStatus, OperationsCockpit, build_operations_cockpit
 from .release_campaigns import (
     ReleaseCampaign,
     ReleaseCampaignStage,
@@ -229,6 +230,8 @@ __all__ = [
     "ChangeWindowEntry",
     "ChangeWindowStatus",
     "CorrelatedOperation",
+    "CockpitEntry",
+    "CockpitStatus",
     "ControlArtifact",
     "DelegationGrant",
     "DryRunEvaluation",
@@ -271,6 +274,7 @@ __all__ = [
     "OperationsWave",
     "OperationsRunLedger",
     "OperationsIncident",
+    "OperationsCockpit",
     "OperatingMode",
     "OrchestrationState",
     "OrchestrationStatus",
@@ -348,6 +352,7 @@ __all__ = [
     "build_dispatch_plan",
     "build_drift_monitor",
     "build_improvement_orchestrator",
+    "build_operations_cockpit",
     "build_remediation_campaign",
     "build_release_campaign",
     "build_readiness_review",

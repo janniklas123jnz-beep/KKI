@@ -24,6 +24,8 @@ from kki import (
     ChangeWindowStatus,
     ClaimStatus,
     CorrelatedOperation,
+    CockpitEntry,
+    CockpitStatus,
     ControlArtifact,
     CoreState,
     DelegationGrant,
@@ -69,6 +71,7 @@ from kki import (
     ModuleBoundaryName,
     OperationalPressure,
     OperationsRunLedger,
+    OperationsCockpit,
     OperationsWave,
     OperatingMode,
     OperationsIncident,
@@ -138,6 +141,7 @@ from kki import (
     build_drift_monitor,
     build_guardrail_portfolio,
     build_improvement_orchestrator,
+    build_operations_cockpit,
     build_remediation_campaign,
     build_readiness_review,
     build_release_campaign,
@@ -3442,6 +3446,39 @@ class SmokeTests(unittest.TestCase):
         self.assertTrue(campaign.commitment_refs)
         self.assertGreaterEqual(len(campaign.evidence_records), len(campaign.stages))
         self.assertEqual(campaign.campaign_signal.status, "blocked")
+
+    def test_kki_operations_cockpit_tracks_healthy_case(self) -> None:
+        cockpit = build_operations_cockpit(cockpit_id="cockpit-158-healthy")
+        ready_entry = next(entry for entry in cockpit.entries if entry.case_id == "pilot-ready")
+
+        self.assertIsInstance(cockpit, OperationsCockpit)
+        self.assertIsInstance(ready_entry, CockpitEntry)
+        self.assertEqual(ready_entry.status, CockpitStatus.HEALTHY)
+        self.assertIn("pilot-ready", cockpit.healthy_case_ids)
+
+    def test_kki_operations_cockpit_surfaces_governed_case(self) -> None:
+        cockpit = build_operations_cockpit(cockpit_id="cockpit-158-attention")
+        guarded_entry = next(entry for entry in cockpit.entries if entry.case_id == "shadow-guarded")
+
+        self.assertEqual(guarded_entry.status, CockpitStatus.ATTENTION)
+        self.assertEqual(guarded_entry.remediation_status, RemediationCampaignStatus.GUARDED.value)
+        self.assertIn("shadow-guarded", cockpit.attention_case_ids)
+
+    def test_kki_operations_cockpit_surfaces_critical_case(self) -> None:
+        cockpit = build_operations_cockpit(cockpit_id="cockpit-158-critical")
+        blocked_entry = next(entry for entry in cockpit.entries if entry.case_id == "pilot-containment")
+
+        self.assertEqual(blocked_entry.status, CockpitStatus.CRITICAL)
+        self.assertTrue(blocked_entry.blocked_release)
+        self.assertIn("pilot-containment", cockpit.critical_case_ids)
+
+    def test_kki_operations_cockpit_aggregates_status_counts(self) -> None:
+        cockpit = build_operations_cockpit(cockpit_id="cockpit-158-matrix")
+
+        self.assertEqual(cockpit.cockpit_signal.status, "critical")
+        self.assertIn("pilot-ready", cockpit.healthy_case_ids)
+        self.assertIn("shadow-guarded", cockpit.attention_case_ids)
+        self.assertIn("pilot-containment", cockpit.critical_case_ids)
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

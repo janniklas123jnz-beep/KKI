@@ -380,6 +380,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `build_remediation_campaign()` koppelt den `ImprovementOrchestrator` mit Commitments, Evidence und Schutzstufen zu einem ausfuehrbaren Mehrphasenlauf
 - die Kampagne erweitert den Snapshot um ein explizites `remediation-campaign`-Signal fuer koordinierte Behebung, Freigaben und Recovery-Absicherung
 
+`#158` verdichtet diese Lage nun in einer kompakten Betriebsansicht:
+
+- `CockpitEntry`, `OperationsCockpit` und `CockpitStatus` modellieren die zentrale Sicht auf Healthy-, Attention- und Critical-Faelle
+- `build_operations_cockpit()` koppelt `ReadinessReview`, `RiskRegister`, `DriftMonitor` und `RemediationCampaign`, um pro Fall eine operative Gesamtlage zu bilden
+- das Cockpit erweitert den Snapshot um ein explizites `operations-cockpit`-Signal fuer die verdichtete Leitwarte ueber Freigabe, Risiko, Drift und Behebung
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

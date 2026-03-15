@@ -554,6 +554,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `build_mandate_memory_store()` koppelt `MandateCardDeck` und `CourseCorrector`, um contain-, rebalance- und accelerate-Pfade als sealed, review oder renewable Erinnerungen fuer spaetere Erneuerung abzulegen
 - der Mandats-Speicher erweitert den Snapshot um ein explizites `mandate-memory-store`-Signal fuer versiegelte, review-pflichtige und erneuerbare Leitstern-Mandate
 
+`#187` ueberfuehrt diese Erinnerungen nun in einen Leitlinien-Kompass:
+
+- `GuidelineVector`, `GuidelineCompass`, `GuidelinePrinciple`, `NavigationConstraint` und `CompassStatus` modellieren dauerhafte Leitlinien, Navigationsgrenzen und offene bzw. verankerte Orientierungspfade
+- `build_guideline_compass()` koppelt den `MandateMemoryStore`, um versiegelte, review-pflichtige und erneuerbare Leitstern-Erinnerungen in stabile Navigationsprinzipien fuer Folgeentscheidungen zu ueberfuehren
+- der Leitlinien-Kompass erweitert den Snapshot um ein explizites `guideline-compass`-Signal fuer anchored stability, guided progress und open expansion
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

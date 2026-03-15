@@ -41,9 +41,14 @@ from kki import (
     CourseCorrectionAction,
     CourseCorrectionDirective,
     CourseCorrectionStatus,
+    CompassStatus,
+    GuidelineCompass,
+    GuidelinePrinciple,
+    GuidelineVector,
     MandateMemoryRecord,
     MandateMemoryStatus,
     MandateMemoryStore,
+    NavigationConstraint,
     CockpitEntry,
     CockpitStatus,
     ConstitutionArticle,
@@ -259,6 +264,7 @@ from kki import (
     build_executive_watchtower,
     build_exception_register,
     build_federation_coordination,
+    build_guideline_compass,
     build_governance_agenda,
     build_guardrail_portfolio,
     build_improvement_orchestrator,
@@ -4575,6 +4581,39 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(store.sealed_record_ids, ("memory-186-signal-stability-lane",))
         self.assertEqual(store.review_record_ids, ("memory-186-signal-governance-lane",))
         self.assertEqual(store.renewable_record_ids, ("memory-186-signal-expansion-lane",))
+
+    def test_kki_guideline_compass_builds_anchored_stability_vector(self) -> None:
+        compass = build_guideline_compass(compass_id="compass-187-stability")
+        vector = next(item for item in compass.vectors if item.compass_status is CompassStatus.ANCHORED)
+
+        self.assertIsInstance(compass, GuidelineCompass)
+        self.assertIsInstance(vector, GuidelineVector)
+        self.assertEqual(vector.principle, GuidelinePrinciple.STABILITY_FIRST)
+        self.assertEqual(vector.navigation_constraint, NavigationConstraint.HARD_BOUNDARY)
+
+    def test_kki_guideline_compass_builds_guided_progress_vector(self) -> None:
+        compass = build_guideline_compass(compass_id="compass-187-governance")
+        vector = next(item for item in compass.vectors if item.compass_status is CompassStatus.GUIDED)
+
+        self.assertEqual(vector.principle, GuidelinePrinciple.GOVERNED_PROGRESS)
+        self.assertEqual(vector.navigation_constraint, NavigationConstraint.GOVERNED_CORRIDOR)
+        self.assertGreater(vector.guidance_score, 0.7)
+
+    def test_kki_guideline_compass_builds_open_expansion_vector(self) -> None:
+        compass = build_guideline_compass(compass_id="compass-187-expansion")
+        vector = next(item for item in compass.vectors if item.compass_status is CompassStatus.OPEN)
+
+        self.assertEqual(vector.principle, GuidelinePrinciple.BOUNDED_EXPANSION)
+        self.assertEqual(vector.navigation_constraint, NavigationConstraint.EXPANSION_WINDOW)
+        self.assertTrue(vector.release_ready)
+
+    def test_kki_guideline_compass_aggregates_compass_signal(self) -> None:
+        compass = build_guideline_compass(compass_id="compass-187-signal")
+
+        self.assertEqual(compass.compass_signal.status, "compass-anchored")
+        self.assertEqual(compass.anchored_vector_ids, ("compass-187-signal-stability-lane",))
+        self.assertEqual(compass.guided_vector_ids, ("compass-187-signal-governance-lane",))
+        self.assertEqual(compass.open_vector_ids, ("compass-187-signal-expansion-lane",))
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

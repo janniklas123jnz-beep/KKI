@@ -83,6 +83,14 @@ from .mandate_memory_store import (
     MandateMemoryStore,
     build_mandate_memory_store,
 )
+from .guideline_compass import (
+    CompassStatus,
+    GuidelineCompass,
+    GuidelinePrinciple,
+    GuidelineVector,
+    NavigationConstraint,
+    build_guideline_compass,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -409,6 +417,11 @@ __all__ = [
     "MandateMemoryRecord",
     "MandateMemoryStatus",
     "MandateMemoryStore",
+    "CompassStatus",
+    "GuidelineCompass",
+    "GuidelinePrinciple",
+    "GuidelineVector",
+    "NavigationConstraint",
     "ExceptionCase",
     "ExceptionKind",
     "ExceptionRegister",
@@ -591,6 +604,7 @@ __all__ = [
     "build_scenario_chancery",
     "build_course_corrector",
     "build_mandate_memory_store",
+    "build_guideline_compass",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

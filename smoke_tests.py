@@ -83,6 +83,11 @@ from kki import (
     ReviewActionPlan,
     ReviewActionPriority,
     ReviewActionType,
+    RiskImpact,
+    RiskLikelihood,
+    RiskMitigationStatus,
+    RiskRecord,
+    RiskRegister,
     RoleName,
     RolloutPhase,
     RolloutState,
@@ -114,6 +119,7 @@ from kki import (
     build_readiness_review,
     build_release_campaign,
     build_review_action_plan,
+    build_risk_register,
     build_runtime_scorecard,
     build_telemetry_snapshot,
     claim_for_work_unit,
@@ -3134,6 +3140,75 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(plan.critical_case_ids, ("pilot-containment",))
         self.assertIn(ModuleBoundaryName.GOVERNANCE, plan.owner_boundaries)
         self.assertIn(ModuleBoundaryName.RECOVERY, plan.owner_boundaries)
+
+    def test_kki_risk_register_observes_healthy_case(self) -> None:
+        plan = build_review_action_plan(
+            build_readiness_review(
+                build_runtime_scorecard(
+                    run_benchmark_harness(
+                        (
+                            BenchmarkCase(
+                                case_id="risk-ready",
+                                title="risk ready",
+                                missions=(mission_profile_for_name("pilot-cutover"),),
+                                release_mode=BenchmarkReleaseMode.READY,
+                            ),
+                        ),
+                        harness_id="harness-152-ready",
+                    ),
+                    scorecard_id="scorecard-152-ready",
+                ),
+                review_id="review-152-ready",
+            ),
+            plan_id="plan-152-ready",
+        )
+        register = build_risk_register(plan, register_id="register-152-ready")
+
+        self.assertIsInstance(register, RiskRegister)
+        self.assertIsInstance(register.risks[0], RiskRecord)
+        self.assertEqual(register.register_signal.status, "observed")
+        self.assertEqual(register.risks[0].mitigation_status, RiskMitigationStatus.OBSERVE)
+        self.assertEqual(register.risks[0].likelihood, RiskLikelihood.LOW)
+
+    def test_kki_risk_register_tracks_governance_risk(self) -> None:
+        plan = build_review_action_plan(plan_id="plan-152-guarded")
+        governance_only_plan = ReviewActionPlan(
+            plan_id=plan.plan_id,
+            review=plan.review,
+            actions=(next(action for action in plan.actions if action.case_id == "shadow-guarded"),),
+            plan_signal=plan.plan_signal,
+            final_snapshot=plan.final_snapshot,
+        )
+        register = build_risk_register(governance_only_plan, register_id="register-152-guarded")
+
+        self.assertEqual(register.register_signal.status, "active-risks")
+        self.assertEqual(register.risks[0].owner, ModuleBoundaryName.GOVERNANCE)
+        self.assertEqual(register.risks[0].impact, RiskImpact.HIGH)
+        self.assertEqual(register.active_case_ids, ("shadow-guarded",))
+
+    def test_kki_risk_register_tracks_blocking_risk(self) -> None:
+        plan = build_review_action_plan(plan_id="plan-152-blocked")
+        blocked_only_plan = ReviewActionPlan(
+            plan_id=plan.plan_id,
+            review=plan.review,
+            actions=(next(action for action in plan.actions if action.case_id == "pilot-containment"),),
+            plan_signal=plan.plan_signal,
+            final_snapshot=plan.final_snapshot,
+        )
+        register = build_risk_register(blocked_only_plan, register_id="register-152-blocked")
+
+        self.assertEqual(register.register_signal.status, "blocking-risks")
+        self.assertEqual(register.blocking_case_ids, ("pilot-containment",))
+        self.assertEqual(register.risks[0].impact, RiskImpact.CRITICAL)
+        self.assertEqual(register.risks[0].mitigation_status, RiskMitigationStatus.BLOCKING)
+
+    def test_kki_risk_register_aggregates_default_plan(self) -> None:
+        register = build_risk_register(register_id="register-152-matrix")
+
+        self.assertEqual(register.register_signal.status, "blocking-risks")
+        self.assertIn("pilot-containment", register.blocking_case_ids)
+        self.assertIn(ModuleBoundaryName.GOVERNANCE, register.owner_boundaries)
+        self.assertIn(ModuleBoundaryName.RECOVERY, register.owner_boundaries)
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

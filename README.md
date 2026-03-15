@@ -344,6 +344,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `build_review_action_plan()` leitet aus `ReadinessReview`-Findings konkrete Governance-, Recovery-, Remediation- und Monitoring-Massnahmen ab
 - der Aktionsplan erweitert den Snapshot um ein explizites `review-action-plan`-Signal fuer priorisierte Folgearbeit nach dem Abschlussreview
 
+`#152` fuehrt diese Folgearbeit nun als dauerhaftes Risiko-Register:
+
+- `RiskRecord`, `RiskRegister`, `RiskLikelihood`, `RiskImpact` und `RiskMitigationStatus` modellieren offene und mitigierte Risiken samt Eintrittswahrscheinlichkeit, Auswirkung und Status
+- `build_risk_register()` leitet aus `ReviewActionPlan`-Aktionen ein dauerhaftes Register fuer Blocking-, Active- und Observe-Risiken ab
+- das Register erweitert den Snapshot um ein explizites `risk-register`-Signal fuer Rest-Risiken und Mitigation-Fortschritt
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

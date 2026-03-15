@@ -44,6 +44,14 @@ from .review_action_plan import (
     ReviewActionType,
     build_review_action_plan,
 )
+from .risk_register import (
+    RiskImpact,
+    RiskLikelihood,
+    RiskMitigationStatus,
+    RiskRecord,
+    RiskRegister,
+    build_risk_register,
+)
 from .readiness_review import ReadinessFinding, ReadinessFindingSeverity, ReadinessReview, build_readiness_review
 from .runtime_scorecard import RuntimeScorecard, RuntimeScorecardEntry, build_runtime_scorecard
 from .run_ledger import OperationsRunLedger, RunLedgerEntry, ledger_for_wave
@@ -252,6 +260,11 @@ __all__ = [
     "RecoveryMode",
     "RecoveryOrchestration",
     "RecoveryOutcome",
+    "RiskImpact",
+    "RiskLikelihood",
+    "RiskMitigationStatus",
+    "RiskRecord",
+    "RiskRegister",
     "RoleName",
     "RolloutPhase",
     "RolloutState",
@@ -294,6 +307,7 @@ __all__ = [
     "build_release_campaign",
     "build_readiness_review",
     "build_review_action_plan",
+    "build_risk_register",
     "build_runtime_scorecard",
     "build_telemetry_snapshot",
     "claim_for_work_unit",

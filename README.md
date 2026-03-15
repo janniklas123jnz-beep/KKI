@@ -470,6 +470,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `build_outcome_ledger()` koppelt das `StewardWorkboard`, um bearbeitete Direktiven als enthaltene, governte, getunte oder beobachtete Outcomes mit Outcome-Refs zu protokollieren
 - das Ledger erweitert den Snapshot um ein explizites `outcome-ledger`-Signal fuer stabilisierte Outcomes und potentielle Ausnahme-Kandidaten
 
+`#173` trennt daraus nun die echten Sonderlagen ab:
+
+- `ExceptionCase`, `ExceptionRegister`, `ExceptionKind` und `ExceptionSeverity` modellieren ungelöste, wiederkehrende und policy-kritische Ausnahmefaelle explizit
+- `build_exception_register()` koppelt das `OutcomeLedger`, um nur nicht-routinemaessige Faelle als policy-breach-, unresolved- oder recurring-Exceptions fortzuschreiben
+- das Register erweitert den Snapshot um ein explizites `exception-register`-Signal fuer kritische Sonderlagen und die naechste Eskalationsstufe
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

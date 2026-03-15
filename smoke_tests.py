@@ -55,6 +55,10 @@ from kki import (
     EvidenceLedger,
     EvidenceLedgerEntry,
     EvidenceLedgerSource,
+    ExceptionCase,
+    ExceptionKind,
+    ExceptionRegister,
+    ExceptionSeverity,
     EvidenceRecord,
     EventEnvelope,
     GateDecision,
@@ -193,6 +197,7 @@ from kki import (
     build_drift_monitor,
     build_escalation_router,
     build_evidence_ledger,
+    build_exception_register,
     build_governance_agenda,
     build_guardrail_portfolio,
     build_improvement_orchestrator,
@@ -4033,6 +4038,37 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(ledger.contained_case_ids, ("pilot-containment",))
         self.assertEqual(ledger.governed_case_ids, ("shadow-guarded",))
         self.assertAlmostEqual(ledger.ledger_signal.metrics["record_count"], 4.0)
+
+    def test_kki_exception_register_tracks_policy_breach_case(self) -> None:
+        register = build_exception_register(register_id="exception-173-breach")
+        case = next(item for item in register.exceptions if item.case_id == "pilot-containment")
+
+        self.assertIsInstance(register, ExceptionRegister)
+        self.assertIsInstance(case, ExceptionCase)
+        self.assertEqual(case.kind, ExceptionKind.POLICY_BREACH)
+        self.assertEqual(case.severity, ExceptionSeverity.CRITICAL)
+
+    def test_kki_exception_register_tracks_unresolved_case(self) -> None:
+        register = build_exception_register(register_id="exception-173-unresolved")
+        case = next(item for item in register.exceptions if item.case_id == "recovery-resume")
+
+        self.assertEqual(case.kind, ExceptionKind.UNRESOLVED)
+        self.assertEqual(case.severity, ExceptionSeverity.HIGH)
+        self.assertIn("unresolved", case.escalation_reason)
+
+    def test_kki_exception_register_excludes_routine_cases(self) -> None:
+        register = build_exception_register(register_id="exception-173-scope")
+
+        self.assertNotIn("shadow-guarded", [item.case_id for item in register.exceptions])
+        self.assertNotIn("pilot-ready", [item.case_id for item in register.exceptions])
+
+    def test_kki_exception_register_aggregates_exception_signal(self) -> None:
+        register = build_exception_register(register_id="exception-173-signal")
+
+        self.assertEqual(register.register_signal.status, "critical-exceptions")
+        self.assertEqual(register.critical_case_ids, ("pilot-containment",))
+        self.assertEqual(register.unresolved_case_ids, ("recovery-resume",))
+        self.assertEqual(register.policy_breach_case_ids, ("pilot-containment",))
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

@@ -30,6 +30,7 @@ from .convergence_simulator import (
     ConvergenceStatus,
     build_convergence_simulator,
 )
+from .exception_register import ExceptionCase, ExceptionKind, ExceptionRegister, ExceptionSeverity, build_exception_register
 from .learning_register import LearningPatternType, LearningRecord, LearningRegister, build_learning_register
 from .operations_steward import OperationsSteward, OperationsStewardStatus, StewardDirective, StewardDirectiveType, build_operations_steward
 from .outcome_ledger import OutcomeLedger, OutcomeRecord, OutcomeStatus, build_outcome_ledger
@@ -290,6 +291,10 @@ __all__ = [
     "EvidenceLedger",
     "EvidenceLedgerEntry",
     "EvidenceLedgerSource",
+    "ExceptionCase",
+    "ExceptionKind",
+    "ExceptionRegister",
+    "ExceptionSeverity",
     "GovernanceAgenda",
     "GovernanceAgendaItem",
     "GovernanceAgendaStatus",
@@ -436,6 +441,7 @@ __all__ = [
     "build_drift_monitor",
     "build_escalation_router",
     "build_evidence_ledger",
+    "build_exception_register",
     "build_governance_agenda",
     "build_improvement_orchestrator",
     "build_learning_register",

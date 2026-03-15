@@ -62,6 +62,9 @@ from kki import (
     GuardrailDomain,
     GuardrailPolicyMode,
     GuardrailPortfolio,
+    GovernanceAgenda,
+    GovernanceAgendaItem,
+    GovernanceAgendaStatus,
     HandoffMode,
     HumanDecision,
     HumanLoopGovernance,
@@ -165,6 +168,7 @@ from kki import (
     build_drift_monitor,
     build_escalation_router,
     build_evidence_ledger,
+    build_governance_agenda,
     build_guardrail_portfolio,
     build_improvement_orchestrator,
     build_operations_cockpit,
@@ -3728,6 +3732,36 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(planner.admitted_case_ids[:2], ("pilot-containment", "shadow-guarded"))
         self.assertLessEqual(planner.consumed_budget, planner.total_budget)
         self.assertIn("pilot-containment", planner.immediate_case_ids)
+
+    def test_kki_governance_agenda_schedules_governance_case(self) -> None:
+        agenda = build_governance_agenda(agenda_id="agenda-165-governed")
+        governed_item = next(item for item in agenda.items if item.case_id == "shadow-guarded")
+
+        self.assertIsInstance(agenda, GovernanceAgenda)
+        self.assertIsInstance(governed_item, GovernanceAgendaItem)
+        self.assertEqual(governed_item.agenda_status, GovernanceAgendaStatus.SCHEDULED)
+        self.assertEqual(governed_item.decision, HumanDecision.APPROVE)
+        self.assertIn("shadow-guarded", agenda.scheduled_case_ids)
+
+    def test_kki_governance_agenda_tracks_governance_evidence(self) -> None:
+        agenda = build_governance_agenda(agenda_id="agenda-165-evidence")
+        governed_item = next(item for item in agenda.items if item.case_id == "shadow-guarded")
+
+        self.assertTrue(governed_item.evidence_refs)
+        self.assertEqual(governed_item.route_path, EscalationRoutePath.GOVERNANCE_REVIEW)
+
+    def test_kki_governance_agenda_excludes_non_governance_cases(self) -> None:
+        agenda = build_governance_agenda(agenda_id="agenda-165-scope")
+
+        self.assertNotIn("pilot-containment", [item.case_id for item in agenda.items])
+        self.assertNotIn("pilot-ready", [item.case_id for item in agenda.items])
+
+    def test_kki_governance_agenda_aggregates_queue_state(self) -> None:
+        agenda = build_governance_agenda(agenda_id="agenda-165-matrix")
+
+        self.assertEqual(agenda.agenda_signal.status, "scheduled")
+        self.assertEqual(agenda.scheduled_case_ids, ("shadow-guarded",))
+        self.assertFalse(agenda.blocked_case_ids)
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

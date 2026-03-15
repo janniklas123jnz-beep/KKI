@@ -422,6 +422,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `build_capacity_planner()` koppelt `PortfolioOptimizer` und `EvidenceLedger`, um Immediate-, Current-, Next- und Backlog-Faelle deterministisch in Admit-, Hold- und Defer-Lanes einzuordnen
 - der Planer erweitert den Snapshot um ein explizites `capacity-planner`-Signal fuer unmittelbare Kapazitaetslast, Engpaesse und reservierte Umsetzungsfenster
 
+`#165` fuehrt daraus nun eine explizite Governance-Agenda:
+
+- `GovernanceAgendaItem`, `GovernanceAgenda` und `GovernanceAgendaStatus` modellieren den geordneten Human-in-the-loop-Backlog fuer review-required-Faelle
+- `build_governance_agenda()` koppelt `CapacityPlanner` und `EvidenceLedger`, um Governance-Faelle mit Evidenz-Refs, Commitment-Spuren und Beschlussstatus in eine deterministische Agenda zu ueberfuehren
+- die Agenda erweitert den Snapshot um ein explizites `governance-agenda`-Signal fuer scheduled-, queued- und blocked-Entscheidungslaegen
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

@@ -410,6 +410,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `build_escalation_router()` leitet aus `ReadinessCadence` deterministische Eskalationspfade fuer blocked-, review-required- und steady-Faelle ab
 - der Router erweitert den Snapshot um ein explizites `escalation-router`-Signal fuer kritische Responses, Governance-Follow-ups und reine Telemetry-Watches
 
+`#163` haelt diese Spuren nun als dauerhaftes Evidenz-Ledger zusammen:
+
+- `EvidenceLedgerEntry`, `EvidenceLedger` und `EvidenceLedgerSource` sammeln Review-, Replay- und Remediation-Nachweise pro Fall entlang der deterministischen Eskalationsroute
+- `build_evidence_ledger()` kombiniert `ReadinessReview`, `ScenarioReplaySuite`, `RemediationCampaign` und `EscalationRouter` in eine persistente Audit- und Commitment-Spur ueber mehrere Folgezyklen
+- das Ledger erweitert den Snapshot um ein explizites `evidence-ledger`-Signal fuer blocked-, review- und steady-Evidenzlagen
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

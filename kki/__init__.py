@@ -33,6 +33,7 @@ from .readiness_cadence import (
 )
 from .drift_monitor import DriftMonitor, DriftObservation, DriftSeverity, build_drift_monitor
 from .escalation_router import EscalationRoute, EscalationRoutePath, EscalationRouter, build_escalation_router
+from .evidence_ledger import EvidenceLedger, EvidenceLedgerEntry, EvidenceLedgerSource, build_evidence_ledger
 from .governance import (
     GateDecision,
     GateOutcome,
@@ -265,6 +266,9 @@ __all__ = [
     "EscalationRoute",
     "EscalationRoutePath",
     "EscalationRouter",
+    "EvidenceLedger",
+    "EvidenceLedgerEntry",
+    "EvidenceLedgerSource",
     "GateDecision",
     "GateReadiness",
     "GateState",
@@ -384,6 +388,7 @@ __all__ = [
     "build_dispatch_plan",
     "build_drift_monitor",
     "build_escalation_router",
+    "build_evidence_ledger",
     "build_improvement_orchestrator",
     "build_operations_cockpit",
     "build_portfolio_optimizer",

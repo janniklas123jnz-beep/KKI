@@ -45,6 +45,9 @@ from kki import (
     EscalationRoute,
     EscalationRoutePath,
     EscalationRouter,
+    EvidenceLedger,
+    EvidenceLedgerEntry,
+    EvidenceLedgerSource,
     EvidenceRecord,
     EventEnvelope,
     GateDecision,
@@ -156,6 +159,7 @@ from kki import (
     build_dispatch_plan,
     build_drift_monitor,
     build_escalation_router,
+    build_evidence_ledger,
     build_guardrail_portfolio,
     build_improvement_orchestrator,
     build_operations_cockpit,
@@ -3638,6 +3642,52 @@ class SmokeTests(unittest.TestCase):
         self.assertIn("pilot-containment", router.blocked_case_ids)
         self.assertIn("shadow-guarded", router.focus_case_ids)
         self.assertIn("pilot-ready", router.telemetry_case_ids)
+
+    def test_kki_evidence_ledger_collects_review_evidence(self) -> None:
+        ledger = build_evidence_ledger(ledger_id="ledger-163-review")
+        review_entry = next(
+            entry
+            for entry in ledger.entries
+            if entry.case_id == "shadow-guarded" and entry.source is EvidenceLedgerSource.REVIEW
+        )
+
+        self.assertIsInstance(ledger, EvidenceLedger)
+        self.assertIsInstance(review_entry, EvidenceLedgerEntry)
+        self.assertEqual(review_entry.route_path, EscalationRoutePath.GOVERNANCE_REVIEW)
+        self.assertEqual(review_entry.boundary, ModuleBoundaryName.GOVERNANCE)
+        self.assertEqual(review_entry.evidence_record.evidence_type, "readiness-review-finding")
+
+    def test_kki_evidence_ledger_collects_replay_evidence(self) -> None:
+        ledger = build_evidence_ledger(ledger_id="ledger-163-replay")
+        replay_entry = next(
+            entry
+            for entry in ledger.entries
+            if entry.case_id == "pilot-containment" and entry.source is EvidenceLedgerSource.REPLAY
+        )
+
+        self.assertEqual(replay_entry.route_path, EscalationRoutePath.RECOVERY_CONTAINMENT)
+        self.assertEqual(replay_entry.evidence_record.evidence_type, "scenario-replay-result")
+        self.assertEqual(replay_entry.cycle_index, 1)
+
+    def test_kki_evidence_ledger_collects_remediation_commitments(self) -> None:
+        ledger = build_evidence_ledger(ledger_id="ledger-163-remediation")
+        remediation_entry = next(
+            entry
+            for entry in ledger.entries
+            if entry.case_id == "pilot-containment" and entry.source is EvidenceLedgerSource.REMEDIATION
+        )
+
+        self.assertTrue(remediation_entry.commitment_refs)
+        self.assertTrue(remediation_entry.evidence_record.commitment_ref)
+        self.assertIn(remediation_entry.commitment_refs[0], ledger.commitment_refs)
+
+    def test_kki_evidence_ledger_aggregates_case_tracks(self) -> None:
+        ledger = build_evidence_ledger(ledger_id="ledger-163-matrix")
+
+        self.assertEqual(ledger.ledger_signal.status, "blocked-evidence")
+        self.assertIn("pilot-containment", ledger.blocked_case_ids)
+        self.assertIn("shadow-guarded", ledger.governance_case_ids)
+        self.assertIn("pilot-containment", ledger.recovery_case_ids)
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

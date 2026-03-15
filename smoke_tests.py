@@ -23,6 +23,9 @@ from kki import (
     ChangeWindowEntry,
     ChangeWindowStatus,
     ClaimStatus,
+    ContinuousReadinessCycle,
+    ContinuousReadinessIteration,
+    ContinuousReadinessStatus,
     CorrelatedOperation,
     CockpitEntry,
     CockpitStatus,
@@ -141,6 +144,7 @@ from kki import (
     audit_entry_for_artifact,
     audit_entry_for_message,
     benchmark_case_matrix,
+    build_continuous_readiness_cycle,
     build_dispatch_plan,
     build_drift_monitor,
     build_guardrail_portfolio,
@@ -3517,6 +3521,39 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(optimizer.optimizer_signal.status, "critical-priorities")
         self.assertEqual(optimizer.recommendations[0].case_id, "pilot-containment")
         self.assertGreaterEqual(optimizer.recommendations[0].net_value, 0.0)
+
+    def test_kki_continuous_readiness_marks_release_candidate_ready(self) -> None:
+        cycle = build_continuous_readiness_cycle(cycle_id="cycle-160-ready")
+        ready_iteration = next(iteration for iteration in cycle.iterations if iteration.case_id == "pilot-ready")
+
+        self.assertIsInstance(cycle, ContinuousReadinessCycle)
+        self.assertIsInstance(ready_iteration, ContinuousReadinessIteration)
+        self.assertEqual(ready_iteration.status, ContinuousReadinessStatus.READY)
+        self.assertTrue(ready_iteration.release_candidate)
+
+    def test_kki_continuous_readiness_marks_governed_case_attention(self) -> None:
+        cycle = build_continuous_readiness_cycle(cycle_id="cycle-160-governed")
+        governed_iteration = next(iteration for iteration in cycle.iterations if iteration.case_id == "shadow-guarded")
+
+        self.assertEqual(governed_iteration.status, ContinuousReadinessStatus.ATTENTION)
+        self.assertEqual(governed_iteration.next_review_status, "review-required")
+        self.assertIn("shadow-guarded", cycle.attention_case_ids)
+
+    def test_kki_continuous_readiness_marks_blocked_case_not_ready(self) -> None:
+        cycle = build_continuous_readiness_cycle(cycle_id="cycle-160-blocked")
+        blocked_iteration = next(iteration for iteration in cycle.iterations if iteration.case_id == "pilot-containment")
+
+        self.assertEqual(blocked_iteration.status, ContinuousReadinessStatus.BLOCKED)
+        self.assertEqual(blocked_iteration.next_review_status, "not-ready")
+        self.assertIn("pilot-containment", cycle.blocked_case_ids)
+
+    def test_kki_continuous_readiness_aggregates_focus_cases(self) -> None:
+        cycle = build_continuous_readiness_cycle(cycle_id="cycle-160-matrix")
+
+        self.assertEqual(cycle.cycle_signal.status, "blocked")
+        self.assertIn("pilot-ready", cycle.ready_case_ids)
+        self.assertIn("shadow-guarded", cycle.next_focus_case_ids)
+        self.assertIn("pilot-containment", cycle.blocked_case_ids)
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

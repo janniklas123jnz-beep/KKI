@@ -392,6 +392,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `build_portfolio_optimizer()` koppelt `OperationsCockpit` und `RemediationCampaign`, um Nutzen, Risiko, Kapazitaetskosten und Release-Kandidaten pro Fall abzuwiegen
 - der Optimierer erweitert den Snapshot um ein explizites `portfolio-optimizer`-Signal fuer priorisierte Queues, kritische Eingriffe und freigabefaehige Kandidaten
 
+`#160` schliesst den Block nun als dauerhaften Continuous-Readiness-Zyklus:
+
+- `ContinuousReadinessIteration`, `ContinuousReadinessCycle` und `ContinuousReadinessStatus` modellieren den geschlossenen Loop aus Cockpit-Lage, Portfolio-Empfehlung und naechster Bewertungsstufe
+- `build_continuous_readiness_cycle()` koppelt `OperationsCockpit` und `PortfolioOptimizer`, um pro Fall den naechsten Review-Zustand und den laufenden Fokus abzuleiten
+- der Zyklus erweitert den Snapshot um ein explizites `continuous-readiness`-Signal fuer ready-, attention- und blocked-Schleifen
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

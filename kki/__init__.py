@@ -17,6 +17,12 @@ from .benchmark_harness import (
     benchmark_case_matrix,
     run_benchmark_harness,
 )
+from .continuous_readiness import (
+    ContinuousReadinessCycle,
+    ContinuousReadinessIteration,
+    ContinuousReadinessStatus,
+    build_continuous_readiness_cycle,
+)
 from .drift_monitor import DriftMonitor, DriftObservation, DriftSeverity, build_drift_monitor
 from .governance import (
     GateDecision,
@@ -227,6 +233,9 @@ __all__ = [
     "BenchmarkCaseResult",
     "BenchmarkHarness",
     "BenchmarkReleaseMode",
+    "ContinuousReadinessCycle",
+    "ContinuousReadinessIteration",
+    "ContinuousReadinessStatus",
     "ChangeWindow",
     "ChangeWindowEntry",
     "ChangeWindowStatus",
@@ -354,6 +363,7 @@ __all__ = [
     "audit_entry_for_artifact",
     "audit_entry_for_message",
     "benchmark_case_matrix",
+    "build_continuous_readiness_cycle",
     "build_dispatch_plan",
     "build_drift_monitor",
     "build_improvement_orchestrator",

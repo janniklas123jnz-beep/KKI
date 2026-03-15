@@ -16,6 +16,7 @@ from .governance import (
     evaluate_gate,
     govern_recovery_orchestration,
 )
+from .escalation_coordinator import EscalationDirective, EscalationPath, EscalationPlan, coordinate_escalations
 from .incident_detector import IncidentCause, IncidentReport, IncidentSeverity, OperationsIncident, detect_incidents
 from .integrated_smoke import IntegratedSmokeBuild, run_integrated_smoke_build
 from .mission_profiles import MissionPolicy, MissionProfile, MissionScenario, mission_profile_catalog, mission_profile_for_name
@@ -170,6 +171,9 @@ __all__ = [
     "DispatchLane",
     "DispatchPlan",
     "DispatchTriageMode",
+    "EscalationDirective",
+    "EscalationPath",
+    "EscalationPlan",
     "GateDecision",
     "GateReadiness",
     "GateState",
@@ -243,6 +247,7 @@ __all__ = [
     "build_dispatch_plan",
     "build_telemetry_snapshot",
     "claim_for_work_unit",
+    "coordinate_escalations",
     "command_message",
     "coordinate_shadow_work",
     "correlate_operation",

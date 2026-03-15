@@ -302,6 +302,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `detect_incidents()` erkennt Dispatch-, Governance-, Rollout-, Recovery- und Telemetrie-Incidents direkt aus der Ledger-Sicht
 - der Incident-Report erweitert den Snapshot um ein explizites `incident-report`-Signal fuer Incident-Lage und Eskalationsbedarf
 
+`#145` koppelt diese Incident-Lage an konkrete Gegenmassnahmen:
+
+- `EscalationDirective`, `EscalationPath` und `EscalationPlan` modellieren konkrete Replan-, Governance-, Restart- und Containment-Pfade pro Incident
+- `coordinate_escalations()` uebersetzt Incident-Reports in ausfuehrbare Eskalationsdirektiven zwischen Dispatch, Governance und Recovery
+- der Eskalationsplan erweitert den Snapshot um ein explizites `escalation-plan`-Signal fuer Reaktions- und Freigabepfade
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

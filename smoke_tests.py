@@ -25,6 +25,9 @@ from kki import (
     DeliveryMode,
     DispatchLane,
     DispatchTriageMode,
+    EscalationDirective,
+    EscalationPath,
+    EscalationPlan,
     EvidenceRecord,
     EventEnvelope,
     GateDecision,
@@ -90,6 +93,7 @@ from kki import (
     build_dispatch_plan,
     build_telemetry_snapshot,
     claim_for_work_unit,
+    coordinate_escalations,
     command_message,
     coordinate_shadow_work,
     correlate_operation,
@@ -2510,6 +2514,112 @@ class SmokeTests(unittest.TestCase):
 
         self.assertEqual(manual_report["critical_incidents"][0]["cause"], "recovery")
         self.assertEqual(manual_report["escalation_mission_refs"], ["pilot-cutover"])
+
+    def test_kki_escalation_plan_is_clear_without_incidents(self) -> None:
+        plan = coordinate_escalations(
+            detect_incidents(ledger_for_wave(run_operations_wave(("pilot-cutover",), wave_id="wave-145-clear")))
+        )
+
+        self.assertIsInstance(plan, EscalationPlan)
+        self.assertEqual(plan.directives, ())
+        self.assertEqual(plan.escalation_signal.status, "clear")
+
+    def test_kki_escalation_plan_replans_dispatch_holds(self) -> None:
+        plan = coordinate_escalations(
+            detect_incidents(
+                ledger_for_wave(
+                    run_operations_wave(
+                        (
+                            MissionProfile(
+                                mission_ref="escalation-critical",
+                                title="escalation critical",
+                                scenario=MissionScenario.CUTOVER,
+                                runtime_stage=RuntimeStage.PILOT,
+                                runtime_profile="pilot-runtime-dna",
+                                target_boundary=ModuleBoundaryName.ROLLOUT,
+                                work_priority=WorkPriority.CRITICAL,
+                                budget_share=0.14,
+                            ),
+                            MissionProfile(
+                                mission_ref="escalation-held",
+                                title="escalation held",
+                                scenario=MissionScenario.ROUTINE,
+                                runtime_stage=RuntimeStage.PILOT,
+                                runtime_profile="pilot-runtime-dna",
+                                target_boundary=ModuleBoundaryName.ROLLOUT,
+                                work_priority=WorkPriority.NORMAL,
+                                budget_share=0.13,
+                            ),
+                        ),
+                        wave_id="wave-145-dispatch",
+                        budget_policy=WaveBudgetPolicy(total_budget=0.3, reserve_floor=0.12, max_parallel=2),
+                    )
+                )
+            )
+        )
+
+        self.assertEqual(len(plan.directives), 1)
+        self.assertIsInstance(plan.directives[0], EscalationDirective)
+        self.assertEqual(plan.directives[0].path, EscalationPath.DISPATCH_REPLAN)
+        self.assertEqual(plan.blocked_release_refs, ("escalation-held",))
+
+    def test_kki_escalation_plan_routes_governance_review(self) -> None:
+        plan = coordinate_escalations(
+            detect_incidents(
+                ledger_for_wave(
+                    run_operations_wave(
+                        (
+                            MissionProfile(
+                                mission_ref="escalation-governance",
+                                title="escalation governance",
+                                scenario=MissionScenario.CUTOVER,
+                                runtime_stage=RuntimeStage.PILOT,
+                                runtime_profile="pilot-runtime-dna",
+                                target_boundary=ModuleBoundaryName.ROLLOUT,
+                                governance_decision=HumanDecision.ESCALATE,
+                            ),
+                        ),
+                        wave_id="wave-145-governance",
+                    )
+                )
+            )
+        )
+
+        self.assertEqual(plan.directives[0].path, EscalationPath.GOVERNANCE_REVIEW)
+        self.assertEqual(plan.governance_review_refs, ("escalation-governance",))
+        self.assertEqual(plan.escalation_signal.status, "response-required")
+
+    def test_kki_escalation_plan_contains_critical_recovery_response(self) -> None:
+        base_report = detect_incidents(ledger_for_wave(run_operations_wave(("pilot-cutover",), wave_id="wave-145-base")))
+        critical_report = IncidentReport(
+            wave_id=base_report.wave_id,
+            ledger=base_report.ledger,
+            incidents=(
+                OperationsIncident(
+                    incident_id="incident-wave-145-critical-recovery",
+                    wave_id=base_report.wave_id,
+                    severity=IncidentSeverity.CRITICAL,
+                    cause=IncidentCause.RECOVERY,
+                    summary="critical recovery rollback incident",
+                    mission_refs=("pilot-cutover",),
+                    trigger_statuses=("rollback-active",),
+                    escalation_required=True,
+                ),
+            ),
+            incident_signal=TelemetrySignal(
+                signal_name="incident-report",
+                boundary=ModuleBoundaryName.TELEMETRY,
+                correlation_id=base_report.wave_id,
+                severity="critical",
+                status="critical-incidents",
+            ),
+            final_snapshot=base_report.final_snapshot,
+        )
+        plan = coordinate_escalations(critical_report)
+
+        self.assertEqual(plan.directives[0].path, EscalationPath.ROLLBACK_CONTAINMENT)
+        self.assertEqual(plan.directives[0].recovery_disposition, RecoveryDisposition.CONTAIN)
+        self.assertEqual(plan.escalation_signal.status, "critical-response")
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

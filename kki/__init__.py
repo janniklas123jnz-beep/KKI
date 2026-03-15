@@ -63,6 +63,13 @@ from .portfolio_radar import (
     PortfolioRadarEntry,
     build_portfolio_radar,
 )
+from .scenario_chancery import (
+    ScenarioChancery,
+    ScenarioOfficeMode,
+    ScenarioOfficeStatus,
+    ScenarioOption,
+    build_scenario_chancery,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -378,6 +385,10 @@ __all__ = [
     "PortfolioOperatingSpread",
     "PortfolioRadar",
     "PortfolioRadarEntry",
+    "ScenarioChancery",
+    "ScenarioOfficeMode",
+    "ScenarioOfficeStatus",
+    "ScenarioOption",
     "ExceptionCase",
     "ExceptionKind",
     "ExceptionRegister",
@@ -557,6 +568,7 @@ __all__ = [
     "build_strategy_council",
     "build_mandate_card_deck",
     "build_portfolio_radar",
+    "build_scenario_chancery",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

@@ -214,6 +214,10 @@ from kki import (
     ScenarioReplayItem,
     ScenarioReplayResult,
     ScenarioReplaySuite,
+    ScenarioChancery,
+    ScenarioOfficeMode,
+    ScenarioOfficeStatus,
+    ScenarioOption,
     ShadowPreview,
     TelemetryAlert,
     TelemetrySignal,
@@ -270,6 +274,7 @@ from kki import (
     build_review_action_plan,
     build_risk_register,
     build_scenario_replay,
+    build_scenario_chancery,
     build_runtime_scorecard,
     build_steward_workboard,
     build_strategy_council,
@@ -4462,6 +4467,39 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(radar.concentrated_entry_ids, ("portfolio-183-signal-stability-lane",))
         self.assertEqual(radar.governed_entry_ids, ("portfolio-183-signal-governance-lane",))
         self.assertEqual(radar.expansive_entry_ids, ("portfolio-183-signal-expansion-lane",))
+
+    def test_kki_scenario_chancery_builds_locked_stabilize_option(self) -> None:
+        chancery = build_scenario_chancery(chancery_id="scenario-184-stability")
+        option = next(item for item in chancery.options if item.mode is ScenarioOfficeMode.STABILIZE)
+
+        self.assertIsInstance(chancery, ScenarioChancery)
+        self.assertIsInstance(option, ScenarioOption)
+        self.assertEqual(option.status, ScenarioOfficeStatus.LOCKED)
+        self.assertFalse(option.release_ready)
+
+    def test_kki_scenario_chancery_builds_review_steer_option(self) -> None:
+        chancery = build_scenario_chancery(chancery_id="scenario-184-governance")
+        option = next(item for item in chancery.options if item.mode is ScenarioOfficeMode.STEER)
+
+        self.assertEqual(option.status, ScenarioOfficeStatus.REVIEW)
+        self.assertGreater(option.comparison_score, 0.7)
+        self.assertFalse(option.release_ready)
+
+    def test_kki_scenario_chancery_builds_ready_expand_option(self) -> None:
+        chancery = build_scenario_chancery(chancery_id="scenario-184-expansion")
+        option = next(item for item in chancery.options if item.mode is ScenarioOfficeMode.EXPAND)
+
+        self.assertEqual(option.status, ScenarioOfficeStatus.READY)
+        self.assertTrue(option.release_ready)
+        self.assertGreater(option.confidence_score, 0.6)
+
+    def test_kki_scenario_chancery_aggregates_chancery_signal(self) -> None:
+        chancery = build_scenario_chancery(chancery_id="scenario-184-signal")
+
+        self.assertEqual(chancery.chancery_signal.status, "scenario-locked")
+        self.assertEqual(chancery.locked_option_ids, ("scenario-184-signal-stability-lane",))
+        self.assertEqual(chancery.review_option_ids, ("scenario-184-signal-governance-lane",))
+        self.assertEqual(chancery.ready_option_ids, ("scenario-184-signal-expansion-lane",))
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

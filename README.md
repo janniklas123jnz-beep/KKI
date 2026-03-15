@@ -536,6 +536,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `build_portfolio_radar()` koppelt das `MandateCardDeck`, um Budgetanteile, Scope und Review-Fenster in konzentrierte Stabilitaet, balancierte Governance und distribuierte Expansion zu ueberfuehren
 - das Portfolio-Radar erweitert den Snapshot um ein explizites `portfolio-radar`-Signal fuer konzentrierte Schwerpunktlagen, governed exposure und expansionsbereite Portfolio-Fenster
 
+`#184` legt darueber nun die Szenario-Kanzlei:
+
+- `ScenarioOption`, `ScenarioChancery`, `ScenarioOfficeMode` und `ScenarioOfficeStatus` modellieren vergleichbare strategische Moves als Stabilize-, Steer- und Expand-Optionen mit Kanzlei-Status
+- `build_scenario_chancery()` koppelt das `PortfolioRadar`, um Radar-Lagen vor der Ausfuehrung in vergleichbare Szenario-Optionen mit Vergleichs- und Konfidenzwerten zu ueberfuehren
+- die Szenario-Kanzlei erweitert den Snapshot um ein explizites `scenario-chancery`-Signal fuer gelockte Stabilisierung, review-pflichtige Governance-Optionen und bereite Expansionspfade
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

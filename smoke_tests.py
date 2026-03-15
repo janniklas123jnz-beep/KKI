@@ -81,6 +81,8 @@ from kki import (
     RolloutState,
     RollbackDirective,
     RunLedgerEntry,
+    RuntimeScorecard,
+    RuntimeScorecardEntry,
     RuntimeStage,
     RuntimeThresholds,
     ShadowPreview,
@@ -103,6 +105,7 @@ from kki import (
     benchmark_case_matrix,
     build_dispatch_plan,
     build_release_campaign,
+    build_runtime_scorecard,
     build_telemetry_snapshot,
     claim_for_work_unit,
     coordinate_escalations,
@@ -2907,6 +2910,70 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(harness.guarded_case_ids, ("shadow-guarded",))
         self.assertEqual(harness.recovery_case_ids, ("recovery-resume",))
         self.assertEqual(harness.blocked_case_ids, ("pilot-containment",))
+
+    def test_kki_runtime_scorecard_scores_ready_case(self) -> None:
+        harness = run_benchmark_harness(
+            (
+                BenchmarkCase(
+                    case_id="scorecard-ready",
+                    title="scorecard ready",
+                    missions=(mission_profile_for_name("pilot-cutover"),),
+                    release_mode=BenchmarkReleaseMode.READY,
+                ),
+            ),
+            harness_id="harness-149-ready",
+        )
+        scorecard = build_runtime_scorecard(harness, scorecard_id="scorecard-149-ready")
+
+        self.assertIsInstance(scorecard, RuntimeScorecard)
+        self.assertIsInstance(scorecard.entries[0], RuntimeScorecardEntry)
+        self.assertEqual(scorecard.scorecard_signal.status, "healthy")
+        self.assertGreater(scorecard.entries[0].overall_score, 0.8)
+        self.assertEqual(scorecard.healthy_case_ids, ("scorecard-ready",))
+
+    def test_kki_runtime_scorecard_marks_guarded_case_for_attention(self) -> None:
+        harness = run_benchmark_harness(
+            (
+                BenchmarkCase(
+                    case_id="scorecard-guarded",
+                    title="scorecard guarded",
+                    missions=(benchmark_case_matrix()[1].missions[0],),
+                    release_mode=BenchmarkReleaseMode.GUARDED,
+                ),
+            ),
+            harness_id="harness-149-guarded",
+        )
+        scorecard = build_runtime_scorecard(harness, scorecard_id="scorecard-149-guarded")
+
+        self.assertEqual(scorecard.scorecard_signal.status, "attention-required")
+        self.assertLess(scorecard.entries[0].governance_score, scorecard.entries[0].success_score)
+        self.assertEqual(scorecard.attention_case_ids, ("scorecard-guarded",))
+
+    def test_kki_runtime_scorecard_marks_blocked_case_critical(self) -> None:
+        harness = run_benchmark_harness(
+            (
+                BenchmarkCase(
+                    case_id="scorecard-blocked",
+                    title="scorecard blocked",
+                    missions=(mission_profile_for_name("pilot-cutover"),),
+                    release_mode=BenchmarkReleaseMode.BLOCKED,
+                ),
+            ),
+            harness_id="harness-149-blocked",
+        )
+        scorecard = build_runtime_scorecard(harness, scorecard_id="scorecard-149-blocked")
+
+        self.assertEqual(scorecard.scorecard_signal.status, "critical-review")
+        self.assertLess(scorecard.entries[0].overall_score, 0.4)
+        self.assertEqual(scorecard.attention_case_ids, ("scorecard-blocked",))
+
+    def test_kki_runtime_scorecard_aggregates_matrix_scores(self) -> None:
+        scorecard = build_runtime_scorecard(scorecard_id="scorecard-149-matrix")
+
+        self.assertEqual(scorecard.scorecard_signal.status, "critical-review")
+        self.assertEqual(scorecard.healthy_case_ids, ("pilot-ready",))
+        self.assertEqual(scorecard.attention_case_ids, ("shadow-guarded", "recovery-resume", "pilot-containment"))
+        self.assertGreater(scorecard.average_overall_score, 0.4)
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

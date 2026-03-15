@@ -37,6 +37,7 @@ from .release_campaigns import (
     ReleaseCampaignStatus,
     build_release_campaign,
 )
+from .runtime_scorecard import RuntimeScorecard, RuntimeScorecardEntry, build_runtime_scorecard
 from .run_ledger import OperationsRunLedger, RunLedgerEntry, ledger_for_wave
 from .message_protocols import (
     DeliveryGuarantee,
@@ -243,6 +244,8 @@ __all__ = [
     "RuntimeDNA",
     "RuntimeHooks",
     "RuntimeIdentity",
+    "RuntimeScorecard",
+    "RuntimeScorecardEntry",
     "RuntimeStage",
     "RuntimeThresholds",
     "RunLedgerEntry",
@@ -274,6 +277,7 @@ __all__ = [
     "benchmark_case_matrix",
     "build_dispatch_plan",
     "build_release_campaign",
+    "build_runtime_scorecard",
     "build_telemetry_snapshot",
     "claim_for_work_unit",
     "coordinate_escalations",

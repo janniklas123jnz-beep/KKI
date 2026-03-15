@@ -326,6 +326,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `benchmark_case_matrix()` liefert eine feste Szenariomatrix fuer ready-, guarded-, recovery-only- und blocked-Verlaeufe
 - `run_benchmark_harness()` fuehrt pro Case die komplette Kette von `run_operations_wave()` bis `build_release_campaign()` aus und verdichtet sie in ein gemeinsames `benchmark-harness`-Signal
 
+`#149` verdichtet diese Benchmark-Laeufe nun zu einer Scorecard:
+
+- `RuntimeScorecardEntry` bewertet pro Benchmark-Fall Erfolg, Stabilitaet, Recovery-Leistung und Governance-Qualitaet als verdichtete Scores
+- `RuntimeScorecard` fasst diese Einzelsichten zu einer uebergreifenden Betriebsbewertung mit Healthy-/Attention-Sicht zusammen
+- `build_runtime_scorecard()` baut die Scorecard direkt auf dem `BenchmarkHarness` auf und erweitert den Snapshot um ein explizites `runtime-scorecard`-Signal
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

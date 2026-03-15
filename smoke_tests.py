@@ -68,6 +68,9 @@ from kki import (
     ShadowCoordinationMode,
     ProtocolContext,
     RecoveryCheckpoint,
+    ReadinessFinding,
+    ReadinessFindingSeverity,
+    ReadinessReview,
     RecoveryDisposition,
     RecoveryMode,
     RecoveryOrchestration,
@@ -105,6 +108,7 @@ from kki import (
     benchmark_case_matrix,
     build_dispatch_plan,
     build_release_campaign,
+    build_readiness_review,
     build_runtime_scorecard,
     build_telemetry_snapshot,
     claim_for_work_unit,
@@ -2974,6 +2978,74 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(scorecard.healthy_case_ids, ("pilot-ready",))
         self.assertEqual(scorecard.attention_case_ids, ("shadow-guarded", "recovery-resume", "pilot-containment"))
         self.assertGreater(scorecard.average_overall_score, 0.4)
+
+    def test_kki_readiness_review_marks_ready_case_release_ready(self) -> None:
+        harness = run_benchmark_harness(
+            (
+                BenchmarkCase(
+                    case_id="review-ready",
+                    title="review ready",
+                    missions=(mission_profile_for_name("pilot-cutover"),),
+                    release_mode=BenchmarkReleaseMode.READY,
+                ),
+            ),
+            harness_id="harness-150-ready",
+        )
+        scorecard = build_runtime_scorecard(harness, scorecard_id="scorecard-150-ready")
+        review = build_readiness_review(scorecard, review_id="review-150-ready")
+
+        self.assertIsInstance(review, ReadinessReview)
+        self.assertEqual(review.review_signal.status, "ready")
+        self.assertTrue(review.release_ready)
+        self.assertEqual(review.healthy_case_ids, ("review-ready",))
+
+    def test_kki_readiness_review_routes_guarded_case_to_review(self) -> None:
+        harness = run_benchmark_harness(
+            (
+                BenchmarkCase(
+                    case_id="review-guarded",
+                    title="review guarded",
+                    missions=(benchmark_case_matrix()[1].missions[0],),
+                    release_mode=BenchmarkReleaseMode.GUARDED,
+                ),
+            ),
+            harness_id="harness-150-guarded",
+        )
+        scorecard = build_runtime_scorecard(harness, scorecard_id="scorecard-150-guarded")
+        review = build_readiness_review(scorecard, review_id="review-150-guarded")
+
+        self.assertEqual(review.review_signal.status, "review-required")
+        self.assertEqual(review.attention_case_ids, ("review-guarded",))
+        self.assertTrue(any(finding.severity is ReadinessFindingSeverity.WARNING for finding in review.findings))
+
+    def test_kki_readiness_review_marks_blocked_case_not_ready(self) -> None:
+        harness = run_benchmark_harness(
+            (
+                BenchmarkCase(
+                    case_id="review-blocked",
+                    title="review blocked",
+                    missions=(mission_profile_for_name("pilot-cutover"),),
+                    release_mode=BenchmarkReleaseMode.BLOCKED,
+                ),
+            ),
+            harness_id="harness-150-blocked",
+        )
+        scorecard = build_runtime_scorecard(harness, scorecard_id="scorecard-150-blocked")
+        review = build_readiness_review(scorecard, review_id="review-150-blocked")
+
+        self.assertEqual(review.review_signal.status, "not-ready")
+        self.assertFalse(review.release_ready)
+        self.assertEqual(review.blocked_case_ids, ("review-blocked",))
+        self.assertIsInstance(review.findings[0], ReadinessFinding)
+        self.assertEqual(review.findings[0].severity, ReadinessFindingSeverity.CRITICAL)
+
+    def test_kki_readiness_review_aggregates_default_chain(self) -> None:
+        review = build_readiness_review(review_id="review-150-matrix")
+
+        self.assertEqual(review.review_signal.status, "not-ready")
+        self.assertEqual(review.healthy_case_ids, ("pilot-ready",))
+        self.assertEqual(review.blocked_case_ids, ("pilot-containment",))
+        self.assertFalse(review.release_ready)
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

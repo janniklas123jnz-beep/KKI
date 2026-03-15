@@ -332,6 +332,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `RuntimeScorecard` fasst diese Einzelsichten zu einer uebergreifenden Betriebsbewertung mit Healthy-/Attention-Sicht zusammen
 - `build_runtime_scorecard()` baut die Scorecard direkt auf dem `BenchmarkHarness` auf und erweitert den Snapshot um ein explizites `runtime-scorecard`-Signal
 
+`#150` schliesst die Reihe nun mit einer finalen Abnahmesicht ab:
+
+- `ReadinessFinding`, `ReadinessFindingSeverity` und `ReadinessReview` modellieren Rest-Risiken, Review-Befunde und die finale Release-Freigabe
+- `build_readiness_review()` verbindet `BenchmarkHarness` und `RuntimeScorecard` zu einer finalen Healthy-/Attention-/Blocked-Abnahmesicht
+- der finale Review erweitert den Snapshot um ein explizites `readiness-review`-Signal fuer Abschlussstatus, Findings und Release-Readiness
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

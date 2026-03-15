@@ -16,6 +16,7 @@ from .governance import (
     evaluate_gate,
     govern_recovery_orchestration,
 )
+from .incident_detector import IncidentCause, IncidentReport, IncidentSeverity, OperationsIncident, detect_incidents
 from .integrated_smoke import IntegratedSmokeBuild, run_integrated_smoke_build
 from .mission_profiles import MissionPolicy, MissionProfile, MissionScenario, mission_profile_catalog, mission_profile_for_name
 from .operations_run import IntegratedOperationsRun, run_integrated_operations
@@ -177,6 +178,9 @@ __all__ = [
     "HumanDecision",
     "HumanLoopGovernance",
     "IdentityKind",
+    "IncidentCause",
+    "IncidentReport",
+    "IncidentSeverity",
     "IntegratedOperationsRun",
     "IntegratedSmokeBuild",
     "LoadedControlPlane",
@@ -188,6 +192,7 @@ __all__ = [
     "OperationalPressure",
     "OperationsWave",
     "OperationsRunLedger",
+    "OperationsIncident",
     "OperatingMode",
     "OrchestrationState",
     "OrchestrationStatus",
@@ -242,6 +247,7 @@ __all__ = [
     "coordinate_shadow_work",
     "correlate_operation",
     "core_state_for_runtime",
+    "detect_incidents",
     "evaluate_dry_run",
     "dispatch_signal",
     "event_message",

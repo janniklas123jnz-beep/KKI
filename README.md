@@ -296,6 +296,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `ledger_for_wave()` baut aus einer `OperationsWave` eine kanonische `OperationsRunLedger`-Sicht auf ausgefuehrte und gehaltene Runs
 - das Ledger erweitert den Wave-Snapshot um ein explizites `run-ledger`-Signal fuer uebersichtliche Mehrfachlauf-Analysen
 
+`#144` leitet daraus nun explizite Betriebs-Incidents ab:
+
+- `OperationsIncident` und `IncidentReport` modellieren Ursache, Severity, betroffene Missionslaeufe und Eskalationsbedarf
+- `detect_incidents()` erkennt Dispatch-, Governance-, Rollout-, Recovery- und Telemetrie-Incidents direkt aus der Ledger-Sicht
+- der Incident-Report erweitert den Snapshot um ein explizites `incident-report`-Signal fuer Incident-Lage und Eskalationsbedarf
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

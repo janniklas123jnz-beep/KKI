@@ -35,6 +35,9 @@ from kki import (
     HumanDecision,
     HumanLoopGovernance,
     IdentityKind,
+    IncidentCause,
+    IncidentReport,
+    IncidentSeverity,
     IntegratedOperationsRun,
     IntegratedSmokeBuild,
     LoadedControlPlane,
@@ -48,6 +51,7 @@ from kki import (
     OperationsRunLedger,
     OperationsWave,
     OperatingMode,
+    OperationsIncident,
     OrchestrationStatus,
     PersistenceRecord,
     PreviewMode,
@@ -90,6 +94,7 @@ from kki import (
     coordinate_shadow_work,
     correlate_operation,
     core_state_for_runtime,
+    detect_incidents,
     evaluate_dry_run,
     evaluate_gate,
     event_message,
@@ -2396,6 +2401,115 @@ class SmokeTests(unittest.TestCase):
 
         self.assertEqual(payload["status_counts"]["admit"], 1)
         self.assertEqual(payload["entries"][0]["mission_ref"], "pilot-cutover")
+
+    def test_kki_incident_report_is_clear_for_clean_wave(self) -> None:
+        report = detect_incidents(ledger_for_wave(run_operations_wave(("pilot-cutover",), wave_id="wave-144-clear")))
+
+        self.assertIsInstance(report, IncidentReport)
+        self.assertEqual(report.incidents, ())
+        self.assertEqual(report.incident_signal.status, "clear")
+        self.assertEqual(report.escalation_mission_refs, ())
+
+    def test_kki_incident_report_detects_dispatch_hold(self) -> None:
+        report = detect_incidents(
+            ledger_for_wave(
+                run_operations_wave(
+                    (
+                        MissionProfile(
+                            mission_ref="incident-critical",
+                            title="incident critical",
+                            scenario=MissionScenario.CUTOVER,
+                            runtime_stage=RuntimeStage.PILOT,
+                            runtime_profile="pilot-runtime-dna",
+                            target_boundary=ModuleBoundaryName.ROLLOUT,
+                            work_priority=WorkPriority.CRITICAL,
+                            budget_share=0.14,
+                        ),
+                        MissionProfile(
+                            mission_ref="incident-held",
+                            title="incident held",
+                            scenario=MissionScenario.ROUTINE,
+                            runtime_stage=RuntimeStage.PILOT,
+                            runtime_profile="pilot-runtime-dna",
+                            target_boundary=ModuleBoundaryName.ROLLOUT,
+                            work_priority=WorkPriority.NORMAL,
+                            budget_share=0.13,
+                        ),
+                    ),
+                    wave_id="wave-144-held",
+                    budget_policy=WaveBudgetPolicy(total_budget=0.3, reserve_floor=0.12, max_parallel=2),
+                )
+            )
+        )
+
+        self.assertEqual(len(report.incidents), 1)
+        self.assertEqual(report.incidents[0].cause, IncidentCause.DISPATCH)
+        self.assertEqual(report.incidents[0].severity, IncidentSeverity.WARNING)
+        self.assertEqual(report.escalation_mission_refs, ("incident-held",))
+
+    def test_kki_incident_report_detects_governance_escalation(self) -> None:
+        report = detect_incidents(
+            ledger_for_wave(
+                run_operations_wave(
+                    (
+                        MissionProfile(
+                            mission_ref="incident-governance",
+                            title="incident governance",
+                            scenario=MissionScenario.CUTOVER,
+                            runtime_stage=RuntimeStage.PILOT,
+                            runtime_profile="pilot-runtime-dna",
+                            target_boundary=ModuleBoundaryName.ROLLOUT,
+                            governance_decision=HumanDecision.ESCALATE,
+                        ),
+                    ),
+                    wave_id="wave-144-governance",
+                )
+            )
+        )
+
+        self.assertEqual(len(report.incidents), 1)
+        self.assertEqual(report.incidents[0].cause, IncidentCause.GOVERNANCE)
+        self.assertEqual(report.incident_signal.status, "attention-required")
+
+    def test_kki_incident_report_serializes_critical_entries(self) -> None:
+        manual_report = IncidentReport(
+            wave_id="wave-144-manual",
+            ledger=ledger_for_wave(run_operations_wave(("pilot-cutover",), wave_id="wave-144-base")),
+            incidents=(
+                OperationsIncident(
+                    incident_id="incident-wave-144-manual-critical",
+                    wave_id="wave-144-manual",
+                    severity=IncidentSeverity.CRITICAL,
+                    cause=IncidentCause.RECOVERY,
+                    summary="manual critical recovery incident",
+                    mission_refs=("pilot-cutover",),
+                    trigger_statuses=("rollback-active",),
+                    escalation_required=True,
+                ),
+            ),
+            incident_signal=TelemetrySignal(
+                signal_name="incident-report",
+                boundary=ModuleBoundaryName.TELEMETRY,
+                correlation_id="wave-144-manual",
+                severity="critical",
+                status="critical-incidents",
+            ),
+            final_snapshot=build_telemetry_snapshot(
+                runtime_stage=RuntimeStage.PILOT,
+                signals=(
+                    TelemetrySignal(
+                        signal_name="incident-report",
+                        boundary=ModuleBoundaryName.TELEMETRY,
+                        correlation_id="wave-144-manual",
+                        severity="critical",
+                        status="critical-incidents",
+                    ),
+                ),
+            ),
+        ).to_dict()
+
+        self.assertEqual(manual_report["critical_incidents"][0]["cause"], "recovery")
+        self.assertEqual(manual_report["escalation_mission_refs"], ["pilot-cutover"])
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

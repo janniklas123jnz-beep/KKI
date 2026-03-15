@@ -48,6 +48,13 @@ from .strategy_council import (
     StrategyPriority,
     build_strategy_council,
 )
+from .mandate_card_deck import (
+    MandateCard,
+    MandateCardDeck,
+    MandateExecutionScope,
+    MandateReviewCadence,
+    build_mandate_card_deck,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -354,6 +361,10 @@ __all__ = [
     "StrategyLane",
     "StrategyMandate",
     "StrategyPriority",
+    "MandateCard",
+    "MandateCardDeck",
+    "MandateExecutionScope",
+    "MandateReviewCadence",
     "ExceptionCase",
     "ExceptionKind",
     "ExceptionRegister",
@@ -531,6 +542,7 @@ __all__ = [
     "build_evidence_ledger",
     "build_executive_watchtower",
     "build_strategy_council",
+    "build_mandate_card_deck",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

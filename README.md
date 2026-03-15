@@ -524,6 +524,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `build_strategy_council()` koppelt die `ExecutiveWatchtower`, um resilienz-, governance- und expansionsorientierte Orders in stabile Strategie-Lanes, Review-Fenster und Council-Posturen zu ueberfuehren
 - der Strategie-Rat erweitert den Snapshot um ein explizites `strategy-council`-Signal fuer eskalierte Stabilitaetsmandate, orchestrierte Governance-Lanes und freigegebene Expansionsfenster
 
+`#182` zerlegt diese Bahnen nun in explizite Mandats-Karten:
+
+- `MandateCard`, `MandateCardDeck`, `MandateExecutionScope` und `MandateReviewCadence` modellieren pro strategischer Bahn konkrete Karten mit Ownership, Ausfuehrungsumfang und Review-Takt
+- `build_mandate_card_deck()` koppelt den `StrategyCouncil`, um Stabilitaet an Steward-Containment, Governance an kontrollierte Aenderung und Expansion an bounded autonomy mit jeweiliger Cadence zu binden
+- die Mandats-Karten erweitern den Snapshot um ein explizites `mandate-card-deck`-Signal fuer containment-owned, governed und expansionsbereite Kartenpakete
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

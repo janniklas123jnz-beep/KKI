@@ -113,6 +113,10 @@ from kki import (
     MissionPolicy,
     MissionProfile,
     MissionScenario,
+    MandateCard,
+    MandateCardDeck,
+    MandateExecutionScope,
+    MandateReviewCadence,
     MessageEnvelope,
     MessageKind,
     ModuleBoundaryName,
@@ -243,6 +247,7 @@ from kki import (
     build_improvement_orchestrator,
     build_intervention_simulator,
     build_learning_register,
+    build_mandate_card_deck,
     build_operations_cockpit,
     build_operations_steward,
     build_operating_constitution,
@@ -4385,6 +4390,39 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(council.escalated_mandate_ids, ("strategy-181-signal-stability-lane",))
         self.assertEqual(council.orchestrated_mandate_ids, ("strategy-181-signal-governance-lane",))
         self.assertEqual(council.primed_mandate_ids, ("strategy-181-signal-expansion-lane",))
+
+    def test_kki_mandate_card_deck_builds_steward_containment_card(self) -> None:
+        deck = build_mandate_card_deck(deck_id="mandate-182-steward")
+        card = next(item for item in deck.cards if item.owner is ConstitutionalAuthority.STEWARD)
+
+        self.assertIsInstance(deck, MandateCardDeck)
+        self.assertIsInstance(card, MandateCard)
+        self.assertEqual(card.execution_scope, MandateExecutionScope.CONTAINMENT)
+        self.assertEqual(card.review_cadence, MandateReviewCadence.INCIDENT)
+
+    def test_kki_mandate_card_deck_builds_governance_review_card(self) -> None:
+        deck = build_mandate_card_deck(deck_id="mandate-182-governance")
+        card = next(item for item in deck.cards if item.owner is ConstitutionalAuthority.GOVERNANCE)
+
+        self.assertEqual(card.execution_scope, MandateExecutionScope.GOVERNED_CHANGE)
+        self.assertEqual(card.review_cadence, MandateReviewCadence.GOVERNANCE)
+        self.assertFalse(card.release_ready)
+
+    def test_kki_mandate_card_deck_builds_autonomy_expansion_card(self) -> None:
+        deck = build_mandate_card_deck(deck_id="mandate-182-autonomy")
+        card = next(item for item in deck.cards if item.owner is ConstitutionalAuthority.AUTONOMY)
+
+        self.assertEqual(card.execution_scope, MandateExecutionScope.BOUNDED_EXPANSION)
+        self.assertEqual(card.review_cadence, MandateReviewCadence.EXPANSION)
+        self.assertTrue(card.release_ready)
+
+    def test_kki_mandate_card_deck_aggregates_deck_signal(self) -> None:
+        deck = build_mandate_card_deck(deck_id="mandate-182-signal")
+
+        self.assertEqual(deck.deck_signal.status, "mandate-containment-owned")
+        self.assertEqual(deck.steward_card_ids, ("mandate-182-signal-stability-lane",))
+        self.assertEqual(deck.governance_card_ids, ("mandate-182-signal-governance-lane",))
+        self.assertEqual(deck.autonomy_card_ids, ("mandate-182-signal-expansion-lane",))
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

@@ -17,6 +17,7 @@ from .benchmark_harness import (
     benchmark_case_matrix,
     run_benchmark_harness,
 )
+from .capacity_planner import CapacityLane, CapacityPlanEntry, CapacityPlanner, CapacityWindow, build_capacity_planner
 from .continuous_readiness import (
     ContinuousReadinessCycle,
     ContinuousReadinessIteration,
@@ -243,6 +244,10 @@ __all__ = [
     "BenchmarkCaseResult",
     "BenchmarkHarness",
     "BenchmarkReleaseMode",
+    "CapacityLane",
+    "CapacityPlanEntry",
+    "CapacityPlanner",
+    "CapacityWindow",
     "ContinuousReadinessCycle",
     "ContinuousReadinessIteration",
     "ContinuousReadinessStatus",
@@ -384,6 +389,7 @@ __all__ = [
     "audit_entry_for_artifact",
     "audit_entry_for_message",
     "benchmark_case_matrix",
+    "build_capacity_planner",
     "build_continuous_readiness_cycle",
     "build_dispatch_plan",
     "build_drift_monitor",

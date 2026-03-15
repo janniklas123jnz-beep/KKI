@@ -19,6 +19,10 @@ from kki import (
     BenchmarkCase,
     BenchmarkHarness,
     BenchmarkReleaseMode,
+    CapacityLane,
+    CapacityPlanEntry,
+    CapacityPlanner,
+    CapacityWindow,
     ChangeWindow,
     ChangeWindowEntry,
     ChangeWindowStatus,
@@ -155,6 +159,7 @@ from kki import (
     audit_entry_for_artifact,
     audit_entry_for_message,
     benchmark_case_matrix,
+    build_capacity_planner,
     build_continuous_readiness_cycle,
     build_dispatch_plan,
     build_drift_monitor,
@@ -3688,6 +3693,41 @@ class SmokeTests(unittest.TestCase):
         self.assertIn("pilot-containment", ledger.blocked_case_ids)
         self.assertIn("shadow-guarded", ledger.governance_case_ids)
         self.assertIn("pilot-containment", ledger.recovery_case_ids)
+
+    def test_kki_capacity_planner_admits_blocked_case_immediately(self) -> None:
+        planner = build_capacity_planner(planner_id="planner-164-blocked")
+        blocked_entry = next(entry for entry in planner.entries if entry.case_id == "pilot-containment")
+
+        self.assertIsInstance(planner, CapacityPlanner)
+        self.assertIsInstance(blocked_entry, CapacityPlanEntry)
+        self.assertEqual(blocked_entry.window, CapacityWindow.IMMEDIATE)
+        self.assertEqual(blocked_entry.lane, CapacityLane.ADMIT)
+        self.assertEqual(blocked_entry.wip_slot, 1)
+
+    def test_kki_capacity_planner_admits_governance_case_current_window(self) -> None:
+        planner = build_capacity_planner(planner_id="planner-164-governance")
+        governed_entry = next(entry for entry in planner.entries if entry.case_id == "shadow-guarded")
+
+        self.assertEqual(governed_entry.window, CapacityWindow.CURRENT)
+        self.assertEqual(governed_entry.lane, CapacityLane.ADMIT)
+        self.assertIn("shadow-guarded", planner.current_window_case_ids)
+
+    def test_kki_capacity_planner_defers_release_candidate_to_next_window(self) -> None:
+        planner = build_capacity_planner(planner_id="planner-164-release")
+        ready_entry = next(entry for entry in planner.entries if entry.case_id == "pilot-ready")
+
+        self.assertEqual(ready_entry.window, CapacityWindow.NEXT)
+        self.assertEqual(ready_entry.lane, CapacityLane.DEFER)
+        self.assertTrue(ready_entry.release_candidate)
+        self.assertIn("pilot-ready", planner.deferred_case_ids)
+
+    def test_kki_capacity_planner_aggregates_budget_and_wip(self) -> None:
+        planner = build_capacity_planner(planner_id="planner-164-matrix")
+
+        self.assertEqual(planner.planner_signal.status, "immediate-capacity")
+        self.assertEqual(planner.admitted_case_ids[:2], ("pilot-containment", "shadow-guarded"))
+        self.assertLessEqual(planner.consumed_budget, planner.total_budget)
+        self.assertIn("pilot-containment", planner.immediate_case_ids)
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

@@ -416,6 +416,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `build_evidence_ledger()` kombiniert `ReadinessReview`, `ScenarioReplaySuite`, `RemediationCampaign` und `EscalationRouter` in eine persistente Audit- und Commitment-Spur ueber mehrere Folgezyklen
 - das Ledger erweitert den Snapshot um ein explizites `evidence-ledger`-Signal fuer blocked-, review- und steady-Evidenzlagen
 
+`#164` uebersetzt diese Prioritaeten nun in einen operativen Kapazitaetsplan:
+
+- `CapacityPlanEntry`, `CapacityPlanner`, `CapacityWindow` und `CapacityLane` verbinden Portfolio-Empfehlungen mit festen Umsetzungsfenstern, WIP-Slots und Budgetreservierung
+- `build_capacity_planner()` koppelt `PortfolioOptimizer` und `EvidenceLedger`, um Immediate-, Current-, Next- und Backlog-Faelle deterministisch in Admit-, Hold- und Defer-Lanes einzuordnen
+- der Planer erweitert den Snapshot um ein explizites `capacity-planner`-Signal fuer unmittelbare Kapazitaetslast, Engpaesse und reservierte Umsetzungsfenster
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

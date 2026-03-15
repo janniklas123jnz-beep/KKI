@@ -41,6 +41,9 @@ from kki import (
     CourseCorrectionAction,
     CourseCorrectionDirective,
     CourseCorrectionStatus,
+    MandateMemoryRecord,
+    MandateMemoryStatus,
+    MandateMemoryStore,
     CockpitEntry,
     CockpitStatus,
     ConstitutionArticle,
@@ -262,6 +265,7 @@ from kki import (
     build_intervention_simulator,
     build_learning_register,
     build_mandate_card_deck,
+    build_mandate_memory_store,
     build_operations_cockpit,
     build_operations_steward,
     build_operating_constitution,
@@ -4538,6 +4542,39 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(corrector.enforced_directive_ids, ("course-185-signal-stability-lane",))
         self.assertEqual(corrector.directed_directive_ids, ("course-185-signal-governance-lane",))
         self.assertEqual(corrector.cleared_directive_ids, ("course-185-signal-expansion-lane",))
+
+    def test_kki_mandate_memory_store_builds_sealed_record(self) -> None:
+        store = build_mandate_memory_store(store_id="memory-186-sealed")
+        record = next(item for item in store.records if item.memory_status is MandateMemoryStatus.SEALED)
+
+        self.assertIsInstance(store, MandateMemoryStore)
+        self.assertIsInstance(record, MandateMemoryRecord)
+        self.assertEqual(record.source_action, CourseCorrectionAction.CONTAIN)
+        self.assertFalse(record.release_ready)
+
+    def test_kki_mandate_memory_store_builds_review_record(self) -> None:
+        store = build_mandate_memory_store(store_id="memory-186-review")
+        record = next(item for item in store.records if item.memory_status is MandateMemoryStatus.REVIEW)
+
+        self.assertEqual(record.source_action, CourseCorrectionAction.REBALANCE)
+        self.assertGreater(record.retention_score, 0.7)
+        self.assertEqual(record.renewal_window, 4)
+
+    def test_kki_mandate_memory_store_builds_renewable_record(self) -> None:
+        store = build_mandate_memory_store(store_id="memory-186-renewable")
+        record = next(item for item in store.records if item.memory_status is MandateMemoryStatus.RENEWABLE)
+
+        self.assertEqual(record.source_action, CourseCorrectionAction.ACCELERATE)
+        self.assertTrue(record.release_ready)
+        self.assertEqual(record.renewal_window, 7)
+
+    def test_kki_mandate_memory_store_aggregates_store_signal(self) -> None:
+        store = build_mandate_memory_store(store_id="memory-186-signal")
+
+        self.assertEqual(store.store_signal.status, "memory-sealed")
+        self.assertEqual(store.sealed_record_ids, ("memory-186-signal-stability-lane",))
+        self.assertEqual(store.review_record_ids, ("memory-186-signal-governance-lane",))
+        self.assertEqual(store.renewable_record_ids, ("memory-186-signal-expansion-lane",))
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

@@ -77,6 +77,12 @@ from .course_corrector import (
     CourseCorrectionStatus,
     build_course_corrector,
 )
+from .mandate_memory_store import (
+    MandateMemoryRecord,
+    MandateMemoryStatus,
+    MandateMemoryStore,
+    build_mandate_memory_store,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -400,6 +406,9 @@ __all__ = [
     "CourseCorrectionAction",
     "CourseCorrectionDirective",
     "CourseCorrectionStatus",
+    "MandateMemoryRecord",
+    "MandateMemoryStatus",
+    "MandateMemoryStore",
     "ExceptionCase",
     "ExceptionKind",
     "ExceptionRegister",
@@ -581,6 +590,7 @@ __all__ = [
     "build_portfolio_radar",
     "build_scenario_chancery",
     "build_course_corrector",
+    "build_mandate_memory_store",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

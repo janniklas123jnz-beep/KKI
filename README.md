@@ -548,6 +548,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `build_course_corrector()` koppelt die `ScenarioChancery` mit den Portfolio-Stressindikatoren, um Vergleichslagen in erzwungene, gerichtete oder freigegebene Korrekturpfade zu ueberfuehren
 - der Kurs-Korrektor erweitert den Snapshot um ein explizites `course-corrector`-Signal fuer enforced containment, directed rebalancing und cleared acceleration
 
+`#186` konserviert diese Pfade nun im Mandats-Speicher:
+
+- `MandateMemoryRecord`, `MandateMemoryStatus` und `MandateMemoryStore` modellieren dauerhafte Erinnerungsobjekte fuer strategische Karten und ihre Kurskorrekturen
+- `build_mandate_memory_store()` koppelt `MandateCardDeck` und `CourseCorrector`, um contain-, rebalance- und accelerate-Pfade als sealed, review oder renewable Erinnerungen fuer spaetere Erneuerung abzulegen
+- der Mandats-Speicher erweitert den Snapshot um ein explizites `mandate-memory-store`-Signal fuer versiegelte, review-pflichtige und erneuerbare Leitstern-Mandate
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

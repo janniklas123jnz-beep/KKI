@@ -308,6 +308,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `coordinate_escalations()` uebersetzt Incident-Reports in ausfuehrbare Eskalationsdirektiven zwischen Dispatch, Governance und Recovery
 - der Eskalationsplan erweitert den Snapshot um ein explizites `escalation-plan`-Signal fuer Reaktions- und Freigabepfade
 
+`#146` legt diese Reaktionslagen nun in definierte Change-Fenster:
+
+- `ChangeWindow`, `ChangeWindowEntry` und `ChangeWindowStatus` modellieren, ob Freigaben offen, guarded, recovery-only oder blockiert sind
+- `open_change_window()` verdichtet mehrere Eskalationsplaene zu einem gemeinsamen Change-Fenster ueber mehrere Wellen
+- das Change-Fenster erweitert den Snapshot um ein explizites `change-window`-Signal fuer Promotions, Canary-Uebergaenge und Wiederanlauf-Freigaben
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

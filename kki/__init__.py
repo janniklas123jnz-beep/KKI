@@ -8,6 +8,7 @@ from .data_models import (
     core_state_for_runtime,
     transfer_envelope_for_state,
 )
+from .change_windows import ChangeWindow, ChangeWindowEntry, ChangeWindowStatus, open_change_window
 from .governance import (
     GateDecision,
     GateOutcome,
@@ -162,6 +163,9 @@ __all__ = [
     "AuthorizationDecision",
     "AuthorizationIdentity",
     "AuditTrailEntry",
+    "ChangeWindow",
+    "ChangeWindowEntry",
+    "ChangeWindowStatus",
     "CorrelatedOperation",
     "ControlArtifact",
     "DelegationGrant",
@@ -269,6 +273,7 @@ __all__ = [
     "mission_profile_catalog",
     "mission_profile_for_name",
     "operation_alerts",
+    "open_change_window",
     "orchestration_state_for_runtime",
     "orchestrate_recovery_for_rollout",
     "permission_catalog",

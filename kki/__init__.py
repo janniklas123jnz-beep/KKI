@@ -17,6 +17,7 @@ from .benchmark_harness import (
     benchmark_case_matrix,
     run_benchmark_harness,
 )
+from .autonomy_governor import AutonomyAssignment, AutonomyDecision, AutonomyGovernor, build_autonomy_governor
 from .capacity_planner import CapacityLane, CapacityPlanEntry, CapacityPlanner, CapacityWindow, build_capacity_planner
 from .continuous_readiness import (
     ContinuousReadinessCycle,
@@ -252,6 +253,9 @@ __all__ = [
     "ActionName",
     "ArtifactKind",
     "ArtifactScope",
+    "AutonomyAssignment",
+    "AutonomyDecision",
+    "AutonomyGovernor",
     "AuthorizationDecision",
     "AuthorizationIdentity",
     "AuditTrailEntry",
@@ -439,6 +443,7 @@ __all__ = [
     "audit_entry_for_artifact",
     "audit_entry_for_message",
     "benchmark_case_matrix",
+    "build_autonomy_governor",
     "build_capacity_planner",
     "build_continuous_readiness_cycle",
     "build_convergence_simulator",

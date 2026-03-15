@@ -482,6 +482,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `build_playbook_catalog()` koppelt `LearningRegister`, `OutcomeLedger` und `ExceptionRegister`, um steward-guided, governed-standard und autonomy-candidate Playbooks sauber zu unterscheiden
 - der Katalog erweitert den Snapshot um ein explizites `playbook-catalog`-Signal fuer standardisierte Betriebsrezepte und kontrolliert autonomiefaehige Routinen
 
+`#175` setzt darauf nun die Freigabelogik:
+
+- `AutonomyAssignment`, `AutonomyGovernor` und `AutonomyDecision` legen fuer jedes Playbook fest, ob es autonom, governance-pflichtig oder steward-pflichtig bleibt
+- `build_autonomy_governor()` koppelt `PlaybookCatalog`, `GovernanceAgenda` und `ExceptionRegister`, damit nur bounded-autonomy-faehige Rezepte ohne Sonderlage wirklich delegiert werden
+- der Governor erweitert den Snapshot um ein explizites `autonomy-governor`-Signal fuer kontrollierte Delegation mit Approval-Gates und Exception-Eskalationen
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

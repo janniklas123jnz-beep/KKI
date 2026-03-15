@@ -14,6 +14,9 @@ from kki import (
     ActionName,
     ArtifactKind,
     ArtifactScope,
+    AutonomyAssignment,
+    AutonomyDecision,
+    AutonomyGovernor,
     AuthorizationIdentity,
     AuditTrailEntry,
     BenchmarkCase,
@@ -194,6 +197,7 @@ from kki import (
     audit_entry_for_artifact,
     audit_entry_for_message,
     benchmark_case_matrix,
+    build_autonomy_governor,
     build_capacity_planner,
     build_continuous_readiness_cycle,
     build_convergence_simulator,
@@ -4107,6 +4111,37 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(catalog.steward_guided_case_ids, ("pilot-containment", "recovery-resume"))
         self.assertEqual(catalog.governed_case_ids, ("shadow-guarded",))
         self.assertEqual(catalog.autonomy_candidate_case_ids, ("pilot-ready",))
+
+    def test_kki_autonomy_governor_enables_bounded_autonomy(self) -> None:
+        governor = build_autonomy_governor(governor_id="autonomy-175-auto")
+        assignment = next(item for item in governor.assignments if item.case_id == "pilot-ready")
+
+        self.assertIsInstance(governor, AutonomyGovernor)
+        self.assertIsInstance(assignment, AutonomyAssignment)
+        self.assertEqual(assignment.decision, AutonomyDecision.AUTONOMOUS)
+        self.assertTrue(assignment.automation_allowed)
+
+    def test_kki_autonomy_governor_requires_governance_for_standard_case(self) -> None:
+        governor = build_autonomy_governor(governor_id="autonomy-175-governance")
+        assignment = next(item for item in governor.assignments if item.case_id == "shadow-guarded")
+
+        self.assertEqual(assignment.decision, AutonomyDecision.GOVERNANCE_REQUIRED)
+        self.assertTrue(assignment.governance_required)
+        self.assertIn("approval-gate", assignment.control_tags)
+
+    def test_kki_autonomy_governor_keeps_exception_cases_with_steward(self) -> None:
+        governor = build_autonomy_governor(governor_id="autonomy-175-steward")
+
+        self.assertEqual(governor.steward_required_case_ids, ("pilot-containment", "recovery-resume"))
+        self.assertIn("exception-escalation", next(item for item in governor.assignments if item.case_id == "pilot-containment").control_tags)
+
+    def test_kki_autonomy_governor_aggregates_governor_signal(self) -> None:
+        governor = build_autonomy_governor(governor_id="autonomy-175-signal")
+
+        self.assertEqual(governor.governor_signal.status, "autonomy-enabled")
+        self.assertEqual(governor.autonomous_case_ids, ("pilot-ready",))
+        self.assertEqual(governor.governance_required_case_ids, ("shadow-guarded",))
+        self.assertAlmostEqual(governor.governor_signal.metrics["assignment_count"], 4.0)
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

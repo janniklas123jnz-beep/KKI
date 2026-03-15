@@ -107,6 +107,10 @@ from kki import (
     OperatingMode,
     OperationsIncident,
     OrchestrationStatus,
+    PlaybookCatalog,
+    PlaybookEntry,
+    PlaybookReadiness,
+    PlaybookType,
     PortfolioAction,
     PortfolioOptimizer,
     PortfolioPriority,
@@ -205,6 +209,7 @@ from kki import (
     build_operations_cockpit,
     build_operations_steward,
     build_outcome_ledger,
+    build_playbook_catalog,
     build_portfolio_optimizer,
     build_policy_tuner,
     build_readiness_cadence,
@@ -4069,6 +4074,39 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(register.critical_case_ids, ("pilot-containment",))
         self.assertEqual(register.unresolved_case_ids, ("recovery-resume",))
         self.assertEqual(register.policy_breach_case_ids, ("pilot-containment",))
+
+    def test_kki_playbook_catalog_compiles_steward_guided_playbooks(self) -> None:
+        catalog = build_playbook_catalog(catalog_id="playbook-174-guided")
+        playbook = next(item for item in catalog.playbooks if item.case_id == "pilot-containment")
+
+        self.assertIsInstance(catalog, PlaybookCatalog)
+        self.assertIsInstance(playbook, PlaybookEntry)
+        self.assertEqual(playbook.playbook_type, PlaybookType.STABILIZATION)
+        self.assertEqual(playbook.readiness, PlaybookReadiness.STEWARD_GUIDED)
+
+    def test_kki_playbook_catalog_compiles_governed_standard_playbooks(self) -> None:
+        catalog = build_playbook_catalog(catalog_id="playbook-174-governed")
+        playbook = next(item for item in catalog.playbooks if item.case_id == "shadow-guarded")
+
+        self.assertEqual(playbook.playbook_type, PlaybookType.GOVERNANCE)
+        self.assertEqual(playbook.readiness, PlaybookReadiness.GOVERNED_STANDARD)
+        self.assertFalse(playbook.automation_candidate)
+
+    def test_kki_playbook_catalog_marks_autonomy_candidates(self) -> None:
+        catalog = build_playbook_catalog(catalog_id="playbook-174-autonomy")
+        playbook = next(item for item in catalog.playbooks if item.case_id == "pilot-ready")
+
+        self.assertEqual(playbook.playbook_type, PlaybookType.MONITORING)
+        self.assertEqual(playbook.readiness, PlaybookReadiness.AUTONOMY_CANDIDATE)
+        self.assertIn("Eligible for controlled autonomous execution.", playbook.steps)
+
+    def test_kki_playbook_catalog_aggregates_catalog_signal(self) -> None:
+        catalog = build_playbook_catalog(catalog_id="playbook-174-signal")
+
+        self.assertEqual(catalog.catalog_signal.status, "catalog-autonomy-ready")
+        self.assertEqual(catalog.steward_guided_case_ids, ("pilot-containment", "recovery-resume"))
+        self.assertEqual(catalog.governed_case_ids, ("shadow-guarded",))
+        self.assertEqual(catalog.autonomy_candidate_case_ids, ("pilot-ready",))
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

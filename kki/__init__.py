@@ -34,6 +34,7 @@ from .exception_register import ExceptionCase, ExceptionKind, ExceptionRegister,
 from .learning_register import LearningPatternType, LearningRecord, LearningRegister, build_learning_register
 from .operations_steward import OperationsSteward, OperationsStewardStatus, StewardDirective, StewardDirectiveType, build_operations_steward
 from .outcome_ledger import OutcomeLedger, OutcomeRecord, OutcomeStatus, build_outcome_ledger
+from .playbook_catalog import PlaybookCatalog, PlaybookEntry, PlaybookReadiness, PlaybookType, build_playbook_catalog
 from .policy_tuner import PolicyTuneAction, PolicyTuneEntry, PolicyTuner, build_policy_tuner
 from .steward_workboard import StewardWorkboard, WorkboardItem, WorkboardLane, WorkboardQueue, WorkboardStatus, build_steward_workboard
 from .readiness_cadence import (
@@ -341,6 +342,10 @@ __all__ = [
     "OperatingMode",
     "OrchestrationState",
     "OrchestrationStatus",
+    "PlaybookCatalog",
+    "PlaybookEntry",
+    "PlaybookReadiness",
+    "PlaybookType",
     "PortfolioAction",
     "PortfolioOptimizer",
     "PortfolioPriority",
@@ -448,6 +453,7 @@ __all__ = [
     "build_operations_cockpit",
     "build_operations_steward",
     "build_outcome_ledger",
+    "build_playbook_catalog",
     "build_portfolio_optimizer",
     "build_policy_tuner",
     "build_remediation_campaign",

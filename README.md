@@ -476,6 +476,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `build_exception_register()` koppelt das `OutcomeLedger`, um nur nicht-routinemaessige Faelle als policy-breach-, unresolved- oder recurring-Exceptions fortzuschreiben
 - das Register erweitert den Snapshot um ein explizites `exception-register`-Signal fuer kritische Sonderlagen und die naechste Eskalationsstufe
 
+`#174` macht daraus jetzt belastbare Betriebsrezepte:
+
+- `PlaybookEntry`, `PlaybookCatalog`, `PlaybookType` und `PlaybookReadiness` kompilieren Lernmuster, Outcomes und Ausnahmen in wiederverwendbare Playbooks
+- `build_playbook_catalog()` koppelt `LearningRegister`, `OutcomeLedger` und `ExceptionRegister`, um steward-guided, governed-standard und autonomy-candidate Playbooks sauber zu unterscheiden
+- der Katalog erweitert den Snapshot um ein explizites `playbook-catalog`-Signal fuer standardisierte Betriebsrezepte und kontrolliert autonomiefaehige Routinen
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

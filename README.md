@@ -560,6 +560,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `build_guideline_compass()` koppelt den `MandateMemoryStore`, um versiegelte, review-pflichtige und erneuerbare Leitstern-Erinnerungen in stabile Navigationsprinzipien fuer Folgeentscheidungen zu ueberfuehren
 - der Leitlinien-Kompass erweitert den Snapshot um ein explizites `guideline-compass`-Signal fuer anchored stability, guided progress und open expansion
 
+`#188` formalisiert diese Orientierung nun in einer Interventions-Charta:
+
+- `InterventionClause`, `InterventionCharter`, `InterventionRight`, `StopCondition`, `ReleaseThreshold` und `CharterStatus` modellieren explizite Eingriffsrechte, Stop-Bedingungen und Freigabeschwellen pro strategischer Bahn
+- `build_intervention_charter()` koppelt den `GuidelineCompass`, um verankerte, gefuehrte und offene Leitlinien in restriktive, guarded oder enabled Charta-Klauseln fuer Folgeeingriffe zu ueberfuehren
+- die Interventions-Charta erweitert den Snapshot um ein explizites `intervention-charter`-Signal fuer restricted veto, guarded review und enabled autonomy windows
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

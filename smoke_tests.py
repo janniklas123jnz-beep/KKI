@@ -42,13 +42,19 @@ from kki import (
     CourseCorrectionDirective,
     CourseCorrectionStatus,
     CompassStatus,
+    CharterStatus,
     GuidelineCompass,
     GuidelinePrinciple,
     GuidelineVector,
+    InterventionCharter,
+    InterventionClause,
+    InterventionRight,
     MandateMemoryRecord,
     MandateMemoryStatus,
     MandateMemoryStore,
     NavigationConstraint,
+    ReleaseThreshold,
+    StopCondition,
     CockpitEntry,
     CockpitStatus,
     ConstitutionArticle,
@@ -268,6 +274,7 @@ from kki import (
     build_governance_agenda,
     build_guardrail_portfolio,
     build_improvement_orchestrator,
+    build_intervention_charter,
     build_intervention_simulator,
     build_learning_register,
     build_mandate_card_deck,
@@ -4614,6 +4621,42 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(compass.anchored_vector_ids, ("compass-187-signal-stability-lane",))
         self.assertEqual(compass.guided_vector_ids, ("compass-187-signal-governance-lane",))
         self.assertEqual(compass.open_vector_ids, ("compass-187-signal-expansion-lane",))
+
+    def test_kki_intervention_charter_builds_restricted_stability_clause(self) -> None:
+        charter = build_intervention_charter(charter_id="charter-188-stability")
+        clause = next(item for item in charter.clauses if item.charter_status is CharterStatus.RESTRICTED)
+
+        self.assertIsInstance(charter, InterventionCharter)
+        self.assertIsInstance(clause, InterventionClause)
+        self.assertEqual(clause.intervention_right, InterventionRight.STEWARD_VETO)
+        self.assertEqual(clause.stop_condition, StopCondition.HARD_BOUNDARY_BREACH)
+        self.assertEqual(clause.release_threshold, ReleaseThreshold.EXECUTIVE_OVERRIDE)
+
+    def test_kki_intervention_charter_builds_guarded_governance_clause(self) -> None:
+        charter = build_intervention_charter(charter_id="charter-188-governance")
+        clause = next(item for item in charter.clauses if item.charter_status is CharterStatus.GUARDED)
+
+        self.assertEqual(clause.intervention_right, InterventionRight.GOVERNANCE_REVIEW)
+        self.assertEqual(clause.stop_condition, StopCondition.CORRIDOR_DEVIATION)
+        self.assertEqual(clause.release_threshold, ReleaseThreshold.GOVERNANCE_CLEARANCE)
+        self.assertGreater(clause.intervention_score, 0.7)
+
+    def test_kki_intervention_charter_builds_enabled_expansion_clause(self) -> None:
+        charter = build_intervention_charter(charter_id="charter-188-expansion")
+        clause = next(item for item in charter.clauses if item.charter_status is CharterStatus.ENABLED)
+
+        self.assertEqual(clause.intervention_right, InterventionRight.AUTONOMY_WINDOW)
+        self.assertEqual(clause.stop_condition, StopCondition.WINDOW_EXHAUSTED)
+        self.assertEqual(clause.release_threshold, ReleaseThreshold.READINESS_QUORUM)
+        self.assertTrue(clause.release_ready)
+
+    def test_kki_intervention_charter_aggregates_charter_signal(self) -> None:
+        charter = build_intervention_charter(charter_id="charter-188-signal")
+
+        self.assertEqual(charter.charter_signal.status, "charter-restricted")
+        self.assertEqual(charter.restricted_clause_ids, ("charter-188-signal-stability-lane",))
+        self.assertEqual(charter.guarded_clause_ids, ("charter-188-signal-governance-lane",))
+        self.assertEqual(charter.enabled_clause_ids, ("charter-188-signal-expansion-lane",))
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

@@ -9,6 +9,14 @@ from .data_models import (
     transfer_envelope_for_state,
 )
 from .change_windows import ChangeWindow, ChangeWindowEntry, ChangeWindowStatus, open_change_window
+from .benchmark_harness import (
+    BenchmarkCase,
+    BenchmarkCaseResult,
+    BenchmarkHarness,
+    BenchmarkReleaseMode,
+    benchmark_case_matrix,
+    run_benchmark_harness,
+)
 from .governance import (
     GateDecision,
     GateOutcome,
@@ -170,6 +178,10 @@ __all__ = [
     "AuthorizationDecision",
     "AuthorizationIdentity",
     "AuditTrailEntry",
+    "BenchmarkCase",
+    "BenchmarkCaseResult",
+    "BenchmarkHarness",
+    "BenchmarkReleaseMode",
     "ChangeWindow",
     "ChangeWindowEntry",
     "ChangeWindowStatus",
@@ -259,6 +271,7 @@ __all__ = [
     "advance_work_unit",
     "audit_entry_for_artifact",
     "audit_entry_for_message",
+    "benchmark_case_matrix",
     "build_dispatch_plan",
     "build_release_campaign",
     "build_telemetry_snapshot",
@@ -292,6 +305,7 @@ __all__ = [
     "protocol_context",
     "role_permissions",
     "rollout_state_for_shadow",
+    "run_benchmark_harness",
     "run_integrated_smoke_build",
     "recovery_checkpoint_for_state",
     "recovery_outcome",

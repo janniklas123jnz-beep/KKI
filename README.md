@@ -320,6 +320,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `build_release_campaign()` verdichtet offene, guarded, recovery-only und blockierte Fenster zu einer gemeinsamen Freigabe-Kampagne
 - die Kampagne fuehrt Evidence-Records und Commitment-Refs pro Stage zusammen und erweitert den Snapshot um ein explizites `release-campaign`-Signal
 
+`#148` fuehrt diese Kette nun als deterministische Benchmark-Serie aus:
+
+- `BenchmarkCase`, `BenchmarkCaseResult`, `BenchmarkHarness` und `BenchmarkReleaseMode` modellieren kanonische Benchmark-Faelle ueber Missionsprofile, Wellen und Freigabepfade
+- `benchmark_case_matrix()` liefert eine feste Szenariomatrix fuer ready-, guarded-, recovery-only- und blocked-Verlaeufe
+- `run_benchmark_harness()` fuehrt pro Case die komplette Kette von `run_operations_wave()` bis `build_release_campaign()` aus und verdichtet sie in ein gemeinsames `benchmark-harness`-Signal
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

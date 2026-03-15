@@ -16,6 +16,9 @@ from kki import (
     ArtifactScope,
     AuthorizationIdentity,
     AuditTrailEntry,
+    BenchmarkCase,
+    BenchmarkHarness,
+    BenchmarkReleaseMode,
     ChangeWindow,
     ChangeWindowEntry,
     ChangeWindowStatus,
@@ -97,6 +100,7 @@ from kki import (
     advance_work_unit,
     audit_entry_for_artifact,
     audit_entry_for_message,
+    benchmark_case_matrix,
     build_dispatch_plan,
     build_release_campaign,
     build_telemetry_snapshot,
@@ -125,6 +129,7 @@ from kki import (
     recovery_outcome,
     rollback_directive_for_checkpoint,
     rollout_state_for_shadow,
+    run_benchmark_harness,
     run_integrated_smoke_build,
     run_integrated_operations,
     run_operations_wave,
@@ -2856,6 +2861,52 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(campaign.status, ReleaseCampaignStatus.BLOCKED)
         self.assertEqual(campaign.blocked_refs, ("pilot-cutover",))
         self.assertIn(ReleaseCampaignStageType.CONTAINMENT, {stage.stage_type for stage in campaign.stages})
+
+    def test_kki_benchmark_case_matrix_exposes_canonical_cases(self) -> None:
+        cases = benchmark_case_matrix()
+
+        self.assertEqual(len(cases), 4)
+        self.assertIsInstance(cases[0], BenchmarkCase)
+        self.assertEqual(
+            tuple(case.case_id for case in cases),
+            ("pilot-ready", "shadow-guarded", "recovery-resume", "pilot-containment"),
+        )
+
+    def test_kki_benchmark_harness_runs_ready_case(self) -> None:
+        case = BenchmarkCase(
+            case_id="benchmark-ready",
+            title="benchmark ready",
+            missions=(mission_profile_for_name("pilot-cutover"),),
+            release_mode=BenchmarkReleaseMode.READY,
+        )
+        harness = run_benchmark_harness((case,), harness_id="harness-148-ready")
+
+        self.assertIsInstance(harness, BenchmarkHarness)
+        self.assertEqual(harness.results[0].status, ReleaseCampaignStatus.READY)
+        self.assertEqual(harness.results[0].release_campaign.promotion_refs, ("pilot-cutover",))
+        self.assertEqual(harness.ready_case_ids, ("benchmark-ready",))
+
+    def test_kki_benchmark_harness_runs_recovery_case(self) -> None:
+        case = BenchmarkCase(
+            case_id="benchmark-recovery",
+            title="benchmark recovery",
+            missions=(mission_profile_for_name("recovery-drill"),),
+            release_mode=BenchmarkReleaseMode.RECOVERY_ONLY,
+        )
+        harness = run_benchmark_harness((case,), harness_id="harness-148-recovery")
+
+        self.assertEqual(harness.results[0].status, ReleaseCampaignStatus.RECOVERY_ONLY)
+        self.assertEqual(harness.results[0].release_campaign.recovery_only_refs, ("recovery-drill",))
+        self.assertEqual(harness.recovery_case_ids, ("benchmark-recovery",))
+
+    def test_kki_benchmark_harness_aggregates_matrix_statuses(self) -> None:
+        harness = run_benchmark_harness(harness_id="harness-148-matrix")
+
+        self.assertEqual(harness.harness_signal.status, "blocked")
+        self.assertEqual(harness.ready_case_ids, ("pilot-ready",))
+        self.assertEqual(harness.guarded_case_ids, ("shadow-guarded",))
+        self.assertEqual(harness.recovery_case_ids, ("recovery-resume",))
+        self.assertEqual(harness.blocked_case_ids, ("pilot-containment",))
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

@@ -356,6 +356,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `build_guardrail_portfolio()` ueberfuehrt das Risiko-Register in konkrete Monitor-, Hold-, Throttle- und Contain-Guardrails
 - das Portfolio erweitert den Snapshot um ein explizites `guardrail-portfolio`-Signal fuer aktive Eingriffs- und Schutzmechanismen
 
+`#154` macht diese kritischen Pfade nun replaybar:
+
+- `ScenarioReplayItem`, `ScenarioReplayResult`, `ScenarioReplaySuite` und `ReplayMode` modellieren deterministische Wiederholungslaeufe fuer Attention- und Blocked-Faelle
+- `build_scenario_replay()` koppelt `BenchmarkHarness` und `GuardrailPortfolio`, um auffaellige Faelle gezielt unter denselben Guardrails erneut auszufuehren
+- der Replay-Layer erweitert den Snapshot um ein explizites `scenario-replay`-Signal fuer Reproduzierbarkeit, Stabilitaet und Regression
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

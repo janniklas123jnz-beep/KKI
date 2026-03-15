@@ -59,6 +59,7 @@ from .risk_register import (
     RiskRegister,
     build_risk_register,
 )
+from .scenario_replay import ReplayMode, ScenarioReplayItem, ScenarioReplayResult, ScenarioReplaySuite, build_scenario_replay
 from .readiness_review import ReadinessFinding, ReadinessFindingSeverity, ReadinessReview, build_readiness_review
 from .runtime_scorecard import RuntimeScorecard, RuntimeScorecardEntry, build_runtime_scorecard
 from .run_ledger import OperationsRunLedger, RunLedgerEntry, ledger_for_wave
@@ -276,6 +277,7 @@ __all__ = [
     "RiskMitigationStatus",
     "RiskRecord",
     "RiskRegister",
+    "ReplayMode",
     "RoleName",
     "RolloutPhase",
     "RolloutState",
@@ -289,6 +291,9 @@ __all__ = [
     "RuntimeThresholds",
     "RunLedgerEntry",
     "PreviewMode",
+    "ScenarioReplayItem",
+    "ScenarioReplayResult",
+    "ScenarioReplaySuite",
     "ShadowCoordination",
     "ShadowCoordinationMode",
     "ShadowPreview",
@@ -319,6 +324,7 @@ __all__ = [
     "build_readiness_review",
     "build_review_action_plan",
     "build_risk_register",
+    "build_scenario_replay",
     "build_runtime_scorecard",
     "build_telemetry_snapshot",
     "claim_for_work_unit",

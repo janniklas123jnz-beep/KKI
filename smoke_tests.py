@@ -92,6 +92,7 @@ from kki import (
     RiskMitigationStatus,
     RiskRecord,
     RiskRegister,
+    ReplayMode,
     RoleName,
     RolloutPhase,
     RolloutState,
@@ -101,6 +102,9 @@ from kki import (
     RuntimeScorecardEntry,
     RuntimeStage,
     RuntimeThresholds,
+    ScenarioReplayItem,
+    ScenarioReplayResult,
+    ScenarioReplaySuite,
     ShadowPreview,
     TelemetryAlert,
     TelemetrySignal,
@@ -125,6 +129,7 @@ from kki import (
     build_release_campaign,
     build_review_action_plan,
     build_risk_register,
+    build_scenario_replay,
     build_runtime_scorecard,
     build_telemetry_snapshot,
     claim_for_work_unit,
@@ -3272,6 +3277,38 @@ class SmokeTests(unittest.TestCase):
         self.assertIn(GuardrailDomain.RECOVERY, portfolio.domains)
         self.assertIn(ModuleBoundaryName.GOVERNANCE, portfolio.owner_boundaries)
         self.assertIn(ModuleBoundaryName.RECOVERY, portfolio.owner_boundaries)
+
+    def test_kki_scenario_replay_replays_guarded_case(self) -> None:
+        suite = build_scenario_replay(replay_id="replay-154-guarded")
+        guarded_item = next(item for item in suite.items if item.source_case_id == "shadow-guarded")
+
+        self.assertIsInstance(suite, ScenarioReplaySuite)
+        self.assertIsInstance(guarded_item, ScenarioReplayItem)
+        self.assertEqual(guarded_item.replay_mode, ReplayMode.GUARDED)
+        self.assertIn("shadow-guarded", suite.replayed_case_ids)
+
+    def test_kki_scenario_replay_contains_blocked_case(self) -> None:
+        suite = build_scenario_replay(replay_id="replay-154-blocked")
+        blocked_result = next(result for result in suite.results if result.item.source_case_id == "pilot-containment")
+
+        self.assertIsInstance(blocked_result, ScenarioReplayResult)
+        self.assertEqual(blocked_result.item.replay_mode, ReplayMode.CONTAINED)
+        self.assertEqual(blocked_result.result.status, ReleaseCampaignStatus.BLOCKED)
+        self.assertEqual(suite.blocked_case_ids, ("pilot-containment",))
+
+    def test_kki_scenario_replay_can_include_ready_case(self) -> None:
+        suite = build_scenario_replay(replay_id="replay-154-ready", include_ready=True)
+        ready_result = next(result for result in suite.results if result.item.source_case_id == "pilot-ready")
+
+        self.assertEqual(ready_result.item.replay_mode, ReplayMode.OBSERVED)
+        self.assertTrue(ready_result.stable)
+
+    def test_kki_scenario_replay_aggregates_attention_cases(self) -> None:
+        suite = build_scenario_replay(replay_id="replay-154-matrix")
+
+        self.assertEqual(suite.replay_signal.status, "blocked-replays")
+        self.assertEqual(suite.replayed_case_ids, ("shadow-guarded", "recovery-resume", "pilot-containment"))
+        self.assertEqual(suite.blocked_case_ids, ("pilot-containment",))
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

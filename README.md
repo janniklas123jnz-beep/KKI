@@ -278,6 +278,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `run_integrated_operations()` fuehrt die komplette operative Kette ueber gemeinsame Korrelation, Identitaeten und Policies aus
 - der finale Snapshot macht die gesamte Freigabekette mit Shadow-, Rollout-, Recovery- und Governance-Signalen in einer Sicht pruefbar
 
+`#141` fuehrt darauf typed Missionsprofile fuer den Operativkern ein:
+
+- `MissionProfile`, `MissionPolicy` und `MissionScenario` kapseln Szenario-, Policy- und Stage-Vorgaben fuer wiederverwendbare Operations-Runs
+- `mission_profile_for_name()` und `mission_profile_catalog()` liefern deterministische Presets wie `pilot-cutover`, `shadow-hardening` und `recovery-drill`
+- `run_integrated_operations()` kann diese Missionsprofile direkt ausfuehren und uebernimmt daraus Missionsreferenz, Policy-Parameter, Prioritaet und Budgetsteuerung
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

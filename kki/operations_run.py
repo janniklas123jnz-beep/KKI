@@ -5,6 +5,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from .governance import HumanDecision, HumanLoopGovernance, govern_recovery_orchestration
+from .mission_profiles import MissionPolicy, MissionProfile, MissionScenario, mission_profile_for_name
+from .module_boundaries import ModuleBoundaryName
 from .orchestration import OrchestrationState, WorkPriority, WorkUnit, orchestration_state_for_runtime, work_unit_for_state
 from .recovery import RecoveryOrchestration, orchestrate_recovery_for_rollout
 from .rollout import RolloutPhase, RolloutState, advance_rollout_state, rollout_state_for_shadow
@@ -29,6 +31,7 @@ from .telemetry import TelemetrySnapshot, build_telemetry_snapshot
 class IntegratedOperationsRun:
     """End-to-end integrated operational run over the full operative core chain."""
 
+    mission_profile: MissionProfile
     runtime_dna: RuntimeDNA
     shadow_control_plane: LoadedControlPlane
     rollout_control_plane: LoadedControlPlane
@@ -54,6 +57,7 @@ class IntegratedOperationsRun:
 
     def to_dict(self) -> dict[str, object]:
         return {
+            "mission_profile": self.mission_profile.to_dict(),
             "runtime_dna": self.runtime_dna.to_dict(),
             "shadow_control_plane": self.shadow_control_plane.to_dict(),
             "rollout_control_plane": self.rollout_control_plane.to_dict(),
@@ -70,7 +74,43 @@ class IntegratedOperationsRun:
         }
 
 
-def _operational_control_artifacts(stage: RuntimeStage) -> tuple[ControlArtifact, ...]:
+def _default_mission_profile(*, profile: str, stage: RuntimeStage) -> MissionProfile:
+    return MissionProfile(
+        mission_ref="operations-run",
+        title="integrated operations run",
+        scenario=MissionScenario.ROUTINE,
+        runtime_stage=stage,
+        runtime_profile=profile,
+        target_boundary=ModuleBoundaryName.ROLLOUT,
+        work_priority=WorkPriority.HIGH,
+        budget_share=0.12,
+        observed_budget=0.12,
+        governance_decision=HumanDecision.APPROVE,
+        available_roles=(RoleName.EXECUTOR,),
+        policy=MissionPolicy(
+            resource_budget=0.82,
+            recovery_reserve=0.2,
+            drift_threshold=0.05,
+            promotion_gate="hold-until-shadow-green",
+        ),
+        labels={"campaign": "default", "mission_class": "routine"},
+    )
+
+
+def _resolve_mission_profile(
+    *,
+    mission: MissionProfile | str | None,
+    profile: str,
+    stage: RuntimeStage,
+) -> MissionProfile:
+    if isinstance(mission, MissionProfile):
+        return mission
+    if isinstance(mission, str):
+        return mission_profile_for_name(mission)
+    return _default_mission_profile(profile=profile, stage=stage)
+
+
+def _operational_control_artifacts(mission_profile: MissionProfile) -> tuple[ControlArtifact, ...]:
     validations = (
         ValidationStep.STATIC,
         ValidationStep.CONSISTENCY,
@@ -83,71 +123,94 @@ def _operational_control_artifacts(stage: RuntimeStage) -> tuple[ControlArtifact
             version="1.2",
             scope=ArtifactScope.GLOBAL,
             rollback_version="1.1",
-            payload={"resource_budget": 0.8, "shadow_enabled": True, "operations_run": True},
+            payload={
+                "resource_budget": mission_profile.policy.resource_budget,
+                "shadow_enabled": True,
+                "operations_run": True,
+                "mission_ref": mission_profile.mission_ref,
+                "scenario": mission_profile.scenario.value,
+            },
         ),
         ControlArtifact(
             artifact_id="pilot-runtime",
             kind=ArtifactKind.BASE_CONFIG,
             version="1.3",
             scope=ArtifactScope.STAGE,
-            runtime_stage=stage,
+            runtime_stage=mission_profile.runtime_stage,
             validations=validations,
             rollback_version="1.2",
-            payload={"resource_budget": 0.82, "recovery_reserve": 0.2},
+            payload={
+                "resource_budget": mission_profile.policy.resource_budget,
+                "recovery_reserve": mission_profile.policy.recovery_reserve,
+            },
         ),
         ControlArtifact(
             artifact_id="shadow-policy",
             kind=ArtifactKind.POLICY,
             version="2.1",
             scope=ArtifactScope.BOUNDARY,
-            runtime_stage=stage,
+            runtime_stage=mission_profile.runtime_stage,
             boundary="shadow",
             validations=validations,
             evidence_ref="audit-shadow-policy",
             rollback_version="2.0",
-            payload={"preview_gate": "strict", "drift_threshold": 0.05},
+            payload={
+                "preview_gate": "strict",
+                "drift_threshold": mission_profile.policy.drift_threshold,
+                "mission_ref": mission_profile.mission_ref,
+            },
         ),
         ControlArtifact(
             artifact_id="rollout-policy",
             kind=ArtifactKind.POLICY,
             version="2.2",
             scope=ArtifactScope.BOUNDARY,
-            runtime_stage=stage,
+            runtime_stage=mission_profile.runtime_stage,
             boundary="rollout",
             validations=validations,
             evidence_ref="audit-rollout-policy",
             rollback_version="2.1",
-            payload={"promotion_gate": "hold-until-shadow-green"},
+            payload={
+                "promotion_gate": mission_profile.policy.promotion_gate,
+                "mission_ref": mission_profile.mission_ref,
+            },
         ),
     )
 
 
 def run_integrated_operations(
     *,
+    mission: MissionProfile | str | None = None,
     profile: str = "pilot-runtime-dna",
     stage: RuntimeStage = RuntimeStage.PILOT,
     correlation_id: str = "integrated-operations",
 ) -> IntegratedOperationsRun:
     """Execute the canonical integrated operations run across the full operative core chain."""
 
-    runtime_dna = runtime_dna_for_profile(profile, stage=stage)
-    artifacts = _operational_control_artifacts(stage)
-    shadow_control_plane = load_control_plane(artifacts, runtime_stage=stage, boundary="shadow")
-    rollout_control_plane = load_control_plane(artifacts, runtime_stage=stage, boundary="rollout")
-    recovery_control_plane = load_control_plane(artifacts, runtime_stage=stage, boundary="recovery")
-    governance_control_plane = load_control_plane(artifacts, runtime_stage=stage, boundary="governance")
+    mission_profile = _resolve_mission_profile(mission=mission, profile=profile, stage=stage)
+    runtime_dna = runtime_dna_for_profile(mission_profile.runtime_profile, stage=mission_profile.runtime_stage)
+    artifacts = _operational_control_artifacts(mission_profile)
+    shadow_control_plane = load_control_plane(artifacts, runtime_stage=mission_profile.runtime_stage, boundary="shadow")
+    rollout_control_plane = load_control_plane(artifacts, runtime_stage=mission_profile.runtime_stage, boundary="rollout")
+    recovery_control_plane = load_control_plane(artifacts, runtime_stage=mission_profile.runtime_stage, boundary="recovery")
+    governance_control_plane = load_control_plane(artifacts, runtime_stage=mission_profile.runtime_stage, boundary="governance")
 
     orchestration_state = orchestration_state_for_runtime(
         runtime_dna,
-        mission_ref="operations-run",
+        mission_ref=mission_profile.mission_ref,
     )
     work_unit = work_unit_for_state(
         orchestration_state,
-        title="integrated operations run",
-        boundary="rollout",
+        title=mission_profile.title,
+        boundary=mission_profile.target_boundary,
         correlation_id=correlation_id,
-        priority=WorkPriority.HIGH,
-        budget_share=0.12,
+        priority=mission_profile.work_priority,
+        budget_share=mission_profile.budget_share,
+        labels={
+            "mission_scenario": mission_profile.scenario.value,
+            "mission_profile": mission_profile.runtime_profile,
+            **dict(mission_profile.labels),
+        },
     )
 
     shadow_identity = AuthorizationIdentity(
@@ -184,8 +247,8 @@ def run_integrated_operations(
         work_unit,
         control_plane=shadow_control_plane,
         identity=shadow_identity,
-        available_roles=(RoleName.EXECUTOR,),
-        observed_budget=0.12,
+        available_roles=mission_profile.available_roles,
+        observed_budget=mission_profile.effective_observed_budget,
     )
     rollout_state = rollout_state_for_shadow(
         shadow_coordination,
@@ -209,12 +272,12 @@ def run_integrated_operations(
         recovery_orchestration,
         control_plane=governance_control_plane,
         identity=governance_identity,
-        decision=HumanDecision.APPROVE,
+        decision=mission_profile.governance_decision,
         audit_ref=f"audit-{correlation_id}-governance",
     )
 
     final_snapshot = build_telemetry_snapshot(
-        runtime_stage=stage,
+        runtime_stage=mission_profile.runtime_stage,
         signals=(
             shadow_coordination.release_signal,
             rollout_state.promotion_signal,
@@ -244,6 +307,7 @@ def run_integrated_operations(
     )
 
     return IntegratedOperationsRun(
+        mission_profile=mission_profile,
         runtime_dna=runtime_dna,
         shadow_control_plane=shadow_control_plane,
         rollout_control_plane=rollout_control_plane,

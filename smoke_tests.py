@@ -38,6 +38,9 @@ from kki import (
     IntegratedOperationsRun,
     IntegratedSmokeBuild,
     LoadedControlPlane,
+    MissionPolicy,
+    MissionProfile,
+    MissionScenario,
     MessageEnvelope,
     MessageKind,
     ModuleBoundaryName,
@@ -91,6 +94,8 @@ from kki import (
     load_control_plane,
     module_boundaries,
     module_dependency_graph,
+    mission_profile_catalog,
+    mission_profile_for_name,
     orchestration_state_for_runtime,
     orchestrate_recovery_for_rollout,
     protocol_context,
@@ -2199,8 +2204,62 @@ class SmokeTests(unittest.TestCase):
         payload = run_integrated_operations(correlation_id="corr-140-dict").to_dict()
 
         self.assertTrue(payload["success"])
+        self.assertEqual(payload["mission_profile"]["mission_ref"], "operations-run")
         self.assertEqual(payload["shadow_coordination"]["work_unit"]["correlation_id"], "corr-140-dict")
         self.assertEqual(payload["human_governance"]["decision"], "approve")
+
+    def test_kki_mission_profile_preset_is_typed(self) -> None:
+        mission = mission_profile_for_name("pilot-cutover")
+
+        self.assertIsInstance(mission, MissionProfile)
+        self.assertEqual(mission.scenario, MissionScenario.CUTOVER)
+        self.assertEqual(mission.runtime_stage, RuntimeStage.PILOT)
+        self.assertEqual(mission.policy.promotion_gate, "hold-until-shadow-green")
+        self.assertEqual(mission.available_roles, (RoleName.EXECUTOR,))
+
+    def test_kki_mission_profile_catalog_lists_presets(self) -> None:
+        self.assertEqual(
+            mission_profile_catalog(),
+            ("pilot-cutover", "shadow-hardening", "recovery-drill"),
+        )
+
+    def test_kki_integrated_operations_run_accepts_named_mission_profile(self) -> None:
+        run = run_integrated_operations(mission="pilot-cutover", correlation_id="corr-141-pilot")
+
+        self.assertEqual(run.mission_profile.mission_ref, "pilot-cutover")
+        self.assertEqual(run.orchestration_state.mission_ref, "pilot-cutover")
+        self.assertEqual(run.runtime_dna.identity.profile, "pilot-runtime-dna")
+        self.assertEqual(run.shadow_control_plane.effective_payload["mission_ref"], "pilot-cutover")
+        self.assertEqual(run.work_unit.labels["mission_scenario"], "cutover")
+
+    def test_kki_integrated_operations_run_uses_custom_mission_profile(self) -> None:
+        run = run_integrated_operations(
+            mission=MissionProfile(
+                mission_ref="custom-hardening",
+                title="custom hardening run",
+                scenario=MissionScenario.HARDENING,
+                runtime_stage=RuntimeStage.SHADOW,
+                runtime_profile="resilient-runtime-dna",
+                target_boundary=ModuleBoundaryName.ROLLOUT,
+                work_priority=WorkPriority.CRITICAL,
+                budget_share=0.14,
+                observed_budget=0.13,
+                policy=MissionPolicy(
+                    resource_budget=0.81,
+                    recovery_reserve=0.22,
+                    drift_threshold=0.02,
+                    promotion_gate="strict-shadow-window",
+                ),
+                labels={"campaign": "custom"},
+            ),
+            correlation_id="corr-141-custom",
+        )
+
+        self.assertEqual(run.mission_profile.mission_ref, "custom-hardening")
+        self.assertEqual(run.runtime_dna.identity.stage, RuntimeStage.SHADOW)
+        self.assertEqual(run.work_unit.priority, WorkPriority.CRITICAL)
+        self.assertEqual(run.shadow_control_plane.effective_payload["drift_threshold"], 0.02)
+        self.assertEqual(run.rollout_control_plane.effective_payload["promotion_gate"], "strict-shadow-window")
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

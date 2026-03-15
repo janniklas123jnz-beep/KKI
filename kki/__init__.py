@@ -17,6 +17,7 @@ from .governance import (
     govern_recovery_orchestration,
 )
 from .integrated_smoke import IntegratedSmokeBuild, run_integrated_smoke_build
+from .mission_profiles import MissionPolicy, MissionProfile, MissionScenario, mission_profile_catalog, mission_profile_for_name
 from .operations_run import IntegratedOperationsRun, run_integrated_operations
 from .message_protocols import (
     DeliveryGuarantee,
@@ -177,6 +178,9 @@ __all__ = [
     "IntegratedOperationsRun",
     "IntegratedSmokeBuild",
     "LoadedControlPlane",
+    "MissionPolicy",
+    "MissionProfile",
+    "MissionScenario",
     "ModuleBoundary",
     "ModuleBoundaryName",
     "OperationalPressure",
@@ -243,6 +247,8 @@ __all__ = [
     "module_boundaries",
     "module_boundary",
     "module_dependency_graph",
+    "mission_profile_catalog",
+    "mission_profile_for_name",
     "operation_alerts",
     "orchestration_state_for_runtime",
     "orchestrate_recovery_for_rollout",

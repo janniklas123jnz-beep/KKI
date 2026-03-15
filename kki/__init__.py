@@ -44,6 +44,13 @@ from .federation_coordination import (
 from .learning_register import LearningPatternType, LearningRecord, LearningRegister, build_learning_register
 from .operations_steward import OperationsSteward, OperationsStewardStatus, StewardDirective, StewardDirectiveType, build_operations_steward
 from .outcome_ledger import OutcomeLedger, OutcomeRecord, OutcomeStatus, build_outcome_ledger
+from .operating_constitution import (
+    ConstitutionArticle,
+    ConstitutionPrinciple,
+    ConstitutionalAuthority,
+    OperatingConstitution,
+    build_operating_constitution,
+)
 from .playbook_catalog import PlaybookCatalog, PlaybookEntry, PlaybookReadiness, PlaybookType, build_playbook_catalog
 from .policy_tuner import PolicyTuneAction, PolicyTuneEntry, PolicyTuner, build_policy_tuner
 from .program_controller import (
@@ -379,9 +386,13 @@ __all__ = [
     "OutcomeLedger",
     "OutcomeRecord",
     "OutcomeStatus",
+    "OperatingConstitution",
     "OperatingMode",
     "OrchestrationState",
     "OrchestrationStatus",
+    "ConstitutionArticle",
+    "ConstitutionPrinciple",
+    "ConstitutionalAuthority",
     "PlaybookCatalog",
     "PlaybookEntry",
     "PlaybookReadiness",
@@ -500,6 +511,7 @@ __all__ = [
     "build_learning_register",
     "build_operations_cockpit",
     "build_operations_steward",
+    "build_operating_constitution",
     "build_outcome_ledger",
     "build_playbook_catalog",
     "build_portfolio_optimizer",

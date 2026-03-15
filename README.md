@@ -506,6 +506,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `build_program_controller()` koppelt `StewardWorkboard`, `OutcomeLedger`, `ExceptionRegister` und `FederationCoordination`, um Fallsteuerung in programmweite Prioritaeten und Direktiven zu ueberfuehren
 - der Programm-Controller erweitert den Snapshot um ein explizites `program-controller`-Signal fuer kritische Interventionsprogramme, kontrollierte Governance-Programme und skalierende Routine-Programme
 
+`#179` gießt diese Steuerlogik jetzt in eine Verfassung:
+
+- `ConstitutionArticle`, `OperatingConstitution`, `ConstitutionPrinciple` und `ConstitutionalAuthority` halten dauerhafte Betriebsgrundsaetze, Autoritaetsstufen, Budgetdecken und Eskalationsgrenzen formal fest
+- `build_operating_constitution()` koppelt `ProgramController`, `AutonomyGovernor` und `ExceptionRegister`, um resilienz-, governance- und autonomy-bezogene Rechte und Grenzen als verbindliche Artikel abzuleiten
+- die Betriebs-Verfassung erweitert den Snapshot um ein explizites `operating-constitution`-Signal fuer chartered stewardship, governed change und bounded autonomy
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

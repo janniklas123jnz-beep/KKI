@@ -39,6 +39,9 @@ from kki import (
     CorrelatedOperation,
     CockpitEntry,
     CockpitStatus,
+    ConstitutionArticle,
+    ConstitutionPrinciple,
+    ConstitutionalAuthority,
     ControlArtifact,
     CoreState,
     DelegationGrant,
@@ -117,6 +120,7 @@ from kki import (
     OutcomeLedger,
     OutcomeRecord,
     OutcomeStatus,
+    OperatingConstitution,
     OperationsWave,
     OperatingMode,
     OperationsIncident,
@@ -230,6 +234,7 @@ from kki import (
     build_learning_register,
     build_operations_cockpit,
     build_operations_steward,
+    build_operating_constitution,
     build_outcome_ledger,
     build_playbook_catalog,
     build_portfolio_optimizer,
@@ -4266,6 +4271,39 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(controller.critical_track_ids, ("program-178-signal-resilience",))
         self.assertEqual(controller.controlled_track_ids, ("program-178-signal-governance",))
         self.assertEqual(controller.scaling_track_ids, ("program-178-signal-autonomy",))
+
+    def test_kki_operating_constitution_builds_steward_article(self) -> None:
+        constitution = build_operating_constitution(constitution_id="constitution-179-steward")
+        article = next(item for item in constitution.articles if item.authority is ConstitutionalAuthority.STEWARD)
+
+        self.assertIsInstance(constitution, OperatingConstitution)
+        self.assertIsInstance(article, ConstitutionArticle)
+        self.assertEqual(article.principle, ConstitutionPrinciple.STABILITY_FIRST)
+        self.assertEqual(article.case_ids, ("pilot-containment", "recovery-resume"))
+
+    def test_kki_operating_constitution_builds_governance_article(self) -> None:
+        constitution = build_operating_constitution(constitution_id="constitution-179-governance")
+        article = next(item for item in constitution.articles if item.authority is ConstitutionalAuthority.GOVERNANCE)
+
+        self.assertEqual(article.principle, ConstitutionPrinciple.GOVERNED_CHANGE)
+        self.assertEqual(article.budget_ceiling, 0.65)
+        self.assertEqual(article.escalation_limit, 2)
+
+    def test_kki_operating_constitution_builds_bounded_autonomy_article(self) -> None:
+        constitution = build_operating_constitution(constitution_id="constitution-179-autonomy")
+        article = next(item for item in constitution.articles if item.authority is ConstitutionalAuthority.AUTONOMY)
+
+        self.assertEqual(article.principle, ConstitutionPrinciple.BOUNDED_AUTONOMY)
+        self.assertIn("bounded-execution", article.execution_rights)
+        self.assertEqual(article.escalation_limit, 3)
+
+    def test_kki_operating_constitution_aggregates_constitution_signal(self) -> None:
+        constitution = build_operating_constitution(constitution_id="constitution-179-signal")
+
+        self.assertEqual(constitution.constitution_signal.status, "bounded-autonomy-chartered")
+        self.assertEqual(constitution.steward_article_ids, ("constitution-179-signal-resilience-program",))
+        self.assertEqual(constitution.governance_article_ids, ("constitution-179-signal-governance-program",))
+        self.assertEqual(constitution.autonomy_article_ids, ("constitution-179-signal-routine-program",))
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

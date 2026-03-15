@@ -113,6 +113,7 @@ from kki import (
     ShadowCoordinationMode,
     StewardDirective,
     StewardDirectiveType,
+    StewardWorkboard,
     ProtocolContext,
     ReadinessCadence,
     ReadinessCadenceEntry,
@@ -168,6 +169,10 @@ from kki import (
     TrustLevel,
     ValidationStep,
     WaveBudgetPolicy,
+    WorkboardItem,
+    WorkboardLane,
+    WorkboardQueue,
+    WorkboardStatus,
     WorkPriority,
     WorkStatus,
     authorize_action,
@@ -202,6 +207,7 @@ from kki import (
     build_risk_register,
     build_scenario_replay,
     build_runtime_scorecard,
+    build_steward_workboard,
     build_telemetry_snapshot,
     claim_for_work_unit,
     coordinate_escalations,
@@ -3957,6 +3963,39 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(steward.steward_signal.status, OperationsStewardStatus.CRITICAL.value)
         self.assertEqual(steward.stabilize_case_ids, ("pilot-containment",))
         self.assertAlmostEqual(steward.steward_signal.metrics["directive_count"], 4.0)
+
+    def test_kki_steward_workboard_expedites_blocked_case(self) -> None:
+        workboard = build_steward_workboard(workboard_id="workboard-171-expedite")
+        item = next(item for item in workboard.items if item.case_id == "pilot-containment")
+
+        self.assertIsInstance(workboard, StewardWorkboard)
+        self.assertIsInstance(item, WorkboardItem)
+        self.assertEqual(item.queue, WorkboardQueue.STABILIZATION)
+        self.assertEqual(item.lane, WorkboardLane.EXPEDITE)
+        self.assertEqual(item.status, WorkboardStatus.DUE_NOW)
+
+    def test_kki_steward_workboard_tracks_governance_case(self) -> None:
+        workboard = build_steward_workboard(workboard_id="workboard-171-governance")
+        item = next(item for item in workboard.items if item.case_id == "shadow-guarded")
+
+        self.assertEqual(item.queue, WorkboardQueue.GOVERNANCE)
+        self.assertEqual(item.lane, WorkboardLane.COMMITTED)
+        self.assertEqual(item.sla_hours, 12)
+
+    def test_kki_steward_workboard_places_follow_up_and_watch_items(self) -> None:
+        workboard = build_steward_workboard(workboard_id="workboard-171-lanes")
+
+        self.assertEqual(workboard.follow_up_case_ids, ("recovery-resume",))
+        self.assertEqual(workboard.watch_case_ids, ("pilot-ready",))
+        self.assertEqual(workboard.committed_case_ids, ("shadow-guarded",))
+
+    def test_kki_steward_workboard_aggregates_board_signal(self) -> None:
+        workboard = build_steward_workboard(workboard_id="workboard-171-signal")
+
+        self.assertEqual(workboard.board_signal.status, "expedite-board")
+        self.assertEqual(workboard.expedite_case_ids, ("pilot-containment",))
+        self.assertEqual(workboard.due_now_case_ids, ("pilot-containment",))
+        self.assertAlmostEqual(workboard.board_signal.metrics["item_count"], 4.0)
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

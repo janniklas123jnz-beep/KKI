@@ -458,6 +458,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `build_operations_steward()` koppelt `CapacityPlanner`, `GovernanceAgenda`, `RecoveryDrillSuite`, `PolicyTuner` und `LearningRegister`, um pro Fall genau eine kanonische Operations-Direktive abzuleiten
 - der Steward erweitert den Snapshot um ein explizites `operations-steward`-Signal fuer kritische Stabilisierung, aktive Steuerung und stabilen Uebergang in den naechsten Block
 
+`#171` ueberfuehrt diese Direktiven nun in eine bearbeitbare Betriebsoberflaeche:
+
+- `WorkboardItem`, `StewardWorkboard`, `WorkboardQueue`, `WorkboardLane` und `WorkboardStatus` modellieren Queues, Prioritaetsbahnen und SLA-Sicht ueber den Steward-Direktiven
+- `build_steward_workboard()` koppelt den `OperationsSteward` in eine direkte Arbeitsoberflaeche mit Expedite-, Committed-, Follow-up- und Watch-Lanes
+- das Workboard erweitert den Snapshot um ein explizites `steward-workboard`-Signal fuer akute Expedite-Lagen, geplante Bearbeitung und reine Beobachtungspfade
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

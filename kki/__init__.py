@@ -33,6 +33,7 @@ from .convergence_simulator import (
 from .learning_register import LearningPatternType, LearningRecord, LearningRegister, build_learning_register
 from .operations_steward import OperationsSteward, OperationsStewardStatus, StewardDirective, StewardDirectiveType, build_operations_steward
 from .policy_tuner import PolicyTuneAction, PolicyTuneEntry, PolicyTuner, build_policy_tuner
+from .steward_workboard import StewardWorkboard, WorkboardItem, WorkboardLane, WorkboardQueue, WorkboardStatus, build_steward_workboard
 from .readiness_cadence import (
     ReadinessCadence,
     ReadinessCadenceEntry,
@@ -396,6 +397,7 @@ __all__ = [
     "ShadowCoordinationMode",
     "StewardDirective",
     "StewardDirectiveType",
+    "StewardWorkboard",
     "ShadowPreview",
     "TelemetryAlert",
     "TelemetrySignal",
@@ -405,6 +407,10 @@ __all__ = [
     "ValidationStep",
     "WaveBudgetPolicy",
     "WaveMissionExecution",
+    "WorkboardItem",
+    "WorkboardLane",
+    "WorkboardQueue",
+    "WorkboardStatus",
     "WorkClaim",
     "WorkCostProfile",
     "WorkHandoff",
@@ -442,6 +448,7 @@ __all__ = [
     "build_risk_register",
     "build_scenario_replay",
     "build_runtime_scorecard",
+    "build_steward_workboard",
     "build_telemetry_snapshot",
     "claim_for_work_unit",
     "coordinate_escalations",

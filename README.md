@@ -434,6 +434,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `build_recovery_drill_suite()` koppelt `CapacityPlanner` und `EvidenceLedger`, um blocked-Faelle in aktive oder geplante Recovery-Drills mit Replay-, Remediation- und Review-Bedingungen zu ueberfuehren
 - die Drill-Suite erweitert den Snapshot um ein explizites `recovery-drills`-Signal fuer aktive, geplante und wiedereintrittsbereite Recovery-Pfade
 
+`#167` simuliert daraus nun die operative Konvergenz ueber mehrere Zyklen:
+
+- `ConvergenceProjection`, `ConvergenceSimulator` und `ConvergenceStatus` modellieren deterministische Folgezyklen mit Stabilisierung, Restdrift und Konvergenzlage
+- `build_convergence_simulator()` koppelt `ContinuousReadinessCycle`, `GovernanceAgenda` und `RecoveryDrillSuite`, um Governance- und Recovery-Pfade ueber mehrere Folgezustaende hinweg zu projizieren
+- der Simulator erweitert den Snapshot um ein explizites `convergence-simulator`-Signal fuer Restdrift, Stabilisierung und vollstaendige Konvergenz
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

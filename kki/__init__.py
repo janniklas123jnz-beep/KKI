@@ -24,6 +24,12 @@ from .continuous_readiness import (
     ContinuousReadinessStatus,
     build_continuous_readiness_cycle,
 )
+from .convergence_simulator import (
+    ConvergenceProjection,
+    ConvergenceSimulator,
+    ConvergenceStatus,
+    build_convergence_simulator,
+)
 from .readiness_cadence import (
     ReadinessCadence,
     ReadinessCadenceEntry,
@@ -253,6 +259,9 @@ __all__ = [
     "ContinuousReadinessCycle",
     "ContinuousReadinessIteration",
     "ContinuousReadinessStatus",
+    "ConvergenceProjection",
+    "ConvergenceSimulator",
+    "ConvergenceStatus",
     "ChangeWindow",
     "ChangeWindowEntry",
     "ChangeWindowStatus",
@@ -399,6 +408,7 @@ __all__ = [
     "benchmark_case_matrix",
     "build_capacity_planner",
     "build_continuous_readiness_cycle",
+    "build_convergence_simulator",
     "build_dispatch_plan",
     "build_drift_monitor",
     "build_escalation_router",

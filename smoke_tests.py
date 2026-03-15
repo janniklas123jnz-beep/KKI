@@ -30,6 +30,9 @@ from kki import (
     ContinuousReadinessCycle,
     ContinuousReadinessIteration,
     ContinuousReadinessStatus,
+    ConvergenceProjection,
+    ConvergenceSimulator,
+    ConvergenceStatus,
     CorrelatedOperation,
     CockpitEntry,
     CockpitStatus,
@@ -167,6 +170,7 @@ from kki import (
     benchmark_case_matrix,
     build_capacity_planner,
     build_continuous_readiness_cycle,
+    build_convergence_simulator,
     build_dispatch_plan,
     build_drift_monitor,
     build_escalation_router,
@@ -3797,6 +3801,46 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(drills.drill_signal.status, "active")
         self.assertEqual(drills.active_case_ids, ("pilot-containment",))
         self.assertFalse(drills.reentry_ready_case_ids)
+
+    def test_kki_convergence_simulator_projects_three_cycles(self) -> None:
+        simulator = build_convergence_simulator(simulator_id="convergence-167-cycles")
+
+        self.assertIsInstance(simulator, ConvergenceSimulator)
+        self.assertEqual(len(simulator.projections), 3)
+        self.assertTrue(all(isinstance(projection, ConvergenceProjection) for projection in simulator.projections))
+        self.assertEqual(
+            tuple(projection.status for projection in simulator.projections),
+            (
+                ConvergenceStatus.RESIDUAL_DRIFT,
+                ConvergenceStatus.STABILIZING,
+                ConvergenceStatus.CONVERGED,
+            ),
+        )
+
+    def test_kki_convergence_simulator_reduces_residual_drift(self) -> None:
+        simulator = build_convergence_simulator(simulator_id="convergence-167-drift")
+        drifts = tuple(projection.residual_drift for projection in simulator.projections)
+
+        self.assertGreater(drifts[0], drifts[1])
+        self.assertGreater(drifts[1], drifts[2])
+        self.assertEqual(drifts[-1], 0.0)
+
+    def test_kki_convergence_simulator_recovers_cases_by_final_cycle(self) -> None:
+        simulator = build_convergence_simulator(simulator_id="convergence-167-ready")
+
+        self.assertEqual(simulator.projections[0].blocked_case_ids, ("pilot-containment",))
+        self.assertEqual(
+            simulator.final_ready_case_ids,
+            ("pilot-containment", "shadow-guarded", "recovery-resume", "pilot-ready"),
+        )
+        self.assertFalse(simulator.residual_case_ids)
+
+    def test_kki_convergence_simulator_aggregates_converged_signal(self) -> None:
+        simulator = build_convergence_simulator(simulator_id="convergence-167-signal")
+
+        self.assertEqual(simulator.simulator_signal.status, "converged")
+        self.assertEqual(simulator.converged_cycle_index, 3)
+        self.assertEqual(simulator.projections[-1].recovery_case_ids, ("pilot-containment",))
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

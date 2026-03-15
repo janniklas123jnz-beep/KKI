@@ -518,6 +518,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `build_executive_watchtower()` koppelt `ProgramController`, `OperatingConstitution` und `OperationsCockpit`, um aus Programmen und Artikeln konkrete exekutive Orders mit Freigabemodus, Fuehrungsstatus und Release-Reife abzuleiten
 - die Leitwarte-Exekutive erweitert den Snapshot um ein explizites `executive-watchtower`-Signal fuer gelockte Sonderlagen, commanding Governance-Pfade und freigegebene bounded-autonomy-Fenster
 
+`#181` leitet daraus jetzt den strategischen Rat ab:
+
+- `StrategyMandate`, `StrategyCouncil`, `StrategyLane`, `StrategyPriority`, `StrategyEscalationMandate` und `StrategyCouncilStatus` modellieren dauerhafte strategische Bahnen mit klaren Prioritaeten und Eskalationsmandaten
+- `build_strategy_council()` koppelt die `ExecutiveWatchtower`, um resilienz-, governance- und expansionsorientierte Orders in stabile Strategie-Lanes, Review-Fenster und Council-Posturen zu ueberfuehren
+- der Strategie-Rat erweitert den Snapshot um ein explizites `strategy-council`-Signal fuer eskalierte Stabilitaetsmandate, orchestrierte Governance-Lanes und freigegebene Expansionsfenster
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

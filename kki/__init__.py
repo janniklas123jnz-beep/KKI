@@ -39,6 +39,15 @@ from .executive_watchtower import (
     ExecutiveWatchtower,
     build_executive_watchtower,
 )
+from .strategy_council import (
+    StrategyCouncil,
+    StrategyCouncilStatus,
+    StrategyEscalationMandate,
+    StrategyLane,
+    StrategyMandate,
+    StrategyPriority,
+    build_strategy_council,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -339,6 +348,12 @@ __all__ = [
     "ExecutiveOrderMode",
     "ExecutiveWatchStatus",
     "ExecutiveWatchtower",
+    "StrategyCouncil",
+    "StrategyCouncilStatus",
+    "StrategyEscalationMandate",
+    "StrategyLane",
+    "StrategyMandate",
+    "StrategyPriority",
     "ExceptionCase",
     "ExceptionKind",
     "ExceptionRegister",
@@ -515,6 +530,7 @@ __all__ = [
     "build_escalation_router",
     "build_evidence_ledger",
     "build_executive_watchtower",
+    "build_strategy_council",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

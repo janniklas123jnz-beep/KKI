@@ -152,6 +152,12 @@ from kki import (
     StewardDirective,
     StewardDirectiveType,
     StewardWorkboard,
+    StrategyCouncil,
+    StrategyCouncilStatus,
+    StrategyEscalationMandate,
+    StrategyLane,
+    StrategyMandate,
+    StrategyPriority,
     ProtocolContext,
     ReadinessCadence,
     ReadinessCadenceEntry,
@@ -255,6 +261,7 @@ from kki import (
     build_scenario_replay,
     build_runtime_scorecard,
     build_steward_workboard,
+    build_strategy_council,
     build_telemetry_snapshot,
     claim_for_work_unit,
     coordinate_escalations,
@@ -4342,6 +4349,42 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(watchtower.locked_order_ids, ("executive-180-signal-resilience-program",))
         self.assertEqual(watchtower.commanding_order_ids, ("executive-180-signal-governance-program",))
         self.assertEqual(watchtower.ready_order_ids, ("executive-180-signal-routine-program",))
+
+    def test_kki_strategy_council_builds_escalated_stability_mandate(self) -> None:
+        council = build_strategy_council(council_id="strategy-181-resilience")
+        mandate = next(item for item in council.mandates if item.lane is StrategyLane.STABILITY)
+
+        self.assertIsInstance(council, StrategyCouncil)
+        self.assertIsInstance(mandate, StrategyMandate)
+        self.assertEqual(mandate.priority, StrategyPriority.IMMEDIATE)
+        self.assertEqual(mandate.escalation_mandate, StrategyEscalationMandate.CONTAINMENT)
+        self.assertEqual(mandate.council_status, StrategyCouncilStatus.ESCALATED)
+
+    def test_kki_strategy_council_builds_orchestrated_governance_mandate(self) -> None:
+        council = build_strategy_council(council_id="strategy-181-governance")
+        mandate = next(item for item in council.mandates if item.lane is StrategyLane.GOVERNANCE)
+
+        self.assertEqual(mandate.priority, StrategyPriority.DIRECTED)
+        self.assertEqual(mandate.escalation_mandate, StrategyEscalationMandate.REVIEW)
+        self.assertEqual(mandate.council_status, StrategyCouncilStatus.ORCHESTRATED)
+        self.assertFalse(mandate.release_ready)
+
+    def test_kki_strategy_council_builds_primed_expansion_mandate(self) -> None:
+        council = build_strategy_council(council_id="strategy-181-expansion")
+        mandate = next(item for item in council.mandates if item.lane is StrategyLane.EXPANSION)
+
+        self.assertEqual(mandate.priority, StrategyPriority.COMPOUND)
+        self.assertEqual(mandate.escalation_mandate, StrategyEscalationMandate.EXPANSION)
+        self.assertEqual(mandate.council_status, StrategyCouncilStatus.PRIMED)
+        self.assertTrue(mandate.release_ready)
+
+    def test_kki_strategy_council_aggregates_council_signal(self) -> None:
+        council = build_strategy_council(council_id="strategy-181-signal")
+
+        self.assertEqual(council.council_signal.status, "strategy-escalated")
+        self.assertEqual(council.escalated_mandate_ids, ("strategy-181-signal-stability-lane",))
+        self.assertEqual(council.orchestrated_mandate_ids, ("strategy-181-signal-governance-lane",))
+        self.assertEqual(council.primed_mandate_ids, ("strategy-181-signal-expansion-lane",))
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

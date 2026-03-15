@@ -41,8 +41,13 @@ from kki import (
     CourseCorrectionAction,
     CourseCorrectionDirective,
     CourseCorrectionStatus,
+    ConsensusDirective,
+    ConsensusDirectiveStatus,
+    ConsensusDirectiveType,
+    ConsensusMandate,
     CompassStatus,
     CharterStatus,
+    DirectiveConsensus,
     GuidelineCompass,
     GuidelinePrinciple,
     GuidelineVector,
@@ -268,6 +273,7 @@ from kki import (
     build_continuous_readiness_cycle,
     build_convergence_simulator,
     build_course_corrector,
+    build_directive_consensus,
     build_dispatch_plan,
     build_drift_monitor,
     build_escalation_router,
@@ -4696,6 +4702,39 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(senate.contested_seat_ids, ("senate-189-signal-stability-lane",))
         self.assertEqual(senate.balanced_seat_ids, ("senate-189-signal-governance-lane",))
         self.assertEqual(senate.aligned_seat_ids, ("senate-189-signal-expansion-lane",))
+
+    def test_kki_directive_consensus_builds_binding_stability_directive(self) -> None:
+        consensus = build_directive_consensus(consensus_id="consensus-190-stability")
+        directive = next(item for item in consensus.directives if item.directive_status is ConsensusDirectiveStatus.BINDING)
+
+        self.assertIsInstance(consensus, DirectiveConsensus)
+        self.assertIsInstance(directive, ConsensusDirective)
+        self.assertEqual(directive.directive_type, ConsensusDirectiveType.CONSTITUTIONAL_LOCK)
+        self.assertEqual(directive.mandate, ConsensusMandate.HOLD)
+
+    def test_kki_directive_consensus_builds_negotiated_governance_directive(self) -> None:
+        consensus = build_directive_consensus(consensus_id="consensus-190-governance")
+        directive = next(item for item in consensus.directives if item.directive_status is ConsensusDirectiveStatus.NEGOTIATED)
+
+        self.assertEqual(directive.directive_type, ConsensusDirectiveType.GOVERNED_COMPACT)
+        self.assertEqual(directive.mandate, ConsensusMandate.ALIGN)
+        self.assertGreater(directive.consensus_strength, 0.5)
+
+    def test_kki_directive_consensus_builds_ratified_expansion_directive(self) -> None:
+        consensus = build_directive_consensus(consensus_id="consensus-190-expansion")
+        directive = next(item for item in consensus.directives if item.directive_status is ConsensusDirectiveStatus.RATIFIED)
+
+        self.assertEqual(directive.directive_type, ConsensusDirectiveType.EXPANSION_ACCORD)
+        self.assertEqual(directive.mandate, ConsensusMandate.RELEASE)
+        self.assertTrue(directive.release_ready)
+
+    def test_kki_directive_consensus_aggregates_consensus_signal(self) -> None:
+        consensus = build_directive_consensus(consensus_id="consensus-190-signal")
+
+        self.assertEqual(consensus.consensus_signal.status, "consensus-binding")
+        self.assertEqual(consensus.binding_directive_ids, ("consensus-190-signal-stability-lane",))
+        self.assertEqual(consensus.negotiated_directive_ids, ("consensus-190-signal-governance-lane",))
+        self.assertEqual(consensus.ratified_directive_ids, ("consensus-190-signal-expansion-lane",))
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

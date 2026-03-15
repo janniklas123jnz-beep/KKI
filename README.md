@@ -572,6 +572,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `build_program_senate()` koppelt die `InterventionCharter` direkt an dieselbe Fuehrungskette, um restriktive, balanced und aligned Senate-Sitze fuer Leitstern zu bilden
 - der Programm-Senat erweitert den Snapshot um ein explizites `program-senate`-Signal fuer contested veto, balanced negotiation und aligned endorsement
 
+`#190` verdichtet diesen Block nun in einen Direktiv-Konsens:
+
+- `ConsensusDirective`, `DirectiveConsensus`, `ConsensusDirectiveType`, `ConsensusDirectiveStatus` und `ConsensusMandate` modellieren die bindende Spitzendirektive ueber die letzten Senate-Sitze
+- `build_directive_consensus()` koppelt den `ProgramSenate`, um contested, negotiated und ratified Senate-Ergebnisse in tragfaehige Hold-, Align- und Release-Direktiven fuer Leitstern zu konsolidieren
+- der Direktiv-Konsens erweitert den Snapshot um ein explizites `directive-consensus`-Signal fuer binding lock, negotiated compact und ratified accord
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

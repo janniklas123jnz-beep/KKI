@@ -108,6 +108,14 @@ from .program_senate import (
     SenateSeat,
     build_program_senate,
 )
+from .directive_consensus import (
+    ConsensusDirective,
+    ConsensusDirectiveStatus,
+    ConsensusDirectiveType,
+    ConsensusMandate,
+    DirectiveConsensus,
+    build_directive_consensus,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -450,6 +458,11 @@ __all__ = [
     "SenatePriority",
     "SenateResolution",
     "SenateSeat",
+    "ConsensusDirective",
+    "ConsensusDirectiveStatus",
+    "ConsensusDirectiveType",
+    "ConsensusMandate",
+    "DirectiveConsensus",
     "ExceptionCase",
     "ExceptionKind",
     "ExceptionRegister",
@@ -635,6 +648,7 @@ __all__ = [
     "build_guideline_compass",
     "build_intervention_charter",
     "build_program_senate",
+    "build_directive_consensus",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

@@ -17,6 +17,7 @@ from kki import (
     AuthorizationIdentity,
     AuditTrailEntry,
     ClaimStatus,
+    CorrelatedOperation,
     ControlArtifact,
     CoreState,
     DelegationGrant,
@@ -69,6 +70,7 @@ from kki import (
     build_telemetry_snapshot,
     claim_for_work_unit,
     command_message,
+    correlate_operation,
     core_state_for_runtime,
     evaluate_dry_run,
     evaluate_gate,
@@ -86,6 +88,7 @@ from kki import (
     runtime_dna_for_profile,
     runtime_dna_from_env,
     handoff_for_work_unit,
+    operation_alerts,
     shadow_event,
     shadow_preview_for_command,
     shadow_snapshot,
@@ -725,6 +728,196 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(decision.outcome, GateOutcome.ESCALATE)
         self.assertTrue(decision.evidence_required)
         self.assertTrue(decision.escalation_required)
+
+    def test_kki_correlate_operation_builds_snapshot(self) -> None:
+        artifacts = (
+            ControlArtifact(
+                artifact_id="shadow-policy",
+                kind=ArtifactKind.POLICY,
+                version="2.0",
+                scope=ArtifactScope.BOUNDARY,
+                runtime_stage=RuntimeStage.PILOT,
+                boundary="shadow",
+                validations=(ValidationStep.STATIC, ValidationStep.CONSISTENCY, ValidationStep.SHADOW),
+                evidence_ref="audit-shadow-policy",
+                payload={"preview_gate": "strict"},
+            ),
+        )
+        control_plane = load_control_plane(artifacts, runtime_stage=RuntimeStage.PILOT, boundary="shadow")
+        state = orchestration_state_for_runtime(
+            runtime_dna_for_profile("pilot-runtime-dna", stage=RuntimeStage.PILOT),
+            mission_ref="mission-135",
+        )
+        work_unit = work_unit_for_state(
+            state,
+            title="shadow correlate",
+            boundary="shadow",
+            correlation_id="corr-135",
+            priority=WorkPriority.HIGH,
+            budget_share=0.15,
+        )
+        dispatch_plan = build_dispatch_plan(state, (work_unit,), available_roles=(RoleName.EXECUTOR,))
+        identity = AuthorizationIdentity(
+            slug="executor-shadow",
+            kind=IdentityKind.MODULE,
+            role=RoleName.EXECUTOR,
+            trust_level=TrustLevel.VERIFIED,
+            boundary_scope=("shadow",),
+        )
+        message = command_message(
+            name="run-shadow-preview",
+            source_boundary="orchestration",
+            target_boundary="shadow",
+            correlation_id="corr-135",
+            payload={"preview": True},
+        )
+        gate = evaluate_gate(
+            identity,
+            boundary="shadow",
+            control_plane=control_plane,
+            message=message,
+            dispatch_assignment=dispatch_plan.assignments[0],
+        )
+
+        correlated = correlate_operation(
+            control_plane=control_plane,
+            message=message,
+            dispatch_assignment=dispatch_plan.assignments[0],
+            gate_decision=gate,
+        )
+
+        self.assertIsInstance(correlated, CorrelatedOperation)
+        self.assertEqual(correlated.snapshot.highest_severity(), "info")
+        self.assertEqual(len(correlated.signals), 3)
+        self.assertIn("shadow-policy", correlated.snapshot.active_controls)
+
+    def test_kki_operation_alerts_raise_for_blocked_gate(self) -> None:
+        control_plane = load_control_plane((), runtime_stage=RuntimeStage.SHADOW, boundary="recovery")
+        identity = AuthorizationIdentity(
+            slug="executor-shadow",
+            kind=IdentityKind.MODULE,
+            role=RoleName.EXECUTOR,
+            trust_level=TrustLevel.VERIFIED,
+            boundary_scope=("shadow",),
+        )
+        message = command_message(
+            name="start-recovery",
+            source_boundary="shadow",
+            target_boundary="recovery",
+            correlation_id="corr-135-block",
+            payload={"rollback": True},
+        )
+        gate = evaluate_gate(
+            identity,
+            boundary="recovery",
+            control_plane=control_plane,
+            message=message,
+            operating_mode=OperatingMode.RECOVERY,
+            evidence_ref="audit-recovery",
+        )
+
+        alerts = operation_alerts(message=message, gate_decision=gate)
+
+        self.assertEqual(len(alerts), 1)
+        self.assertEqual(alerts[0].severity, "critical")
+
+    def test_kki_correlate_operation_keeps_dispatch_audit(self) -> None:
+        control_plane = load_control_plane((), runtime_stage=RuntimeStage.PILOT, boundary="rollout")
+        state = orchestration_state_for_runtime(
+            runtime_dna_for_profile("pilot-runtime-dna", stage=RuntimeStage.PILOT),
+            mission_ref="mission-135",
+            status=OrchestrationStatus.THROTTLED,
+            gates=GateReadiness(dispatch=GateState.GUARDED),
+        )
+        work_unit = work_unit_for_state(
+            state,
+            title="rollout hold",
+            boundary="rollout",
+            correlation_id="corr-135-hold",
+            priority=WorkPriority.NORMAL,
+            budget_share=0.14,
+        )
+        dispatch_plan = build_dispatch_plan(state, (work_unit,))
+        message = command_message(
+            name="approve-rollout",
+            source_boundary="governance",
+            target_boundary="rollout",
+            correlation_id="corr-135-hold",
+            payload={"target": "wave"},
+        )
+
+        correlated = correlate_operation(
+            control_plane=control_plane,
+            message=message,
+            dispatch_assignment=dispatch_plan.assignments[0],
+        )
+
+        entry_types = [entry.entry_type for entry in correlated.audit_entries]
+        self.assertIn("dispatch-assignment", entry_types)
+        self.assertEqual(correlated.alerts[0].severity, "warning")
+
+    def test_kki_correlate_operation_gate_alerts_raise_snapshot_severity(self) -> None:
+        artifacts = (
+            ControlArtifact(
+                artifact_id="rollout-policy",
+                kind=ArtifactKind.POLICY,
+                version="2.1",
+                scope=ArtifactScope.BOUNDARY,
+                runtime_stage=RuntimeStage.PILOT,
+                boundary="rollout",
+                validations=(ValidationStep.STATIC, ValidationStep.CONSISTENCY, ValidationStep.SHADOW),
+                evidence_ref="audit-rollout-policy",
+                payload={"promotion_gate": "hold-until-shadow-green"},
+            ),
+        )
+        control_plane = load_control_plane(artifacts, runtime_stage=RuntimeStage.PILOT, boundary="rollout")
+        state = orchestration_state_for_runtime(
+            runtime_dna_for_profile("pilot-runtime-dna", stage=RuntimeStage.PILOT),
+            mission_ref="mission-135",
+            status=OrchestrationStatus.THROTTLED,
+            gates=GateReadiness(dispatch=GateState.GUARDED),
+        )
+        work_unit = work_unit_for_state(
+            state,
+            title="rollout pending",
+            boundary="rollout",
+            correlation_id="corr-135-rollout",
+            priority=WorkPriority.NORMAL,
+            budget_share=0.14,
+        )
+        dispatch_plan = build_dispatch_plan(state, (work_unit,))
+        identity = AuthorizationIdentity(
+            slug="gatekeeper-rollout",
+            kind=IdentityKind.OPERATOR,
+            role=RoleName.GATEKEEPER,
+            trust_level=TrustLevel.VERIFIED,
+            boundary_scope=("rollout", "governance"),
+        )
+        message = command_message(
+            name="approve-promotion",
+            source_boundary="governance",
+            target_boundary="rollout",
+            correlation_id="corr-135-rollout",
+            payload={"target": "pilot-wave"},
+        )
+        gate = evaluate_gate(
+            identity,
+            boundary="rollout",
+            control_plane=control_plane,
+            message=message,
+            dispatch_assignment=dispatch_plan.assignments[0],
+            evidence_ref="audit-rollout-policy",
+        )
+
+        correlated = correlate_operation(
+            control_plane=control_plane,
+            message=message,
+            dispatch_assignment=dispatch_plan.assignments[0],
+            gate_decision=gate,
+        )
+
+        self.assertEqual(gate.outcome, GateOutcome.HOLD)
+        self.assertEqual(correlated.snapshot.highest_severity(), "warning")
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

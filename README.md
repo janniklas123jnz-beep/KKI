@@ -242,6 +242,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `evaluate_gate()` verbindet Autorisierung, aktive Policy-Artefakte, Nachrichtenintegritaet und Dispatch-Lage zu einem begruendeten Gate-Urteil
 - strikte Shadow-Policies, Rollout-Promotionsregeln und Scope-/Evidence-Anforderungen greifen dabei direkt in die Entscheidung ein
 
+`#135` fuehrt darauf operative Telemetrie-Korrelation ein:
+
+- `CorrelatedOperation` buendelt Nachricht, Dispatch, Gate, Audit, Alerts und Snapshot zu einer lesbaren Betriebssicht pro Korrelation
+- `correlate_operation()` verdichtet aktive Controls, Dispatch-Lane und Gate-Ausgang in einen gemeinsamen Telemetrie-Drill-down
+- `operation_alerts()` hebt Hold-/Block-Lagen aus Dispatch und Governance in explizite Alarme fuer spaetere Betriebsansichten
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

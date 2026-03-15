@@ -500,6 +500,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `build_federation_coordination()` koppelt `InterventionSimulator` und `AutonomyGovernor`, um Zellen mit gemeinsamen Risiken, Alignment-Status und expliziten Domain-Handoffs zu bilden
 - die Verbund-Koordination erweitert den Snapshot um ein explizites `federation-coordination`-Signal fuer eskalierte Resilienz-Lagen, Governance-Handoffs und ausgerichtete Autonomie-Fenster
 
+`#178` zieht das nun auf Programmebene zusammen:
+
+- `ProgramTrack`, `ProgramController`, `ProgramTrackType`, `ProgramDirective` und `ProgramControllerStatus` modellieren resilienz-, governance- und routineorientierte Betriebsprogramme als eigene Steuerobjekte
+- `build_program_controller()` koppelt `StewardWorkboard`, `OutcomeLedger`, `ExceptionRegister` und `FederationCoordination`, um Fallsteuerung in programmweite Prioritaeten und Direktiven zu ueberfuehren
+- der Programm-Controller erweitert den Snapshot um ein explizites `program-controller`-Signal fuer kritische Interventionsprogramme, kontrollierte Governance-Programme und skalierende Routine-Programme
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

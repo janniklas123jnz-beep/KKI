@@ -46,6 +46,14 @@ from .operations_steward import OperationsSteward, OperationsStewardStatus, Stew
 from .outcome_ledger import OutcomeLedger, OutcomeRecord, OutcomeStatus, build_outcome_ledger
 from .playbook_catalog import PlaybookCatalog, PlaybookEntry, PlaybookReadiness, PlaybookType, build_playbook_catalog
 from .policy_tuner import PolicyTuneAction, PolicyTuneEntry, PolicyTuner, build_policy_tuner
+from .program_controller import (
+    ProgramController,
+    ProgramControllerStatus,
+    ProgramDirective,
+    ProgramTrack,
+    ProgramTrackType,
+    build_program_controller,
+)
 from .steward_workboard import StewardWorkboard, WorkboardItem, WorkboardLane, WorkboardQueue, WorkboardStatus, build_steward_workboard
 from .readiness_cadence import (
     ReadinessCadence,
@@ -385,6 +393,11 @@ __all__ = [
     "PolicyTuneAction",
     "PolicyTuneEntry",
     "PolicyTuner",
+    "ProgramController",
+    "ProgramControllerStatus",
+    "ProgramDirective",
+    "ProgramTrack",
+    "ProgramTrackType",
     "PermissionRule",
     "PersistenceRecord",
     "PressureLevel",
@@ -491,6 +504,7 @@ __all__ = [
     "build_playbook_catalog",
     "build_portfolio_optimizer",
     "build_policy_tuner",
+    "build_program_controller",
     "build_remediation_campaign",
     "build_release_campaign",
     "build_readiness_cadence",

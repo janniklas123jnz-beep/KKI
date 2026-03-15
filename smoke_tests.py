@@ -132,6 +132,11 @@ from kki import (
     PolicyTuneAction,
     PolicyTuneEntry,
     PolicyTuner,
+    ProgramController,
+    ProgramControllerStatus,
+    ProgramDirective,
+    ProgramTrack,
+    ProgramTrackType,
     PersistenceRecord,
     PreviewMode,
     ShadowCoordination,
@@ -229,6 +234,7 @@ from kki import (
     build_playbook_catalog,
     build_portfolio_optimizer,
     build_policy_tuner,
+    build_program_controller,
     build_readiness_cadence,
     build_remediation_campaign,
     build_readiness_review,
@@ -4227,6 +4233,39 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(coordination.escalated_domains, (FederationDomain.RESILIENCE,))
         self.assertEqual(coordination.handoff_domains, (FederationDomain.GOVERNANCE,))
         self.assertEqual(coordination.aligned_domains, (FederationDomain.AUTONOMY,))
+
+    def test_kki_program_controller_builds_resilience_track(self) -> None:
+        controller = build_program_controller(controller_id="program-178-resilience")
+        track = next(item for item in controller.tracks if item.track_type is ProgramTrackType.RESILIENCE)
+
+        self.assertIsInstance(controller, ProgramController)
+        self.assertIsInstance(track, ProgramTrack)
+        self.assertEqual(track.directive, ProgramDirective.INTERVENE)
+        self.assertEqual(track.status, ProgramControllerStatus.CRITICAL)
+
+    def test_kki_program_controller_builds_governance_track(self) -> None:
+        controller = build_program_controller(controller_id="program-178-governance")
+        track = next(item for item in controller.tracks if item.track_type is ProgramTrackType.GOVERNANCE)
+
+        self.assertEqual(track.case_ids, ("shadow-guarded",))
+        self.assertEqual(track.directive, ProgramDirective.STEER)
+        self.assertEqual(track.status, ProgramControllerStatus.CONTROLLED)
+
+    def test_kki_program_controller_builds_routine_scaling_track(self) -> None:
+        controller = build_program_controller(controller_id="program-178-routine")
+        track = next(item for item in controller.tracks if item.track_type is ProgramTrackType.ROUTINE)
+
+        self.assertEqual(track.case_ids, ("pilot-ready",))
+        self.assertEqual(track.directive, ProgramDirective.SCALE)
+        self.assertEqual(track.status, ProgramControllerStatus.SCALING)
+
+    def test_kki_program_controller_aggregates_program_signal(self) -> None:
+        controller = build_program_controller(controller_id="program-178-signal")
+
+        self.assertEqual(controller.controller_signal.status, "program-critical")
+        self.assertEqual(controller.critical_track_ids, ("program-178-signal-resilience",))
+        self.assertEqual(controller.controlled_track_ids, ("program-178-signal-governance",))
+        self.assertEqual(controller.scaling_track_ids, ("program-178-signal-autonomy",))
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

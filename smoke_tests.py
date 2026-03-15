@@ -51,6 +51,10 @@ from kki import (
     HumanDecision,
     HumanLoopGovernance,
     IdentityKind,
+    ImprovementExecutionMode,
+    ImprovementOrchestrator,
+    ImprovementPriority,
+    ImprovementWave,
     IncidentCause,
     IncidentReport,
     IncidentSeverity,
@@ -129,6 +133,7 @@ from kki import (
     build_dispatch_plan,
     build_drift_monitor,
     build_guardrail_portfolio,
+    build_improvement_orchestrator,
     build_readiness_review,
     build_release_campaign,
     build_review_action_plan,
@@ -3355,6 +3360,40 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(monitor.drift_signal.status, "guardrail-violations")
         self.assertIn("shadow-guarded", monitor.governance_drift_case_ids)
         self.assertIn("pilot-containment", monitor.violating_case_ids)
+
+    def test_kki_improvement_orchestrator_prioritizes_blocked_case(self) -> None:
+        orchestrator = build_improvement_orchestrator(orchestrator_id="orchestrator-156-critical")
+        blocked_wave = next(wave for wave in orchestrator.waves if wave.case_id == "pilot-containment")
+
+        self.assertIsInstance(orchestrator, ImprovementOrchestrator)
+        self.assertIsInstance(blocked_wave, ImprovementWave)
+        self.assertEqual(blocked_wave.priority, ImprovementPriority.CRITICAL)
+        self.assertEqual(blocked_wave.execution_mode, ImprovementExecutionMode.CONTAINED)
+        self.assertIn("pilot-containment", orchestrator.blocked_case_ids)
+
+    def test_kki_improvement_orchestrator_governs_shadow_case(self) -> None:
+        orchestrator = build_improvement_orchestrator(orchestrator_id="orchestrator-156-governed")
+        governance_wave = next(wave for wave in orchestrator.waves if wave.case_id == "shadow-guarded")
+
+        self.assertEqual(governance_wave.owner, ModuleBoundaryName.GOVERNANCE)
+        self.assertEqual(governance_wave.execution_mode, ImprovementExecutionMode.GOVERNED)
+        self.assertEqual(governance_wave.priority, ImprovementPriority.HIGH)
+
+    def test_kki_improvement_orchestrator_normalizes_budgets(self) -> None:
+        orchestrator = build_improvement_orchestrator(orchestrator_id="orchestrator-156-budget")
+        total_budget = sum(wave.budget_share for wave in orchestrator.waves)
+        blocked_wave = next(wave for wave in orchestrator.waves if wave.case_id == "pilot-containment")
+        healthy_wave = next(wave for wave in orchestrator.waves if wave.case_id == "pilot-ready")
+
+        self.assertAlmostEqual(total_budget, 1.0, places=6)
+        self.assertGreater(blocked_wave.budget_share, healthy_wave.budget_share)
+
+    def test_kki_improvement_orchestrator_aggregates_waves(self) -> None:
+        orchestrator = build_improvement_orchestrator(orchestrator_id="orchestrator-156-matrix")
+
+        self.assertEqual(orchestrator.orchestration_signal.status, "critical-waves")
+        self.assertIn(ModuleBoundaryName.GOVERNANCE, orchestrator.owner_boundaries)
+        self.assertIn(ModuleBoundaryName.RECOVERY, orchestrator.owner_boundaries)
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

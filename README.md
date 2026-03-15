@@ -368,6 +368,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `build_drift_monitor()` koppelt `RuntimeScorecard`, `ScenarioReplaySuite` und `GuardrailPortfolio`, um Replay-Abweichungen und Guardrail-Verletzungen pro Fall auszuwerten
 - der Drift-Layer erweitert den Snapshot um ein explizites `drift-monitor`-Signal fuer stabile Replays, erkannte Drift und kritische Guardrail-Verletzungen
 
+`#156` ueberfuehrt diese Lage nun in priorisierte Verbesserungswellen:
+
+- `ImprovementWave`, `ImprovementOrchestrator`, `ImprovementPriority` und `ImprovementExecutionMode` modellieren Reihenfolge, Eingriffsbudget und sicheren Abarbeitungsmodus pro Fall
+- `build_improvement_orchestrator()` koppelt `ReviewActionPlan`, `RiskRegister`, `GuardrailPortfolio` und `DriftMonitor`, um konkrete Verbesserungswellen fuer kritische, priorisierte und beobachtete Faelle zu erzeugen
+- der Orchestrator erweitert den Snapshot um ein explizites `improvement-orchestrator`-Signal fuer geplante, priorisierte und kritische Verbesserungswellen
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

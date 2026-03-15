@@ -26,6 +26,13 @@ from .governance import (
     evaluate_gate,
     govern_recovery_orchestration,
 )
+from .improvement_orchestrator import (
+    ImprovementExecutionMode,
+    ImprovementOrchestrator,
+    ImprovementPriority,
+    ImprovementWave,
+    build_improvement_orchestrator,
+)
 from .guardrail_portfolio import (
     Guardrail,
     GuardrailDomain,
@@ -238,6 +245,10 @@ __all__ = [
     "HumanDecision",
     "HumanLoopGovernance",
     "IdentityKind",
+    "ImprovementExecutionMode",
+    "ImprovementOrchestrator",
+    "ImprovementPriority",
+    "ImprovementWave",
     "IncidentCause",
     "IncidentReport",
     "IncidentSeverity",
@@ -325,6 +336,7 @@ __all__ = [
     "benchmark_case_matrix",
     "build_dispatch_plan",
     "build_drift_monitor",
+    "build_improvement_orchestrator",
     "build_release_campaign",
     "build_readiness_review",
     "build_review_action_plan",

@@ -440,6 +440,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `build_convergence_simulator()` koppelt `ContinuousReadinessCycle`, `GovernanceAgenda` und `RecoveryDrillSuite`, um Governance- und Recovery-Pfade ueber mehrere Folgezustaende hinweg zu projizieren
 - der Simulator erweitert den Snapshot um ein explizites `convergence-simulator`-Signal fuer Restdrift, Stabilisierung und vollstaendige Konvergenz
 
+`#168` leitet daraus nun kontrollierte Policy-Anpassungen ab:
+
+- `PolicyTuneEntry`, `PolicyTuner` und `PolicyTuneAction` modellieren kontrollierte Guardrail-Kalibrierungen samt Zielmodus und neuem Schwellwert pro Fall
+- `build_policy_tuner()` koppelt `GuardrailPortfolio`, `EscalationRouter` und `ConvergenceSimulator`, um Recovery-, Governance- und Telemetry-Pfade in deterministische Tighten-, Calibrate- und Relax-Anpassungen zu ueberfuehren
+- der Tuner erweitert den Snapshot um ein explizites `policy-tuner`-Signal fuer aktive Policy-Verschaerfung, Kalibrierung und Entlastung stabiler Pfade
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

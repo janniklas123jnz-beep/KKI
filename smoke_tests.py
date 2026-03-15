@@ -99,6 +99,9 @@ from kki import (
     PortfolioOptimizer,
     PortfolioPriority,
     PortfolioRecommendation,
+    PolicyTuneAction,
+    PolicyTuneEntry,
+    PolicyTuner,
     PersistenceRecord,
     PreviewMode,
     ShadowCoordination,
@@ -180,6 +183,7 @@ from kki import (
     build_improvement_orchestrator,
     build_operations_cockpit,
     build_portfolio_optimizer,
+    build_policy_tuner,
     build_readiness_cadence,
     build_remediation_campaign,
     build_readiness_review,
@@ -3841,6 +3845,41 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(simulator.simulator_signal.status, "converged")
         self.assertEqual(simulator.converged_cycle_index, 3)
         self.assertEqual(simulator.projections[-1].recovery_case_ids, ("pilot-containment",))
+
+    def test_kki_policy_tuner_tightens_recovery_paths(self) -> None:
+        tuner = build_policy_tuner(tuner_id="policy-168-recovery")
+        containment_entry = next(entry for entry in tuner.entries if entry.case_id == "pilot-containment")
+        restart_entry = next(entry for entry in tuner.entries if entry.case_id == "recovery-resume")
+
+        self.assertIsInstance(tuner, PolicyTuner)
+        self.assertIsInstance(containment_entry, PolicyTuneEntry)
+        self.assertEqual(containment_entry.action, PolicyTuneAction.TIGHTEN)
+        self.assertEqual(containment_entry.tuned_policy_mode, GuardrailPolicyMode.CONTAIN)
+        self.assertEqual(restart_entry.tuned_policy_mode, GuardrailPolicyMode.HOLD)
+
+    def test_kki_policy_tuner_calibrates_governance_policy(self) -> None:
+        tuner = build_policy_tuner(tuner_id="policy-168-governance")
+        governed_entry = next(entry for entry in tuner.entries if entry.case_id == "shadow-guarded")
+
+        self.assertEqual(governed_entry.action, PolicyTuneAction.CALIBRATE)
+        self.assertEqual(governed_entry.route_path, EscalationRoutePath.GOVERNANCE_REVIEW)
+        self.assertGreater(governed_entry.tuned_threshold, governed_entry.current_threshold)
+
+    def test_kki_policy_tuner_relaxes_stable_telemetry_case(self) -> None:
+        tuner = build_policy_tuner(tuner_id="policy-168-telemetry")
+        telemetry_entry = next(entry for entry in tuner.entries if entry.case_id == "pilot-ready")
+
+        self.assertEqual(telemetry_entry.action, PolicyTuneAction.RELAX)
+        self.assertEqual(telemetry_entry.tuned_policy_mode, GuardrailPolicyMode.MONITOR)
+        self.assertLess(telemetry_entry.tuned_threshold, telemetry_entry.current_threshold)
+
+    def test_kki_policy_tuner_aggregates_adjustment_signal(self) -> None:
+        tuner = build_policy_tuner(tuner_id="policy-168-signal")
+
+        self.assertEqual(tuner.tuner_signal.status, "policy-tightening")
+        self.assertEqual(tuner.tightened_case_ids, ("recovery-resume", "pilot-containment"))
+        self.assertEqual(tuner.calibrated_case_ids, ("shadow-guarded",))
+        self.assertEqual(tuner.relaxed_case_ids, ("pilot-ready",))
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

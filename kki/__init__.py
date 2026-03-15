@@ -30,6 +30,7 @@ from .convergence_simulator import (
     ConvergenceStatus,
     build_convergence_simulator,
 )
+from .policy_tuner import PolicyTuneAction, PolicyTuneEntry, PolicyTuner, build_policy_tuner
 from .readiness_cadence import (
     ReadinessCadence,
     ReadinessCadenceEntry,
@@ -327,6 +328,9 @@ __all__ = [
     "PortfolioOptimizer",
     "PortfolioPriority",
     "PortfolioRecommendation",
+    "PolicyTuneAction",
+    "PolicyTuneEntry",
+    "PolicyTuner",
     "PermissionRule",
     "PersistenceRecord",
     "PressureLevel",
@@ -417,6 +421,7 @@ __all__ = [
     "build_improvement_orchestrator",
     "build_operations_cockpit",
     "build_portfolio_optimizer",
+    "build_policy_tuner",
     "build_remediation_campaign",
     "build_release_campaign",
     "build_readiness_cadence",

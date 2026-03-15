@@ -260,6 +260,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `rollout_state_for_shadow()` koppelt Shadow-Release, Rollout-Gate und operative Korrelation zu einem expliziten Promotionszustand
 - `advance_rollout_state()` validiert die weiteren Uebergaenge Richtung Canary, Aktivierung, Hold oder Rollback-Bereitschaft
 
+`#138` fuehrt darauf eine Recovery-Orchestrierung fuer Rollout-Pfade ein:
+
+- `RecoveryOrchestration` und `RecoveryDisposition` fassen Rollout-Zustand, Recovery-Gate, Checkpoint, Directive, Outcome und Korrelationssicht zu einem gemeinsamen Wiederanlaufpfad
+- `orchestrate_recovery_for_rollout()` waehlt je nach Rollout-Lage zwischen Rollback, Restart und Reentry und baut darauf den konkreten Recovery-Lauf
+- Resume-Signale markieren explizit, ob nach Canary-/Replay-Pfaden ein echter Wiedereintritt freigegeben ist oder Containment/Restart aktiv bleibt
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

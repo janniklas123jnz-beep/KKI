@@ -350,6 +350,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `build_risk_register()` leitet aus `ReviewActionPlan`-Aktionen ein dauerhaftes Register fuer Blocking-, Active- und Observe-Risiken ab
 - das Register erweitert den Snapshot um ein explizites `risk-register`-Signal fuer Rest-Risiken und Mitigation-Fortschritt
 
+`#153` leitet daraus nun ein wiederverwendbares Guardrail-Portfolio ab:
+
+- `Guardrail`, `GuardrailPortfolio`, `GuardrailDomain` und `GuardrailPolicyMode` modellieren wiederverwendbare Policies fuer Governance-, Recovery-, Rollout- und Telemetrie-Eingriffe
+- `build_guardrail_portfolio()` ueberfuehrt das Risiko-Register in konkrete Monitor-, Hold-, Throttle- und Contain-Guardrails
+- das Portfolio erweitert den Snapshot um ein explizites `guardrail-portfolio`-Signal fuer aktive Eingriffs- und Schutzmechanismen
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

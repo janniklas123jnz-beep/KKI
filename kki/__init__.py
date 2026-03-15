@@ -25,6 +25,13 @@ from .governance import (
     evaluate_gate,
     govern_recovery_orchestration,
 )
+from .guardrail_portfolio import (
+    Guardrail,
+    GuardrailDomain,
+    GuardrailPolicyMode,
+    GuardrailPortfolio,
+    build_guardrail_portfolio,
+)
 from .escalation_coordinator import EscalationDirective, EscalationPath, EscalationPlan, coordinate_escalations
 from .incident_detector import IncidentCause, IncidentReport, IncidentSeverity, OperationsIncident, detect_incidents
 from .integrated_smoke import IntegratedSmokeBuild, run_integrated_smoke_build
@@ -218,6 +225,10 @@ __all__ = [
     "GateReadiness",
     "GateState",
     "GateOutcome",
+    "Guardrail",
+    "GuardrailDomain",
+    "GuardrailPolicyMode",
+    "GuardrailPortfolio",
     "HandoffMode",
     "HumanDecision",
     "HumanLoopGovernance",
@@ -323,6 +334,7 @@ __all__ = [
     "evaluate_gate",
     "evidence_message",
     "govern_recovery_orchestration",
+    "build_guardrail_portfolio",
     "dispatch_priority_score",
     "gate_signal",
     "load_control_plane",

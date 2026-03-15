@@ -40,6 +40,10 @@ from kki import (
     GateReadiness,
     GateState,
     GateOutcome,
+    Guardrail,
+    GuardrailDomain,
+    GuardrailPolicyMode,
+    GuardrailPortfolio,
     HandoffMode,
     HumanDecision,
     HumanLoopGovernance,
@@ -116,6 +120,7 @@ from kki import (
     audit_entry_for_message,
     benchmark_case_matrix,
     build_dispatch_plan,
+    build_guardrail_portfolio,
     build_readiness_review,
     build_release_campaign,
     build_review_action_plan,
@@ -3209,6 +3214,64 @@ class SmokeTests(unittest.TestCase):
         self.assertIn("pilot-containment", register.blocking_case_ids)
         self.assertIn(ModuleBoundaryName.GOVERNANCE, register.owner_boundaries)
         self.assertIn(ModuleBoundaryName.RECOVERY, register.owner_boundaries)
+
+    def test_kki_guardrail_portfolio_monitors_healthy_case(self) -> None:
+        portfolio = build_guardrail_portfolio(
+            build_risk_register(
+                build_review_action_plan(
+                    build_readiness_review(
+                        build_runtime_scorecard(
+                            run_benchmark_harness(
+                                (
+                                    BenchmarkCase(
+                                        case_id="guardrail-ready",
+                                        title="guardrail ready",
+                                        missions=(mission_profile_for_name("pilot-cutover"),),
+                                        release_mode=BenchmarkReleaseMode.READY,
+                                    ),
+                                ),
+                                harness_id="harness-153-ready",
+                            ),
+                            scorecard_id="scorecard-153-ready",
+                        ),
+                        review_id="review-153-ready",
+                    ),
+                    plan_id="plan-153-ready",
+                ),
+                register_id="register-153-ready",
+            ),
+            portfolio_id="portfolio-153-ready",
+        )
+
+        self.assertIsInstance(portfolio, GuardrailPortfolio)
+        self.assertIsInstance(portfolio.guardrails[0], Guardrail)
+        self.assertEqual(portfolio.portfolio_signal.status, "monitoring")
+        self.assertEqual(portfolio.guardrails[0].policy_mode, GuardrailPolicyMode.MONITOR)
+        self.assertEqual(portfolio.guardrails[0].domain, GuardrailDomain.TELEMETRY)
+
+    def test_kki_guardrail_portfolio_holds_governance_case(self) -> None:
+        portfolio = build_guardrail_portfolio(portfolio_id="portfolio-153-guarded")
+        governance_guardrail = next(guardrail for guardrail in portfolio.guardrails if guardrail.case_id == "shadow-guarded")
+
+        self.assertEqual(portfolio.portfolio_signal.status, "containment-guardrails")
+        self.assertEqual(governance_guardrail.domain, GuardrailDomain.GOVERNANCE)
+        self.assertEqual(governance_guardrail.policy_mode, GuardrailPolicyMode.HOLD)
+
+    def test_kki_guardrail_portfolio_contains_blocking_case(self) -> None:
+        portfolio = build_guardrail_portfolio(portfolio_id="portfolio-153-blocked")
+        blocking_guardrail = next(guardrail for guardrail in portfolio.guardrails if guardrail.case_id == "pilot-containment")
+
+        self.assertEqual(blocking_guardrail.policy_mode, GuardrailPolicyMode.CONTAIN)
+        self.assertEqual(blocking_guardrail.domain, GuardrailDomain.RECOVERY)
+        self.assertEqual(portfolio.blocking_case_ids, ("pilot-containment",))
+
+    def test_kki_guardrail_portfolio_aggregates_domains(self) -> None:
+        portfolio = build_guardrail_portfolio(portfolio_id="portfolio-153-matrix")
+
+        self.assertIn(GuardrailDomain.GOVERNANCE, portfolio.domains)
+        self.assertIn(GuardrailDomain.RECOVERY, portfolio.domains)
+        self.assertIn(ModuleBoundaryName.GOVERNANCE, portfolio.owner_boundaries)
+        self.assertIn(ModuleBoundaryName.RECOVERY, portfolio.owner_boundaries)
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

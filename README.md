@@ -362,6 +362,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `build_scenario_replay()` koppelt `BenchmarkHarness` und `GuardrailPortfolio`, um auffaellige Faelle gezielt unter denselben Guardrails erneut auszufuehren
 - der Replay-Layer erweitert den Snapshot um ein explizites `scenario-replay`-Signal fuer Reproduzierbarkeit, Stabilitaet und Regression
 
+`#155` macht diese Abweichungen nun explizit messbar:
+
+- `DriftObservation`, `DriftMonitor` und `DriftSeverity` modellieren Score-, Governance- und Recovery-Drift zwischen Basis-Scorecard und Replay-Lauf
+- `build_drift_monitor()` koppelt `RuntimeScorecard`, `ScenarioReplaySuite` und `GuardrailPortfolio`, um Replay-Abweichungen und Guardrail-Verletzungen pro Fall auszuwerten
+- der Drift-Layer erweitert den Snapshot um ein explizites `drift-monitor`-Signal fuer stabile Replays, erkannte Drift und kritische Guardrail-Verletzungen
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

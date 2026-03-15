@@ -17,6 +17,7 @@ from .benchmark_harness import (
     benchmark_case_matrix,
     run_benchmark_harness,
 )
+from .drift_monitor import DriftMonitor, DriftObservation, DriftSeverity, build_drift_monitor
 from .governance import (
     GateDecision,
     GateOutcome,
@@ -193,6 +194,9 @@ __all__ = [
     "CoreState",
     "DeliveryGuarantee",
     "DeliveryMode",
+    "DriftMonitor",
+    "DriftObservation",
+    "DriftSeverity",
     "EvidenceRecord",
     "EventEnvelope",
     "MessageEnvelope",
@@ -320,6 +324,7 @@ __all__ = [
     "audit_entry_for_message",
     "benchmark_case_matrix",
     "build_dispatch_plan",
+    "build_drift_monitor",
     "build_release_campaign",
     "build_readiness_review",
     "build_review_action_plan",

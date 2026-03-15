@@ -29,6 +29,9 @@ from kki import (
     DelegationGrant,
     DeliveryGuarantee,
     DeliveryMode,
+    DriftMonitor,
+    DriftObservation,
+    DriftSeverity,
     DispatchLane,
     DispatchTriageMode,
     EscalationDirective,
@@ -124,6 +127,7 @@ from kki import (
     audit_entry_for_message,
     benchmark_case_matrix,
     build_dispatch_plan,
+    build_drift_monitor,
     build_guardrail_portfolio,
     build_readiness_review,
     build_release_campaign,
@@ -3309,6 +3313,48 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(suite.replay_signal.status, "blocked-replays")
         self.assertEqual(suite.replayed_case_ids, ("shadow-guarded", "recovery-resume", "pilot-containment"))
         self.assertEqual(suite.blocked_case_ids, ("pilot-containment",))
+
+    def test_kki_drift_monitor_tracks_stable_ready_case(self) -> None:
+        replay_suite = build_scenario_replay(replay_id="replay-155-ready", include_ready=True)
+        ready_only_suite = ScenarioReplaySuite(
+            replay_id=replay_suite.replay_id,
+            source_harness=replay_suite.source_harness,
+            guardrail_portfolio=replay_suite.guardrail_portfolio,
+            items=(next(item for item in replay_suite.items if item.source_case_id == "pilot-ready"),),
+            results=(next(result for result in replay_suite.results if result.item.source_case_id == "pilot-ready"),),
+            replay_signal=replay_suite.replay_signal,
+            final_snapshot=replay_suite.final_snapshot,
+        )
+        monitor = build_drift_monitor(replay_suite=ready_only_suite, monitor_id="drift-155-ready")
+        observation = monitor.observations[0]
+
+        self.assertIsInstance(monitor, DriftMonitor)
+        self.assertIsInstance(observation, DriftObservation)
+        self.assertTrue(observation.stable)
+        self.assertEqual(observation.severity, DriftSeverity.STABLE)
+
+    def test_kki_drift_monitor_detects_governance_violation(self) -> None:
+        monitor = build_drift_monitor(monitor_id="drift-155-governance")
+        observation = next(item for item in monitor.observations if item.case_id == "shadow-guarded")
+
+        self.assertIn("shadow-guarded", monitor.violating_case_ids)
+        self.assertEqual(observation.severity, DriftSeverity.CRITICAL)
+        self.assertTrue(any("governance_score" in violation for violation in observation.guardrail_violations))
+
+    def test_kki_drift_monitor_detects_blocked_case_violation(self) -> None:
+        monitor = build_drift_monitor(monitor_id="drift-155-blocked")
+        observation = next(item for item in monitor.observations if item.case_id == "pilot-containment")
+
+        self.assertEqual(observation.replay_status, ReleaseCampaignStatus.BLOCKED)
+        self.assertIn("pilot-containment", monitor.violating_case_ids)
+        self.assertEqual(observation.severity, DriftSeverity.CRITICAL)
+
+    def test_kki_drift_monitor_aggregates_recovery_and_governance(self) -> None:
+        monitor = build_drift_monitor(monitor_id="drift-155-matrix")
+
+        self.assertEqual(monitor.drift_signal.status, "guardrail-violations")
+        self.assertIn("shadow-guarded", monitor.governance_drift_case_ids)
+        self.assertIn("pilot-containment", monitor.violating_case_ids)
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

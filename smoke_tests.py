@@ -45,6 +45,7 @@ from kki import (
     MessageKind,
     ModuleBoundaryName,
     OperationalPressure,
+    OperationsRunLedger,
     OperationsWave,
     OperatingMode,
     OrchestrationStatus,
@@ -62,6 +63,7 @@ from kki import (
     RolloutPhase,
     RolloutState,
     RollbackDirective,
+    RunLedgerEntry,
     RuntimeStage,
     RuntimeThresholds,
     ShadowPreview,
@@ -94,6 +96,7 @@ from kki import (
     evidence_message,
     govern_recovery_orchestration,
     load_control_plane,
+    ledger_for_wave,
     module_boundaries,
     module_dependency_graph,
     mission_profile_catalog,
@@ -2335,6 +2338,64 @@ class SmokeTests(unittest.TestCase):
         self.assertIn("shadow-release", signal_names)
         self.assertEqual(wave.wave_signal.status, "executed")
         self.assertTrue(wave.to_dict()["success"])
+
+    def test_kki_run_ledger_compiles_entries_for_wave(self) -> None:
+        ledger = ledger_for_wave(run_operations_wave(("pilot-cutover",), wave_id="wave-143-ledger"))
+
+        self.assertIsInstance(ledger, OperationsRunLedger)
+        self.assertEqual(len(ledger.entries), 1)
+        self.assertIsInstance(ledger.entries[0], RunLedgerEntry)
+        self.assertEqual(ledger.executed_mission_refs, ("pilot-cutover",))
+
+    def test_kki_run_ledger_preserves_held_wave_entries(self) -> None:
+        ledger = ledger_for_wave(
+            run_operations_wave(
+                (
+                    MissionProfile(
+                        mission_ref="ledger-critical",
+                        title="ledger critical",
+                        scenario=MissionScenario.CUTOVER,
+                        runtime_stage=RuntimeStage.PILOT,
+                        runtime_profile="pilot-runtime-dna",
+                        target_boundary=ModuleBoundaryName.ROLLOUT,
+                        work_priority=WorkPriority.CRITICAL,
+                        budget_share=0.14,
+                    ),
+                    MissionProfile(
+                        mission_ref="ledger-held",
+                        title="ledger held",
+                        scenario=MissionScenario.ROUTINE,
+                        runtime_stage=RuntimeStage.PILOT,
+                        runtime_profile="pilot-runtime-dna",
+                        target_boundary=ModuleBoundaryName.ROLLOUT,
+                        work_priority=WorkPriority.NORMAL,
+                        budget_share=0.13,
+                    ),
+                ),
+                wave_id="wave-143-held",
+                budget_policy=WaveBudgetPolicy(total_budget=0.3, reserve_floor=0.12, max_parallel=2),
+            )
+        )
+
+        self.assertEqual(ledger.executed_mission_refs, ("ledger-critical",))
+        self.assertEqual(ledger.held_mission_refs, ("ledger-held",))
+        held_entry = next(entry for entry in ledger.entries if entry.mission_ref == "ledger-held")
+        self.assertFalse(held_entry.executed)
+        self.assertEqual(held_entry.governance_status, "not-executed")
+
+    def test_kki_run_ledger_snapshot_contains_ledger_signal(self) -> None:
+        ledger = ledger_for_wave(run_operations_wave(("pilot-cutover",), wave_id="wave-143-signal"))
+
+        signal_names = [signal.signal_name for signal in ledger.final_snapshot.signals]
+        self.assertIn("run-ledger", signal_names)
+        self.assertIn("operations-wave", signal_names)
+        self.assertEqual(ledger.wave_signal.status, "compiled")
+
+    def test_kki_run_ledger_serializes_status_counts(self) -> None:
+        payload = ledger_for_wave(run_operations_wave(("pilot-cutover",), wave_id="wave-143-dict")).to_dict()
+
+        self.assertEqual(payload["status_counts"]["admit"], 1)
+        self.assertEqual(payload["entries"][0]["mission_ref"], "pilot-cutover")
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

@@ -290,6 +290,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `run_operations_wave()` plant mehrere Missionsprofile ueber den bestehenden Dispatch-Kern, fuehrt admitted Runs aus und haelt oder blockiert Restarbeit deterministisch
 - `OperationsWave` verdichtet Dispatch-Plan, Wave-Ausfuehrungen und einen aggregierten Wave-Snapshot fuer Mehrfachlaeufe
 
+`#143` verdichtet diese Mehrfachlaeufe nun in ein gemeinsames Run-Ledger:
+
+- `RunLedgerEntry` normalisiert pro Mission Dispatch-Lane, Severity, Governance-, Rollout- und Recovery-Status
+- `ledger_for_wave()` baut aus einer `OperationsWave` eine kanonische `OperationsRunLedger`-Sicht auf ausgefuehrte und gehaltene Runs
+- das Ledger erweitert den Wave-Snapshot um ein explizites `run-ledger`-Signal fuer uebersichtliche Mehrfachlauf-Analysen
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

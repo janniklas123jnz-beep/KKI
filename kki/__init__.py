@@ -19,6 +19,7 @@ from .governance import (
 from .integrated_smoke import IntegratedSmokeBuild, run_integrated_smoke_build
 from .mission_profiles import MissionPolicy, MissionProfile, MissionScenario, mission_profile_catalog, mission_profile_for_name
 from .operations_run import IntegratedOperationsRun, run_integrated_operations
+from .run_ledger import OperationsRunLedger, RunLedgerEntry, ledger_for_wave
 from .message_protocols import (
     DeliveryGuarantee,
     DeliveryMode,
@@ -186,6 +187,7 @@ __all__ = [
     "ModuleBoundaryName",
     "OperationalPressure",
     "OperationsWave",
+    "OperationsRunLedger",
     "OperatingMode",
     "OrchestrationState",
     "OrchestrationStatus",
@@ -207,6 +209,7 @@ __all__ = [
     "RuntimeIdentity",
     "RuntimeStage",
     "RuntimeThresholds",
+    "RunLedgerEntry",
     "PreviewMode",
     "ShadowCoordination",
     "ShadowCoordinationMode",
@@ -248,6 +251,7 @@ __all__ = [
     "dispatch_priority_score",
     "gate_signal",
     "load_control_plane",
+    "ledger_for_wave",
     "module_boundaries",
     "module_boundary",
     "module_dependency_graph",

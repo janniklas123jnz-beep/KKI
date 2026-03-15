@@ -446,6 +446,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `build_policy_tuner()` koppelt `GuardrailPortfolio`, `EscalationRouter` und `ConvergenceSimulator`, um Recovery-, Governance- und Telemetry-Pfade in deterministische Tighten-, Calibrate- und Relax-Anpassungen zu ueberfuehren
 - der Tuner erweitert den Snapshot um ein explizites `policy-tuner`-Signal fuer aktive Policy-Verschaerfung, Kalibrierung und Entlastung stabiler Pfade
 
+`#169` haelt daraus nun dauerhaftes Betriebswissen fest:
+
+- `LearningRecord`, `LearningRegister` und `LearningPatternType` modellieren stabilisierte Interventionen, wiederverwendbare Betriebsrezepte und wiederkehrende Muster pro Fall
+- `build_learning_register()` koppelt `PolicyTuner`, `ConvergenceSimulator` und `EvidenceLedger`, um getunte Policies mitsamt Evidenz- und Commitment-Spuren als dauerhaft wiederverwendbares Lernwissen festzuhalten
+- das Register erweitert den Snapshot um ein explizites `learning-register`-Signal fuer erfasste Interventionen, Rezepte und wiederverwendbares Organisationswissen
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

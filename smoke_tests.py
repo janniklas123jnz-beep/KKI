@@ -81,6 +81,9 @@ from kki import (
     IncidentSeverity,
     IntegratedOperationsRun,
     IntegratedSmokeBuild,
+    LearningPatternType,
+    LearningRecord,
+    LearningRegister,
     LoadedControlPlane,
     MissionPolicy,
     MissionProfile,
@@ -181,6 +184,7 @@ from kki import (
     build_governance_agenda,
     build_guardrail_portfolio,
     build_improvement_orchestrator,
+    build_learning_register,
     build_operations_cockpit,
     build_portfolio_optimizer,
     build_policy_tuner,
@@ -3880,6 +3884,42 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(tuner.tightened_case_ids, ("recovery-resume", "pilot-containment"))
         self.assertEqual(tuner.calibrated_case_ids, ("shadow-guarded",))
         self.assertEqual(tuner.relaxed_case_ids, ("pilot-ready",))
+
+    def test_kki_learning_register_captures_interventions(self) -> None:
+        register = build_learning_register(register_id="learning-169-interventions")
+        intervention = next(record for record in register.records if record.case_id == "pilot-containment")
+
+        self.assertIsInstance(register, LearningRegister)
+        self.assertIsInstance(intervention, LearningRecord)
+        self.assertEqual(intervention.pattern_type, LearningPatternType.STABILIZED_INTERVENTION)
+        self.assertEqual(intervention.source_action, PolicyTuneAction.TIGHTEN)
+        self.assertTrue(intervention.evidence_refs)
+        self.assertTrue(intervention.commitment_refs)
+
+    def test_kki_learning_register_captures_operating_recipe(self) -> None:
+        register = build_learning_register(register_id="learning-169-recipe")
+        recipe = next(record for record in register.records if record.case_id == "shadow-guarded")
+
+        self.assertEqual(recipe.pattern_type, LearningPatternType.OPERATING_RECIPE)
+        self.assertEqual(recipe.route_path, EscalationRoutePath.GOVERNANCE_REVIEW)
+        self.assertTrue(recipe.reusable)
+
+    def test_kki_learning_register_captures_recurring_pattern(self) -> None:
+        register = build_learning_register(register_id="learning-169-pattern")
+        pattern = next(record for record in register.records if record.case_id == "pilot-ready")
+
+        self.assertEqual(pattern.pattern_type, LearningPatternType.RECURRING_PATTERN)
+        self.assertEqual(pattern.source_action, PolicyTuneAction.RELAX)
+        self.assertGreater(pattern.confidence_score, 0.7)
+
+    def test_kki_learning_register_aggregates_reusable_knowledge(self) -> None:
+        register = build_learning_register(register_id="learning-169-signal")
+
+        self.assertEqual(register.register_signal.status, "reusable-learning")
+        self.assertEqual(register.intervention_case_ids, ("recovery-resume", "pilot-containment"))
+        self.assertEqual(register.recipe_case_ids, ("shadow-guarded",))
+        self.assertEqual(register.recurring_pattern_case_ids, ("pilot-ready",))
+        self.assertEqual(register.reusable_case_ids, ("shadow-guarded", "recovery-resume", "pilot-containment", "pilot-ready"))
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

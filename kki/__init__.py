@@ -30,6 +30,7 @@ from .convergence_simulator import (
     ConvergenceStatus,
     build_convergence_simulator,
 )
+from .learning_register import LearningPatternType, LearningRecord, LearningRegister, build_learning_register
 from .policy_tuner import PolicyTuneAction, PolicyTuneEntry, PolicyTuner, build_policy_tuner
 from .readiness_cadence import (
     ReadinessCadence,
@@ -310,6 +311,9 @@ __all__ = [
     "IncidentSeverity",
     "IntegratedOperationsRun",
     "IntegratedSmokeBuild",
+    "LearningPatternType",
+    "LearningRecord",
+    "LearningRegister",
     "LoadedControlPlane",
     "MissionPolicy",
     "MissionProfile",
@@ -419,6 +423,7 @@ __all__ = [
     "build_evidence_ledger",
     "build_governance_agenda",
     "build_improvement_orchestrator",
+    "build_learning_register",
     "build_operations_cockpit",
     "build_portfolio_optimizer",
     "build_policy_tuner",

@@ -96,6 +96,9 @@ from kki import (
     OperationsCockpit,
     OperationsSteward,
     OperationsStewardStatus,
+    OutcomeLedger,
+    OutcomeRecord,
+    OutcomeStatus,
     OperationsWave,
     OperatingMode,
     OperationsIncident,
@@ -196,6 +199,7 @@ from kki import (
     build_learning_register,
     build_operations_cockpit,
     build_operations_steward,
+    build_outcome_ledger,
     build_portfolio_optimizer,
     build_policy_tuner,
     build_readiness_cadence,
@@ -3996,6 +4000,39 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(workboard.expedite_case_ids, ("pilot-containment",))
         self.assertEqual(workboard.due_now_case_ids, ("pilot-containment",))
         self.assertAlmostEqual(workboard.board_signal.metrics["item_count"], 4.0)
+
+    def test_kki_outcome_ledger_tracks_contained_case(self) -> None:
+        ledger = build_outcome_ledger(ledger_id="outcome-172-contained")
+        record = next(item for item in ledger.records if item.case_id == "pilot-containment")
+
+        self.assertIsInstance(ledger, OutcomeLedger)
+        self.assertIsInstance(record, OutcomeRecord)
+        self.assertEqual(record.outcome_status, OutcomeStatus.CONTAINED)
+        self.assertTrue(record.resolved_within_sla)
+        self.assertTrue(record.exception_candidate)
+
+    def test_kki_outcome_ledger_tracks_governed_case(self) -> None:
+        ledger = build_outcome_ledger(ledger_id="outcome-172-governed")
+        record = next(item for item in ledger.records if item.case_id == "shadow-guarded")
+
+        self.assertEqual(record.outcome_status, OutcomeStatus.GOVERNED)
+        self.assertTrue(record.outcome_ref.startswith("outcome-"))
+        self.assertTrue(record.evidence_refs)
+
+    def test_kki_outcome_ledger_tracks_tuned_and_observed_cases(self) -> None:
+        ledger = build_outcome_ledger(ledger_id="outcome-172-mix")
+
+        self.assertEqual(ledger.tuned_case_ids, ("recovery-resume",))
+        self.assertEqual(ledger.observed_case_ids, ("pilot-ready",))
+        self.assertEqual(ledger.exception_candidate_case_ids, ("pilot-containment", "recovery-resume"))
+
+    def test_kki_outcome_ledger_aggregates_execution_signal(self) -> None:
+        ledger = build_outcome_ledger(ledger_id="outcome-172-signal")
+
+        self.assertEqual(ledger.ledger_signal.status, "stabilizing-outcomes")
+        self.assertEqual(ledger.contained_case_ids, ("pilot-containment",))
+        self.assertEqual(ledger.governed_case_ids, ("shadow-guarded",))
+        self.assertAlmostEqual(ledger.ledger_signal.metrics["record_count"], 4.0)
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

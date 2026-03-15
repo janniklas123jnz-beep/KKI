@@ -464,6 +464,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `build_steward_workboard()` koppelt den `OperationsSteward` in eine direkte Arbeitsoberflaeche mit Expedite-, Committed-, Follow-up- und Watch-Lanes
 - das Workboard erweitert den Snapshot um ein explizites `steward-workboard`-Signal fuer akute Expedite-Lagen, geplante Bearbeitung und reine Beobachtungspfade
 
+`#172` macht daraus nun eine dauerhafte Wirkungsspur:
+
+- `OutcomeRecord`, `OutcomeLedger` und `OutcomeStatus` modellieren die dauerhaften Ergebnisse der Workboard-Abarbeitung pro Fall
+- `build_outcome_ledger()` koppelt das `StewardWorkboard`, um bearbeitete Direktiven als enthaltene, governte, getunte oder beobachtete Outcomes mit Outcome-Refs zu protokollieren
+- das Ledger erweitert den Snapshot um ein explizites `outcome-ledger`-Signal fuer stabilisierte Outcomes und potentielle Ausnahme-Kandidaten
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

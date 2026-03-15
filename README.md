@@ -398,6 +398,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `build_continuous_readiness_cycle()` koppelt `OperationsCockpit` und `PortfolioOptimizer`, um pro Fall den naechsten Review-Zustand und den laufenden Fokus abzuleiten
 - der Zyklus erweitert den Snapshot um ein explizites `continuous-readiness`-Signal fuer ready-, attention- und blocked-Schleifen
 
+`#161` operationalisiert diesen Loop nun als feste Readiness-Kadenz:
+
+- `ReadinessCadenceEntry`, `ReadinessCadence`, `ReadinessCadenceTrigger`, `ReadinessCadenceWindow` und `ReadinessCadenceStatus` modellieren feste Folgefenster fuer Containment-, Governance-, Recovery-, Promotion- und Beobachtungsfaelle
+- `build_readiness_cadence()` leitet aus `ContinuousReadinessCycle` deterministische Trigger, Due-Cycles und aktuelle/naechste Fenster fuer jeden Fall ab
+- die Kadenz erweitert den Snapshot um ein explizites `readiness-cadence`-Signal fuer eskalierte, review-required und steady Betriebsrhythmen
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

@@ -88,6 +88,11 @@ from kki import (
     ShadowCoordination,
     ShadowCoordinationMode,
     ProtocolContext,
+    ReadinessCadence,
+    ReadinessCadenceEntry,
+    ReadinessCadenceStatus,
+    ReadinessCadenceTrigger,
+    ReadinessCadenceWindow,
     RecoveryCheckpoint,
     ReadinessFinding,
     ReadinessFindingSeverity,
@@ -151,6 +156,7 @@ from kki import (
     build_improvement_orchestrator,
     build_operations_cockpit,
     build_portfolio_optimizer,
+    build_readiness_cadence,
     build_remediation_campaign,
     build_readiness_review,
     build_release_campaign,
@@ -3554,6 +3560,44 @@ class SmokeTests(unittest.TestCase):
         self.assertIn("pilot-ready", cycle.ready_case_ids)
         self.assertIn("shadow-guarded", cycle.next_focus_case_ids)
         self.assertIn("pilot-containment", cycle.blocked_case_ids)
+
+    def test_kki_readiness_cadence_schedules_blocked_case_immediately(self) -> None:
+        cadence = build_readiness_cadence(cadence_id="cadence-161-blocked")
+        blocked_entry = next(entry for entry in cadence.entries if entry.case_id == "pilot-containment")
+
+        self.assertIsInstance(cadence, ReadinessCadence)
+        self.assertIsInstance(blocked_entry, ReadinessCadenceEntry)
+        self.assertEqual(blocked_entry.trigger, ReadinessCadenceTrigger.CONTAINMENT)
+        self.assertEqual(blocked_entry.window, ReadinessCadenceWindow.IMMEDIATE)
+        self.assertEqual(blocked_entry.cadence_status, ReadinessCadenceStatus.ESCALATED)
+        self.assertEqual(blocked_entry.due_cycle, 1)
+
+    def test_kki_readiness_cadence_schedules_governed_case_in_current_window(self) -> None:
+        cadence = build_readiness_cadence(cadence_id="cadence-161-governed")
+        governed_entry = next(entry for entry in cadence.entries if entry.case_id == "shadow-guarded")
+
+        self.assertEqual(governed_entry.trigger, ReadinessCadenceTrigger.GOVERNANCE)
+        self.assertEqual(governed_entry.window, ReadinessCadenceWindow.CURRENT)
+        self.assertEqual(governed_entry.cadence_status, ReadinessCadenceStatus.REVIEW_REQUIRED)
+        self.assertIn("shadow-guarded", cadence.current_window_case_ids)
+
+    def test_kki_readiness_cadence_schedules_release_candidate_in_next_window(self) -> None:
+        cadence = build_readiness_cadence(cadence_id="cadence-161-release")
+        ready_entry = next(entry for entry in cadence.entries if entry.case_id == "pilot-ready")
+
+        self.assertEqual(ready_entry.trigger, ReadinessCadenceTrigger.PROMOTION)
+        self.assertEqual(ready_entry.window, ReadinessCadenceWindow.NEXT)
+        self.assertEqual(ready_entry.cadence_status, ReadinessCadenceStatus.STEADY)
+        self.assertTrue(ready_entry.release_candidate)
+        self.assertIn("pilot-ready", cadence.next_window_case_ids)
+
+    def test_kki_readiness_cadence_aggregates_focus_metrics(self) -> None:
+        cadence = build_readiness_cadence(cadence_id="cadence-161-matrix")
+
+        self.assertEqual(cadence.cadence_signal.status, "escalated")
+        self.assertIn("pilot-containment", cadence.immediate_case_ids)
+        self.assertIn("shadow-guarded", cadence.focus_case_ids)
+        self.assertIn("pilot-ready", cadence.next_window_case_ids)
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

@@ -266,6 +266,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `orchestrate_recovery_for_rollout()` waehlt je nach Rollout-Lage zwischen Rollback, Restart und Reentry und baut darauf den konkreten Recovery-Lauf
 - Resume-Signale markieren explizit, ob nach Canary-/Replay-Pfaden ein echter Wiedereintritt freigegeben ist oder Containment/Restart aktiv bleibt
 
+`#139` fuehrt darauf Human-in-the-loop-Governance ein:
+
+- `HumanLoopGovernance` und `HumanDecision` fassen menschliche Freigabe-, Hold-, Eskalations- und Override-Entscheide ueber Recovery- und Rollout-Pfade
+- `govern_recovery_orchestration()` bindet Gatekeeper- bzw. Supervisor-Entscheidungen mitsamt Evidence- und Commitment-Pfaden an die Recovery-Orchestrierung
+- Governance-Signale markieren explizit, ob ein Wiedereintritt autorisiert, gehalten, eskaliert oder nur via Emergency-Override freigegeben wird
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

@@ -8,7 +8,14 @@ from .data_models import (
     core_state_for_runtime,
     transfer_envelope_for_state,
 )
-from .governance import GateDecision, GateOutcome, evaluate_gate
+from .governance import (
+    GateDecision,
+    GateOutcome,
+    HumanDecision,
+    HumanLoopGovernance,
+    evaluate_gate,
+    govern_recovery_orchestration,
+)
 from .integrated_smoke import IntegratedSmokeBuild, run_integrated_smoke_build
 from .message_protocols import (
     DeliveryGuarantee,
@@ -163,6 +170,8 @@ __all__ = [
     "GateState",
     "GateOutcome",
     "HandoffMode",
+    "HumanDecision",
+    "HumanLoopGovernance",
     "IdentityKind",
     "IntegratedSmokeBuild",
     "LoadedControlPlane",
@@ -225,6 +234,7 @@ __all__ = [
     "event_message",
     "evaluate_gate",
     "evidence_message",
+    "govern_recovery_orchestration",
     "dispatch_priority_score",
     "gate_signal",
     "load_control_plane",

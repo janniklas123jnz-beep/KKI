@@ -32,6 +32,8 @@ from kki import (
     GateState,
     GateOutcome,
     HandoffMode,
+    HumanDecision,
+    HumanLoopGovernance,
     IdentityKind,
     IntegratedSmokeBuild,
     LoadedControlPlane,
@@ -84,6 +86,7 @@ from kki import (
     evaluate_gate,
     event_message,
     evidence_message,
+    govern_recovery_orchestration,
     load_control_plane,
     module_boundaries,
     module_dependency_graph,
@@ -1762,6 +1765,404 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(orchestration.gate_decision.outcome, GateOutcome.BLOCK)
         self.assertFalse(orchestration.resume_ready)
         self.assertEqual(orchestration.recovery_signal.severity, "info")
+
+    def test_kki_human_governance_approves_reentry_release(self) -> None:
+        artifacts = (
+            ControlArtifact(
+                artifact_id="shadow-policy",
+                kind=ArtifactKind.POLICY,
+                version="2.0",
+                scope=ArtifactScope.BOUNDARY,
+                runtime_stage=RuntimeStage.PILOT,
+                boundary="shadow",
+                validations=(ValidationStep.STATIC, ValidationStep.CONSISTENCY, ValidationStep.SHADOW),
+                evidence_ref="audit-shadow-policy",
+                payload={"preview_gate": "strict", "drift_threshold": 0.05},
+            ),
+            ControlArtifact(
+                artifact_id="rollout-policy",
+                kind=ArtifactKind.POLICY,
+                version="2.1",
+                scope=ArtifactScope.BOUNDARY,
+                runtime_stage=RuntimeStage.PILOT,
+                boundary="rollout",
+                validations=(ValidationStep.STATIC, ValidationStep.CONSISTENCY, ValidationStep.SHADOW),
+                evidence_ref="audit-rollout-policy",
+                payload={"promotion_gate": "hold-until-shadow-green"},
+            ),
+        )
+        shadow_plane = load_control_plane(artifacts, runtime_stage=RuntimeStage.PILOT, boundary="shadow")
+        rollout_plane = load_control_plane(artifacts, runtime_stage=RuntimeStage.PILOT, boundary="rollout")
+        recovery_plane = load_control_plane((), runtime_stage=RuntimeStage.PILOT, boundary="recovery")
+        governance_plane = load_control_plane((), runtime_stage=RuntimeStage.PILOT, boundary="governance")
+        state = orchestration_state_for_runtime(
+            runtime_dna_for_profile("pilot-runtime-dna", stage=RuntimeStage.PILOT),
+            mission_ref="mission-139",
+        )
+        work_unit = work_unit_for_state(
+            state,
+            title="govern reentry",
+            boundary="rollout",
+            correlation_id="corr-139-approve",
+            priority=WorkPriority.HIGH,
+            budget_share=0.12,
+        )
+        replay_unit = advance_work_unit(
+            work_unit,
+            status=WorkStatus.HANDED_OFF,
+            attempt=1,
+            handoff_ref="handoff-govern-approve",
+        )
+        shadow_identity = AuthorizationIdentity(
+            slug="executor-shadow",
+            kind=IdentityKind.MODULE,
+            role=RoleName.EXECUTOR,
+            trust_level=TrustLevel.VERIFIED,
+            boundary_scope=("shadow", "rollout"),
+        )
+        rollout_identity = AuthorizationIdentity(
+            slug="gatekeeper-rollout",
+            kind=IdentityKind.OPERATOR,
+            role=RoleName.GATEKEEPER,
+            trust_level=TrustLevel.VERIFIED,
+            boundary_scope=("rollout", "governance"),
+        )
+        recovery_identity = AuthorizationIdentity(
+            slug="supervisor-recovery",
+            kind=IdentityKind.SUPERVISOR,
+            role=RoleName.SUPERVISOR,
+            trust_level=TrustLevel.PRIVILEGED,
+            boundary_scope=("recovery", "rollout"),
+        )
+        governance_identity = AuthorizationIdentity(
+            slug="gatekeeper-governance",
+            kind=IdentityKind.OPERATOR,
+            role=RoleName.GATEKEEPER,
+            trust_level=TrustLevel.VERIFIED,
+            boundary_scope=("governance", "rollout"),
+        )
+        coordination = coordinate_shadow_work(
+            state,
+            replay_unit,
+            control_plane=shadow_plane,
+            identity=shadow_identity,
+            available_roles=(RoleName.EXECUTOR,),
+            observed_budget=0.12,
+        )
+        rollout_state = rollout_state_for_shadow(
+            coordination,
+            control_plane=rollout_plane,
+            identity=rollout_identity,
+            evidence_ref="audit-rollout-policy",
+        )
+        recovery = orchestrate_recovery_for_rollout(
+            rollout_state,
+            control_plane=recovery_plane,
+            identity=recovery_identity,
+            evidence_ref="audit-recovery-approve",
+        )
+
+        governance = govern_recovery_orchestration(
+            recovery,
+            control_plane=governance_plane,
+            identity=governance_identity,
+            decision=HumanDecision.APPROVE,
+            audit_ref="audit-governance-approve",
+        )
+
+        self.assertIsInstance(governance, HumanLoopGovernance)
+        self.assertEqual(governance.gate_decision.outcome, GateOutcome.GO)
+        self.assertTrue(governance.release_authorized)
+        self.assertEqual(governance.governance_signal.status, "authorized")
+
+    def test_kki_human_governance_holds_restart_path(self) -> None:
+        artifacts = (
+            ControlArtifact(
+                artifact_id="shadow-policy",
+                kind=ArtifactKind.POLICY,
+                version="2.0",
+                scope=ArtifactScope.BOUNDARY,
+                runtime_stage=RuntimeStage.PILOT,
+                boundary="shadow",
+                validations=(ValidationStep.STATIC, ValidationStep.CONSISTENCY, ValidationStep.SHADOW),
+                evidence_ref="audit-shadow-policy",
+                payload={"preview_gate": "strict", "drift_threshold": 0.05},
+            ),
+            ControlArtifact(
+                artifact_id="rollout-policy",
+                kind=ArtifactKind.POLICY,
+                version="2.1",
+                scope=ArtifactScope.BOUNDARY,
+                runtime_stage=RuntimeStage.PILOT,
+                boundary="rollout",
+                validations=(ValidationStep.STATIC, ValidationStep.CONSISTENCY, ValidationStep.SHADOW),
+                evidence_ref="audit-rollout-policy",
+                payload={"promotion_gate": "hold-until-shadow-green"},
+            ),
+        )
+        shadow_plane = load_control_plane(artifacts, runtime_stage=RuntimeStage.PILOT, boundary="shadow")
+        rollout_plane = load_control_plane(artifacts, runtime_stage=RuntimeStage.PILOT, boundary="rollout")
+        recovery_plane = load_control_plane((), runtime_stage=RuntimeStage.PILOT, boundary="recovery")
+        governance_plane = load_control_plane((), runtime_stage=RuntimeStage.PILOT, boundary="governance")
+        state = orchestration_state_for_runtime(
+            runtime_dna_for_profile("pilot-runtime-dna", stage=RuntimeStage.PILOT),
+            mission_ref="mission-139",
+            gates=GateReadiness(shadow=GateState.GUARDED),
+        )
+        work_unit = work_unit_for_state(
+            state,
+            title="govern hold",
+            boundary="rollout",
+            correlation_id="corr-139-hold",
+            priority=WorkPriority.NORMAL,
+            budget_share=0.14,
+        )
+        shadow_identity = AuthorizationIdentity(
+            slug="executor-shadow",
+            kind=IdentityKind.MODULE,
+            role=RoleName.EXECUTOR,
+            trust_level=TrustLevel.VERIFIED,
+            boundary_scope=("shadow", "rollout"),
+        )
+        rollout_identity = AuthorizationIdentity(
+            slug="gatekeeper-rollout",
+            kind=IdentityKind.OPERATOR,
+            role=RoleName.GATEKEEPER,
+            trust_level=TrustLevel.VERIFIED,
+            boundary_scope=("rollout", "governance"),
+        )
+        recovery_identity = AuthorizationIdentity(
+            slug="supervisor-recovery",
+            kind=IdentityKind.SUPERVISOR,
+            role=RoleName.SUPERVISOR,
+            trust_level=TrustLevel.PRIVILEGED,
+            boundary_scope=("recovery", "rollout"),
+        )
+        governance_identity = AuthorizationIdentity(
+            slug="gatekeeper-governance",
+            kind=IdentityKind.OPERATOR,
+            role=RoleName.GATEKEEPER,
+            trust_level=TrustLevel.VERIFIED,
+            boundary_scope=("governance", "rollout"),
+        )
+        coordination = coordinate_shadow_work(
+            state,
+            work_unit,
+            control_plane=shadow_plane,
+            identity=shadow_identity,
+            available_roles=(RoleName.EXECUTOR,),
+            observed_budget=0.14,
+        )
+        rollout_state = rollout_state_for_shadow(
+            coordination,
+            control_plane=rollout_plane,
+            identity=rollout_identity,
+            evidence_ref="audit-rollout-policy",
+        )
+        held_state = advance_rollout_state(rollout_state, phase=RolloutPhase.HELD, blockers=("manual hold",))
+        recovery = orchestrate_recovery_for_rollout(
+            held_state,
+            control_plane=recovery_plane,
+            identity=recovery_identity,
+            evidence_ref="audit-recovery-hold",
+        )
+
+        governance = govern_recovery_orchestration(
+            recovery,
+            control_plane=governance_plane,
+            identity=governance_identity,
+            decision=HumanDecision.HOLD,
+            audit_ref="audit-governance-hold",
+        )
+
+        self.assertFalse(governance.release_authorized)
+        self.assertEqual(governance.governance_signal.status, "held")
+        self.assertEqual(governance.governance_signal.severity, "warning")
+
+    def test_kki_human_governance_escalates_when_requested(self) -> None:
+        artifacts = (
+            ControlArtifact(
+                artifact_id="shadow-policy",
+                kind=ArtifactKind.POLICY,
+                version="2.0",
+                scope=ArtifactScope.BOUNDARY,
+                runtime_stage=RuntimeStage.PILOT,
+                boundary="shadow",
+                validations=(ValidationStep.STATIC, ValidationStep.CONSISTENCY, ValidationStep.SHADOW),
+                evidence_ref="audit-shadow-policy",
+                payload={"preview_gate": "strict", "drift_threshold": 0.05},
+            ),
+            ControlArtifact(
+                artifact_id="rollout-policy",
+                kind=ArtifactKind.POLICY,
+                version="2.1",
+                scope=ArtifactScope.BOUNDARY,
+                runtime_stage=RuntimeStage.PILOT,
+                boundary="rollout",
+                validations=(ValidationStep.STATIC, ValidationStep.CONSISTENCY, ValidationStep.SHADOW),
+                evidence_ref="audit-rollout-policy",
+                payload={"promotion_gate": "hold-until-shadow-green"},
+            ),
+        )
+        shadow_plane = load_control_plane(artifacts, runtime_stage=RuntimeStage.PILOT, boundary="shadow")
+        rollout_plane = load_control_plane(artifacts, runtime_stage=RuntimeStage.PILOT, boundary="rollout")
+        recovery_plane = load_control_plane((), runtime_stage=RuntimeStage.PILOT, boundary="recovery")
+        governance_plane = load_control_plane((), runtime_stage=RuntimeStage.PILOT, boundary="governance")
+        state = orchestration_state_for_runtime(
+            runtime_dna_for_profile("pilot-runtime-dna", stage=RuntimeStage.PILOT),
+            mission_ref="mission-139",
+            gates=GateReadiness(shadow=GateState.GUARDED),
+        )
+        work_unit = work_unit_for_state(
+            state,
+            title="govern escalate",
+            boundary="rollout",
+            correlation_id="corr-139-escalate",
+            priority=WorkPriority.NORMAL,
+            budget_share=0.14,
+        )
+        coordination = coordinate_shadow_work(
+            state,
+            work_unit,
+            control_plane=shadow_plane,
+            identity=AuthorizationIdentity(
+                slug="executor-shadow",
+                kind=IdentityKind.MODULE,
+                role=RoleName.EXECUTOR,
+                trust_level=TrustLevel.VERIFIED,
+                boundary_scope=("shadow", "rollout"),
+            ),
+            available_roles=(RoleName.EXECUTOR,),
+            observed_budget=0.14,
+        )
+        rollout_state = rollout_state_for_shadow(
+            coordination,
+            control_plane=rollout_plane,
+            identity=AuthorizationIdentity(
+                slug="gatekeeper-rollout",
+                kind=IdentityKind.OPERATOR,
+                role=RoleName.GATEKEEPER,
+                trust_level=TrustLevel.VERIFIED,
+                boundary_scope=("rollout", "governance"),
+            ),
+            evidence_ref="audit-rollout-policy",
+        )
+        held_state = advance_rollout_state(rollout_state, phase=RolloutPhase.HELD, blockers=("manual escalation",))
+        recovery = orchestrate_recovery_for_rollout(
+            held_state,
+            control_plane=recovery_plane,
+            identity=AuthorizationIdentity(
+                slug="supervisor-recovery",
+                kind=IdentityKind.SUPERVISOR,
+                role=RoleName.SUPERVISOR,
+                trust_level=TrustLevel.PRIVILEGED,
+                boundary_scope=("recovery", "rollout"),
+            ),
+            evidence_ref="audit-recovery-escalate",
+        )
+        governance = govern_recovery_orchestration(
+            recovery,
+            control_plane=governance_plane,
+            identity=AuthorizationIdentity(
+                slug="gatekeeper-governance",
+                kind=IdentityKind.OPERATOR,
+                role=RoleName.GATEKEEPER,
+                trust_level=TrustLevel.VERIFIED,
+                boundary_scope=("governance", "rollout"),
+            ),
+            decision=HumanDecision.ESCALATE,
+            audit_ref="audit-governance-escalate",
+        )
+
+        self.assertFalse(governance.release_authorized)
+        self.assertEqual(governance.governance_signal.status, "escalated")
+        self.assertEqual(governance.governance_signal.severity, "warning")
+
+    def test_kki_human_governance_override_requires_commitment(self) -> None:
+        governance_plane = load_control_plane((), runtime_stage=RuntimeStage.PILOT, boundary="governance")
+        recovery_plane = load_control_plane((), runtime_stage=RuntimeStage.PILOT, boundary="recovery")
+        state = orchestration_state_for_runtime(
+            runtime_dna_for_profile("pilot-runtime-dna", stage=RuntimeStage.PILOT),
+            mission_ref="mission-139",
+        )
+        work_unit = work_unit_for_state(
+            state,
+            title="override path",
+            boundary="rollout",
+            correlation_id="corr-139-override",
+            priority=WorkPriority.HIGH,
+            budget_share=0.12,
+        )
+        coordination = coordinate_shadow_work(
+            state,
+            work_unit,
+            control_plane=load_control_plane((), runtime_stage=RuntimeStage.PILOT, boundary="shadow"),
+            identity=AuthorizationIdentity(
+                slug="executor-shadow",
+                kind=IdentityKind.MODULE,
+                role=RoleName.EXECUTOR,
+                trust_level=TrustLevel.VERIFIED,
+                boundary_scope=("shadow", "rollout"),
+            ),
+            available_roles=(RoleName.EXECUTOR,),
+            observed_budget=0.12,
+        )
+        rollout_state = rollout_state_for_shadow(
+            coordination,
+            control_plane=load_control_plane((), runtime_stage=RuntimeStage.PILOT, boundary="rollout"),
+            identity=AuthorizationIdentity(
+                slug="observer-rollout",
+                kind=IdentityKind.OPERATOR,
+                role=RoleName.OBSERVER,
+                trust_level=TrustLevel.RESTRICTED,
+                boundary_scope=("rollout",),
+            ),
+        )
+        recovery = orchestrate_recovery_for_rollout(
+            rollout_state,
+            control_plane=recovery_plane,
+            identity=AuthorizationIdentity(
+                slug="supervisor-recovery",
+                kind=IdentityKind.SUPERVISOR,
+                role=RoleName.SUPERVISOR,
+                trust_level=TrustLevel.PRIVILEGED,
+                boundary_scope=("recovery", "rollout"),
+            ),
+            evidence_ref="audit-recovery-override",
+        )
+        denied = govern_recovery_orchestration(
+            recovery,
+            control_plane=governance_plane,
+            identity=AuthorizationIdentity(
+                slug="supervisor-governance",
+                kind=IdentityKind.SUPERVISOR,
+                role=RoleName.SUPERVISOR,
+                trust_level=TrustLevel.EMERGENCY,
+                boundary_scope=("governance", "recovery"),
+            ),
+            decision=HumanDecision.OVERRIDE,
+            audit_ref="audit-governance-override",
+        )
+        allowed = govern_recovery_orchestration(
+            recovery,
+            control_plane=governance_plane,
+            identity=AuthorizationIdentity(
+                slug="supervisor-governance",
+                kind=IdentityKind.SUPERVISOR,
+                role=RoleName.SUPERVISOR,
+                trust_level=TrustLevel.EMERGENCY,
+                boundary_scope=("governance", "recovery"),
+            ),
+            decision=HumanDecision.OVERRIDE,
+            audit_ref="audit-governance-override",
+            commitment_ref="commit-override",
+        )
+
+        self.assertEqual(denied.gate_decision.outcome, GateOutcome.BLOCK)
+        self.assertFalse(denied.release_authorized)
+        self.assertEqual(allowed.gate_decision.outcome, GateOutcome.ESCALATE)
+        self.assertTrue(allowed.release_authorized)
+        self.assertEqual(allowed.governance_signal.status, "authorized-override")
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

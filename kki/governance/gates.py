@@ -114,6 +114,7 @@ def evaluate_gate(
     boundary: ModuleBoundaryName | str,
     control_plane: LoadedControlPlane,
     message: MessageEnvelope,
+    action: ActionName | str | None = None,
     dispatch_assignment: DispatchAssignment | None = None,
     operating_mode: OperatingMode | str = OperatingMode.NORMAL,
     evidence_ref: str | None = None,
@@ -123,10 +124,10 @@ def evaluate_gate(
 
     boundary_name = boundary if isinstance(boundary, ModuleBoundaryName) else ModuleBoundaryName(boundary)
     mode = operating_mode if isinstance(operating_mode, OperatingMode) else OperatingMode(operating_mode)
-    action = _resolve_action(boundary_name)
+    resolved_action = action if isinstance(action, ActionName) else ActionName(action) if action is not None else _resolve_action(boundary_name)
     authorization = authorize_action(
         identity,
-        action=action,
+        action=resolved_action,
         boundary=boundary_name,
         operating_mode=mode,
         message=message,
@@ -175,7 +176,7 @@ def evaluate_gate(
         gate_name=_gate_name(boundary_name),
         outcome=outcome,
         boundary=boundary_name,
-        action=action,
+        action=resolved_action,
         operating_mode=mode,
         reason=reason,
         authorization=authorization,

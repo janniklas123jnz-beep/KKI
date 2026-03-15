@@ -94,6 +94,8 @@ from kki import (
     OperationalPressure,
     OperationsRunLedger,
     OperationsCockpit,
+    OperationsSteward,
+    OperationsStewardStatus,
     OperationsWave,
     OperatingMode,
     OperationsIncident,
@@ -109,6 +111,8 @@ from kki import (
     PreviewMode,
     ShadowCoordination,
     ShadowCoordinationMode,
+    StewardDirective,
+    StewardDirectiveType,
     ProtocolContext,
     ReadinessCadence,
     ReadinessCadenceEntry,
@@ -186,6 +190,7 @@ from kki import (
     build_improvement_orchestrator,
     build_learning_register,
     build_operations_cockpit,
+    build_operations_steward,
     build_portfolio_optimizer,
     build_policy_tuner,
     build_readiness_cadence,
@@ -3920,6 +3925,38 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(register.recipe_case_ids, ("shadow-guarded",))
         self.assertEqual(register.recurring_pattern_case_ids, ("pilot-ready",))
         self.assertEqual(register.reusable_case_ids, ("shadow-guarded", "recovery-resume", "pilot-containment", "pilot-ready"))
+
+    def test_kki_operations_steward_stabilizes_blocked_case(self) -> None:
+        steward = build_operations_steward(steward_id="steward-170-stabilize")
+        directive = next(item for item in steward.directives if item.case_id == "pilot-containment")
+
+        self.assertIsInstance(steward, OperationsSteward)
+        self.assertIsInstance(directive, StewardDirective)
+        self.assertEqual(directive.directive_type, StewardDirectiveType.STABILIZE)
+        self.assertEqual(directive.policy_action, PolicyTuneAction.TIGHTEN)
+        self.assertEqual(directive.learning_pattern, LearningPatternType.STABILIZED_INTERVENTION)
+
+    def test_kki_operations_steward_governs_review_case(self) -> None:
+        steward = build_operations_steward(steward_id="steward-170-govern")
+        directive = next(item for item in steward.directives if item.case_id == "shadow-guarded")
+
+        self.assertEqual(directive.directive_type, StewardDirectiveType.GOVERN)
+        self.assertEqual(directive.route_path, EscalationRoutePath.GOVERNANCE_REVIEW)
+        self.assertTrue(directive.evidence_refs)
+
+    def test_kki_operations_steward_adapts_remaining_cases(self) -> None:
+        steward = build_operations_steward(steward_id="steward-170-adapt")
+
+        self.assertEqual(steward.adapt_case_ids, ("recovery-resume",))
+        self.assertEqual(steward.monitor_case_ids, ("pilot-ready",))
+        self.assertEqual(steward.govern_case_ids, ("shadow-guarded",))
+
+    def test_kki_operations_steward_aggregates_control_signal(self) -> None:
+        steward = build_operations_steward(steward_id="steward-170-signal")
+
+        self.assertEqual(steward.steward_signal.status, OperationsStewardStatus.CRITICAL.value)
+        self.assertEqual(steward.stabilize_case_ids, ("pilot-containment",))
+        self.assertAlmostEqual(steward.steward_signal.metrics["directive_count"], 4.0)
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

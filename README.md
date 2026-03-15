@@ -452,6 +452,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `build_learning_register()` koppelt `PolicyTuner`, `ConvergenceSimulator` und `EvidenceLedger`, um getunte Policies mitsamt Evidenz- und Commitment-Spuren als dauerhaft wiederverwendbares Lernwissen festzuhalten
 - das Register erweitert den Snapshot um ein explizites `learning-register`-Signal fuer erfasste Interventionen, Rezepte und wiederverwendbares Organisationswissen
 
+`#170` schliesst den Block nun als steuernde Betriebsinstanz ab:
+
+- `StewardDirective`, `OperationsSteward`, `StewardDirectiveType` und `OperationsStewardStatus` modellieren die vereinheitlichte Steuerinstanz ueber Stabilisierung, Governance, Anpassung und Monitoring
+- `build_operations_steward()` koppelt `CapacityPlanner`, `GovernanceAgenda`, `RecoveryDrillSuite`, `PolicyTuner` und `LearningRegister`, um pro Fall genau eine kanonische Operations-Direktive abzuleiten
+- der Steward erweitert den Snapshot um ein explizites `operations-steward`-Signal fuer kritische Stabilisierung, aktive Steuerung und stabilen Uebergang in den naechsten Block
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

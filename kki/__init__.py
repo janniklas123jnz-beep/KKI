@@ -31,6 +31,7 @@ from .convergence_simulator import (
     build_convergence_simulator,
 )
 from .learning_register import LearningPatternType, LearningRecord, LearningRegister, build_learning_register
+from .operations_steward import OperationsSteward, OperationsStewardStatus, StewardDirective, StewardDirectiveType, build_operations_steward
 from .policy_tuner import PolicyTuneAction, PolicyTuneEntry, PolicyTuner, build_policy_tuner
 from .readiness_cadence import (
     ReadinessCadence,
@@ -325,6 +326,8 @@ __all__ = [
     "OperationsRunLedger",
     "OperationsIncident",
     "OperationsCockpit",
+    "OperationsSteward",
+    "OperationsStewardStatus",
     "OperatingMode",
     "OrchestrationState",
     "OrchestrationStatus",
@@ -391,6 +394,8 @@ __all__ = [
     "ScenarioReplaySuite",
     "ShadowCoordination",
     "ShadowCoordinationMode",
+    "StewardDirective",
+    "StewardDirectiveType",
     "ShadowPreview",
     "TelemetryAlert",
     "TelemetrySignal",
@@ -425,6 +430,7 @@ __all__ = [
     "build_improvement_orchestrator",
     "build_learning_register",
     "build_operations_cockpit",
+    "build_operations_steward",
     "build_portfolio_optimizer",
     "build_policy_tuner",
     "build_remediation_campaign",

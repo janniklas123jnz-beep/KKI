@@ -494,6 +494,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `build_intervention_simulator()` koppelt `AutonomyGovernor`, `OutcomeLedger` und `ExceptionRegister`, um pro Fall eine Projektion auf `ready`, `guarded`, `at-risk` oder `rollback-recommended` samt Fallback-Pfad zu erzeugen
 - der Simulator erweitert den Snapshot um ein explizites `intervention-simulator`-Signal fuer vorab erkannte Rueckfallmuster, Rollback-Bedarf und stabile Autonomie-Fenster
 
+`#177` hebt diese Fallsteuerung jetzt auf Verbundebene:
+
+- `FederationCell`, `FederationCoordination`, `FederationDomain`, `FederationAlignmentStatus`, `FederationHandoff` und `FederationHandoffPriority` modellieren mehrere koordinierte Steuerkontexte ueber Resilienz-, Governance- und Autonomie-Domaenen hinweg
+- `build_federation_coordination()` koppelt `InterventionSimulator` und `AutonomyGovernor`, um Zellen mit gemeinsamen Risiken, Alignment-Status und expliziten Domain-Handoffs zu bilden
+- die Verbund-Koordination erweitert den Snapshot um ein explizites `federation-coordination`-Signal fuer eskalierte Resilienz-Lagen, Governance-Handoffs und ausgerichtete Autonomie-Fenster
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

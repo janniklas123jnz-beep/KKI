@@ -62,6 +62,12 @@ from kki import (
     ExceptionKind,
     ExceptionRegister,
     ExceptionSeverity,
+    FederationAlignmentStatus,
+    FederationCell,
+    FederationCoordination,
+    FederationDomain,
+    FederationHandoff,
+    FederationHandoffPriority,
     EvidenceRecord,
     EventEnvelope,
     GateDecision,
@@ -211,6 +217,7 @@ from kki import (
     build_escalation_router,
     build_evidence_ledger,
     build_exception_register,
+    build_federation_coordination,
     build_governance_agenda,
     build_guardrail_portfolio,
     build_improvement_orchestrator,
@@ -4185,6 +4192,41 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(simulator.guarded_case_ids, ("shadow-guarded",))
         self.assertEqual(simulator.at_risk_case_ids, ("recovery-resume",))
         self.assertEqual(simulator.rollback_case_ids, ("pilot-containment",))
+
+    def test_kki_federation_coordination_builds_resilience_cell(self) -> None:
+        coordination = build_federation_coordination(coordination_id="federation-177-resilience")
+        cell = next(item for item in coordination.cells if item.domain is FederationDomain.RESILIENCE)
+
+        self.assertIsInstance(coordination, FederationCoordination)
+        self.assertIsInstance(cell, FederationCell)
+        self.assertEqual(cell.alignment_status, FederationAlignmentStatus.ESCALATED)
+        self.assertEqual(cell.case_ids, ("pilot-containment", "recovery-resume"))
+
+    def test_kki_federation_coordination_builds_governance_and_autonomy_cells(self) -> None:
+        coordination = build_federation_coordination(coordination_id="federation-177-domains")
+
+        governance_cell = next(item for item in coordination.cells if item.domain is FederationDomain.GOVERNANCE)
+        autonomy_cell = next(item for item in coordination.cells if item.domain is FederationDomain.AUTONOMY)
+        self.assertEqual(governance_cell.alignment_status, FederationAlignmentStatus.HANDOFF_REQUIRED)
+        self.assertEqual(governance_cell.case_ids, ("shadow-guarded",))
+        self.assertEqual(autonomy_cell.alignment_status, FederationAlignmentStatus.ALIGNED)
+        self.assertEqual(autonomy_cell.case_ids, ("pilot-ready",))
+
+    def test_kki_federation_coordination_creates_domain_handoffs(self) -> None:
+        coordination = build_federation_coordination(coordination_id="federation-177-handoffs")
+
+        self.assertEqual(len(coordination.handoffs), 2)
+        self.assertIsInstance(coordination.handoffs[0], FederationHandoff)
+        self.assertEqual(coordination.handoffs[0].priority, FederationHandoffPriority.CRITICAL)
+        self.assertEqual(coordination.handoffs[1].priority, FederationHandoffPriority.PLANNED)
+
+    def test_kki_federation_coordination_aggregates_coordination_signal(self) -> None:
+        coordination = build_federation_coordination(coordination_id="federation-177-signal")
+
+        self.assertEqual(coordination.coordination_signal.status, "federated-escalation")
+        self.assertEqual(coordination.escalated_domains, (FederationDomain.RESILIENCE,))
+        self.assertEqual(coordination.handoff_domains, (FederationDomain.GOVERNANCE,))
+        self.assertEqual(coordination.aligned_domains, (FederationDomain.AUTONOMY,))
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

@@ -164,6 +164,14 @@ from .leitstern_doctrine import (
     LeitsternDoctrine,
     build_leitstern_doctrine,
 )
+from .missions_collegium import (
+    CollegiumLane,
+    CollegiumMandate,
+    CollegiumSeat,
+    CollegiumStatus,
+    MissionsCollegium,
+    build_missions_collegium,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -541,6 +549,11 @@ __all__ = [
     "DoctrineScope",
     "DoctrineStatus",
     "LeitsternDoctrine",
+    "CollegiumLane",
+    "CollegiumMandate",
+    "CollegiumSeat",
+    "CollegiumStatus",
+    "MissionsCollegium",
     "ExceptionCase",
     "ExceptionKind",
     "ExceptionRegister",
@@ -733,6 +746,7 @@ __all__ = [
     "build_veto_sluice",
     "build_consensus_diplomacy",
     "build_leitstern_doctrine",
+    "build_missions_collegium",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

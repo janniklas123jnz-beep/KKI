@@ -64,6 +64,10 @@ from kki import (
     ConsensusDirectiveType,
     ConsensusMandate,
     ConsensusDiplomacy,
+    CollegiumLane,
+    CollegiumMandate,
+    CollegiumSeat,
+    CollegiumStatus,
     DoctrineClause,
     DoctrinePrinciple,
     DoctrineScope,
@@ -76,6 +80,7 @@ from kki import (
     DiplomacyStatus,
     ExecutionCabinet,
     LeitsternDoctrine,
+    MissionsCollegium,
     VetoSluice,
     DecisionArchive,
     DelegationMatrix,
@@ -310,6 +315,7 @@ from kki import (
     build_execution_cabinet,
     build_consensus_diplomacy,
     build_leitstern_doctrine,
+    build_missions_collegium,
     build_veto_sluice,
     build_directive_consensus,
     build_dispatch_plan,
@@ -4974,6 +4980,42 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(doctrine.guarded_clause_ids, ("doctrine-196-signal-stability-lane",))
         self.assertEqual(doctrine.adopted_clause_ids, ("doctrine-196-signal-governance-lane",))
         self.assertEqual(doctrine.enshrined_clause_ids, ("doctrine-196-signal-expansion-lane",))
+
+    def test_kki_missions_collegium_builds_reserved_stability_seat(self) -> None:
+        collegium = build_missions_collegium(collegium_id="collegium-197-stability")
+        seat = next(item for item in collegium.seats if item.collegium_status is CollegiumStatus.RESERVED)
+
+        self.assertIsInstance(collegium, MissionsCollegium)
+        self.assertIsInstance(seat, CollegiumSeat)
+        self.assertEqual(seat.collegium_mandate, CollegiumMandate.STABILITY_CHAIR)
+        self.assertEqual(seat.collegium_lane, CollegiumLane.CONTAINMENT_PORTFOLIO)
+        self.assertEqual(seat.mission_ref, "recovery-drill")
+
+    def test_kki_missions_collegium_builds_coordinating_governance_seat(self) -> None:
+        collegium = build_missions_collegium(collegium_id="collegium-197-governance")
+        seat = next(item for item in collegium.seats if item.collegium_status is CollegiumStatus.COORDINATING)
+
+        self.assertEqual(seat.collegium_mandate, CollegiumMandate.GOVERNANCE_CHAIR)
+        self.assertEqual(seat.collegium_lane, CollegiumLane.GOVERNANCE_PORTFOLIO)
+        self.assertEqual(seat.mission_ref, "shadow-hardening")
+        self.assertGreater(seat.collegium_weight, 0.3)
+
+    def test_kki_missions_collegium_builds_deployed_autonomy_seat(self) -> None:
+        collegium = build_missions_collegium(collegium_id="collegium-197-expansion")
+        seat = next(item for item in collegium.seats if item.collegium_status is CollegiumStatus.DEPLOYED)
+
+        self.assertEqual(seat.collegium_mandate, CollegiumMandate.EXPANSION_CHAIR)
+        self.assertEqual(seat.collegium_lane, CollegiumLane.EXPANSION_PORTFOLIO)
+        self.assertEqual(seat.mission_ref, "pilot-cutover")
+        self.assertTrue(seat.release_ready)
+
+    def test_kki_missions_collegium_aggregates_collegium_signal(self) -> None:
+        collegium = build_missions_collegium(collegium_id="collegium-197-signal")
+
+        self.assertEqual(collegium.collegium_signal.status, "collegium-reserved")
+        self.assertEqual(collegium.reserved_seat_ids, ("collegium-197-signal-stability-lane",))
+        self.assertEqual(collegium.coordinating_seat_ids, ("collegium-197-signal-governance-lane",))
+        self.assertEqual(collegium.deployed_seat_ids, ("collegium-197-signal-expansion-lane",))
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

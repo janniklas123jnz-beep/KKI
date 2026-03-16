@@ -614,6 +614,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `build_leitstern_doctrine()` koppelt die `ConsensusDiplomacy`, um deadlocked, brokered und harmonized Kanaele in guarded, adopted und enshrined Doktrin-Klauseln zu ueberfuehren
 - die Leitstern-Doktrin erweitert den Snapshot um ein explizites `leitstern-doctrine`-Signal fuer steward canon, governance canon und autonomy canon
 
+`#197` bindet diese Doktrin nun an laufende Missionen und Portfolios zurueck:
+
+- `CollegiumSeat`, `MissionsCollegium`, `CollegiumMandate`, `CollegiumLane` und `CollegiumStatus` modellieren missionstragende Sitze ueber der Leitstern-Doktrin
+- `build_missions_collegium()` koppelt die `LeitsternDoctrine` mit `PortfolioRadar` und typisierten Missionsprofilen, um guarded, adopted und enshrined Klauseln in reserved, coordinating und deployed Missionssitze zu ueberfuehren
+- das Missions-Kollegium erweitert den Snapshot um ein explizites `missions-collegium`-Signal fuer containment, governance und expansion portfolios
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

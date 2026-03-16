@@ -116,6 +116,13 @@ from .directive_consensus import (
     DirectiveConsensus,
     build_directive_consensus,
 )
+from .decision_archive import (
+    ArchiveEntry,
+    ArchiveRetention,
+    ArchiveStatus,
+    DecisionArchive,
+    build_decision_archive,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -463,6 +470,10 @@ __all__ = [
     "ConsensusDirectiveType",
     "ConsensusMandate",
     "DirectiveConsensus",
+    "ArchiveEntry",
+    "ArchiveRetention",
+    "ArchiveStatus",
+    "DecisionArchive",
     "ExceptionCase",
     "ExceptionKind",
     "ExceptionRegister",
@@ -649,6 +660,7 @@ __all__ = [
     "build_intervention_charter",
     "build_program_senate",
     "build_directive_consensus",
+    "build_decision_archive",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

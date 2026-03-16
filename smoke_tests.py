@@ -12,6 +12,9 @@ from pathlib import Path
 
 from kki import (
     ActionName,
+    ArchiveEntry,
+    ArchiveRetention,
+    ArchiveStatus,
     ArtifactKind,
     ArtifactScope,
     AutonomyAssignment,
@@ -47,6 +50,7 @@ from kki import (
     ConsensusMandate,
     CompassStatus,
     CharterStatus,
+    DecisionArchive,
     DirectiveConsensus,
     GuidelineCompass,
     GuidelinePrinciple,
@@ -273,6 +277,7 @@ from kki import (
     build_continuous_readiness_cycle,
     build_convergence_simulator,
     build_course_corrector,
+    build_decision_archive,
     build_directive_consensus,
     build_dispatch_plan,
     build_drift_monitor,
@@ -4735,6 +4740,39 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(consensus.binding_directive_ids, ("consensus-190-signal-stability-lane",))
         self.assertEqual(consensus.negotiated_directive_ids, ("consensus-190-signal-governance-lane",))
         self.assertEqual(consensus.ratified_directive_ids, ("consensus-190-signal-expansion-lane",))
+
+    def test_kki_decision_archive_builds_sealed_binding_entry(self) -> None:
+        archive = build_decision_archive(archive_id="archive-191-binding")
+        entry = next(item for item in archive.entries if item.archive_status is ArchiveStatus.SEALED)
+
+        self.assertIsInstance(archive, DecisionArchive)
+        self.assertIsInstance(entry, ArchiveEntry)
+        self.assertEqual(entry.retention, ArchiveRetention.AUDIT)
+        self.assertEqual(entry.directive_status, ConsensusDirectiveStatus.BINDING)
+
+    def test_kki_decision_archive_builds_indexed_negotiated_entry(self) -> None:
+        archive = build_decision_archive(archive_id="archive-191-negotiated")
+        entry = next(item for item in archive.entries if item.archive_status is ArchiveStatus.INDEXED)
+
+        self.assertEqual(entry.retention, ArchiveRetention.AUDIT)
+        self.assertEqual(entry.directive_status, ConsensusDirectiveStatus.NEGOTIATED)
+        self.assertGreater(entry.archive_weight, 0.5)
+
+    def test_kki_decision_archive_builds_codified_ratified_entry(self) -> None:
+        archive = build_decision_archive(archive_id="archive-191-ratified")
+        entry = next(item for item in archive.entries if item.archive_status is ArchiveStatus.CODIFIED)
+
+        self.assertEqual(entry.retention, ArchiveRetention.KNOWLEDGE)
+        self.assertEqual(entry.directive_status, ConsensusDirectiveStatus.RATIFIED)
+        self.assertTrue(entry.release_ready)
+
+    def test_kki_decision_archive_aggregates_archive_signal(self) -> None:
+        archive = build_decision_archive(archive_id="archive-191-signal")
+
+        self.assertEqual(archive.archive_signal.status, "archive-sealed")
+        self.assertEqual(archive.sealed_entry_ids, ("archive-191-signal-stability-lane",))
+        self.assertEqual(archive.indexed_entry_ids, ("archive-191-signal-governance-lane",))
+        self.assertEqual(archive.codified_entry_ids, ("archive-191-signal-expansion-lane",))
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

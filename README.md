@@ -578,6 +578,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `build_directive_consensus()` koppelt den `ProgramSenate`, um contested, negotiated und ratified Senate-Ergebnisse in tragfaehige Hold-, Align- und Release-Direktiven fuer Leitstern zu konsolidieren
 - der Direktiv-Konsens erweitert den Snapshot um ein explizites `directive-consensus`-Signal fuer binding lock, negotiated compact und ratified accord
 
+`#191` konserviert diese Spitzendirektiven nun im Beschluss-Archiv:
+
+- `ArchiveEntry`, `DecisionArchive`, `ArchiveStatus` und `ArchiveRetention` modellieren versiegelte, indexierte und kodifizierte Archivobjekte ueber bindende, verhandelte und ratifizierte Leitstern-Direktiven
+- `build_decision_archive()` koppelt den `DirectiveConsensus`, um Spitzendirektiven als dauerhafte `PersistenceRecord`-gestuetzte Archiv-Eintraege zu sichern
+- das Beschluss-Archiv erweitert den Snapshot um ein explizites `decision-archive`-Signal fuer sealed audit, indexed review und codified knowledge retention
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

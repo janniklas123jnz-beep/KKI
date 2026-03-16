@@ -139,6 +139,15 @@ from .delegation_matrix import (
     DelegationStatus,
     build_delegation_matrix,
 )
+from .veto_sluice import (
+    RecallPath,
+    ReleasePath,
+    SluiceStatus,
+    VetoChannel,
+    VetoSluice,
+    VetoStop,
+    build_veto_sluice,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -500,6 +509,12 @@ __all__ = [
     "DelegationMatrix",
     "DelegationMode",
     "DelegationStatus",
+    "RecallPath",
+    "ReleasePath",
+    "SluiceStatus",
+    "VetoChannel",
+    "VetoSluice",
+    "VetoStop",
     "ExceptionCase",
     "ExceptionKind",
     "ExceptionRegister",
@@ -689,6 +704,7 @@ __all__ = [
     "build_decision_archive",
     "build_execution_cabinet",
     "build_delegation_matrix",
+    "build_veto_sluice",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

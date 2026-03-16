@@ -596,6 +596,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `build_delegation_matrix()` koppelt das `ExecutionCabinet`, um locked, supervising und commissioned Kabinettsordnungen in pinned, routed und open Delegationspfade zu ueberfuehren
 - die Delegations-Matrix erweitert den Snapshot um ein explizites `delegation-matrix`-Signal fuer pinned stewardship, routed governance und open autonomy handoffs
 
+`#194` sichert diese Delegationen nun durch eine Veto-Schleuse ab:
+
+- `VetoChannel`, `VetoSluice`, `VetoStop`, `ReleasePath`, `RecallPath` und `SluiceStatus` modellieren explizite Sperr-, Freigabe- und Rueckholpfade ueber die Delegationslinien
+- `build_veto_sluice()` koppelt die `DelegationMatrix`, um pinned, routed und open Delegationen in blocking, reviewing und clearing Schleusenkanäle zu ueberfuehren
+- die Veto-Schleuse erweitert den Snapshot um ein explizites `veto-sluice`-Signal fuer blocking veto, reviewing release und clearing recall controls
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

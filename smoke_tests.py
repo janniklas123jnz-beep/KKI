@@ -34,6 +34,12 @@ from kki import (
     DelegationMatrix,
     DelegationMode,
     DelegationStatus,
+    RecallPath,
+    ReleasePath,
+    SluiceStatus,
+    VetoChannel,
+    VetoSluice,
+    VetoStop,
     CapacityLane,
     CapacityPlanEntry,
     CapacityPlanner,
@@ -60,6 +66,7 @@ from kki import (
     CompassStatus,
     CharterStatus,
     ExecutionCabinet,
+    VetoSluice,
     DecisionArchive,
     DelegationMatrix,
     DirectiveConsensus,
@@ -291,6 +298,7 @@ from kki import (
     build_decision_archive,
     build_delegation_matrix,
     build_execution_cabinet,
+    build_veto_sluice,
     build_directive_consensus,
     build_dispatch_plan,
     build_drift_monitor,
@@ -4852,6 +4860,42 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(matrix.pinned_delegation_ids, ("matrix-193-signal-stability-lane",))
         self.assertEqual(matrix.routed_delegation_ids, ("matrix-193-signal-governance-lane",))
         self.assertEqual(matrix.open_delegation_ids, ("matrix-193-signal-expansion-lane",))
+
+    def test_kki_veto_sluice_builds_blocking_stability_channel(self) -> None:
+        sluice = build_veto_sluice(sluice_id="sluice-194-stability")
+        channel = next(item for item in sluice.channels if item.sluice_status is SluiceStatus.BLOCKING)
+
+        self.assertIsInstance(sluice, VetoSluice)
+        self.assertIsInstance(channel, VetoChannel)
+        self.assertEqual(channel.veto_stop, VetoStop.HARD_STOP)
+        self.assertEqual(channel.release_path, ReleasePath.EXECUTIVE_RELEASE)
+        self.assertEqual(channel.recall_path, RecallPath.IMMEDIATE_RECALL)
+
+    def test_kki_veto_sluice_builds_reviewing_governance_channel(self) -> None:
+        sluice = build_veto_sluice(sluice_id="sluice-194-governance")
+        channel = next(item for item in sluice.channels if item.sluice_status is SluiceStatus.REVIEWING)
+
+        self.assertEqual(channel.veto_stop, VetoStop.REVIEW_STOP)
+        self.assertEqual(channel.release_path, ReleasePath.GOVERNED_RELEASE)
+        self.assertEqual(channel.recall_path, RecallPath.GOVERNED_RECALL)
+        self.assertGreater(channel.guard_score, 0.6)
+
+    def test_kki_veto_sluice_builds_clearing_autonomy_channel(self) -> None:
+        sluice = build_veto_sluice(sluice_id="sluice-194-expansion")
+        channel = next(item for item in sluice.channels if item.sluice_status is SluiceStatus.CLEARING)
+
+        self.assertEqual(channel.veto_stop, VetoStop.OPEN_STOP)
+        self.assertEqual(channel.release_path, ReleasePath.AUTONOMY_RELEASE)
+        self.assertEqual(channel.recall_path, RecallPath.SUPERVISED_RECALL)
+        self.assertTrue(channel.release_ready)
+
+    def test_kki_veto_sluice_aggregates_sluice_signal(self) -> None:
+        sluice = build_veto_sluice(sluice_id="sluice-194-signal")
+
+        self.assertEqual(sluice.sluice_signal.status, "sluice-blocking")
+        self.assertEqual(sluice.blocking_channel_ids, ("sluice-194-signal-stability-lane",))
+        self.assertEqual(sluice.reviewing_channel_ids, ("sluice-194-signal-governance-lane",))
+        self.assertEqual(sluice.clearing_channel_ids, ("sluice-194-signal-expansion-lane",))
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

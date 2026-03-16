@@ -602,6 +602,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `build_veto_sluice()` koppelt die `DelegationMatrix`, um pinned, routed und open Delegationen in blocking, reviewing und clearing Schleusenkanäle zu ueberfuehren
 - die Veto-Schleuse erweitert den Snapshot um ein explizites `veto-sluice`-Signal fuer blocking veto, reviewing release und clearing recall controls
 
+`#195` fuehrt diese gegensaetzlichen Pfade nun in eine Konsens-Diplomatie:
+
+- `DiplomacyChannel`, `ConsensusDiplomacy`, `DiplomacyPosture`, `DiplomacyPath` und `DiplomacyStatus` modellieren die Verhandlungsebene ueber blockierende, reviewende und freigebende Schleusen
+- `build_consensus_diplomacy()` koppelt die `VetoSluice`, um blocking, reviewing und clearing Kanaele in deadlocked, brokered und harmonized Diplomatiepfade zu ueberfuehren
+- die Konsens-Diplomatie erweitert den Snapshot um ein explizites `consensus-diplomacy`-Signal fuer veto table, governance compact und autonomy accord
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

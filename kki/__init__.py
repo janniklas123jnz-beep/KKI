@@ -148,6 +148,14 @@ from .veto_sluice import (
     VetoStop,
     build_veto_sluice,
 )
+from .consensus_diplomacy import (
+    ConsensusDiplomacy,
+    DiplomacyChannel,
+    DiplomacyPath,
+    DiplomacyPosture,
+    DiplomacyStatus,
+    build_consensus_diplomacy,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -515,6 +523,11 @@ __all__ = [
     "VetoChannel",
     "VetoSluice",
     "VetoStop",
+    "ConsensusDiplomacy",
+    "DiplomacyChannel",
+    "DiplomacyPath",
+    "DiplomacyPosture",
+    "DiplomacyStatus",
     "ExceptionCase",
     "ExceptionKind",
     "ExceptionRegister",
@@ -705,6 +718,7 @@ __all__ = [
     "build_execution_cabinet",
     "build_delegation_matrix",
     "build_veto_sluice",
+    "build_consensus_diplomacy",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

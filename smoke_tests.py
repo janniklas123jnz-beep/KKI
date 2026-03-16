@@ -63,8 +63,13 @@ from kki import (
     ConsensusDirectiveStatus,
     ConsensusDirectiveType,
     ConsensusMandate,
+    ConsensusDiplomacy,
     CompassStatus,
     CharterStatus,
+    DiplomacyChannel,
+    DiplomacyPath,
+    DiplomacyPosture,
+    DiplomacyStatus,
     ExecutionCabinet,
     VetoSluice,
     DecisionArchive,
@@ -298,6 +303,7 @@ from kki import (
     build_decision_archive,
     build_delegation_matrix,
     build_execution_cabinet,
+    build_consensus_diplomacy,
     build_veto_sluice,
     build_directive_consensus,
     build_dispatch_plan,
@@ -4896,6 +4902,39 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(sluice.blocking_channel_ids, ("sluice-194-signal-stability-lane",))
         self.assertEqual(sluice.reviewing_channel_ids, ("sluice-194-signal-governance-lane",))
         self.assertEqual(sluice.clearing_channel_ids, ("sluice-194-signal-expansion-lane",))
+
+    def test_kki_consensus_diplomacy_builds_deadlocked_stability_channel(self) -> None:
+        diplomacy = build_consensus_diplomacy(diplomacy_id="diplomacy-195-stability")
+        channel = next(item for item in diplomacy.channels if item.diplomacy_status is DiplomacyStatus.DEADLOCKED)
+
+        self.assertIsInstance(diplomacy, ConsensusDiplomacy)
+        self.assertIsInstance(channel, DiplomacyChannel)
+        self.assertEqual(channel.posture, DiplomacyPosture.CONTAINMENT_TALKS)
+        self.assertEqual(channel.diplomacy_path, DiplomacyPath.VETO_TABLE)
+
+    def test_kki_consensus_diplomacy_builds_brokered_governance_channel(self) -> None:
+        diplomacy = build_consensus_diplomacy(diplomacy_id="diplomacy-195-governance")
+        channel = next(item for item in diplomacy.channels if item.diplomacy_status is DiplomacyStatus.BROKERED)
+
+        self.assertEqual(channel.posture, DiplomacyPosture.REVIEW_COMPACT)
+        self.assertEqual(channel.diplomacy_path, DiplomacyPath.GOVERNANCE_TABLE)
+        self.assertGreater(channel.compromise_score, 0.5)
+
+    def test_kki_consensus_diplomacy_builds_harmonized_autonomy_channel(self) -> None:
+        diplomacy = build_consensus_diplomacy(diplomacy_id="diplomacy-195-expansion")
+        channel = next(item for item in diplomacy.channels if item.diplomacy_status is DiplomacyStatus.HARMONIZED)
+
+        self.assertEqual(channel.posture, DiplomacyPosture.RELEASE_ACCORD)
+        self.assertEqual(channel.diplomacy_path, DiplomacyPath.AUTONOMY_TABLE)
+        self.assertTrue(channel.release_ready)
+
+    def test_kki_consensus_diplomacy_aggregates_diplomacy_signal(self) -> None:
+        diplomacy = build_consensus_diplomacy(diplomacy_id="diplomacy-195-signal")
+
+        self.assertEqual(diplomacy.diplomacy_signal.status, "diplomacy-deadlocked")
+        self.assertEqual(diplomacy.deadlocked_channel_ids, ("diplomacy-195-signal-stability-lane",))
+        self.assertEqual(diplomacy.brokered_channel_ids, ("diplomacy-195-signal-governance-lane",))
+        self.assertEqual(diplomacy.harmonized_channel_ids, ("diplomacy-195-signal-expansion-lane",))
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

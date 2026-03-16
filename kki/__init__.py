@@ -196,6 +196,13 @@ from .leitstern_codex import (
     LeitsternCodex,
     build_leitstern_codex,
 )
+from .kodex_register import (
+    KodexRegister,
+    KodexRegisterEntry,
+    RegisterRetention,
+    RegisterTier,
+    build_kodex_register,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -593,6 +600,10 @@ __all__ = [
     "CodexSection",
     "CodexStatus",
     "LeitsternCodex",
+    "KodexRegister",
+    "KodexRegisterEntry",
+    "RegisterRetention",
+    "RegisterTier",
     "ExceptionCase",
     "ExceptionKind",
     "ExceptionRegister",
@@ -789,6 +800,7 @@ __all__ = [
     "build_priority_conclave",
     "build_course_contract",
     "build_leitstern_codex",
+    "build_kodex_register",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

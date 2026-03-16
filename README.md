@@ -638,6 +638,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `build_leitstern_codex()` koppelt den `CourseContract` mit der zugrunde liegenden Beschluss- und Delegationskette, um protective, operative und binding Vertragsklauseln in guarded, governed und canonical Kodex-Abschnitte zu ueberfuehren
 - der Leitstern-Kodex erweitert den Snapshot um ein explizites `leitstern-codex`-Signal fuer decision canon, governance canon und expansion canon
 
+`#201` legt diesen Kodex nun als versioniertes Register ab:
+
+- `KodexRegisterEntry`, `KodexRegister`, `RegisterTier` und `RegisterRetention` modellieren referenzierbare Registereintraege ueber den kanonischen Kodex-Abschnitten
+- `build_kodex_register()` koppelt den `LeitsternCodex`, um guarded, governed und canonical Kodex-Abschnitte in reserved, curated und canonized Registerstufen zu ueberfuehren
+- das Kodex-Register erweitert den Snapshot um ein explizites `kodex-register`-Signal fuer audit, governance und constitutional retention
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

@@ -80,6 +80,8 @@ from kki import (
     CodexCanon,
     CodexSection,
     CodexStatus,
+    KodexRegister,
+    KodexRegisterEntry,
     DoctrineClause,
     DoctrinePrinciple,
     DoctrineScope,
@@ -95,6 +97,8 @@ from kki import (
     LeitsternCodex,
     MissionsCollegium,
     PriorityConclave,
+    RegisterRetention,
+    RegisterTier,
     CourseContract,
     VetoSluice,
     DecisionArchive,
@@ -334,6 +338,7 @@ from kki import (
     build_priority_conclave,
     build_course_contract,
     build_leitstern_codex,
+    build_kodex_register,
     build_veto_sluice,
     build_directive_consensus,
     build_dispatch_plan,
@@ -5142,6 +5147,40 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(codex.guarded_section_ids, ("codex-200-signal-stability-lane",))
         self.assertEqual(codex.governed_section_ids, ("codex-200-signal-governance-lane",))
         self.assertEqual(codex.canonical_section_ids, ("codex-200-signal-expansion-lane",))
+
+    def test_kki_kodex_register_builds_reserved_decision_entry(self) -> None:
+        register = build_kodex_register(register_id="register-201-stability")
+        entry = next(item for item in register.entries if item.register_tier is RegisterTier.RESERVED)
+
+        self.assertIsInstance(register, KodexRegister)
+        self.assertIsInstance(entry, KodexRegisterEntry)
+        self.assertEqual(entry.codex_canon, CodexCanon.DECISION_CANON)
+        self.assertEqual(entry.retention, RegisterRetention.AUDIT)
+        self.assertEqual(entry.version, "v1.1")
+
+    def test_kki_kodex_register_builds_curated_governance_entry(self) -> None:
+        register = build_kodex_register(register_id="register-201-governance")
+        entry = next(item for item in register.entries if item.register_tier is RegisterTier.CURATED)
+
+        self.assertEqual(entry.codex_canon, CodexCanon.GOVERNANCE_CANON)
+        self.assertEqual(entry.retention, RegisterRetention.GOVERNANCE)
+        self.assertGreater(entry.register_weight, 0.4)
+
+    def test_kki_kodex_register_builds_canonized_expansion_entry(self) -> None:
+        register = build_kodex_register(register_id="register-201-expansion")
+        entry = next(item for item in register.entries if item.register_tier is RegisterTier.CANONIZED)
+
+        self.assertEqual(entry.codex_canon, CodexCanon.EXPANSION_CANON)
+        self.assertEqual(entry.retention, RegisterRetention.CONSTITUTIONAL)
+        self.assertTrue(entry.release_ready)
+
+    def test_kki_kodex_register_aggregates_register_signal(self) -> None:
+        register = build_kodex_register(register_id="register-201-signal")
+
+        self.assertEqual(register.register_signal.status, "register-reserved")
+        self.assertEqual(register.reserved_entry_ids, ("register-201-signal-stability-lane",))
+        self.assertEqual(register.curated_entry_ids, ("register-201-signal-governance-lane",))
+        self.assertEqual(register.canonized_entry_ids, ("register-201-signal-expansion-lane",))
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

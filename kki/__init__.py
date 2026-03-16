@@ -203,6 +203,14 @@ from .kodex_register import (
     RegisterTier,
     build_kodex_register,
 )
+from .satzungs_rat import (
+    RatBench,
+    RatInterpretation,
+    RatStatus,
+    SatzungsRat,
+    SatzungsRatArticle,
+    build_satzungs_rat,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -604,6 +612,11 @@ __all__ = [
     "KodexRegisterEntry",
     "RegisterRetention",
     "RegisterTier",
+    "RatBench",
+    "RatInterpretation",
+    "RatStatus",
+    "SatzungsRat",
+    "SatzungsRatArticle",
     "ExceptionCase",
     "ExceptionKind",
     "ExceptionRegister",
@@ -801,6 +814,7 @@ __all__ = [
     "build_course_contract",
     "build_leitstern_codex",
     "build_kodex_register",
+    "build_satzungs_rat",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

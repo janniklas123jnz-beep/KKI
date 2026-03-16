@@ -644,6 +644,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `build_kodex_register()` koppelt den `LeitsternCodex`, um guarded, governed und canonical Kodex-Abschnitte in reserved, curated und canonized Registerstufen zu ueberfuehren
 - das Kodex-Register erweitert den Snapshot um ein explizites `kodex-register`-Signal fuer audit, governance und constitutional retention
 
+`#202` ueberfuehrt dieses Register nun in einen lebenden Satzungs-Rat:
+
+- `SatzungsRatArticle`, `SatzungsRat`, `RatBench`, `RatInterpretation` und `RatStatus` modellieren die auslegbare Leitstern-Satzung ueber den Registereintraegen
+- `build_satzungs_rat()` koppelt das `KodexRegister`, um reserved, curated und canonized Registerstufen in provisional, ratified und enshrined Satzungsartikel zu ueberfuehren
+- der Satzungs-Rat erweitert den Snapshot um ein explizites `satzungs-rat`-Signal fuer steward, governance und autonomy benches
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

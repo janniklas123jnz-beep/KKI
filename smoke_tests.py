@@ -82,6 +82,11 @@ from kki import (
     CodexStatus,
     KodexRegister,
     KodexRegisterEntry,
+    RatBench,
+    RatInterpretation,
+    RatStatus,
+    SatzungsRat,
+    SatzungsRatArticle,
     DoctrineClause,
     DoctrinePrinciple,
     DoctrineScope,
@@ -339,6 +344,7 @@ from kki import (
     build_course_contract,
     build_leitstern_codex,
     build_kodex_register,
+    build_satzungs_rat,
     build_veto_sluice,
     build_directive_consensus,
     build_dispatch_plan,
@@ -5181,6 +5187,40 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(register.reserved_entry_ids, ("register-201-signal-stability-lane",))
         self.assertEqual(register.curated_entry_ids, ("register-201-signal-governance-lane",))
         self.assertEqual(register.canonized_entry_ids, ("register-201-signal-expansion-lane",))
+
+    def test_kki_satzungs_rat_builds_provisional_steward_article(self) -> None:
+        rat = build_satzungs_rat(rat_id="rat-202-stability")
+        article = next(item for item in rat.articles if item.rat_status is RatStatus.PROVISIONAL)
+
+        self.assertIsInstance(rat, SatzungsRat)
+        self.assertIsInstance(article, SatzungsRatArticle)
+        self.assertEqual(article.bench, RatBench.STEWARD_BENCH)
+        self.assertEqual(article.interpretation, RatInterpretation.PROTECTIVE_READING)
+        self.assertEqual(article.precedent_window, 1)
+
+    def test_kki_satzungs_rat_builds_ratified_governance_article(self) -> None:
+        rat = build_satzungs_rat(rat_id="rat-202-governance")
+        article = next(item for item in rat.articles if item.rat_status is RatStatus.RATIFIED)
+
+        self.assertEqual(article.bench, RatBench.GOVERNANCE_BENCH)
+        self.assertEqual(article.interpretation, RatInterpretation.GOVERNED_READING)
+        self.assertGreater(article.statute_weight, 0.45)
+
+    def test_kki_satzungs_rat_builds_enshrined_autonomy_article(self) -> None:
+        rat = build_satzungs_rat(rat_id="rat-202-expansion")
+        article = next(item for item in rat.articles if item.rat_status is RatStatus.ENSHRINED)
+
+        self.assertEqual(article.bench, RatBench.AUTONOMY_BENCH)
+        self.assertEqual(article.interpretation, RatInterpretation.SOVEREIGN_READING)
+        self.assertTrue(article.release_ready)
+
+    def test_kki_satzungs_rat_aggregates_rat_signal(self) -> None:
+        rat = build_satzungs_rat(rat_id="rat-202-signal")
+
+        self.assertEqual(rat.rat_signal.status, "rat-provisional")
+        self.assertEqual(rat.provisional_article_ids, ("rat-202-signal-stability-lane",))
+        self.assertEqual(rat.ratified_article_ids, ("rat-202-signal-governance-lane",))
+        self.assertEqual(rat.enshrined_article_ids, ("rat-202-signal-expansion-lane",))
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

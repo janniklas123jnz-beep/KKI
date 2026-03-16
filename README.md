@@ -632,6 +632,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `build_course_contract()` koppelt das `PriorityConclave`, um guarded, shortlisted und elected Selektionen in protective, operative und binding Vertragsklauseln zu ueberfuehren
 - der Kurs-Vertrag erweitert den Snapshot um ein explizites `course-contract`-Signal fuer steward assembly, governance assembly und autonomy assembly
 
+`#200` zieht diese Gesamtordnung nun in einen kanonischen Leitstern-Kodex:
+
+- `CodexSection`, `LeitsternCodex`, `CodexCanon`, `CodexAxis` und `CodexStatus` modellieren die dauerhafte Kanonform ueber Beschlussordnung, Delegation, Diplomatie und Vertrag
+- `build_leitstern_codex()` koppelt den `CourseContract` mit der zugrunde liegenden Beschluss- und Delegationskette, um protective, operative und binding Vertragsklauseln in guarded, governed und canonical Kodex-Abschnitte zu ueberfuehren
+- der Leitstern-Kodex erweitert den Snapshot um ein explizites `leitstern-codex`-Signal fuer decision canon, governance canon und expansion canon
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

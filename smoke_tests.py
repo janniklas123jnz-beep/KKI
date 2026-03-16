@@ -76,6 +76,10 @@ from kki import (
     ContractCommitment,
     ContractParty,
     ContractStatus,
+    CodexAxis,
+    CodexCanon,
+    CodexSection,
+    CodexStatus,
     DoctrineClause,
     DoctrinePrinciple,
     DoctrineScope,
@@ -88,6 +92,7 @@ from kki import (
     DiplomacyStatus,
     ExecutionCabinet,
     LeitsternDoctrine,
+    LeitsternCodex,
     MissionsCollegium,
     PriorityConclave,
     CourseContract,
@@ -328,6 +333,7 @@ from kki import (
     build_missions_collegium,
     build_priority_conclave,
     build_course_contract,
+    build_leitstern_codex,
     build_veto_sluice,
     build_directive_consensus,
     build_dispatch_plan,
@@ -5100,6 +5106,42 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(contract.protective_clause_ids, ("contract-199-signal-stability-lane",))
         self.assertEqual(contract.operative_clause_ids, ("contract-199-signal-governance-lane",))
         self.assertEqual(contract.binding_clause_ids, ("contract-199-signal-expansion-lane",))
+
+    def test_kki_leitstern_codex_builds_guarded_decision_section(self) -> None:
+        codex = build_leitstern_codex(codex_id="codex-200-stability")
+        section = next(item for item in codex.sections if item.codex_status is CodexStatus.GUARDED)
+
+        self.assertIsInstance(codex, LeitsternCodex)
+        self.assertIsInstance(section, CodexSection)
+        self.assertEqual(section.codex_canon, CodexCanon.DECISION_CANON)
+        self.assertEqual(section.codex_axis, CodexAxis.DECISION_ORDER)
+        self.assertEqual(section.mission_ref, "recovery-drill")
+
+    def test_kki_leitstern_codex_builds_governed_delegation_section(self) -> None:
+        codex = build_leitstern_codex(codex_id="codex-200-governance")
+        section = next(item for item in codex.sections if item.codex_status is CodexStatus.GOVERNED)
+
+        self.assertEqual(section.codex_canon, CodexCanon.GOVERNANCE_CANON)
+        self.assertEqual(section.codex_axis, CodexAxis.DELEGATION_ORDER)
+        self.assertEqual(section.mission_ref, "shadow-hardening")
+        self.assertGreater(section.codex_strength, 0.4)
+
+    def test_kki_leitstern_codex_builds_canonical_diplomacy_section(self) -> None:
+        codex = build_leitstern_codex(codex_id="codex-200-expansion")
+        section = next(item for item in codex.sections if item.codex_status is CodexStatus.CANONICAL)
+
+        self.assertEqual(section.codex_canon, CodexCanon.EXPANSION_CANON)
+        self.assertEqual(section.codex_axis, CodexAxis.DIPLOMACY_ORDER)
+        self.assertEqual(section.mission_ref, "pilot-cutover")
+        self.assertTrue(section.release_ready)
+
+    def test_kki_leitstern_codex_aggregates_codex_signal(self) -> None:
+        codex = build_leitstern_codex(codex_id="codex-200-signal")
+
+        self.assertEqual(codex.codex_signal.status, "codex-guarded")
+        self.assertEqual(codex.guarded_section_ids, ("codex-200-signal-stability-lane",))
+        self.assertEqual(codex.governed_section_ids, ("codex-200-signal-governance-lane",))
+        self.assertEqual(codex.canonical_section_ids, ("codex-200-signal-expansion-lane",))
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

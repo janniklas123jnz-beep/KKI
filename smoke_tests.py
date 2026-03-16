@@ -64,6 +64,10 @@ from kki import (
     ConsensusDirectiveType,
     ConsensusMandate,
     ConsensusDiplomacy,
+    DoctrineClause,
+    DoctrinePrinciple,
+    DoctrineScope,
+    DoctrineStatus,
     CompassStatus,
     CharterStatus,
     DiplomacyChannel,
@@ -71,6 +75,7 @@ from kki import (
     DiplomacyPosture,
     DiplomacyStatus,
     ExecutionCabinet,
+    LeitsternDoctrine,
     VetoSluice,
     DecisionArchive,
     DelegationMatrix,
@@ -304,6 +309,7 @@ from kki import (
     build_delegation_matrix,
     build_execution_cabinet,
     build_consensus_diplomacy,
+    build_leitstern_doctrine,
     build_veto_sluice,
     build_directive_consensus,
     build_dispatch_plan,
@@ -4935,6 +4941,39 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(diplomacy.deadlocked_channel_ids, ("diplomacy-195-signal-stability-lane",))
         self.assertEqual(diplomacy.brokered_channel_ids, ("diplomacy-195-signal-governance-lane",))
         self.assertEqual(diplomacy.harmonized_channel_ids, ("diplomacy-195-signal-expansion-lane",))
+
+    def test_kki_leitstern_doctrine_builds_guarded_boundary_clause(self) -> None:
+        doctrine = build_leitstern_doctrine(doctrine_id="doctrine-196-stability")
+        clause = next(item for item in doctrine.clauses if item.doctrine_status is DoctrineStatus.GUARDED)
+
+        self.assertIsInstance(doctrine, LeitsternDoctrine)
+        self.assertIsInstance(clause, DoctrineClause)
+        self.assertEqual(clause.principle, DoctrinePrinciple.BOUNDARY_PRIMACY)
+        self.assertEqual(clause.doctrine_scope, DoctrineScope.STEWARD_CANON)
+
+    def test_kki_leitstern_doctrine_builds_adopted_governance_clause(self) -> None:
+        doctrine = build_leitstern_doctrine(doctrine_id="doctrine-196-governance")
+        clause = next(item for item in doctrine.clauses if item.doctrine_status is DoctrineStatus.ADOPTED)
+
+        self.assertEqual(clause.principle, DoctrinePrinciple.GOVERNED_ALIGNMENT)
+        self.assertEqual(clause.doctrine_scope, DoctrineScope.GOVERNANCE_CANON)
+        self.assertGreater(clause.doctrine_strength, 0.5)
+
+    def test_kki_leitstern_doctrine_builds_enshrined_autonomy_clause(self) -> None:
+        doctrine = build_leitstern_doctrine(doctrine_id="doctrine-196-expansion")
+        clause = next(item for item in doctrine.clauses if item.doctrine_status is DoctrineStatus.ENSHRINED)
+
+        self.assertEqual(clause.principle, DoctrinePrinciple.EXPANSION_DISCIPLINE)
+        self.assertEqual(clause.doctrine_scope, DoctrineScope.AUTONOMY_CANON)
+        self.assertTrue(clause.release_ready)
+
+    def test_kki_leitstern_doctrine_aggregates_doctrine_signal(self) -> None:
+        doctrine = build_leitstern_doctrine(doctrine_id="doctrine-196-signal")
+
+        self.assertEqual(doctrine.doctrine_signal.status, "doctrine-guarded")
+        self.assertEqual(doctrine.guarded_clause_ids, ("doctrine-196-signal-stability-lane",))
+        self.assertEqual(doctrine.adopted_clause_ids, ("doctrine-196-signal-governance-lane",))
+        self.assertEqual(doctrine.enshrined_clause_ids, ("doctrine-196-signal-expansion-lane",))
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

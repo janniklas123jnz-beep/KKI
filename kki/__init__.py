@@ -156,6 +156,14 @@ from .consensus_diplomacy import (
     DiplomacyStatus,
     build_consensus_diplomacy,
 )
+from .leitstern_doctrine import (
+    DoctrineClause,
+    DoctrinePrinciple,
+    DoctrineScope,
+    DoctrineStatus,
+    LeitsternDoctrine,
+    build_leitstern_doctrine,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -528,6 +536,11 @@ __all__ = [
     "DiplomacyPath",
     "DiplomacyPosture",
     "DiplomacyStatus",
+    "DoctrineClause",
+    "DoctrinePrinciple",
+    "DoctrineScope",
+    "DoctrineStatus",
+    "LeitsternDoctrine",
     "ExceptionCase",
     "ExceptionKind",
     "ExceptionRegister",
@@ -719,6 +732,7 @@ __all__ = [
     "build_delegation_matrix",
     "build_veto_sluice",
     "build_consensus_diplomacy",
+    "build_leitstern_doctrine",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

@@ -608,6 +608,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `build_consensus_diplomacy()` koppelt die `VetoSluice`, um blocking, reviewing und clearing Kanaele in deadlocked, brokered und harmonized Diplomatiepfade zu ueberfuehren
 - die Konsens-Diplomatie erweitert den Snapshot um ein explizites `consensus-diplomacy`-Signal fuer veto table, governance compact und autonomy accord
 
+`#196` verdichtet diese Diplomatie nun in eine Leitstern-Doktrin:
+
+- `DoctrineClause`, `LeitsternDoctrine`, `DoctrinePrinciple`, `DoctrineScope` und `DoctrineStatus` modellieren die dauerhafte Lehrsatzebene ueber der verhandelten Diplomatie
+- `build_leitstern_doctrine()` koppelt die `ConsensusDiplomacy`, um deadlocked, brokered und harmonized Kanaele in guarded, adopted und enshrined Doktrin-Klauseln zu ueberfuehren
+- die Leitstern-Doktrin erweitert den Snapshot um ein explizites `leitstern-doctrine`-Signal fuer steward canon, governance canon und autonomy canon
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

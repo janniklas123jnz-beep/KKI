@@ -620,6 +620,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `build_missions_collegium()` koppelt die `LeitsternDoctrine` mit `PortfolioRadar` und typisierten Missionsprofilen, um guarded, adopted und enshrined Klauseln in reserved, coordinating und deployed Missionssitze zu ueberfuehren
 - das Missions-Kollegium erweitert den Snapshot um ein explizites `missions-collegium`-Signal fuer containment, governance und expansion portfolios
 
+`#198` konsolidiert diese Missionslage nun in ein Prioritaeten-Konklave:
+
+- `ConclaveMotion`, `PriorityConclave`, `ConclavePriority`, `ConclaveLane` und `ConclaveStatus` modellieren die priorisierte Spitzenauswahl ueber Mission, Doktrin und Diplomatie
+- `build_priority_conclave()` koppelt das `MissionsCollegium` mit der zugrunde liegenden `ConsensusDiplomacy`, um reserved, coordinating und deployed Sitze in guarded, shortlisted und elected Top-Selektionen zu ueberfuehren
+- das Prioritaeten-Konklave erweitert den Snapshot um ein explizites `priority-conclave`-Signal fuer containment, governance und expansion slots
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

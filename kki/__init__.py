@@ -172,6 +172,14 @@ from .missions_collegium import (
     MissionsCollegium,
     build_missions_collegium,
 )
+from .priority_conclave import (
+    ConclaveLane,
+    ConclaveMotion,
+    ConclavePriority,
+    ConclaveStatus,
+    PriorityConclave,
+    build_priority_conclave,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -554,6 +562,11 @@ __all__ = [
     "CollegiumSeat",
     "CollegiumStatus",
     "MissionsCollegium",
+    "ConclaveLane",
+    "ConclaveMotion",
+    "ConclavePriority",
+    "ConclaveStatus",
+    "PriorityConclave",
     "ExceptionCase",
     "ExceptionKind",
     "ExceptionRegister",
@@ -747,6 +760,7 @@ __all__ = [
     "build_consensus_diplomacy",
     "build_leitstern_doctrine",
     "build_missions_collegium",
+    "build_priority_conclave",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

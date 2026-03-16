@@ -68,6 +68,10 @@ from kki import (
     CollegiumMandate,
     CollegiumSeat,
     CollegiumStatus,
+    ConclaveLane,
+    ConclaveMotion,
+    ConclavePriority,
+    ConclaveStatus,
     DoctrineClause,
     DoctrinePrinciple,
     DoctrineScope,
@@ -81,6 +85,7 @@ from kki import (
     ExecutionCabinet,
     LeitsternDoctrine,
     MissionsCollegium,
+    PriorityConclave,
     VetoSluice,
     DecisionArchive,
     DelegationMatrix,
@@ -316,6 +321,7 @@ from kki import (
     build_consensus_diplomacy,
     build_leitstern_doctrine,
     build_missions_collegium,
+    build_priority_conclave,
     build_veto_sluice,
     build_directive_consensus,
     build_dispatch_plan,
@@ -5016,6 +5022,42 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(collegium.reserved_seat_ids, ("collegium-197-signal-stability-lane",))
         self.assertEqual(collegium.coordinating_seat_ids, ("collegium-197-signal-governance-lane",))
         self.assertEqual(collegium.deployed_seat_ids, ("collegium-197-signal-expansion-lane",))
+
+    def test_kki_priority_conclave_builds_guarded_stability_motion(self) -> None:
+        conclave = build_priority_conclave(conclave_id="conclave-198-stability")
+        motion = next(item for item in conclave.motions if item.conclave_status is ConclaveStatus.GUARDED)
+
+        self.assertIsInstance(conclave, PriorityConclave)
+        self.assertIsInstance(motion, ConclaveMotion)
+        self.assertEqual(motion.conclave_priority, ConclavePriority.STABILITY_FIRST)
+        self.assertEqual(motion.conclave_lane, ConclaveLane.CONTAINMENT_SLOT)
+        self.assertEqual(motion.mission_ref, "recovery-drill")
+
+    def test_kki_priority_conclave_builds_shortlisted_governance_motion(self) -> None:
+        conclave = build_priority_conclave(conclave_id="conclave-198-governance")
+        motion = next(item for item in conclave.motions if item.conclave_status is ConclaveStatus.SHORTLISTED)
+
+        self.assertEqual(motion.conclave_priority, ConclavePriority.GOVERNANCE_FOCUS)
+        self.assertEqual(motion.conclave_lane, ConclaveLane.GOVERNANCE_SLOT)
+        self.assertEqual(motion.mission_ref, "shadow-hardening")
+        self.assertGreater(motion.priority_score, 0.4)
+
+    def test_kki_priority_conclave_builds_elected_autonomy_motion(self) -> None:
+        conclave = build_priority_conclave(conclave_id="conclave-198-expansion")
+        motion = next(item for item in conclave.motions if item.conclave_status is ConclaveStatus.ELECTED)
+
+        self.assertEqual(motion.conclave_priority, ConclavePriority.RELEASE_VECTOR)
+        self.assertEqual(motion.conclave_lane, ConclaveLane.EXPANSION_SLOT)
+        self.assertEqual(motion.mission_ref, "pilot-cutover")
+        self.assertTrue(motion.release_ready)
+
+    def test_kki_priority_conclave_aggregates_conclave_signal(self) -> None:
+        conclave = build_priority_conclave(conclave_id="conclave-198-signal")
+
+        self.assertEqual(conclave.conclave_signal.status, "conclave-guarded")
+        self.assertEqual(conclave.guarded_motion_ids, ("conclave-198-signal-stability-lane",))
+        self.assertEqual(conclave.shortlisted_motion_ids, ("conclave-198-signal-governance-lane",))
+        self.assertEqual(conclave.elected_motion_ids, ("conclave-198-signal-expansion-lane",))
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

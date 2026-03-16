@@ -180,6 +180,14 @@ from .priority_conclave import (
     PriorityConclave,
     build_priority_conclave,
 )
+from .course_contract import (
+    ContractClause,
+    ContractCommitment,
+    ContractParty,
+    ContractStatus,
+    CourseContract,
+    build_course_contract,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -567,6 +575,11 @@ __all__ = [
     "ConclavePriority",
     "ConclaveStatus",
     "PriorityConclave",
+    "ContractClause",
+    "ContractCommitment",
+    "ContractParty",
+    "ContractStatus",
+    "CourseContract",
     "ExceptionCase",
     "ExceptionKind",
     "ExceptionRegister",
@@ -761,6 +774,7 @@ __all__ = [
     "build_leitstern_doctrine",
     "build_missions_collegium",
     "build_priority_conclave",
+    "build_course_contract",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

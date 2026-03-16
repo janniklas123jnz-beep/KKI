@@ -72,6 +72,10 @@ from kki import (
     ConclaveMotion,
     ConclavePriority,
     ConclaveStatus,
+    ContractClause,
+    ContractCommitment,
+    ContractParty,
+    ContractStatus,
     DoctrineClause,
     DoctrinePrinciple,
     DoctrineScope,
@@ -86,6 +90,7 @@ from kki import (
     LeitsternDoctrine,
     MissionsCollegium,
     PriorityConclave,
+    CourseContract,
     VetoSluice,
     DecisionArchive,
     DelegationMatrix,
@@ -322,6 +327,7 @@ from kki import (
     build_leitstern_doctrine,
     build_missions_collegium,
     build_priority_conclave,
+    build_course_contract,
     build_veto_sluice,
     build_directive_consensus,
     build_dispatch_plan,
@@ -5058,6 +5064,42 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(conclave.guarded_motion_ids, ("conclave-198-signal-stability-lane",))
         self.assertEqual(conclave.shortlisted_motion_ids, ("conclave-198-signal-governance-lane",))
         self.assertEqual(conclave.elected_motion_ids, ("conclave-198-signal-expansion-lane",))
+
+    def test_kki_course_contract_builds_protective_stability_clause(self) -> None:
+        contract = build_course_contract(contract_id="contract-199-stability")
+        clause = next(item for item in contract.clauses if item.contract_status is ContractStatus.PROTECTIVE)
+
+        self.assertIsInstance(contract, CourseContract)
+        self.assertIsInstance(clause, ContractClause)
+        self.assertEqual(clause.contract_party, ContractParty.STEWARD_ASSEMBLY)
+        self.assertEqual(clause.contract_commitment, ContractCommitment.HOLD_LINE)
+        self.assertEqual(clause.mission_ref, "recovery-drill")
+
+    def test_kki_course_contract_builds_operative_governance_clause(self) -> None:
+        contract = build_course_contract(contract_id="contract-199-governance")
+        clause = next(item for item in contract.clauses if item.contract_status is ContractStatus.OPERATIVE)
+
+        self.assertEqual(clause.contract_party, ContractParty.GOVERNANCE_ASSEMBLY)
+        self.assertEqual(clause.contract_commitment, ContractCommitment.ALIGN_LINE)
+        self.assertEqual(clause.mission_ref, "shadow-hardening")
+        self.assertGreater(clause.contract_strength, 0.4)
+
+    def test_kki_course_contract_builds_binding_autonomy_clause(self) -> None:
+        contract = build_course_contract(contract_id="contract-199-expansion")
+        clause = next(item for item in contract.clauses if item.contract_status is ContractStatus.BINDING)
+
+        self.assertEqual(clause.contract_party, ContractParty.AUTONOMY_ASSEMBLY)
+        self.assertEqual(clause.contract_commitment, ContractCommitment.ADVANCE_LINE)
+        self.assertEqual(clause.mission_ref, "pilot-cutover")
+        self.assertTrue(clause.release_ready)
+
+    def test_kki_course_contract_aggregates_contract_signal(self) -> None:
+        contract = build_course_contract(contract_id="contract-199-signal")
+
+        self.assertEqual(contract.contract_signal.status, "contract-protective")
+        self.assertEqual(contract.protective_clause_ids, ("contract-199-signal-stability-lane",))
+        self.assertEqual(contract.operative_clause_ids, ("contract-199-signal-governance-lane",))
+        self.assertEqual(contract.binding_clause_ids, ("contract-199-signal-expansion-lane",))
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

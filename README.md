@@ -626,6 +626,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `build_priority_conclave()` koppelt das `MissionsCollegium` mit der zugrunde liegenden `ConsensusDiplomacy`, um reserved, coordinating und deployed Sitze in guarded, shortlisted und elected Top-Selektionen zu ueberfuehren
 - das Prioritaeten-Konklave erweitert den Snapshot um ein explizites `priority-conclave`-Signal fuer containment, governance und expansion slots
 
+`#199` schreibt diese Spitzenauswahl nun als Kurs-Vertrag fest:
+
+- `ContractClause`, `CourseContract`, `ContractParty`, `ContractCommitment` und `ContractStatus` modellieren den belastbaren Fuehrungsvertrag zwischen den Leitstern-Ebenen
+- `build_course_contract()` koppelt das `PriorityConclave`, um guarded, shortlisted und elected Selektionen in protective, operative und binding Vertragsklauseln zu ueberfuehren
+- der Kurs-Vertrag erweitert den Snapshot um ein explizites `course-contract`-Signal fuer steward assembly, governance assembly und autonomy assembly
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

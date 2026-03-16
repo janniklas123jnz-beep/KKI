@@ -131,6 +131,14 @@ from .execution_cabinet import (
     ExecutionCabinet,
     build_execution_cabinet,
 )
+from .delegation_matrix import (
+    DelegationEntry,
+    DelegationLane,
+    DelegationMatrix,
+    DelegationMode,
+    DelegationStatus,
+    build_delegation_matrix,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -487,6 +495,11 @@ __all__ = [
     "CabinetRole",
     "CabinetStatus",
     "ExecutionCabinet",
+    "DelegationEntry",
+    "DelegationLane",
+    "DelegationMatrix",
+    "DelegationMode",
+    "DelegationStatus",
     "ExceptionCase",
     "ExceptionKind",
     "ExceptionRegister",
@@ -675,6 +688,7 @@ __all__ = [
     "build_directive_consensus",
     "build_decision_archive",
     "build_execution_cabinet",
+    "build_delegation_matrix",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

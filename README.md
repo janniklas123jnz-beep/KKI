@@ -590,6 +590,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `build_execution_cabinet()` koppelt das `DecisionArchive`, um versiegelte, indexierte und kodifizierte Archivobjekte in locked, supervising und commissioned Kabinettsordnungen zu ueberfuehren
 - das Vollzugs-Kabinett erweitert den Snapshot um ein explizites `execution-cabinet`-Signal fuer locked hold, supervising alignment und commissioned release
 
+`#193` routet diese Kabinettsordnung nun als Delegations-Matrix:
+
+- `DelegationEntry`, `DelegationMatrix`, `DelegationLane`, `DelegationMode` und `DelegationStatus` modellieren belastbare Steward-, Governance- und Autonomiepfade fuer Kabinettsbeschluesse
+- `build_delegation_matrix()` koppelt das `ExecutionCabinet`, um locked, supervising und commissioned Kabinettsordnungen in pinned, routed und open Delegationspfade zu ueberfuehren
+- die Delegations-Matrix erweitert den Snapshot um ein explizites `delegation-matrix`-Signal fuer pinned stewardship, routed governance und open autonomy handoffs
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

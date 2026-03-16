@@ -29,6 +29,11 @@ from kki import (
     CabinetOrder,
     CabinetRole,
     CabinetStatus,
+    DelegationEntry,
+    DelegationLane,
+    DelegationMatrix,
+    DelegationMode,
+    DelegationStatus,
     CapacityLane,
     CapacityPlanEntry,
     CapacityPlanner,
@@ -56,6 +61,7 @@ from kki import (
     CharterStatus,
     ExecutionCabinet,
     DecisionArchive,
+    DelegationMatrix,
     DirectiveConsensus,
     GuidelineCompass,
     GuidelinePrinciple,
@@ -283,6 +289,7 @@ from kki import (
     build_convergence_simulator,
     build_course_corrector,
     build_decision_archive,
+    build_delegation_matrix,
     build_execution_cabinet,
     build_directive_consensus,
     build_dispatch_plan,
@@ -4812,6 +4819,39 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(cabinet.locked_order_ids, ("cabinet-192-signal-stability-lane",))
         self.assertEqual(cabinet.supervising_order_ids, ("cabinet-192-signal-governance-lane",))
         self.assertEqual(cabinet.commissioned_order_ids, ("cabinet-192-signal-expansion-lane",))
+
+    def test_kki_delegation_matrix_builds_pinned_steward_entry(self) -> None:
+        matrix = build_delegation_matrix(matrix_id="matrix-193-stability")
+        entry = next(item for item in matrix.delegations if item.delegation_status is DelegationStatus.PINNED)
+
+        self.assertIsInstance(matrix, DelegationMatrix)
+        self.assertIsInstance(entry, DelegationEntry)
+        self.assertEqual(entry.delegation_lane, DelegationLane.STEWARD_PATH)
+        self.assertEqual(entry.delegation_mode, DelegationMode.HARD_HANDOFF)
+
+    def test_kki_delegation_matrix_builds_routed_governance_entry(self) -> None:
+        matrix = build_delegation_matrix(matrix_id="matrix-193-governance")
+        entry = next(item for item in matrix.delegations if item.delegation_status is DelegationStatus.ROUTED)
+
+        self.assertEqual(entry.delegation_lane, DelegationLane.GOVERNANCE_PATH)
+        self.assertEqual(entry.delegation_mode, DelegationMode.GOVERNED_HANDOFF)
+        self.assertGreater(entry.handoff_score, 0.6)
+
+    def test_kki_delegation_matrix_builds_open_autonomy_entry(self) -> None:
+        matrix = build_delegation_matrix(matrix_id="matrix-193-expansion")
+        entry = next(item for item in matrix.delegations if item.delegation_status is DelegationStatus.OPEN)
+
+        self.assertEqual(entry.delegation_lane, DelegationLane.AUTONOMY_PATH)
+        self.assertEqual(entry.delegation_mode, DelegationMode.ENABLED_HANDOFF)
+        self.assertTrue(entry.release_ready)
+
+    def test_kki_delegation_matrix_aggregates_matrix_signal(self) -> None:
+        matrix = build_delegation_matrix(matrix_id="matrix-193-signal")
+
+        self.assertEqual(matrix.matrix_signal.status, "delegation-pinned")
+        self.assertEqual(matrix.pinned_delegation_ids, ("matrix-193-signal-stability-lane",))
+        self.assertEqual(matrix.routed_delegation_ids, ("matrix-193-signal-governance-lane",))
+        self.assertEqual(matrix.open_delegation_ids, ("matrix-193-signal-expansion-lane",))
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

@@ -123,6 +123,14 @@ from .decision_archive import (
     DecisionArchive,
     build_decision_archive,
 )
+from .execution_cabinet import (
+    CabinetExecutionMode,
+    CabinetOrder,
+    CabinetRole,
+    CabinetStatus,
+    ExecutionCabinet,
+    build_execution_cabinet,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -474,6 +482,11 @@ __all__ = [
     "ArchiveRetention",
     "ArchiveStatus",
     "DecisionArchive",
+    "CabinetExecutionMode",
+    "CabinetOrder",
+    "CabinetRole",
+    "CabinetStatus",
+    "ExecutionCabinet",
     "ExceptionCase",
     "ExceptionKind",
     "ExceptionRegister",
@@ -661,6 +674,7 @@ __all__ = [
     "build_program_senate",
     "build_directive_consensus",
     "build_decision_archive",
+    "build_execution_cabinet",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

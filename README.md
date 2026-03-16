@@ -584,6 +584,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `build_decision_archive()` koppelt den `DirectiveConsensus`, um Spitzendirektiven als dauerhafte `PersistenceRecord`-gestuetzte Archiv-Eintraege zu sichern
 - das Beschluss-Archiv erweitert den Snapshot um ein explizites `decision-archive`-Signal fuer sealed audit, indexed review und codified knowledge retention
 
+`#192` ueberfuehrt dieses Archiv nun in ein Vollzugs-Kabinett:
+
+- `CabinetOrder`, `ExecutionCabinet`, `CabinetRole`, `CabinetExecutionMode` und `CabinetStatus` modellieren exekutierbare Kabinettsbeschluesse mit klaren Rollen und Vollzugsmodi
+- `build_execution_cabinet()` koppelt das `DecisionArchive`, um versiegelte, indexierte und kodifizierte Archivobjekte in locked, supervising und commissioned Kabinettsordnungen zu ueberfuehren
+- das Vollzugs-Kabinett erweitert den Snapshot um ein explizites `execution-cabinet`-Signal fuer locked hold, supervising alignment und commissioned release
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

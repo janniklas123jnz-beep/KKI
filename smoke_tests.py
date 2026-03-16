@@ -25,6 +25,10 @@ from kki import (
     BenchmarkCase,
     BenchmarkHarness,
     BenchmarkReleaseMode,
+    CabinetExecutionMode,
+    CabinetOrder,
+    CabinetRole,
+    CabinetStatus,
     CapacityLane,
     CapacityPlanEntry,
     CapacityPlanner,
@@ -50,6 +54,7 @@ from kki import (
     ConsensusMandate,
     CompassStatus,
     CharterStatus,
+    ExecutionCabinet,
     DecisionArchive,
     DirectiveConsensus,
     GuidelineCompass,
@@ -278,6 +283,7 @@ from kki import (
     build_convergence_simulator,
     build_course_corrector,
     build_decision_archive,
+    build_execution_cabinet,
     build_directive_consensus,
     build_dispatch_plan,
     build_drift_monitor,
@@ -4773,6 +4779,39 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(archive.sealed_entry_ids, ("archive-191-signal-stability-lane",))
         self.assertEqual(archive.indexed_entry_ids, ("archive-191-signal-governance-lane",))
         self.assertEqual(archive.codified_entry_ids, ("archive-191-signal-expansion-lane",))
+
+    def test_kki_execution_cabinet_builds_locked_stability_order(self) -> None:
+        cabinet = build_execution_cabinet(cabinet_id="cabinet-192-stability")
+        order = next(item for item in cabinet.orders if item.cabinet_status is CabinetStatus.LOCKED)
+
+        self.assertIsInstance(cabinet, ExecutionCabinet)
+        self.assertIsInstance(order, CabinetOrder)
+        self.assertEqual(order.cabinet_role, CabinetRole.STEWARD_CHIEF)
+        self.assertEqual(order.execution_mode, CabinetExecutionMode.ENFORCE_HOLD)
+
+    def test_kki_execution_cabinet_builds_supervising_governance_order(self) -> None:
+        cabinet = build_execution_cabinet(cabinet_id="cabinet-192-governance")
+        order = next(item for item in cabinet.orders if item.cabinet_status is CabinetStatus.SUPERVISING)
+
+        self.assertEqual(order.cabinet_role, CabinetRole.GOVERNANCE_MINISTER)
+        self.assertEqual(order.execution_mode, CabinetExecutionMode.COORDINATE_ALIGNMENT)
+        self.assertGreater(order.authority_band, 0.6)
+
+    def test_kki_execution_cabinet_builds_commissioned_expansion_order(self) -> None:
+        cabinet = build_execution_cabinet(cabinet_id="cabinet-192-expansion")
+        order = next(item for item in cabinet.orders if item.cabinet_status is CabinetStatus.COMMISSIONED)
+
+        self.assertEqual(order.cabinet_role, CabinetRole.AUTONOMY_MINISTER)
+        self.assertEqual(order.execution_mode, CabinetExecutionMode.AUTHORIZE_RELEASE)
+        self.assertTrue(order.release_ready)
+
+    def test_kki_execution_cabinet_aggregates_cabinet_signal(self) -> None:
+        cabinet = build_execution_cabinet(cabinet_id="cabinet-192-signal")
+
+        self.assertEqual(cabinet.cabinet_signal.status, "cabinet-locked")
+        self.assertEqual(cabinet.locked_order_ids, ("cabinet-192-signal-stability-lane",))
+        self.assertEqual(cabinet.supervising_order_ids, ("cabinet-192-signal-governance-lane",))
+        self.assertEqual(cabinet.commissioned_order_ids, ("cabinet-192-signal-expansion-lane",))
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

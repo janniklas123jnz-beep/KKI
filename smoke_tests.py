@@ -230,6 +230,12 @@ from kki import (
     SuprematsProzedur,
     SuprematsRegister,
     build_supremats_register,
+    EwigkeitsEintrag,
+    EwigkeitsGeltung,
+    EwigkeitsNorm,
+    EwigkeitsProzedur,
+    EwigkeitsTyp,
+    build_ewigkeits_norm,
     DoctrineClause,
     DoctrinePrinciple,
     DoctrineScope,
@@ -5399,6 +5405,40 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(konvent.begrenzt_line_ids, ("konvent-203-signal-stability-lane",))
         self.assertEqual(konvent.delegiert_line_ids, ("konvent-203-signal-governance-lane",))
         self.assertEqual(konvent.verankert_line_ids, ("konvent-203-signal-expansion-lane",))
+
+    def test_kki_ewigkeits_norm_builds_gesperrt_schutz_eintrag(self) -> None:
+        norm = build_ewigkeits_norm(norm_id="norm-228-stability")
+        eintrag = next(e for e in norm.eintraege if e.geltung is EwigkeitsGeltung.GESPERRT)
+
+        self.assertIsInstance(norm, EwigkeitsNorm)
+        self.assertIsInstance(eintrag, EwigkeitsEintrag)
+        self.assertEqual(eintrag.ewigkeits_typ, EwigkeitsTyp.SCHUTZ_EWIGKEIT)
+        self.assertEqual(eintrag.prozedur, EwigkeitsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(eintrag.ewigkeits_tier, 1)
+
+    def test_kki_ewigkeits_norm_builds_verewigt_ordnungs_eintrag(self) -> None:
+        norm = build_ewigkeits_norm(norm_id="norm-228-governance")
+        eintrag = next(e for e in norm.eintraege if e.geltung is EwigkeitsGeltung.VEREWIGT)
+
+        self.assertEqual(eintrag.ewigkeits_typ, EwigkeitsTyp.ORDNUNGS_EWIGKEIT)
+        self.assertEqual(eintrag.prozedur, EwigkeitsProzedur.REGELPROTOKOLL)
+        self.assertGreater(eintrag.ewigkeits_weight, 0.45)
+
+    def test_kki_ewigkeits_norm_builds_grundlegend_souveraenitaets_eintrag(self) -> None:
+        norm = build_ewigkeits_norm(norm_id="norm-228-expansion")
+        eintrag = next(e for e in norm.eintraege if e.geltung is EwigkeitsGeltung.GRUNDLEGEND_VEREWIGT)
+
+        self.assertEqual(eintrag.ewigkeits_typ, EwigkeitsTyp.SOUVERAENITAETS_EWIGKEIT)
+        self.assertEqual(eintrag.prozedur, EwigkeitsProzedur.PLENARPROTOKOLL)
+        self.assertTrue(eintrag.canonical)
+
+    def test_kki_ewigkeits_norm_aggregates_norm_signal(self) -> None:
+        norm = build_ewigkeits_norm(norm_id="norm-228-signal")
+
+        self.assertEqual(norm.norm_signal.status, "norm-gesperrt")
+        self.assertEqual(norm.gesperrt_eintrag_ids, ("norm-228-signal-stability-lane",))
+        self.assertEqual(norm.verewigt_eintrag_ids, ("norm-228-signal-governance-lane",))
+        self.assertEqual(norm.grundlegend_eintrag_ids, ("norm-228-signal-expansion-lane",))
 
     def test_kki_supremats_register_builds_gesperrt_schutz_norm(self) -> None:
         register = build_supremats_register(register_id="register-227-stability")

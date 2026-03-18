@@ -403,6 +403,14 @@ from .supremats_register import (
     SuprematsRegister,
     build_supremats_register,
 )
+from .ewigkeits_norm import (
+    EwigkeitsEintrag,
+    EwigkeitsGeltung,
+    EwigkeitsNorm,
+    EwigkeitsProzedur,
+    EwigkeitsTyp,
+    build_ewigkeits_norm,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -929,6 +937,11 @@ __all__ = [
     "SuprematsNorm",
     "SuprematsProzedur",
     "SuprematsRegister",
+    "EwigkeitsEintrag",
+    "EwigkeitsGeltung",
+    "EwigkeitsNorm",
+    "EwigkeitsProzedur",
+    "EwigkeitsTyp",
     "ExceptionCase",
     "ExceptionKind",
     "ExceptionRegister",
@@ -1151,6 +1164,7 @@ __all__ = [
     "build_bundes_charta",
     "build_hoheits_manifest",
     "build_supremats_register",
+    "build_ewigkeits_norm",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

@@ -242,6 +242,12 @@ from kki import (
     SenatProzedur,
     SenatRang,
     build_grundrechts_senat,
+    VerfassungsKodex,
+    VerfassungsKodexGeltung,
+    VerfassungsKodexNorm,
+    VerfassungsKodexProzedur,
+    VerfassungsKodexRang,
+    build_verfassungs_kodex,
     DoctrineClause,
     DoctrinePrinciple,
     DoctrineScope,
@@ -5411,6 +5417,40 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(konvent.begrenzt_line_ids, ("konvent-203-signal-stability-lane",))
         self.assertEqual(konvent.delegiert_line_ids, ("konvent-203-signal-governance-lane",))
         self.assertEqual(konvent.verankert_line_ids, ("konvent-203-signal-expansion-lane",))
+
+    def test_kki_verfassungs_kodex_builds_gesperrt_schutz_norm(self) -> None:
+        kodex = build_verfassungs_kodex(kodex_id="kodex-230-stability")
+        norm = next(n for n in kodex.normen if n.geltung is VerfassungsKodexGeltung.GESPERRT)
+
+        self.assertIsInstance(kodex, VerfassungsKodex)
+        self.assertIsInstance(norm, VerfassungsKodexNorm)
+        self.assertEqual(norm.kodex_rang, VerfassungsKodexRang.SCHUTZ_KODEX)
+        self.assertEqual(norm.prozedur, VerfassungsKodexProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.kodex_tier, 1)
+
+    def test_kki_verfassungs_kodex_builds_kodifiziert_ordnungs_norm(self) -> None:
+        kodex = build_verfassungs_kodex(kodex_id="kodex-230-governance")
+        norm = next(n for n in kodex.normen if n.geltung is VerfassungsKodexGeltung.KODIFIZIERT)
+
+        self.assertEqual(norm.kodex_rang, VerfassungsKodexRang.ORDNUNGS_KODEX)
+        self.assertEqual(norm.prozedur, VerfassungsKodexProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.kodex_weight, 0.45)
+
+    def test_kki_verfassungs_kodex_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        kodex = build_verfassungs_kodex(kodex_id="kodex-230-expansion")
+        norm = next(n for n in kodex.normen if n.geltung is VerfassungsKodexGeltung.GRUNDLEGEND_KODIFIZIERT)
+
+        self.assertEqual(norm.kodex_rang, VerfassungsKodexRang.SOUVERAENITAETS_KODEX)
+        self.assertEqual(norm.prozedur, VerfassungsKodexProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_verfassungs_kodex_aggregates_kodex_signal(self) -> None:
+        kodex = build_verfassungs_kodex(kodex_id="kodex-230-signal")
+
+        self.assertEqual(kodex.kodex_signal.status, "kodex-gesperrt")
+        self.assertEqual(kodex.gesperrt_norm_ids, ("kodex-230-signal-stability-lane",))
+        self.assertEqual(kodex.kodifiziert_norm_ids, ("kodex-230-signal-governance-lane",))
+        self.assertEqual(kodex.grundlegend_norm_ids, ("kodex-230-signal-expansion-lane",))
 
     def test_kki_grundrechts_senat_builds_gesperrt_schutz_norm(self) -> None:
         senat = build_grundrechts_senat(senat_id="senat-229-stability")

@@ -419,6 +419,14 @@ from .grundrechts_senat import (
     SenatRang,
     build_grundrechts_senat,
 )
+from .verfassungs_kodex import (
+    VerfassungsKodex,
+    VerfassungsKodexGeltung,
+    VerfassungsKodexNorm,
+    VerfassungsKodexProzedur,
+    VerfassungsKodexRang,
+    build_verfassungs_kodex,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -955,6 +963,11 @@ __all__ = [
     "SenatNorm",
     "SenatProzedur",
     "SenatRang",
+    "VerfassungsKodex",
+    "VerfassungsKodexGeltung",
+    "VerfassungsKodexNorm",
+    "VerfassungsKodexProzedur",
+    "VerfassungsKodexRang",
     "ExceptionCase",
     "ExceptionKind",
     "ExceptionRegister",
@@ -1179,6 +1192,7 @@ __all__ = [
     "build_supremats_register",
     "build_ewigkeits_norm",
     "build_grundrechts_senat",
+    "build_verfassungs_kodex",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

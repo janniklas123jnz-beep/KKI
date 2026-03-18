@@ -323,6 +323,14 @@ from .missions_verfassung import (
     VerfassungsStatus,
     build_missions_verfassung,
 )
+from .zweck_manifest import (
+    ManifestGeltung,
+    ManifestProzedur,
+    ZweckDimension,
+    ZweckKlausel,
+    ZweckManifest,
+    build_zweck_manifest,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -799,6 +807,11 @@ __all__ = [
     "MissionsVerfassung",
     "VerfassungsProzedur",
     "VerfassungsStatus",
+    "ManifestGeltung",
+    "ManifestProzedur",
+    "ZweckDimension",
+    "ZweckKlausel",
+    "ZweckManifest",
     "ExceptionCase",
     "ExceptionKind",
     "ExceptionRegister",
@@ -1011,6 +1024,7 @@ __all__ = [
     "build_werte_charta",
     "build_leitbild_konvent",
     "build_missions_verfassung",
+    "build_zweck_manifest",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

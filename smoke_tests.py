@@ -170,6 +170,12 @@ from kki import (
     VerfassungsProzedur,
     VerfassungsStatus,
     build_missions_verfassung,
+    ManifestGeltung,
+    ManifestProzedur,
+    ZweckDimension,
+    ZweckKlausel,
+    ZweckManifest,
+    build_zweck_manifest,
     DoctrineClause,
     DoctrinePrinciple,
     DoctrineScope,
@@ -5339,6 +5345,40 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(konvent.begrenzt_line_ids, ("konvent-203-signal-stability-lane",))
         self.assertEqual(konvent.delegiert_line_ids, ("konvent-203-signal-governance-lane",))
         self.assertEqual(konvent.verankert_line_ids, ("konvent-203-signal-expansion-lane",))
+
+    def test_kki_zweck_manifest_builds_gesperrt_schutz_klausel(self) -> None:
+        manifest = build_zweck_manifest(manifest_id="manifest-218-stability")
+        klausel = next(k for k in manifest.klauseln if k.geltung is ManifestGeltung.GESPERRT)
+
+        self.assertIsInstance(manifest, ZweckManifest)
+        self.assertIsInstance(klausel, ZweckKlausel)
+        self.assertEqual(klausel.dimension, ZweckDimension.SCHUTZ_DIMENSION)
+        self.assertEqual(klausel.prozedur, ManifestProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(klausel.manifest_tier, 1)
+
+    def test_kki_zweck_manifest_builds_proklamiert_ordnungs_klausel(self) -> None:
+        manifest = build_zweck_manifest(manifest_id="manifest-218-governance")
+        klausel = next(k for k in manifest.klauseln if k.geltung is ManifestGeltung.PROKLAMIERT)
+
+        self.assertEqual(klausel.dimension, ZweckDimension.ORDNUNGS_DIMENSION)
+        self.assertEqual(klausel.prozedur, ManifestProzedur.REGELPROTOKOLL)
+        self.assertGreater(klausel.manifest_weight, 0.45)
+
+    def test_kki_zweck_manifest_builds_grundlegend_souveraenitaets_klausel(self) -> None:
+        manifest = build_zweck_manifest(manifest_id="manifest-218-expansion")
+        klausel = next(k for k in manifest.klauseln if k.geltung is ManifestGeltung.GRUNDLEGEND_PROKLAMIERT)
+
+        self.assertEqual(klausel.dimension, ZweckDimension.SOUVERAENITAETS_DIMENSION)
+        self.assertEqual(klausel.prozedur, ManifestProzedur.PLENARPROTOKOLL)
+        self.assertTrue(klausel.canonical)
+
+    def test_kki_zweck_manifest_aggregates_manifest_signal(self) -> None:
+        manifest = build_zweck_manifest(manifest_id="manifest-218-signal")
+
+        self.assertEqual(manifest.manifest_signal.status, "manifest-gesperrt")
+        self.assertEqual(manifest.gesperrt_klausel_ids, ("manifest-218-signal-stability-lane",))
+        self.assertEqual(manifest.proklamiert_klausel_ids, ("manifest-218-signal-governance-lane",))
+        self.assertEqual(manifest.grundlegend_klausel_ids, ("manifest-218-signal-expansion-lane",))
 
     def test_kki_missions_verfassung_builds_gesperrt_schutz_artikel(self) -> None:
         verfassung = build_missions_verfassung(verfassungs_id="verfassung-217-stability")

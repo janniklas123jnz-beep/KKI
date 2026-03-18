@@ -110,6 +110,12 @@ from kki import (
     ChartaVerfahren,
     GrundrechtsCharta,
     build_grundrechts_charta,
+    AktKlausel,
+    AktProzedur,
+    AktSektion,
+    AktStatus,
+    SouveraenitaetsAkt,
+    build_souveraenitaets_akt,
     DoctrineClause,
     DoctrinePrinciple,
     DoctrineScope,
@@ -5279,6 +5285,40 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(konvent.begrenzt_line_ids, ("konvent-203-signal-stability-lane",))
         self.assertEqual(konvent.delegiert_line_ids, ("konvent-203-signal-governance-lane",))
         self.assertEqual(konvent.verankert_line_ids, ("konvent-203-signal-expansion-lane",))
+
+    def test_kki_souveraenitaets_akt_builds_suspendiert_schutz_klausel(self) -> None:
+        akt = build_souveraenitaets_akt(akt_id="akt-208-stability")
+        klausel = next(k for k in akt.klauseln if k.akt_status is AktStatus.SUSPENDIERT)
+
+        self.assertIsInstance(akt, SouveraenitaetsAkt)
+        self.assertIsInstance(klausel, AktKlausel)
+        self.assertEqual(klausel.sektion, AktSektion.SCHUTZ_SEKTION)
+        self.assertEqual(klausel.prozedur, AktProzedur.EILVERFAHREN)
+        self.assertGreaterEqual(klausel.enactment_tier, 1)
+
+    def test_kki_souveraenitaets_akt_builds_ratifiziert_ordnungs_klausel(self) -> None:
+        akt = build_souveraenitaets_akt(akt_id="akt-208-governance")
+        klausel = next(k for k in akt.klauseln if k.akt_status is AktStatus.RATIFIZIERT)
+
+        self.assertEqual(klausel.sektion, AktSektion.ORDNUNGS_SEKTION)
+        self.assertEqual(klausel.prozedur, AktProzedur.STANDARDVERFAHREN)
+        self.assertGreater(klausel.sovereignty_weight, 0.45)
+
+    def test_kki_souveraenitaets_akt_builds_souveraen_souveraenitaets_klausel(self) -> None:
+        akt = build_souveraenitaets_akt(akt_id="akt-208-expansion")
+        klausel = next(k for k in akt.klauseln if k.akt_status is AktStatus.SOUVERAEN)
+
+        self.assertEqual(klausel.sektion, AktSektion.SOUVERAENITAETS_SEKTION)
+        self.assertEqual(klausel.prozedur, AktProzedur.VOLLVERFAHREN)
+        self.assertTrue(klausel.operative)
+
+    def test_kki_souveraenitaets_akt_aggregates_akt_signal(self) -> None:
+        akt = build_souveraenitaets_akt(akt_id="akt-208-signal")
+
+        self.assertEqual(akt.akt_signal.status, "akt-suspendiert")
+        self.assertEqual(akt.suspendiert_klausel_ids, ("akt-208-signal-stability-lane",))
+        self.assertEqual(akt.ratifiziert_klausel_ids, ("akt-208-signal-governance-lane",))
+        self.assertEqual(akt.souveraen_klausel_ids, ("akt-208-signal-expansion-lane",))
 
     def test_kki_grundrechts_charta_builds_ausgesetzt_schutz_artikel(self) -> None:
         charta = build_grundrechts_charta(charta_id="charta-207-stability")

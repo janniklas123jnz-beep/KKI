@@ -243,6 +243,14 @@ from .grundrechts_charta import (
     GrundrechtsCharta,
     build_grundrechts_charta,
 )
+from .souveraenitaets_akt import (
+    AktKlausel,
+    AktProzedur,
+    AktSektion,
+    AktStatus,
+    SouveraenitaetsAkt,
+    build_souveraenitaets_akt,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -669,6 +677,11 @@ __all__ = [
     "ChartaKapitel",
     "ChartaVerfahren",
     "GrundrechtsCharta",
+    "AktKlausel",
+    "AktProzedur",
+    "AktSektion",
+    "AktStatus",
+    "SouveraenitaetsAkt",
     "ExceptionCase",
     "ExceptionKind",
     "ExceptionRegister",
@@ -871,6 +884,7 @@ __all__ = [
     "build_normen_tribunal",
     "build_verfassungs_senat",
     "build_grundrechts_charta",
+    "build_souveraenitaets_akt",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

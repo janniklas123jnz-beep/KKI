@@ -152,6 +152,12 @@ from kki import (
     PrinzipienSatz,
     PrinzipienStatus,
     build_prinzipien_kodex,
+    WerteArtikel,
+    WerteCharta,
+    WerteProzedur,
+    WerteStatus,
+    WerteTyp,
+    build_werte_charta,
     DoctrineClause,
     DoctrinePrinciple,
     DoctrineScope,
@@ -5321,6 +5327,40 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(konvent.begrenzt_line_ids, ("konvent-203-signal-stability-lane",))
         self.assertEqual(konvent.delegiert_line_ids, ("konvent-203-signal-governance-lane",))
         self.assertEqual(konvent.verankert_line_ids, ("konvent-203-signal-expansion-lane",))
+
+    def test_kki_werte_charta_builds_gesperrt_schutz_artikel(self) -> None:
+        charta = build_werte_charta(charta_id="charta-215-stability")
+        artikel = next(a for a in charta.artikel if a.status is WerteStatus.GESPERRT)
+
+        self.assertIsInstance(charta, WerteCharta)
+        self.assertIsInstance(artikel, WerteArtikel)
+        self.assertEqual(artikel.typ, WerteTyp.SCHUTZ_WERT)
+        self.assertEqual(artikel.prozedur, WerteProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(artikel.charta_tier, 1)
+
+    def test_kki_werte_charta_builds_verankert_ordnungs_artikel(self) -> None:
+        charta = build_werte_charta(charta_id="charta-215-governance")
+        artikel = next(a for a in charta.artikel if a.status is WerteStatus.VERANKERT)
+
+        self.assertEqual(artikel.typ, WerteTyp.ORDNUNGS_WERT)
+        self.assertEqual(artikel.prozedur, WerteProzedur.REGELPROTOKOLL)
+        self.assertGreater(artikel.charta_weight, 0.45)
+
+    def test_kki_werte_charta_builds_grundlegend_souveraenitaets_artikel(self) -> None:
+        charta = build_werte_charta(charta_id="charta-215-expansion")
+        artikel = next(a for a in charta.artikel if a.status is WerteStatus.GRUNDLEGEND_VERANKERT)
+
+        self.assertEqual(artikel.typ, WerteTyp.SOUVERAENITAETS_WERT)
+        self.assertEqual(artikel.prozedur, WerteProzedur.PLENARPROTOKOLL)
+        self.assertTrue(artikel.canonical)
+
+    def test_kki_werte_charta_aggregates_charta_signal(self) -> None:
+        charta = build_werte_charta(charta_id="charta-215-signal")
+
+        self.assertEqual(charta.charta_signal.status, "charta-gesperrt")
+        self.assertEqual(charta.gesperrt_artikel_ids, ("charta-215-signal-stability-lane",))
+        self.assertEqual(charta.verankert_artikel_ids, ("charta-215-signal-governance-lane",))
+        self.assertEqual(charta.grundlegend_artikel_ids, ("charta-215-signal-expansion-lane",))
 
     def test_kki_prinzipien_kodex_builds_gesperrt_schutz_satz(self) -> None:
         kodex = build_prinzipien_kodex(kodex_id="kodex-214-stability")

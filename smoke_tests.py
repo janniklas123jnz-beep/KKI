@@ -122,6 +122,12 @@ from kki import (
     ManifestVerfahren,
     OrdnungsManifest,
     build_ordnungs_manifest,
+    Leitordnung,
+    OrdnungsKraft,
+    OrdnungsNorm,
+    OrdnungsRang,
+    OrdnungsTyp,
+    build_leitordnung,
     DoctrineClause,
     DoctrinePrinciple,
     DoctrineScope,
@@ -5291,6 +5297,40 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(konvent.begrenzt_line_ids, ("konvent-203-signal-stability-lane",))
         self.assertEqual(konvent.delegiert_line_ids, ("konvent-203-signal-governance-lane",))
         self.assertEqual(konvent.verankert_line_ids, ("konvent-203-signal-expansion-lane",))
+
+    def test_kki_leitordnung_builds_blockiert_schutz_norm(self) -> None:
+        ordnung = build_leitordnung(ordnung_id="ordnung-210-stability")
+        norm = next(n for n in ordnung.normen if n.kraft is OrdnungsKraft.BLOCKIERT)
+
+        self.assertIsInstance(ordnung, Leitordnung)
+        self.assertIsInstance(norm, OrdnungsNorm)
+        self.assertEqual(norm.rang, OrdnungsRang.SCHUTZ_RANG)
+        self.assertEqual(norm.typ, OrdnungsTyp.NOTORDNUNG)
+        self.assertGreaterEqual(norm.authority_level, 1)
+
+    def test_kki_leitordnung_builds_wirksam_ordnungs_norm(self) -> None:
+        ordnung = build_leitordnung(ordnung_id="ordnung-210-governance")
+        norm = next(n for n in ordnung.normen if n.kraft is OrdnungsKraft.WIRKSAM)
+
+        self.assertEqual(norm.rang, OrdnungsRang.ORDNUNGS_RANG)
+        self.assertEqual(norm.typ, OrdnungsTyp.REGELORDNUNG)
+        self.assertGreater(norm.ordnungs_weight, 0.45)
+
+    def test_kki_leitordnung_builds_leitend_souveraenitaets_norm(self) -> None:
+        ordnung = build_leitordnung(ordnung_id="ordnung-210-expansion")
+        norm = next(n for n in ordnung.normen if n.kraft is OrdnungsKraft.LEITEND)
+
+        self.assertEqual(norm.rang, OrdnungsRang.SOUVERAENITAETS_RANG)
+        self.assertEqual(norm.typ, OrdnungsTyp.PLENARORDNUNG)
+        self.assertTrue(norm.supreme)
+
+    def test_kki_leitordnung_aggregates_ordnungs_signal(self) -> None:
+        ordnung = build_leitordnung(ordnung_id="ordnung-210-signal")
+
+        self.assertEqual(ordnung.ordnungs_signal.status, "ordnung-blockiert")
+        self.assertEqual(ordnung.blockiert_norm_ids, ("ordnung-210-signal-stability-lane",))
+        self.assertEqual(ordnung.wirksam_norm_ids, ("ordnung-210-signal-governance-lane",))
+        self.assertEqual(ordnung.leitend_norm_ids, ("ordnung-210-signal-expansion-lane",))
 
     def test_kki_ordnungs_manifest_builds_gesperrt_schutz_abschnitt(self) -> None:
         manifest = build_ordnungs_manifest(manifest_id="manifest-209-stability")

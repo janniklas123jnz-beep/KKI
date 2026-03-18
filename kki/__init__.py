@@ -307,6 +307,14 @@ from .werte_charta import (
     WerteTyp,
     build_werte_charta,
 )
+from .leitbild_konvent import (
+    KonventBeschluss,
+    KonventProzedur,
+    LeitbildAusrichtung,
+    LeitbildKonvent,
+    LeitbildResolution,
+    build_leitbild_konvent,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -773,6 +781,11 @@ __all__ = [
     "WerteProzedur",
     "WerteStatus",
     "WerteTyp",
+    "KonventBeschluss",
+    "KonventProzedur",
+    "LeitbildAusrichtung",
+    "LeitbildKonvent",
+    "LeitbildResolution",
     "ExceptionCase",
     "ExceptionKind",
     "ExceptionRegister",
@@ -983,6 +996,7 @@ __all__ = [
     "build_grundsatz_register",
     "build_prinzipien_kodex",
     "build_werte_charta",
+    "build_leitbild_konvent",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

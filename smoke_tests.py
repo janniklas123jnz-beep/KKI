@@ -158,6 +158,12 @@ from kki import (
     WerteStatus,
     WerteTyp,
     build_werte_charta,
+    KonventBeschluss,
+    KonventProzedur,
+    LeitbildAusrichtung,
+    LeitbildKonvent,
+    LeitbildResolution,
+    build_leitbild_konvent,
     DoctrineClause,
     DoctrinePrinciple,
     DoctrineScope,
@@ -5327,6 +5333,40 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(konvent.begrenzt_line_ids, ("konvent-203-signal-stability-lane",))
         self.assertEqual(konvent.delegiert_line_ids, ("konvent-203-signal-governance-lane",))
         self.assertEqual(konvent.verankert_line_ids, ("konvent-203-signal-expansion-lane",))
+
+    def test_kki_leitbild_konvent_builds_gesperrt_schutz_resolution(self) -> None:
+        konvent = build_leitbild_konvent(konvent_id="konvent-216-stability")
+        resolution = next(r for r in konvent.resolutionen if r.beschluss is KonventBeschluss.GESPERRT)
+
+        self.assertIsInstance(konvent, LeitbildKonvent)
+        self.assertIsInstance(resolution, LeitbildResolution)
+        self.assertEqual(resolution.ausrichtung, LeitbildAusrichtung.SCHUTZ_AUSRICHTUNG)
+        self.assertEqual(resolution.prozedur, KonventProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(resolution.konvent_tier, 1)
+
+    def test_kki_leitbild_konvent_builds_beschlossen_ordnungs_resolution(self) -> None:
+        konvent = build_leitbild_konvent(konvent_id="konvent-216-governance")
+        resolution = next(r for r in konvent.resolutionen if r.beschluss is KonventBeschluss.BESCHLOSSEN)
+
+        self.assertEqual(resolution.ausrichtung, LeitbildAusrichtung.ORDNUNGS_AUSRICHTUNG)
+        self.assertEqual(resolution.prozedur, KonventProzedur.REGELPROTOKOLL)
+        self.assertGreater(resolution.konvent_weight, 0.45)
+
+    def test_kki_leitbild_konvent_builds_grundlegend_souveraenitaets_resolution(self) -> None:
+        konvent = build_leitbild_konvent(konvent_id="konvent-216-expansion")
+        resolution = next(r for r in konvent.resolutionen if r.beschluss is KonventBeschluss.GRUNDLEGEND_BESCHLOSSEN)
+
+        self.assertEqual(resolution.ausrichtung, LeitbildAusrichtung.SOUVERAENITAETS_AUSRICHTUNG)
+        self.assertEqual(resolution.prozedur, KonventProzedur.PLENARPROTOKOLL)
+        self.assertTrue(resolution.canonical)
+
+    def test_kki_leitbild_konvent_aggregates_konvent_signal(self) -> None:
+        konvent = build_leitbild_konvent(konvent_id="konvent-216-signal")
+
+        self.assertEqual(konvent.konvent_signal.status, "konvent-gesperrt")
+        self.assertEqual(konvent.gesperrt_resolution_ids, ("konvent-216-signal-stability-lane",))
+        self.assertEqual(konvent.beschlossen_resolution_ids, ("konvent-216-signal-governance-lane",))
+        self.assertEqual(konvent.grundlegend_resolution_ids, ("konvent-216-signal-expansion-lane",))
 
     def test_kki_werte_charta_builds_gesperrt_schutz_artikel(self) -> None:
         charta = build_werte_charta(charta_id="charta-215-stability")

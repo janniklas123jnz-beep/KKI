@@ -218,6 +218,12 @@ from kki import (
     BundesProzedur,
     BundesRang,
     build_bundes_charta,
+    HoheitsGeltung,
+    HoheitsGrad,
+    HoheitsManifest,
+    HoheitsNorm,
+    HoheitsProzedur,
+    build_hoheits_manifest,
     DoctrineClause,
     DoctrinePrinciple,
     DoctrineScope,
@@ -5387,6 +5393,40 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(konvent.begrenzt_line_ids, ("konvent-203-signal-stability-lane",))
         self.assertEqual(konvent.delegiert_line_ids, ("konvent-203-signal-governance-lane",))
         self.assertEqual(konvent.verankert_line_ids, ("konvent-203-signal-expansion-lane",))
+
+    def test_kki_hoheits_manifest_builds_gesperrt_schutz_norm(self) -> None:
+        manifest = build_hoheits_manifest(manifest_id="manifest-226-stability")
+        norm = next(n for n in manifest.normen if n.geltung is HoheitsGeltung.GESPERRT)
+
+        self.assertIsInstance(manifest, HoheitsManifest)
+        self.assertIsInstance(norm, HoheitsNorm)
+        self.assertEqual(norm.hoheits_grad, HoheitsGrad.SCHUTZ_GRAD)
+        self.assertEqual(norm.prozedur, HoheitsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.hoheits_tier, 1)
+
+    def test_kki_hoheits_manifest_builds_proklamiert_ordnungs_norm(self) -> None:
+        manifest = build_hoheits_manifest(manifest_id="manifest-226-governance")
+        norm = next(n for n in manifest.normen if n.geltung is HoheitsGeltung.PROKLAMIERT)
+
+        self.assertEqual(norm.hoheits_grad, HoheitsGrad.ORDNUNGS_GRAD)
+        self.assertEqual(norm.prozedur, HoheitsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.hoheits_weight, 0.45)
+
+    def test_kki_hoheits_manifest_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        manifest = build_hoheits_manifest(manifest_id="manifest-226-expansion")
+        norm = next(n for n in manifest.normen if n.geltung is HoheitsGeltung.GRUNDLEGEND_PROKLAMIERT)
+
+        self.assertEqual(norm.hoheits_grad, HoheitsGrad.SOUVERAENITAETS_GRAD)
+        self.assertEqual(norm.prozedur, HoheitsProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_hoheits_manifest_aggregates_manifest_signal(self) -> None:
+        manifest = build_hoheits_manifest(manifest_id="manifest-226-signal")
+
+        self.assertEqual(manifest.manifest_signal.status, "manifest-gesperrt")
+        self.assertEqual(manifest.gesperrt_norm_ids, ("manifest-226-signal-stability-lane",))
+        self.assertEqual(manifest.proklamiert_norm_ids, ("manifest-226-signal-governance-lane",))
+        self.assertEqual(manifest.grundlegend_norm_ids, ("manifest-226-signal-expansion-lane",))
 
     def test_kki_bundes_charta_builds_gesperrt_schutz_norm(self) -> None:
         charta = build_bundes_charta(charta_id="charta-225-stability")

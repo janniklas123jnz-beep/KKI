@@ -387,6 +387,14 @@ from .bundes_charta import (
     BundesRang,
     build_bundes_charta,
 )
+from .hoheits_manifest import (
+    HoheitsGeltung,
+    HoheitsGrad,
+    HoheitsManifest,
+    HoheitsNorm,
+    HoheitsProzedur,
+    build_hoheits_manifest,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -903,6 +911,11 @@ __all__ = [
     "BundesNorm",
     "BundesProzedur",
     "BundesRang",
+    "HoheitsGeltung",
+    "HoheitsGrad",
+    "HoheitsManifest",
+    "HoheitsNorm",
+    "HoheitsProzedur",
     "ExceptionCase",
     "ExceptionKind",
     "ExceptionRegister",
@@ -1123,6 +1136,7 @@ __all__ = [
     "build_unions_akt",
     "build_foederal_vertrag",
     "build_bundes_charta",
+    "build_hoheits_manifest",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

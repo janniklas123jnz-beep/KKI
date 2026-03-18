@@ -315,6 +315,14 @@ from .leitbild_konvent import (
     LeitbildResolution,
     build_leitbild_konvent,
 )
+from .missions_verfassung import (
+    MissionsArtikel,
+    MissionsRang,
+    MissionsVerfassung,
+    VerfassungsProzedur,
+    VerfassungsStatus,
+    build_missions_verfassung,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -786,6 +794,11 @@ __all__ = [
     "LeitbildAusrichtung",
     "LeitbildKonvent",
     "LeitbildResolution",
+    "MissionsArtikel",
+    "MissionsRang",
+    "MissionsVerfassung",
+    "VerfassungsProzedur",
+    "VerfassungsStatus",
     "ExceptionCase",
     "ExceptionKind",
     "ExceptionRegister",
@@ -997,6 +1010,7 @@ __all__ = [
     "build_prinzipien_kodex",
     "build_werte_charta",
     "build_leitbild_konvent",
+    "build_missions_verfassung",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

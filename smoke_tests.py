@@ -164,6 +164,12 @@ from kki import (
     LeitbildKonvent,
     LeitbildResolution,
     build_leitbild_konvent,
+    MissionsArtikel,
+    MissionsRang,
+    MissionsVerfassung,
+    VerfassungsProzedur,
+    VerfassungsStatus,
+    build_missions_verfassung,
     DoctrineClause,
     DoctrinePrinciple,
     DoctrineScope,
@@ -5333,6 +5339,40 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(konvent.begrenzt_line_ids, ("konvent-203-signal-stability-lane",))
         self.assertEqual(konvent.delegiert_line_ids, ("konvent-203-signal-governance-lane",))
         self.assertEqual(konvent.verankert_line_ids, ("konvent-203-signal-expansion-lane",))
+
+    def test_kki_missions_verfassung_builds_gesperrt_schutz_artikel(self) -> None:
+        verfassung = build_missions_verfassung(verfassungs_id="verfassung-217-stability")
+        artikel = next(a for a in verfassung.artikel if a.status is VerfassungsStatus.GESPERRT)
+
+        self.assertIsInstance(verfassung, MissionsVerfassung)
+        self.assertIsInstance(artikel, MissionsArtikel)
+        self.assertEqual(artikel.rang, MissionsRang.SCHUTZ_RANG)
+        self.assertEqual(artikel.prozedur, VerfassungsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(artikel.verfassungs_tier, 1)
+
+    def test_kki_missions_verfassung_builds_ratifiziert_ordnungs_artikel(self) -> None:
+        verfassung = build_missions_verfassung(verfassungs_id="verfassung-217-governance")
+        artikel = next(a for a in verfassung.artikel if a.status is VerfassungsStatus.RATIFIZIERT)
+
+        self.assertEqual(artikel.rang, MissionsRang.ORDNUNGS_RANG)
+        self.assertEqual(artikel.prozedur, VerfassungsProzedur.REGELPROTOKOLL)
+        self.assertGreater(artikel.verfassungs_weight, 0.45)
+
+    def test_kki_missions_verfassung_builds_grundlegend_souveraenitaets_artikel(self) -> None:
+        verfassung = build_missions_verfassung(verfassungs_id="verfassung-217-expansion")
+        artikel = next(a for a in verfassung.artikel if a.status is VerfassungsStatus.GRUNDLEGEND_RATIFIZIERT)
+
+        self.assertEqual(artikel.rang, MissionsRang.SOUVERAENITAETS_RANG)
+        self.assertEqual(artikel.prozedur, VerfassungsProzedur.PLENARPROTOKOLL)
+        self.assertTrue(artikel.canonical)
+
+    def test_kki_missions_verfassung_aggregates_verfassungs_signal(self) -> None:
+        verfassung = build_missions_verfassung(verfassungs_id="verfassung-217-signal")
+
+        self.assertEqual(verfassung.verfassungs_signal.status, "verfassung-gesperrt")
+        self.assertEqual(verfassung.gesperrt_artikel_ids, ("verfassung-217-signal-stability-lane",))
+        self.assertEqual(verfassung.ratifiziert_artikel_ids, ("verfassung-217-signal-governance-lane",))
+        self.assertEqual(verfassung.grundlegend_artikel_ids, ("verfassung-217-signal-expansion-lane",))
 
     def test_kki_leitbild_konvent_builds_gesperrt_schutz_resolution(self) -> None:
         konvent = build_leitbild_konvent(konvent_id="konvent-216-stability")

@@ -116,6 +116,12 @@ from kki import (
     AktStatus,
     SouveraenitaetsAkt,
     build_souveraenitaets_akt,
+    ManifestAbschnitt,
+    ManifestGeltung,
+    ManifestKapitel,
+    ManifestVerfahren,
+    OrdnungsManifest,
+    build_ordnungs_manifest,
     DoctrineClause,
     DoctrinePrinciple,
     DoctrineScope,
@@ -5285,6 +5291,40 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(konvent.begrenzt_line_ids, ("konvent-203-signal-stability-lane",))
         self.assertEqual(konvent.delegiert_line_ids, ("konvent-203-signal-governance-lane",))
         self.assertEqual(konvent.verankert_line_ids, ("konvent-203-signal-expansion-lane",))
+
+    def test_kki_ordnungs_manifest_builds_gesperrt_schutz_abschnitt(self) -> None:
+        manifest = build_ordnungs_manifest(manifest_id="manifest-209-stability")
+        abschnitt = next(a for a in manifest.abschnitte if a.geltung is ManifestGeltung.GESPERRT)
+
+        self.assertIsInstance(manifest, OrdnungsManifest)
+        self.assertIsInstance(abschnitt, ManifestAbschnitt)
+        self.assertEqual(abschnitt.kapitel, ManifestKapitel.SCHUTZ_KAPITEL)
+        self.assertEqual(abschnitt.verfahren, ManifestVerfahren.NOTVERFAHREN)
+        self.assertGreaterEqual(abschnitt.proclamation_rank, 1)
+
+    def test_kki_ordnungs_manifest_builds_proklamiert_ordnungs_abschnitt(self) -> None:
+        manifest = build_ordnungs_manifest(manifest_id="manifest-209-governance")
+        abschnitt = next(a for a in manifest.abschnitte if a.geltung is ManifestGeltung.PROKLAMIERT)
+
+        self.assertEqual(abschnitt.kapitel, ManifestKapitel.ORDNUNGS_KAPITEL)
+        self.assertEqual(abschnitt.verfahren, ManifestVerfahren.REGELVERFAHREN)
+        self.assertGreater(abschnitt.manifest_weight, 0.45)
+
+    def test_kki_ordnungs_manifest_builds_hoheitsrecht_souveraenitaets_abschnitt(self) -> None:
+        manifest = build_ordnungs_manifest(manifest_id="manifest-209-expansion")
+        abschnitt = next(a for a in manifest.abschnitte if a.geltung is ManifestGeltung.HOHEITSRECHT)
+
+        self.assertEqual(abschnitt.kapitel, ManifestKapitel.SOUVERAENITAETS_KAPITEL)
+        self.assertEqual(abschnitt.verfahren, ManifestVerfahren.PLENARVERFAHREN)
+        self.assertTrue(abschnitt.promulgated)
+
+    def test_kki_ordnungs_manifest_aggregates_manifest_signal(self) -> None:
+        manifest = build_ordnungs_manifest(manifest_id="manifest-209-signal")
+
+        self.assertEqual(manifest.manifest_signal.status, "manifest-gesperrt")
+        self.assertEqual(manifest.gesperrt_abschnitt_ids, ("manifest-209-signal-stability-lane",))
+        self.assertEqual(manifest.proklamiert_abschnitt_ids, ("manifest-209-signal-governance-lane",))
+        self.assertEqual(manifest.hoheitsrecht_abschnitt_ids, ("manifest-209-signal-expansion-lane",))
 
     def test_kki_souveraenitaets_akt_builds_suspendiert_schutz_klausel(self) -> None:
         akt = build_souveraenitaets_akt(akt_id="akt-208-stability")

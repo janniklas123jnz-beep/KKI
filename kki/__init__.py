@@ -275,6 +275,14 @@ from .autoritaets_dekret import (
     DekretSektion,
     build_autoritaets_dekret,
 )
+from .rechts_fundament import (
+    FundamentKraft,
+    FundamentPfeiler,
+    FundamentSaeule,
+    FundamentVerfahren,
+    RechtsFundament,
+    build_rechts_fundament,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -721,6 +729,11 @@ __all__ = [
     "DekretKlausel",
     "DekretProzedur",
     "DekretSektion",
+    "FundamentKraft",
+    "FundamentPfeiler",
+    "FundamentSaeule",
+    "FundamentVerfahren",
+    "RechtsFundament",
     "ExceptionCase",
     "ExceptionKind",
     "ExceptionRegister",
@@ -927,6 +940,7 @@ __all__ = [
     "build_ordnungs_manifest",
     "build_leitordnung",
     "build_autoritaets_dekret",
+    "build_rechts_fundament",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

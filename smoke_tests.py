@@ -134,6 +134,12 @@ from kki import (
     DekretProzedur,
     DekretSektion,
     build_autoritaets_dekret,
+    FundamentKraft,
+    FundamentPfeiler,
+    FundamentSaeule,
+    FundamentVerfahren,
+    RechtsFundament,
+    build_rechts_fundament,
     DoctrineClause,
     DoctrinePrinciple,
     DoctrineScope,
@@ -5303,6 +5309,40 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(konvent.begrenzt_line_ids, ("konvent-203-signal-stability-lane",))
         self.assertEqual(konvent.delegiert_line_ids, ("konvent-203-signal-governance-lane",))
         self.assertEqual(konvent.verankert_line_ids, ("konvent-203-signal-expansion-lane",))
+
+    def test_kki_rechts_fundament_builds_gesperrt_schutz_pfeiler(self) -> None:
+        fundament = build_rechts_fundament(fundament_id="fundament-212-stability")
+        pfeiler = next(p for p in fundament.pfeiler if p.kraft is FundamentKraft.GESPERRT)
+
+        self.assertIsInstance(fundament, RechtsFundament)
+        self.assertIsInstance(pfeiler, FundamentPfeiler)
+        self.assertEqual(pfeiler.saeule, FundamentSaeule.SCHUTZ_SAEULE)
+        self.assertEqual(pfeiler.verfahren, FundamentVerfahren.NOTVERFAHREN)
+        self.assertGreaterEqual(pfeiler.foundation_depth, 1)
+
+    def test_kki_rechts_fundament_builds_fundiert_ordnungs_pfeiler(self) -> None:
+        fundament = build_rechts_fundament(fundament_id="fundament-212-governance")
+        pfeiler = next(p for p in fundament.pfeiler if p.kraft is FundamentKraft.FUNDIERT)
+
+        self.assertEqual(pfeiler.saeule, FundamentSaeule.ORDNUNGS_SAEULE)
+        self.assertEqual(pfeiler.verfahren, FundamentVerfahren.REGELVERFAHREN)
+        self.assertGreater(pfeiler.fundament_weight, 0.45)
+
+    def test_kki_rechts_fundament_builds_tragendes_recht_souveraenitaets_pfeiler(self) -> None:
+        fundament = build_rechts_fundament(fundament_id="fundament-212-expansion")
+        pfeiler = next(p for p in fundament.pfeiler if p.kraft is FundamentKraft.TRAGENDES_RECHT)
+
+        self.assertEqual(pfeiler.saeule, FundamentSaeule.SOUVERAENITAETS_SAEULE)
+        self.assertEqual(pfeiler.verfahren, FundamentVerfahren.PLENARVERFAHREN)
+        self.assertTrue(pfeiler.load_bearing)
+
+    def test_kki_rechts_fundament_aggregates_fundament_signal(self) -> None:
+        fundament = build_rechts_fundament(fundament_id="fundament-212-signal")
+
+        self.assertEqual(fundament.fundament_signal.status, "fundament-gesperrt")
+        self.assertEqual(fundament.gesperrt_pfeiler_ids, ("fundament-212-signal-stability-lane",))
+        self.assertEqual(fundament.fundiert_pfeiler_ids, ("fundament-212-signal-governance-lane",))
+        self.assertEqual(fundament.tragendes_recht_pfeiler_ids, ("fundament-212-signal-expansion-lane",))
 
     def test_kki_autoritaets_dekret_builds_gesperrt_schutz_klausel(self) -> None:
         dekret = build_autoritaets_dekret(dekret_id="dekret-211-stability")

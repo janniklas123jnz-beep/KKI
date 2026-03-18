@@ -87,6 +87,11 @@ from kki import (
     RatStatus,
     SatzungsRat,
     SatzungsRatArticle,
+    KonventEbene,
+    KonventMandat,
+    KonventStatus,
+    MandatsKonvent,
+    MandatsLinie,
     DoctrineClause,
     DoctrinePrinciple,
     DoctrineScope,
@@ -345,6 +350,7 @@ from kki import (
     build_leitstern_codex,
     build_kodex_register,
     build_satzungs_rat,
+    build_mandats_konvent,
     build_veto_sluice,
     build_directive_consensus,
     build_dispatch_plan,
@@ -5221,6 +5227,40 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(rat.provisional_article_ids, ("rat-202-signal-stability-lane",))
         self.assertEqual(rat.ratified_article_ids, ("rat-202-signal-governance-lane",))
         self.assertEqual(rat.enshrined_article_ids, ("rat-202-signal-expansion-lane",))
+
+    def test_kki_mandats_konvent_builds_begrenzt_steward_line(self) -> None:
+        konvent = build_mandats_konvent(konvent_id="konvent-203-stability")
+        line = next(item for item in konvent.lines if item.konvent_status is KonventStatus.BEGRENZT)
+
+        self.assertIsInstance(konvent, MandatsKonvent)
+        self.assertIsInstance(line, MandatsLinie)
+        self.assertEqual(line.konvent_mandat, KonventMandat.SCHUTZ_MANDAT)
+        self.assertEqual(line.konvent_ebene, KonventEbene.STEWARD_EBENE)
+        self.assertEqual(line.handoff_window, 1)
+
+    def test_kki_mandats_konvent_builds_delegiert_governance_line(self) -> None:
+        konvent = build_mandats_konvent(konvent_id="konvent-203-governance")
+        line = next(item for item in konvent.lines if item.konvent_status is KonventStatus.DELEGIERT)
+
+        self.assertEqual(line.konvent_mandat, KonventMandat.ORDNUNGS_MANDAT)
+        self.assertEqual(line.konvent_ebene, KonventEbene.GOVERNANCE_EBENE)
+        self.assertGreater(line.delegations_budget, 0.5)
+
+    def test_kki_mandats_konvent_builds_verankert_autonomy_line(self) -> None:
+        konvent = build_mandats_konvent(konvent_id="konvent-203-expansion")
+        line = next(item for item in konvent.lines if item.konvent_status is KonventStatus.VERANKERT)
+
+        self.assertEqual(line.konvent_mandat, KonventMandat.SOUVERAENITAETS_MANDAT)
+        self.assertEqual(line.konvent_ebene, KonventEbene.AUTONOMIE_EBENE)
+        self.assertTrue(line.release_ready)
+
+    def test_kki_mandats_konvent_aggregates_konvent_signal(self) -> None:
+        konvent = build_mandats_konvent(konvent_id="konvent-203-signal")
+
+        self.assertEqual(konvent.konvent_signal.status, "konvent-begrenzt")
+        self.assertEqual(konvent.begrenzt_line_ids, ("konvent-203-signal-stability-lane",))
+        self.assertEqual(konvent.delegiert_line_ids, ("konvent-203-signal-governance-lane",))
+        self.assertEqual(konvent.verankert_line_ids, ("konvent-203-signal-expansion-lane",))
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

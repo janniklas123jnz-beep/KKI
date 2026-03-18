@@ -211,6 +211,14 @@ from .satzungs_rat import (
     SatzungsRatArticle,
     build_satzungs_rat,
 )
+from .mandats_konvent import (
+    KonventEbene,
+    KonventMandat,
+    KonventStatus,
+    MandatsKonvent,
+    MandatsLinie,
+    build_mandats_konvent,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -617,6 +625,11 @@ __all__ = [
     "RatStatus",
     "SatzungsRat",
     "SatzungsRatArticle",
+    "KonventEbene",
+    "KonventMandat",
+    "KonventStatus",
+    "MandatsKonvent",
+    "MandatsLinie",
     "ExceptionCase",
     "ExceptionKind",
     "ExceptionRegister",
@@ -815,6 +828,7 @@ __all__ = [
     "build_leitstern_codex",
     "build_kodex_register",
     "build_satzungs_rat",
+    "build_mandats_konvent",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

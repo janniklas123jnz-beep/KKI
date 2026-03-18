@@ -291,6 +291,14 @@ from .grundsatz_register import (
     RegisterStatus,
     build_grundsatz_register,
 )
+from .prinzipien_kodex import (
+    PrinzipienKlasse,
+    PrinzipienKodex,
+    PrinzipienProzedur,
+    PrinzipienSatz,
+    PrinzipienStatus,
+    build_prinzipien_kodex,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -747,6 +755,11 @@ __all__ = [
     "RegisterKategorie",
     "RegisterProzedur",
     "RegisterStatus",
+    "PrinzipienKlasse",
+    "PrinzipienKodex",
+    "PrinzipienProzedur",
+    "PrinzipienSatz",
+    "PrinzipienStatus",
     "ExceptionCase",
     "ExceptionKind",
     "ExceptionRegister",
@@ -955,6 +968,7 @@ __all__ = [
     "build_autoritaets_dekret",
     "build_rechts_fundament",
     "build_grundsatz_register",
+    "build_prinzipien_kodex",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

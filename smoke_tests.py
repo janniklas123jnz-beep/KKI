@@ -146,6 +146,12 @@ from kki import (
     RegisterProzedur,
     RegisterStatus,
     build_grundsatz_register,
+    PrinzipienKlasse,
+    PrinzipienKodex,
+    PrinzipienProzedur,
+    PrinzipienSatz,
+    PrinzipienStatus,
+    build_prinzipien_kodex,
     DoctrineClause,
     DoctrinePrinciple,
     DoctrineScope,
@@ -5315,6 +5321,40 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(konvent.begrenzt_line_ids, ("konvent-203-signal-stability-lane",))
         self.assertEqual(konvent.delegiert_line_ids, ("konvent-203-signal-governance-lane",))
         self.assertEqual(konvent.verankert_line_ids, ("konvent-203-signal-expansion-lane",))
+
+    def test_kki_prinzipien_kodex_builds_gesperrt_schutz_satz(self) -> None:
+        kodex = build_prinzipien_kodex(kodex_id="kodex-214-stability")
+        satz = next(s for s in kodex.saetze if s.status is PrinzipienStatus.GESPERRT)
+
+        self.assertIsInstance(kodex, PrinzipienKodex)
+        self.assertIsInstance(satz, PrinzipienSatz)
+        self.assertEqual(satz.klasse, PrinzipienKlasse.SCHUTZ_KLASSE)
+        self.assertEqual(satz.prozedur, PrinzipienProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(satz.kodex_tier, 1)
+
+    def test_kki_prinzipien_kodex_builds_kodifiziert_ordnungs_satz(self) -> None:
+        kodex = build_prinzipien_kodex(kodex_id="kodex-214-governance")
+        satz = next(s for s in kodex.saetze if s.status is PrinzipienStatus.KODIFIZIERT)
+
+        self.assertEqual(satz.klasse, PrinzipienKlasse.ORDNUNGS_KLASSE)
+        self.assertEqual(satz.prozedur, PrinzipienProzedur.REGELPROTOKOLL)
+        self.assertGreater(satz.kodex_weight, 0.45)
+
+    def test_kki_prinzipien_kodex_builds_grundlegend_souveraenitaets_satz(self) -> None:
+        kodex = build_prinzipien_kodex(kodex_id="kodex-214-expansion")
+        satz = next(s for s in kodex.saetze if s.status is PrinzipienStatus.GRUNDLEGEND_KODIFIZIERT)
+
+        self.assertEqual(satz.klasse, PrinzipienKlasse.SOUVERAENITAETS_KLASSE)
+        self.assertEqual(satz.prozedur, PrinzipienProzedur.PLENARPROTOKOLL)
+        self.assertTrue(satz.canonical)
+
+    def test_kki_prinzipien_kodex_aggregates_kodex_signal(self) -> None:
+        kodex = build_prinzipien_kodex(kodex_id="kodex-214-signal")
+
+        self.assertEqual(kodex.kodex_signal.status, "kodex-gesperrt")
+        self.assertEqual(kodex.gesperrt_satz_ids, ("kodex-214-signal-stability-lane",))
+        self.assertEqual(kodex.kodifiziert_satz_ids, ("kodex-214-signal-governance-lane",))
+        self.assertEqual(kodex.grundlegend_satz_ids, ("kodex-214-signal-expansion-lane",))
 
     def test_kki_grundsatz_register_builds_gesperrt_schutz_eintrag(self) -> None:
         register = build_grundsatz_register(register_id="register-213-stability")

@@ -411,6 +411,14 @@ from .ewigkeits_norm import (
     EwigkeitsTyp,
     build_ewigkeits_norm,
 )
+from .grundrechts_senat import (
+    GrundrechtsSenat,
+    SenatGeltung,
+    SenatNorm,
+    SenatProzedur,
+    SenatRang,
+    build_grundrechts_senat,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -942,6 +950,11 @@ __all__ = [
     "EwigkeitsNorm",
     "EwigkeitsProzedur",
     "EwigkeitsTyp",
+    "GrundrechtsSenat",
+    "SenatGeltung",
+    "SenatNorm",
+    "SenatProzedur",
+    "SenatRang",
     "ExceptionCase",
     "ExceptionKind",
     "ExceptionRegister",
@@ -1165,6 +1178,7 @@ __all__ = [
     "build_hoheits_manifest",
     "build_supremats_register",
     "build_ewigkeits_norm",
+    "build_grundrechts_senat",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

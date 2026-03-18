@@ -236,6 +236,12 @@ from kki import (
     EwigkeitsProzedur,
     EwigkeitsTyp,
     build_ewigkeits_norm,
+    GrundrechtsSenat,
+    SenatGeltung,
+    SenatNorm,
+    SenatProzedur,
+    SenatRang,
+    build_grundrechts_senat,
     DoctrineClause,
     DoctrinePrinciple,
     DoctrineScope,
@@ -5405,6 +5411,40 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(konvent.begrenzt_line_ids, ("konvent-203-signal-stability-lane",))
         self.assertEqual(konvent.delegiert_line_ids, ("konvent-203-signal-governance-lane",))
         self.assertEqual(konvent.verankert_line_ids, ("konvent-203-signal-expansion-lane",))
+
+    def test_kki_grundrechts_senat_builds_gesperrt_schutz_norm(self) -> None:
+        senat = build_grundrechts_senat(senat_id="senat-229-stability")
+        norm = next(n for n in senat.normen if n.geltung is SenatGeltung.GESPERRT)
+
+        self.assertIsInstance(senat, GrundrechtsSenat)
+        self.assertIsInstance(norm, SenatNorm)
+        self.assertEqual(norm.senat_rang, SenatRang.SCHUTZ_SENAT)
+        self.assertEqual(norm.prozedur, SenatProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.senat_tier, 1)
+
+    def test_kki_grundrechts_senat_builds_beschlossen_ordnungs_norm(self) -> None:
+        senat = build_grundrechts_senat(senat_id="senat-229-governance")
+        norm = next(n for n in senat.normen if n.geltung is SenatGeltung.BESCHLOSSEN)
+
+        self.assertEqual(norm.senat_rang, SenatRang.ORDNUNGS_SENAT)
+        self.assertEqual(norm.prozedur, SenatProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.senat_weight, 0.45)
+
+    def test_kki_grundrechts_senat_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        senat = build_grundrechts_senat(senat_id="senat-229-expansion")
+        norm = next(n for n in senat.normen if n.geltung is SenatGeltung.GRUNDLEGEND_BESCHLOSSEN)
+
+        self.assertEqual(norm.senat_rang, SenatRang.SOUVERAENITAETS_SENAT)
+        self.assertEqual(norm.prozedur, SenatProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_grundrechts_senat_aggregates_senat_signal(self) -> None:
+        senat = build_grundrechts_senat(senat_id="senat-229-signal")
+
+        self.assertEqual(senat.senat_signal.status, "senat-gesperrt")
+        self.assertEqual(senat.gesperrt_norm_ids, ("senat-229-signal-stability-lane",))
+        self.assertEqual(senat.beschlossen_norm_ids, ("senat-229-signal-governance-lane",))
+        self.assertEqual(senat.grundlegend_norm_ids, ("senat-229-signal-expansion-lane",))
 
     def test_kki_ewigkeits_norm_builds_gesperrt_schutz_eintrag(self) -> None:
         norm = build_ewigkeits_norm(norm_id="norm-228-stability")

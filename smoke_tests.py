@@ -212,6 +212,12 @@ from kki import (
     FoederalTyp,
     FoederalVertrag,
     build_foederal_vertrag,
+    BundesCharta,
+    BundesGeltung,
+    BundesNorm,
+    BundesProzedur,
+    BundesRang,
+    build_bundes_charta,
     DoctrineClause,
     DoctrinePrinciple,
     DoctrineScope,
@@ -5381,6 +5387,40 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(konvent.begrenzt_line_ids, ("konvent-203-signal-stability-lane",))
         self.assertEqual(konvent.delegiert_line_ids, ("konvent-203-signal-governance-lane",))
         self.assertEqual(konvent.verankert_line_ids, ("konvent-203-signal-expansion-lane",))
+
+    def test_kki_bundes_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_bundes_charta(charta_id="charta-225-stability")
+        norm = next(n for n in charta.normen if n.geltung is BundesGeltung.GESPERRT)
+
+        self.assertIsInstance(charta, BundesCharta)
+        self.assertIsInstance(norm, BundesNorm)
+        self.assertEqual(norm.bundes_rang, BundesRang.SCHUTZ_RANG)
+        self.assertEqual(norm.prozedur, BundesProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.bundes_tier, 1)
+
+    def test_kki_bundes_charta_builds_verbuergt_ordnungs_norm(self) -> None:
+        charta = build_bundes_charta(charta_id="charta-225-governance")
+        norm = next(n for n in charta.normen if n.geltung is BundesGeltung.VERBUERGT)
+
+        self.assertEqual(norm.bundes_rang, BundesRang.ORDNUNGS_RANG)
+        self.assertEqual(norm.prozedur, BundesProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.bundes_weight, 0.45)
+
+    def test_kki_bundes_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_bundes_charta(charta_id="charta-225-expansion")
+        norm = next(n for n in charta.normen if n.geltung is BundesGeltung.GRUNDLEGEND_VERBUERGT)
+
+        self.assertEqual(norm.bundes_rang, BundesRang.SOUVERAENITAETS_RANG)
+        self.assertEqual(norm.prozedur, BundesProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_bundes_charta_aggregates_charta_signal(self) -> None:
+        charta = build_bundes_charta(charta_id="charta-225-signal")
+
+        self.assertEqual(charta.charta_signal.status, "charta-gesperrt")
+        self.assertEqual(charta.gesperrt_norm_ids, ("charta-225-signal-stability-lane",))
+        self.assertEqual(charta.verbuergt_norm_ids, ("charta-225-signal-governance-lane",))
+        self.assertEqual(charta.grundlegend_norm_ids, ("charta-225-signal-expansion-lane",))
 
     def test_kki_foederal_vertrag_builds_gesperrt_schutz_norm(self) -> None:
         vertrag = build_foederal_vertrag(vertrag_id="vertrag-224-stability")

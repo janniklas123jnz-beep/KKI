@@ -379,6 +379,14 @@ from .foederal_vertrag import (
     FoederalVertrag,
     build_foederal_vertrag,
 )
+from .bundes_charta import (
+    BundesCharta,
+    BundesGeltung,
+    BundesNorm,
+    BundesProzedur,
+    BundesRang,
+    build_bundes_charta,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -890,6 +898,11 @@ __all__ = [
     "FoederalProzedur",
     "FoederalTyp",
     "FoederalVertrag",
+    "BundesCharta",
+    "BundesGeltung",
+    "BundesNorm",
+    "BundesProzedur",
+    "BundesRang",
     "ExceptionCase",
     "ExceptionKind",
     "ExceptionRegister",
@@ -1109,6 +1122,7 @@ __all__ = [
     "build_rechts_kodex",
     "build_unions_akt",
     "build_foederal_vertrag",
+    "build_bundes_charta",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

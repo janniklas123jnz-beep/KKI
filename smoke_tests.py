@@ -98,6 +98,12 @@ from kki import (
     TribunalUrteil,
     TribunalVerfahren,
     build_normen_tribunal,
+    SenatsBeschluss,
+    SenatsFraktion,
+    SenatsSitzung,
+    SenatsMandat,
+    VerfassungsSenat,
+    build_verfassungs_senat,
     DoctrineClause,
     DoctrinePrinciple,
     DoctrineScope,
@@ -5267,6 +5273,40 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(konvent.begrenzt_line_ids, ("konvent-203-signal-stability-lane",))
         self.assertEqual(konvent.delegiert_line_ids, ("konvent-203-signal-governance-lane",))
         self.assertEqual(konvent.verankert_line_ids, ("konvent-203-signal-expansion-lane",))
+
+    def test_kki_verfassungs_senat_builds_ungueltig_schutz_mandat(self) -> None:
+        senat = build_verfassungs_senat(senat_id="senat-206-stability")
+        mandat = next(m for m in senat.mandate if m.beschluss is SenatsBeschluss.UNGUELTIG)
+
+        self.assertIsInstance(senat, VerfassungsSenat)
+        self.assertIsInstance(mandat, SenatsMandat)
+        self.assertEqual(mandat.fraktion, SenatsFraktion.SCHUTZ_FRAKTION)
+        self.assertEqual(mandat.sitzung, SenatsSitzung.DRINGLICH_SITZUNG)
+        self.assertGreaterEqual(mandat.deliberation_quorum, 1)
+
+    def test_kki_verfassungs_senat_builds_wirksam_ordnungs_mandat(self) -> None:
+        senat = build_verfassungs_senat(senat_id="senat-206-governance")
+        mandat = next(m for m in senat.mandate if m.beschluss is SenatsBeschluss.WIRKSAM)
+
+        self.assertEqual(mandat.fraktion, SenatsFraktion.ORDNUNGS_FRAKTION)
+        self.assertEqual(mandat.sitzung, SenatsSitzung.ORDENTLICHE_SITZUNG)
+        self.assertGreater(mandat.resolution_weight, 0.45)
+
+    def test_kki_verfassungs_senat_builds_grundlegend_souveraenitaets_mandat(self) -> None:
+        senat = build_verfassungs_senat(senat_id="senat-206-expansion")
+        mandat = next(m for m in senat.mandate if m.beschluss is SenatsBeschluss.GRUNDLEGEND)
+
+        self.assertEqual(mandat.fraktion, SenatsFraktion.SOUVERAENITAETS_FRAKTION)
+        self.assertEqual(mandat.sitzung, SenatsSitzung.PLENARSITZUNG)
+        self.assertTrue(mandat.binding)
+
+    def test_kki_verfassungs_senat_aggregates_senat_signal(self) -> None:
+        senat = build_verfassungs_senat(senat_id="senat-206-signal")
+
+        self.assertEqual(senat.senat_signal.status, "senat-ungueltig")
+        self.assertEqual(senat.ungueltig_mandat_ids, ("senat-206-signal-stability-lane",))
+        self.assertEqual(senat.wirksam_mandat_ids, ("senat-206-signal-governance-lane",))
+        self.assertEqual(senat.grundlegend_mandat_ids, ("senat-206-signal-expansion-lane",))
 
     def test_kki_normen_tribunal_builds_abgewiesen_schutz_fall(self) -> None:
         tribunal = build_normen_tribunal(tribunal_id="tribunal-205-stability")

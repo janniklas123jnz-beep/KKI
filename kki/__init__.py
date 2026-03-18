@@ -227,6 +227,14 @@ from .normen_tribunal import (
     TribunalVerfahren,
     build_normen_tribunal,
 )
+from .verfassungs_senat import (
+    SenatsBeschluss,
+    SenatsFraktion,
+    SenatsSitzung,
+    SenatsMandat,
+    VerfassungsSenat,
+    build_verfassungs_senat,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -643,6 +651,11 @@ __all__ = [
     "TribunalKammer",
     "TribunalUrteil",
     "TribunalVerfahren",
+    "SenatsBeschluss",
+    "SenatsFraktion",
+    "SenatsSitzung",
+    "SenatsMandat",
+    "VerfassungsSenat",
     "ExceptionCase",
     "ExceptionKind",
     "ExceptionRegister",
@@ -843,6 +856,7 @@ __all__ = [
     "build_satzungs_rat",
     "build_mandats_konvent",
     "build_normen_tribunal",
+    "build_verfassungs_senat",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

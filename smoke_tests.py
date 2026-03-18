@@ -92,6 +92,12 @@ from kki import (
     KonventStatus,
     MandatsKonvent,
     MandatsLinie,
+    NormenTribunal,
+    TribunalFall,
+    TribunalKammer,
+    TribunalUrteil,
+    TribunalVerfahren,
+    build_normen_tribunal,
     DoctrineClause,
     DoctrinePrinciple,
     DoctrineScope,
@@ -5261,6 +5267,40 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(konvent.begrenzt_line_ids, ("konvent-203-signal-stability-lane",))
         self.assertEqual(konvent.delegiert_line_ids, ("konvent-203-signal-governance-lane",))
         self.assertEqual(konvent.verankert_line_ids, ("konvent-203-signal-expansion-lane",))
+
+    def test_kki_normen_tribunal_builds_abgewiesen_schutz_fall(self) -> None:
+        tribunal = build_normen_tribunal(tribunal_id="tribunal-205-stability")
+        fall = next(f for f in tribunal.faelle if f.urteil is TribunalUrteil.ABGEWIESEN)
+
+        self.assertIsInstance(tribunal, NormenTribunal)
+        self.assertIsInstance(fall, TribunalFall)
+        self.assertEqual(fall.kammer, TribunalKammer.SCHUTZ_KAMMER)
+        self.assertEqual(fall.verfahren, TribunalVerfahren.SUMMARISCHES_VERFAHREN)
+        self.assertGreaterEqual(fall.deliberation_rounds, 1)
+
+    def test_kki_normen_tribunal_builds_bestaetigt_ordnungs_fall(self) -> None:
+        tribunal = build_normen_tribunal(tribunal_id="tribunal-205-governance")
+        fall = next(f for f in tribunal.faelle if f.urteil is TribunalUrteil.BESTAETIGT)
+
+        self.assertEqual(fall.kammer, TribunalKammer.ORDNUNGS_KAMMER)
+        self.assertEqual(fall.verfahren, TribunalVerfahren.ORDENTLICHES_VERFAHREN)
+        self.assertGreater(fall.verdict_weight, 0.45)
+
+    def test_kki_normen_tribunal_builds_verfassungsgebunden_souveraenitaets_fall(self) -> None:
+        tribunal = build_normen_tribunal(tribunal_id="tribunal-205-expansion")
+        fall = next(f for f in tribunal.faelle if f.urteil is TribunalUrteil.VERFASSUNGSGEBUNDEN)
+
+        self.assertEqual(fall.kammer, TribunalKammer.SOUVERAENITAETS_KAMMER)
+        self.assertEqual(fall.verfahren, TribunalVerfahren.VERFASSUNGSVERFAHREN)
+        self.assertTrue(fall.release_ready)
+
+    def test_kki_normen_tribunal_aggregates_tribunal_signal(self) -> None:
+        tribunal = build_normen_tribunal(tribunal_id="tribunal-205-signal")
+
+        self.assertEqual(tribunal.tribunal_signal.status, "tribunal-abgewiesen")
+        self.assertEqual(tribunal.abgewiesen_fall_ids, ("tribunal-205-signal-stability-lane",))
+        self.assertEqual(tribunal.bestaetigt_fall_ids, ("tribunal-205-signal-governance-lane",))
+        self.assertEqual(tribunal.verfassungsgebunden_fall_ids, ("tribunal-205-signal-expansion-lane",))
 
     def test_kki_protocol_context_defaults_idempotency(self) -> None:
         context = protocol_context("corr-001", sequence=3)

@@ -219,6 +219,14 @@ from .mandats_konvent import (
     MandatsLinie,
     build_mandats_konvent,
 )
+from .normen_tribunal import (
+    NormenTribunal,
+    TribunalFall,
+    TribunalKammer,
+    TribunalUrteil,
+    TribunalVerfahren,
+    build_normen_tribunal,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -630,6 +638,11 @@ __all__ = [
     "KonventStatus",
     "MandatsKonvent",
     "MandatsLinie",
+    "NormenTribunal",
+    "TribunalFall",
+    "TribunalKammer",
+    "TribunalUrteil",
+    "TribunalVerfahren",
     "ExceptionCase",
     "ExceptionKind",
     "ExceptionRegister",
@@ -829,6 +842,7 @@ __all__ = [
     "build_kodex_register",
     "build_satzungs_rat",
     "build_mandats_konvent",
+    "build_normen_tribunal",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

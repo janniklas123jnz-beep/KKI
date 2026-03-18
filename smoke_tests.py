@@ -188,6 +188,12 @@ from kki import (
     GrundgesetzTitel,
     VerfassungsGrundgesetz,
     build_verfassungs_grundgesetz,
+    StaatsEbene,
+    StaatsGeltung,
+    StaatsNorm,
+    StaatsOrdnung,
+    StaatsProzedur,
+    build_staats_ordnung,
     DoctrineClause,
     DoctrinePrinciple,
     DoctrineScope,
@@ -5357,6 +5363,40 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(konvent.begrenzt_line_ids, ("konvent-203-signal-stability-lane",))
         self.assertEqual(konvent.delegiert_line_ids, ("konvent-203-signal-governance-lane",))
         self.assertEqual(konvent.verankert_line_ids, ("konvent-203-signal-expansion-lane",))
+
+    def test_kki_staats_ordnung_builds_gesperrt_schutz_norm(self) -> None:
+        ordnung = build_staats_ordnung(ordnung_id="ordnung-221-stability")
+        norm = next(n for n in ordnung.normen if n.geltung is StaatsGeltung.GESPERRT)
+
+        self.assertIsInstance(ordnung, StaatsOrdnung)
+        self.assertIsInstance(norm, StaatsNorm)
+        self.assertEqual(norm.ebene, StaatsEbene.SCHUTZ_EBENE)
+        self.assertEqual(norm.prozedur, StaatsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.staats_tier, 1)
+
+    def test_kki_staats_ordnung_builds_geordnet_ordnungs_norm(self) -> None:
+        ordnung = build_staats_ordnung(ordnung_id="ordnung-221-governance")
+        norm = next(n for n in ordnung.normen if n.geltung is StaatsGeltung.GEORDNET)
+
+        self.assertEqual(norm.ebene, StaatsEbene.ORDNUNGS_EBENE)
+        self.assertEqual(norm.prozedur, StaatsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.staats_weight, 0.45)
+
+    def test_kki_staats_ordnung_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        ordnung = build_staats_ordnung(ordnung_id="ordnung-221-expansion")
+        norm = next(n for n in ordnung.normen if n.geltung is StaatsGeltung.GRUNDLEGEND_GEORDNET)
+
+        self.assertEqual(norm.ebene, StaatsEbene.SOUVERAENITAETS_EBENE)
+        self.assertEqual(norm.prozedur, StaatsProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_staats_ordnung_aggregates_staats_signal(self) -> None:
+        ordnung = build_staats_ordnung(ordnung_id="ordnung-221-signal")
+
+        self.assertEqual(ordnung.staats_signal.status, "ordnung-gesperrt")
+        self.assertEqual(ordnung.gesperrt_norm_ids, ("ordnung-221-signal-stability-lane",))
+        self.assertEqual(ordnung.geordnet_norm_ids, ("ordnung-221-signal-governance-lane",))
+        self.assertEqual(ordnung.grundlegend_norm_ids, ("ordnung-221-signal-expansion-lane",))
 
     def test_kki_verfassungs_grundgesetz_builds_gesperrt_schutz_paragraph(self) -> None:
         grundgesetz = build_verfassungs_grundgesetz(grundgesetz_id="grundgesetz-220-stability")

@@ -128,6 +128,12 @@ from kki import (
     OrdnungsRang,
     OrdnungsTyp,
     build_leitordnung,
+    AutoritaetsDekret,
+    DekretGeltung,
+    DekretKlausel,
+    DekretProzedur,
+    DekretSektion,
+    build_autoritaets_dekret,
     DoctrineClause,
     DoctrinePrinciple,
     DoctrineScope,
@@ -5297,6 +5303,40 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(konvent.begrenzt_line_ids, ("konvent-203-signal-stability-lane",))
         self.assertEqual(konvent.delegiert_line_ids, ("konvent-203-signal-governance-lane",))
         self.assertEqual(konvent.verankert_line_ids, ("konvent-203-signal-expansion-lane",))
+
+    def test_kki_autoritaets_dekret_builds_gesperrt_schutz_klausel(self) -> None:
+        dekret = build_autoritaets_dekret(dekret_id="dekret-211-stability")
+        klausel = next(k for k in dekret.klauseln if k.geltung is DekretGeltung.GESPERRT)
+
+        self.assertIsInstance(dekret, AutoritaetsDekret)
+        self.assertIsInstance(klausel, DekretKlausel)
+        self.assertEqual(klausel.sektion, DekretSektion.SCHUTZ_SEKTION)
+        self.assertEqual(klausel.prozedur, DekretProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(klausel.decree_order, 1)
+
+    def test_kki_autoritaets_dekret_builds_verordnet_ordnungs_klausel(self) -> None:
+        dekret = build_autoritaets_dekret(dekret_id="dekret-211-governance")
+        klausel = next(k for k in dekret.klauseln if k.geltung is DekretGeltung.VERORDNET)
+
+        self.assertEqual(klausel.sektion, DekretSektion.ORDNUNGS_SEKTION)
+        self.assertEqual(klausel.prozedur, DekretProzedur.REGELPROZEDUR)
+        self.assertGreater(klausel.dekret_weight, 0.45)
+
+    def test_kki_autoritaets_dekret_builds_autoritaetsrecht_souveraenitaets_klausel(self) -> None:
+        dekret = build_autoritaets_dekret(dekret_id="dekret-211-expansion")
+        klausel = next(k for k in dekret.klauseln if k.geltung is DekretGeltung.AUTORITAETSRECHT)
+
+        self.assertEqual(klausel.sektion, DekretSektion.SOUVERAENITAETS_SEKTION)
+        self.assertEqual(klausel.prozedur, DekretProzedur.PLENARPROZEDUR)
+        self.assertTrue(klausel.decreed)
+
+    def test_kki_autoritaets_dekret_aggregates_dekret_signal(self) -> None:
+        dekret = build_autoritaets_dekret(dekret_id="dekret-211-signal")
+
+        self.assertEqual(dekret.dekret_signal.status, "dekret-gesperrt")
+        self.assertEqual(dekret.gesperrt_klausel_ids, ("dekret-211-signal-stability-lane",))
+        self.assertEqual(dekret.verordnet_klausel_ids, ("dekret-211-signal-governance-lane",))
+        self.assertEqual(dekret.autoritaetsrecht_klausel_ids, ("dekret-211-signal-expansion-lane",))
 
     def test_kki_leitordnung_builds_blockiert_schutz_norm(self) -> None:
         ordnung = build_leitordnung(ordnung_id="ordnung-210-stability")

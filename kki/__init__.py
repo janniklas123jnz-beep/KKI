@@ -267,6 +267,14 @@ from .leitordnung import (
     OrdnungsTyp,
     build_leitordnung,
 )
+from .autoritaets_dekret import (
+    AutoritaetsDekret,
+    DekretGeltung,
+    DekretKlausel,
+    DekretProzedur,
+    DekretSektion,
+    build_autoritaets_dekret,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -708,6 +716,11 @@ __all__ = [
     "OrdnungsNorm",
     "OrdnungsRang",
     "OrdnungsTyp",
+    "AutoritaetsDekret",
+    "DekretGeltung",
+    "DekretKlausel",
+    "DekretProzedur",
+    "DekretSektion",
     "ExceptionCase",
     "ExceptionKind",
     "ExceptionRegister",
@@ -913,6 +926,7 @@ __all__ = [
     "build_souveraenitaets_akt",
     "build_ordnungs_manifest",
     "build_leitordnung",
+    "build_autoritaets_dekret",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

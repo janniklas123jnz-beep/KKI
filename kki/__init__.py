@@ -283,6 +283,14 @@ from .rechts_fundament import (
     RechtsFundament,
     build_rechts_fundament,
 )
+from .grundsatz_register import (
+    GrundsatzRegister,
+    RegisterEintrag,
+    RegisterKategorie,
+    RegisterProzedur,
+    RegisterStatus,
+    build_grundsatz_register,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -734,6 +742,11 @@ __all__ = [
     "FundamentSaeule",
     "FundamentVerfahren",
     "RechtsFundament",
+    "GrundsatzRegister",
+    "RegisterEintrag",
+    "RegisterKategorie",
+    "RegisterProzedur",
+    "RegisterStatus",
     "ExceptionCase",
     "ExceptionKind",
     "ExceptionRegister",
@@ -941,6 +954,7 @@ __all__ = [
     "build_leitordnung",
     "build_autoritaets_dekret",
     "build_rechts_fundament",
+    "build_grundsatz_register",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

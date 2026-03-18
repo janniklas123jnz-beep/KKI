@@ -140,6 +140,12 @@ from kki import (
     FundamentVerfahren,
     RechtsFundament,
     build_rechts_fundament,
+    GrundsatzRegister,
+    RegisterEintrag,
+    RegisterKategorie,
+    RegisterProzedur,
+    RegisterStatus,
+    build_grundsatz_register,
     DoctrineClause,
     DoctrinePrinciple,
     DoctrineScope,
@@ -5309,6 +5315,40 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(konvent.begrenzt_line_ids, ("konvent-203-signal-stability-lane",))
         self.assertEqual(konvent.delegiert_line_ids, ("konvent-203-signal-governance-lane",))
         self.assertEqual(konvent.verankert_line_ids, ("konvent-203-signal-expansion-lane",))
+
+    def test_kki_grundsatz_register_builds_gesperrt_schutz_eintrag(self) -> None:
+        register = build_grundsatz_register(register_id="register-213-stability")
+        eintrag = next(e for e in register.eintraege if e.status is RegisterStatus.GESPERRT)
+
+        self.assertIsInstance(register, GrundsatzRegister)
+        self.assertIsInstance(eintrag, RegisterEintrag)
+        self.assertEqual(eintrag.kategorie, RegisterKategorie.SCHUTZ_KATEGORIE)
+        self.assertEqual(eintrag.prozedur, RegisterProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(eintrag.registry_tier, 1)
+
+    def test_kki_grundsatz_register_builds_eingetragen_ordnungs_eintrag(self) -> None:
+        register = build_grundsatz_register(register_id="register-213-governance")
+        eintrag = next(e for e in register.eintraege if e.status is RegisterStatus.EINGETRAGEN)
+
+        self.assertEqual(eintrag.kategorie, RegisterKategorie.ORDNUNGS_KATEGORIE)
+        self.assertEqual(eintrag.prozedur, RegisterProzedur.REGELPROTOKOLL)
+        self.assertGreater(eintrag.register_weight, 0.45)
+
+    def test_kki_grundsatz_register_builds_grundlegend_souveraenitaets_eintrag(self) -> None:
+        register = build_grundsatz_register(register_id="register-213-expansion")
+        eintrag = next(e for e in register.eintraege if e.status is RegisterStatus.GRUNDLEGEND_EINGETRAGEN)
+
+        self.assertEqual(eintrag.kategorie, RegisterKategorie.SOUVERAENITAETS_KATEGORIE)
+        self.assertEqual(eintrag.prozedur, RegisterProzedur.PLENARPROTOKOLL)
+        self.assertTrue(eintrag.canonical)
+
+    def test_kki_grundsatz_register_aggregates_register_signal(self) -> None:
+        register = build_grundsatz_register(register_id="register-213-signal")
+
+        self.assertEqual(register.register_signal.status, "register-gesperrt")
+        self.assertEqual(register.gesperrt_eintrag_ids, ("register-213-signal-stability-lane",))
+        self.assertEqual(register.eingetragen_eintrag_ids, ("register-213-signal-governance-lane",))
+        self.assertEqual(register.grundlegend_eintrag_ids, ("register-213-signal-expansion-lane",))
 
     def test_kki_rechts_fundament_builds_gesperrt_schutz_pfeiler(self) -> None:
         fundament = build_rechts_fundament(fundament_id="fundament-212-stability")

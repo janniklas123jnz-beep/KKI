@@ -104,6 +104,12 @@ from kki import (
     SenatsMandat,
     VerfassungsSenat,
     build_verfassungs_senat,
+    ChartaArtikel,
+    ChartaGeltung,
+    ChartaKapitel,
+    ChartaVerfahren,
+    GrundrechtsCharta,
+    build_grundrechts_charta,
     DoctrineClause,
     DoctrinePrinciple,
     DoctrineScope,
@@ -5273,6 +5279,40 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(konvent.begrenzt_line_ids, ("konvent-203-signal-stability-lane",))
         self.assertEqual(konvent.delegiert_line_ids, ("konvent-203-signal-governance-lane",))
         self.assertEqual(konvent.verankert_line_ids, ("konvent-203-signal-expansion-lane",))
+
+    def test_kki_grundrechts_charta_builds_ausgesetzt_schutz_artikel(self) -> None:
+        charta = build_grundrechts_charta(charta_id="charta-207-stability")
+        artikel = next(a for a in charta.artikel if a.geltung is ChartaGeltung.AUSGESETZT)
+
+        self.assertIsInstance(charta, GrundrechtsCharta)
+        self.assertIsInstance(artikel, ChartaArtikel)
+        self.assertEqual(artikel.kapitel, ChartaKapitel.SCHUTZ_KAPITEL)
+        self.assertEqual(artikel.verfahren, ChartaVerfahren.DRINGLICHE_EINTRAGUNG)
+        self.assertGreaterEqual(artikel.ratification_depth, 1)
+
+    def test_kki_grundrechts_charta_builds_geltend_ordnungs_artikel(self) -> None:
+        charta = build_grundrechts_charta(charta_id="charta-207-governance")
+        artikel = next(a for a in charta.artikel if a.geltung is ChartaGeltung.GELTEND)
+
+        self.assertEqual(artikel.kapitel, ChartaKapitel.ORDNUNGS_KAPITEL)
+        self.assertEqual(artikel.verfahren, ChartaVerfahren.ORDENTLICHE_EINTRAGUNG)
+        self.assertGreater(artikel.codex_weight, 0.45)
+
+    def test_kki_grundrechts_charta_builds_grundrecht_souveraenitaets_artikel(self) -> None:
+        charta = build_grundrechts_charta(charta_id="charta-207-expansion")
+        artikel = next(a for a in charta.artikel if a.geltung is ChartaGeltung.GRUNDRECHT)
+
+        self.assertEqual(artikel.kapitel, ChartaKapitel.SOUVERAENITAETS_KAPITEL)
+        self.assertEqual(artikel.verfahren, ChartaVerfahren.PLENARE_EINTRAGUNG)
+        self.assertTrue(artikel.enforceable)
+
+    def test_kki_grundrechts_charta_aggregates_charta_signal(self) -> None:
+        charta = build_grundrechts_charta(charta_id="charta-207-signal")
+
+        self.assertEqual(charta.charta_signal.status, "charta-ausgesetzt")
+        self.assertEqual(charta.ausgesetzt_artikel_ids, ("charta-207-signal-stability-lane",))
+        self.assertEqual(charta.geltend_artikel_ids, ("charta-207-signal-governance-lane",))
+        self.assertEqual(charta.grundrecht_artikel_ids, ("charta-207-signal-expansion-lane",))
 
     def test_kki_verfassungs_senat_builds_ungueltig_schutz_mandat(self) -> None:
         senat = build_verfassungs_senat(senat_id="senat-206-stability")

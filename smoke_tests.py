@@ -194,6 +194,12 @@ from kki import (
     StaatsOrdnung,
     StaatsProzedur,
     build_staats_ordnung,
+    KodexKlasse,
+    KodexNorm,
+    KodexProzedur,
+    KodexStatus,
+    RechtsKodex,
+    build_rechts_kodex,
     DoctrineClause,
     DoctrinePrinciple,
     DoctrineScope,
@@ -5363,6 +5369,40 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(konvent.begrenzt_line_ids, ("konvent-203-signal-stability-lane",))
         self.assertEqual(konvent.delegiert_line_ids, ("konvent-203-signal-governance-lane",))
         self.assertEqual(konvent.verankert_line_ids, ("konvent-203-signal-expansion-lane",))
+
+    def test_kki_rechts_kodex_builds_gesperrt_schutz_norm(self) -> None:
+        kodex = build_rechts_kodex(kodex_id="kodex-222-stability")
+        norm = next(n for n in kodex.normen if n.status is KodexStatus.GESPERRT)
+
+        self.assertIsInstance(kodex, RechtsKodex)
+        self.assertIsInstance(norm, KodexNorm)
+        self.assertEqual(norm.klasse, KodexKlasse.SCHUTZ_KLASSE)
+        self.assertEqual(norm.prozedur, KodexProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.kodex_tier, 1)
+
+    def test_kki_rechts_kodex_builds_kodiert_ordnungs_norm(self) -> None:
+        kodex = build_rechts_kodex(kodex_id="kodex-222-governance")
+        norm = next(n for n in kodex.normen if n.status is KodexStatus.KODIERT)
+
+        self.assertEqual(norm.klasse, KodexKlasse.ORDNUNGS_KLASSE)
+        self.assertEqual(norm.prozedur, KodexProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.kodex_weight, 0.45)
+
+    def test_kki_rechts_kodex_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        kodex = build_rechts_kodex(kodex_id="kodex-222-expansion")
+        norm = next(n for n in kodex.normen if n.status is KodexStatus.GRUNDLEGEND_KODIERT)
+
+        self.assertEqual(norm.klasse, KodexKlasse.SOUVERAENITAETS_KLASSE)
+        self.assertEqual(norm.prozedur, KodexProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_rechts_kodex_aggregates_kodex_signal(self) -> None:
+        kodex = build_rechts_kodex(kodex_id="kodex-222-signal")
+
+        self.assertEqual(kodex.kodex_signal.status, "kodex-gesperrt")
+        self.assertEqual(kodex.gesperrt_norm_ids, ("kodex-222-signal-stability-lane",))
+        self.assertEqual(kodex.kodiert_norm_ids, ("kodex-222-signal-governance-lane",))
+        self.assertEqual(kodex.grundlegend_norm_ids, ("kodex-222-signal-expansion-lane",))
 
     def test_kki_staats_ordnung_builds_gesperrt_schutz_norm(self) -> None:
         ordnung = build_staats_ordnung(ordnung_id="ordnung-221-stability")

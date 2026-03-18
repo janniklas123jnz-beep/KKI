@@ -355,6 +355,14 @@ from .staats_ordnung import (
     StaatsProzedur,
     build_staats_ordnung,
 )
+from .rechts_kodex import (
+    KodexKlasse,
+    KodexNorm,
+    KodexProzedur,
+    KodexStatus,
+    RechtsKodex,
+    build_rechts_kodex,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -851,6 +859,11 @@ __all__ = [
     "StaatsNorm",
     "StaatsOrdnung",
     "StaatsProzedur",
+    "KodexKlasse",
+    "KodexNorm",
+    "KodexProzedur",
+    "KodexStatus",
+    "RechtsKodex",
     "ExceptionCase",
     "ExceptionKind",
     "ExceptionRegister",
@@ -1067,6 +1080,7 @@ __all__ = [
     "build_leitstern_konstitution",
     "build_verfassungs_grundgesetz",
     "build_staats_ordnung",
+    "build_rechts_kodex",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

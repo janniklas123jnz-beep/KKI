@@ -363,6 +363,14 @@ from .rechts_kodex import (
     RechtsKodex,
     build_rechts_kodex,
 )
+from .unions_akt import (
+    UnionsAkt,
+    UnionsGeltung,
+    UnionsNorm,
+    UnionsProzedur,
+    UnionsTyp,
+    build_unions_akt,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -864,6 +872,11 @@ __all__ = [
     "KodexProzedur",
     "KodexStatus",
     "RechtsKodex",
+    "UnionsAkt",
+    "UnionsGeltung",
+    "UnionsNorm",
+    "UnionsProzedur",
+    "UnionsTyp",
     "ExceptionCase",
     "ExceptionKind",
     "ExceptionRegister",
@@ -1081,6 +1094,7 @@ __all__ = [
     "build_verfassungs_grundgesetz",
     "build_staats_ordnung",
     "build_rechts_kodex",
+    "build_unions_akt",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

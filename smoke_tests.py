@@ -200,6 +200,12 @@ from kki import (
     KodexStatus,
     RechtsKodex,
     build_rechts_kodex,
+    UnionsAkt,
+    UnionsGeltung,
+    UnionsNorm,
+    UnionsProzedur,
+    UnionsTyp,
+    build_unions_akt,
     DoctrineClause,
     DoctrinePrinciple,
     DoctrineScope,
@@ -5369,6 +5375,40 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(konvent.begrenzt_line_ids, ("konvent-203-signal-stability-lane",))
         self.assertEqual(konvent.delegiert_line_ids, ("konvent-203-signal-governance-lane",))
         self.assertEqual(konvent.verankert_line_ids, ("konvent-203-signal-expansion-lane",))
+
+    def test_kki_unions_akt_builds_gesperrt_schutz_norm(self) -> None:
+        akt = build_unions_akt(akt_id="akt-223-stability")
+        norm = next(n for n in akt.normen if n.geltung is UnionsGeltung.GESPERRT)
+
+        self.assertIsInstance(akt, UnionsAkt)
+        self.assertIsInstance(norm, UnionsNorm)
+        self.assertEqual(norm.unions_typ, UnionsTyp.SCHUTZ_UNION)
+        self.assertEqual(norm.prozedur, UnionsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.unions_tier, 1)
+
+    def test_kki_unions_akt_builds_vereint_ordnungs_norm(self) -> None:
+        akt = build_unions_akt(akt_id="akt-223-governance")
+        norm = next(n for n in akt.normen if n.geltung is UnionsGeltung.VEREINT)
+
+        self.assertEqual(norm.unions_typ, UnionsTyp.ORDNUNGS_UNION)
+        self.assertEqual(norm.prozedur, UnionsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.unions_weight, 0.45)
+
+    def test_kki_unions_akt_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        akt = build_unions_akt(akt_id="akt-223-expansion")
+        norm = next(n for n in akt.normen if n.geltung is UnionsGeltung.GRUNDLEGEND_VEREINT)
+
+        self.assertEqual(norm.unions_typ, UnionsTyp.SOUVERAENITAETS_UNION)
+        self.assertEqual(norm.prozedur, UnionsProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_unions_akt_aggregates_akt_signal(self) -> None:
+        akt = build_unions_akt(akt_id="akt-223-signal")
+
+        self.assertEqual(akt.akt_signal.status, "akt-gesperrt")
+        self.assertEqual(akt.gesperrt_norm_ids, ("akt-223-signal-stability-lane",))
+        self.assertEqual(akt.vereint_norm_ids, ("akt-223-signal-governance-lane",))
+        self.assertEqual(akt.grundlegend_norm_ids, ("akt-223-signal-expansion-lane",))
 
     def test_kki_rechts_kodex_builds_gesperrt_schutz_norm(self) -> None:
         kodex = build_rechts_kodex(kodex_id="kodex-222-stability")

@@ -339,6 +339,14 @@ from .leitstern_konstitution import (
     LeitsternKonstitution,
     build_leitstern_konstitution,
 )
+from .verfassungs_grundgesetz import (
+    GrundgesetzGeltung,
+    GrundgesetzParagraph,
+    GrundgesetzProzedur,
+    GrundgesetzTitel,
+    VerfassungsGrundgesetz,
+    build_verfassungs_grundgesetz,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -825,6 +833,11 @@ __all__ = [
     "KonstitutionsProzedur",
     "KonstitutionsRang",
     "LeitsternKonstitution",
+    "GrundgesetzGeltung",
+    "GrundgesetzParagraph",
+    "GrundgesetzProzedur",
+    "GrundgesetzTitel",
+    "VerfassungsGrundgesetz",
     "ExceptionCase",
     "ExceptionKind",
     "ExceptionRegister",
@@ -1039,6 +1052,7 @@ __all__ = [
     "build_missions_verfassung",
     "build_zweck_manifest",
     "build_leitstern_konstitution",
+    "build_verfassungs_grundgesetz",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

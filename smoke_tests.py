@@ -182,6 +182,12 @@ from kki import (
     KonstitutionsRang,
     LeitsternKonstitution,
     build_leitstern_konstitution,
+    GrundgesetzGeltung,
+    GrundgesetzParagraph,
+    GrundgesetzProzedur,
+    GrundgesetzTitel,
+    VerfassungsGrundgesetz,
+    build_verfassungs_grundgesetz,
     DoctrineClause,
     DoctrinePrinciple,
     DoctrineScope,
@@ -5351,6 +5357,40 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(konvent.begrenzt_line_ids, ("konvent-203-signal-stability-lane",))
         self.assertEqual(konvent.delegiert_line_ids, ("konvent-203-signal-governance-lane",))
         self.assertEqual(konvent.verankert_line_ids, ("konvent-203-signal-expansion-lane",))
+
+    def test_kki_verfassungs_grundgesetz_builds_gesperrt_schutz_paragraph(self) -> None:
+        grundgesetz = build_verfassungs_grundgesetz(grundgesetz_id="grundgesetz-220-stability")
+        paragraph = next(p for p in grundgesetz.paragraphen if p.geltung is GrundgesetzGeltung.GESPERRT)
+
+        self.assertIsInstance(grundgesetz, VerfassungsGrundgesetz)
+        self.assertIsInstance(paragraph, GrundgesetzParagraph)
+        self.assertEqual(paragraph.titel, GrundgesetzTitel.SCHUTZ_TITEL)
+        self.assertEqual(paragraph.prozedur, GrundgesetzProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(paragraph.grundgesetz_tier, 1)
+
+    def test_kki_verfassungs_grundgesetz_builds_verbindlich_ordnungs_paragraph(self) -> None:
+        grundgesetz = build_verfassungs_grundgesetz(grundgesetz_id="grundgesetz-220-governance")
+        paragraph = next(p for p in grundgesetz.paragraphen if p.geltung is GrundgesetzGeltung.VERBINDLICH)
+
+        self.assertEqual(paragraph.titel, GrundgesetzTitel.ORDNUNGS_TITEL)
+        self.assertEqual(paragraph.prozedur, GrundgesetzProzedur.REGELPROTOKOLL)
+        self.assertGreater(paragraph.grundgesetz_weight, 0.45)
+
+    def test_kki_verfassungs_grundgesetz_builds_grundgesetzlich_souveraenitaets_paragraph(self) -> None:
+        grundgesetz = build_verfassungs_grundgesetz(grundgesetz_id="grundgesetz-220-expansion")
+        paragraph = next(p for p in grundgesetz.paragraphen if p.geltung is GrundgesetzGeltung.GRUNDGESETZLICH)
+
+        self.assertEqual(paragraph.titel, GrundgesetzTitel.SOUVERAENITAETS_TITEL)
+        self.assertEqual(paragraph.prozedur, GrundgesetzProzedur.PLENARPROTOKOLL)
+        self.assertTrue(paragraph.canonical)
+
+    def test_kki_verfassungs_grundgesetz_aggregates_grundgesetz_signal(self) -> None:
+        grundgesetz = build_verfassungs_grundgesetz(grundgesetz_id="grundgesetz-220-signal")
+
+        self.assertEqual(grundgesetz.grundgesetz_signal.status, "grundgesetz-gesperrt")
+        self.assertEqual(grundgesetz.gesperrt_paragraph_ids, ("grundgesetz-220-signal-stability-lane",))
+        self.assertEqual(grundgesetz.verbindlich_paragraph_ids, ("grundgesetz-220-signal-governance-lane",))
+        self.assertEqual(grundgesetz.grundgesetzlich_paragraph_ids, ("grundgesetz-220-signal-expansion-lane",))
 
     def test_kki_leitstern_konstitution_builds_gesperrt_schutz_artikel(self) -> None:
         konstitution = build_leitstern_konstitution(konstitutions_id="konstitution-219-stability")

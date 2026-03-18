@@ -206,6 +206,12 @@ from kki import (
     UnionsProzedur,
     UnionsTyp,
     build_unions_akt,
+    FoederalGeltung,
+    FoederalNorm,
+    FoederalProzedur,
+    FoederalTyp,
+    FoederalVertrag,
+    build_foederal_vertrag,
     DoctrineClause,
     DoctrinePrinciple,
     DoctrineScope,
@@ -5375,6 +5381,40 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(konvent.begrenzt_line_ids, ("konvent-203-signal-stability-lane",))
         self.assertEqual(konvent.delegiert_line_ids, ("konvent-203-signal-governance-lane",))
         self.assertEqual(konvent.verankert_line_ids, ("konvent-203-signal-expansion-lane",))
+
+    def test_kki_foederal_vertrag_builds_gesperrt_schutz_norm(self) -> None:
+        vertrag = build_foederal_vertrag(vertrag_id="vertrag-224-stability")
+        norm = next(n for n in vertrag.normen if n.geltung is FoederalGeltung.GESPERRT)
+
+        self.assertIsInstance(vertrag, FoederalVertrag)
+        self.assertIsInstance(norm, FoederalNorm)
+        self.assertEqual(norm.foederal_typ, FoederalTyp.SCHUTZ_BUND)
+        self.assertEqual(norm.prozedur, FoederalProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.foederal_tier, 1)
+
+    def test_kki_foederal_vertrag_builds_foederiert_ordnungs_norm(self) -> None:
+        vertrag = build_foederal_vertrag(vertrag_id="vertrag-224-governance")
+        norm = next(n for n in vertrag.normen if n.geltung is FoederalGeltung.FOEDERIERT)
+
+        self.assertEqual(norm.foederal_typ, FoederalTyp.ORDNUNGS_BUND)
+        self.assertEqual(norm.prozedur, FoederalProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.foederal_weight, 0.45)
+
+    def test_kki_foederal_vertrag_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        vertrag = build_foederal_vertrag(vertrag_id="vertrag-224-expansion")
+        norm = next(n for n in vertrag.normen if n.geltung is FoederalGeltung.GRUNDLEGEND_FOEDERIERT)
+
+        self.assertEqual(norm.foederal_typ, FoederalTyp.SOUVERAENITAETS_BUND)
+        self.assertEqual(norm.prozedur, FoederalProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_foederal_vertrag_aggregates_vertrag_signal(self) -> None:
+        vertrag = build_foederal_vertrag(vertrag_id="vertrag-224-signal")
+
+        self.assertEqual(vertrag.vertrag_signal.status, "vertrag-gesperrt")
+        self.assertEqual(vertrag.gesperrt_norm_ids, ("vertrag-224-signal-stability-lane",))
+        self.assertEqual(vertrag.foederiert_norm_ids, ("vertrag-224-signal-governance-lane",))
+        self.assertEqual(vertrag.grundlegend_norm_ids, ("vertrag-224-signal-expansion-lane",))
 
     def test_kki_unions_akt_builds_gesperrt_schutz_norm(self) -> None:
         akt = build_unions_akt(akt_id="akt-223-stability")

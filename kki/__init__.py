@@ -395,6 +395,14 @@ from .hoheits_manifest import (
     HoheitsProzedur,
     build_hoheits_manifest,
 )
+from .supremats_register import (
+    SuprematsGeltung,
+    SuprematsKlasse,
+    SuprematsNorm,
+    SuprematsProzedur,
+    SuprematsRegister,
+    build_supremats_register,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -916,6 +924,11 @@ __all__ = [
     "HoheitsManifest",
     "HoheitsNorm",
     "HoheitsProzedur",
+    "SuprematsGeltung",
+    "SuprematsKlasse",
+    "SuprematsNorm",
+    "SuprematsProzedur",
+    "SuprematsRegister",
     "ExceptionCase",
     "ExceptionKind",
     "ExceptionRegister",
@@ -1137,6 +1150,7 @@ __all__ = [
     "build_foederal_vertrag",
     "build_bundes_charta",
     "build_hoheits_manifest",
+    "build_supremats_register",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

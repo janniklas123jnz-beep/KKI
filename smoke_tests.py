@@ -224,6 +224,12 @@ from kki import (
     HoheitsNorm,
     HoheitsProzedur,
     build_hoheits_manifest,
+    SuprematsGeltung,
+    SuprematsKlasse,
+    SuprematsNorm,
+    SuprematsProzedur,
+    SuprematsRegister,
+    build_supremats_register,
     DoctrineClause,
     DoctrinePrinciple,
     DoctrineScope,
@@ -5393,6 +5399,40 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(konvent.begrenzt_line_ids, ("konvent-203-signal-stability-lane",))
         self.assertEqual(konvent.delegiert_line_ids, ("konvent-203-signal-governance-lane",))
         self.assertEqual(konvent.verankert_line_ids, ("konvent-203-signal-expansion-lane",))
+
+    def test_kki_supremats_register_builds_gesperrt_schutz_norm(self) -> None:
+        register = build_supremats_register(register_id="register-227-stability")
+        norm = next(n for n in register.normen if n.geltung is SuprematsGeltung.GESPERRT)
+
+        self.assertIsInstance(register, SuprematsRegister)
+        self.assertIsInstance(norm, SuprematsNorm)
+        self.assertEqual(norm.supremats_klasse, SuprematsKlasse.SCHUTZ_SUPREMAT)
+        self.assertEqual(norm.prozedur, SuprematsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.supremats_tier, 1)
+
+    def test_kki_supremats_register_builds_supremiert_ordnungs_norm(self) -> None:
+        register = build_supremats_register(register_id="register-227-governance")
+        norm = next(n for n in register.normen if n.geltung is SuprematsGeltung.SUPREMIERT)
+
+        self.assertEqual(norm.supremats_klasse, SuprematsKlasse.ORDNUNGS_SUPREMAT)
+        self.assertEqual(norm.prozedur, SuprematsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.supremats_weight, 0.45)
+
+    def test_kki_supremats_register_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        register = build_supremats_register(register_id="register-227-expansion")
+        norm = next(n for n in register.normen if n.geltung is SuprematsGeltung.GRUNDLEGEND_SUPREMIERT)
+
+        self.assertEqual(norm.supremats_klasse, SuprematsKlasse.SOUVERAENITAETS_SUPREMAT)
+        self.assertEqual(norm.prozedur, SuprematsProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_supremats_register_aggregates_register_signal(self) -> None:
+        register = build_supremats_register(register_id="register-227-signal")
+
+        self.assertEqual(register.register_signal.status, "register-gesperrt")
+        self.assertEqual(register.gesperrt_norm_ids, ("register-227-signal-stability-lane",))
+        self.assertEqual(register.supremiert_norm_ids, ("register-227-signal-governance-lane",))
+        self.assertEqual(register.grundlegend_norm_ids, ("register-227-signal-expansion-lane",))
 
     def test_kki_hoheits_manifest_builds_gesperrt_schutz_norm(self) -> None:
         manifest = build_hoheits_manifest(manifest_id="manifest-226-stability")

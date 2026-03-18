@@ -331,6 +331,14 @@ from .zweck_manifest import (
     ZweckManifest,
     build_zweck_manifest,
 )
+from .leitstern_konstitution import (
+    KonstitutionsArtikel,
+    KonstitutionsEbene,
+    KonstitutionsProzedur,
+    KonstitutionsRang,
+    LeitsternKonstitution,
+    build_leitstern_konstitution,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -812,6 +820,11 @@ __all__ = [
     "ZweckDimension",
     "ZweckKlausel",
     "ZweckManifest",
+    "KonstitutionsArtikel",
+    "KonstitutionsEbene",
+    "KonstitutionsProzedur",
+    "KonstitutionsRang",
+    "LeitsternKonstitution",
     "ExceptionCase",
     "ExceptionKind",
     "ExceptionRegister",
@@ -1025,6 +1038,7 @@ __all__ = [
     "build_leitbild_konvent",
     "build_missions_verfassung",
     "build_zweck_manifest",
+    "build_leitstern_konstitution",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

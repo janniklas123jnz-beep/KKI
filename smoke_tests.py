@@ -176,6 +176,12 @@ from kki import (
     ZweckKlausel,
     ZweckManifest,
     build_zweck_manifest,
+    KonstitutionsArtikel,
+    KonstitutionsEbene,
+    KonstitutionsProzedur,
+    KonstitutionsRang,
+    LeitsternKonstitution,
+    build_leitstern_konstitution,
     DoctrineClause,
     DoctrinePrinciple,
     DoctrineScope,
@@ -5345,6 +5351,40 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(konvent.begrenzt_line_ids, ("konvent-203-signal-stability-lane",))
         self.assertEqual(konvent.delegiert_line_ids, ("konvent-203-signal-governance-lane",))
         self.assertEqual(konvent.verankert_line_ids, ("konvent-203-signal-expansion-lane",))
+
+    def test_kki_leitstern_konstitution_builds_gesperrt_schutz_artikel(self) -> None:
+        konstitution = build_leitstern_konstitution(konstitutions_id="konstitution-219-stability")
+        artikel = next(a for a in konstitution.artikel if a.rang is KonstitutionsRang.GESPERRT)
+
+        self.assertIsInstance(konstitution, LeitsternKonstitution)
+        self.assertIsInstance(artikel, KonstitutionsArtikel)
+        self.assertEqual(artikel.ebene, KonstitutionsEbene.SCHUTZ_EBENE)
+        self.assertEqual(artikel.prozedur, KonstitutionsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(artikel.konstitutions_tier, 1)
+
+    def test_kki_leitstern_konstitution_builds_konstituiert_ordnungs_artikel(self) -> None:
+        konstitution = build_leitstern_konstitution(konstitutions_id="konstitution-219-governance")
+        artikel = next(a for a in konstitution.artikel if a.rang is KonstitutionsRang.KONSTITUIERT)
+
+        self.assertEqual(artikel.ebene, KonstitutionsEbene.ORDNUNGS_EBENE)
+        self.assertEqual(artikel.prozedur, KonstitutionsProzedur.REGELPROTOKOLL)
+        self.assertGreater(artikel.konstitutions_weight, 0.45)
+
+    def test_kki_leitstern_konstitution_builds_grundlegend_souveraenitaets_artikel(self) -> None:
+        konstitution = build_leitstern_konstitution(konstitutions_id="konstitution-219-expansion")
+        artikel = next(a for a in konstitution.artikel if a.rang is KonstitutionsRang.GRUNDLEGEND_KONSTITUIERT)
+
+        self.assertEqual(artikel.ebene, KonstitutionsEbene.SOUVERAENITAETS_EBENE)
+        self.assertEqual(artikel.prozedur, KonstitutionsProzedur.PLENARPROTOKOLL)
+        self.assertTrue(artikel.canonical)
+
+    def test_kki_leitstern_konstitution_aggregates_konstitutions_signal(self) -> None:
+        konstitution = build_leitstern_konstitution(konstitutions_id="konstitution-219-signal")
+
+        self.assertEqual(konstitution.konstitutions_signal.status, "konstitution-gesperrt")
+        self.assertEqual(konstitution.gesperrt_artikel_ids, ("konstitution-219-signal-stability-lane",))
+        self.assertEqual(konstitution.konstituiert_artikel_ids, ("konstitution-219-signal-governance-lane",))
+        self.assertEqual(konstitution.grundlegend_artikel_ids, ("konstitution-219-signal-expansion-lane",))
 
     def test_kki_zweck_manifest_builds_gesperrt_schutz_klausel(self) -> None:
         manifest = build_zweck_manifest(manifest_id="manifest-218-stability")

@@ -272,6 +272,30 @@ from kki import (
     UniversalrechtsRang,
     UniversalrechtsRegister,
     build_universalrechts_register,
+    ZivilisationsGeltung,
+    ZivilisationsNorm,
+    ZivilisationsPakt,
+    ZivilisationsProzedur,
+    ZivilisationsTyp,
+    build_zivilisations_pakt,
+    ErbeGeltung,
+    ErbeKlasse,
+    ErbeNorm,
+    ErbeProzedur,
+    ErbeRegister,
+    build_erbe_register,
+    SchoepfungsGeltung,
+    SchoepfungsGrad,
+    SchoepfungsNorm,
+    SchoepfungsProzedur,
+    SchoepfungsVertrag,
+    build_schoepfungs_vertrag,
+    UrsprungsCharta,
+    UrsprungsGeltung,
+    UrsprungsNorm,
+    UrsprungsProzedur,
+    UrsprungsTyp,
+    build_ursprungs_charta,
     UniversalKodex,
     UniversalKodexGeltung,
     UniversalKodexKlasse,
@@ -5477,6 +5501,142 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(konvent.begrenzt_line_ids, ("konvent-203-signal-stability-lane",))
         self.assertEqual(konvent.delegiert_line_ids, ("konvent-203-signal-governance-lane",))
         self.assertEqual(konvent.verankert_line_ids, ("konvent-203-signal-expansion-lane",))
+
+    def test_kki_zivilisations_pakt_builds_gesperrt_schutz_norm(self) -> None:
+        pakt = build_zivilisations_pakt(pakt_id="pakt-244-stability")
+        norm = next(n for n in pakt.normen if n.geltung is ZivilisationsGeltung.GESPERRT)
+
+        self.assertIsInstance(pakt, ZivilisationsPakt)
+        self.assertIsInstance(norm, ZivilisationsNorm)
+        self.assertEqual(norm.zivilisations_typ, ZivilisationsTyp.SCHUTZ_ZIVILISATION)
+        self.assertEqual(norm.prozedur, ZivilisationsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.zivilisations_tier, 1)
+
+    def test_kki_zivilisations_pakt_builds_geschlossen_ordnungs_norm(self) -> None:
+        pakt = build_zivilisations_pakt(pakt_id="pakt-244-governance")
+        norm = next(n for n in pakt.normen if n.geltung is ZivilisationsGeltung.GESCHLOSSEN)
+
+        self.assertEqual(norm.zivilisations_typ, ZivilisationsTyp.ORDNUNGS_ZIVILISATION)
+        self.assertEqual(norm.prozedur, ZivilisationsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.zivilisations_weight, 0.45)
+
+    def test_kki_zivilisations_pakt_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        pakt = build_zivilisations_pakt(pakt_id="pakt-244-expansion")
+        norm = next(n for n in pakt.normen if n.geltung is ZivilisationsGeltung.GRUNDLEGEND_GESCHLOSSEN)
+
+        self.assertEqual(norm.zivilisations_typ, ZivilisationsTyp.SOUVERAENITAETS_ZIVILISATION)
+        self.assertEqual(norm.prozedur, ZivilisationsProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_zivilisations_pakt_aggregates_pakt_signal(self) -> None:
+        pakt = build_zivilisations_pakt(pakt_id="pakt-244-signal")
+
+        self.assertEqual(pakt.pakt_signal.status, "pakt-gesperrt")
+        self.assertEqual(pakt.gesperrt_norm_ids, ("pakt-244-signal-stability-lane",))
+        self.assertEqual(pakt.geschlossen_norm_ids, ("pakt-244-signal-governance-lane",))
+        self.assertEqual(pakt.grundlegend_norm_ids, ("pakt-244-signal-expansion-lane",))
+
+    def test_kki_erbe_register_builds_gesperrt_schutz_norm(self) -> None:
+        register = build_erbe_register(register_id="register-243-stability")
+        norm = next(n for n in register.normen if n.geltung is ErbeGeltung.GESPERRT)
+
+        self.assertIsInstance(register, ErbeRegister)
+        self.assertIsInstance(norm, ErbeNorm)
+        self.assertEqual(norm.erbe_klasse, ErbeKlasse.SCHUTZ_ERBE)
+        self.assertEqual(norm.prozedur, ErbeProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.erbe_tier, 1)
+
+    def test_kki_erbe_register_builds_ueberliefert_ordnungs_norm(self) -> None:
+        register = build_erbe_register(register_id="register-243-governance")
+        norm = next(n for n in register.normen if n.geltung is ErbeGeltung.UEBERLIEFERT)
+
+        self.assertEqual(norm.erbe_klasse, ErbeKlasse.ORDNUNGS_ERBE)
+        self.assertEqual(norm.prozedur, ErbeProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.erbe_weight, 0.45)
+
+    def test_kki_erbe_register_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        register = build_erbe_register(register_id="register-243-expansion")
+        norm = next(n for n in register.normen if n.geltung is ErbeGeltung.GRUNDLEGEND_UEBERLIEFERT)
+
+        self.assertEqual(norm.erbe_klasse, ErbeKlasse.SOUVERAENITAETS_ERBE)
+        self.assertEqual(norm.prozedur, ErbeProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_erbe_register_aggregates_register_signal(self) -> None:
+        register = build_erbe_register(register_id="register-243-signal")
+
+        self.assertEqual(register.register_signal.status, "register-gesperrt")
+        self.assertEqual(register.gesperrt_norm_ids, ("register-243-signal-stability-lane",))
+        self.assertEqual(register.ueberliefert_norm_ids, ("register-243-signal-governance-lane",))
+        self.assertEqual(register.grundlegend_norm_ids, ("register-243-signal-expansion-lane",))
+
+    def test_kki_schoepfungs_vertrag_builds_gesperrt_schutz_norm(self) -> None:
+        vertrag = build_schoepfungs_vertrag(vertrag_id="vertrag-242-stability")
+        norm = next(n for n in vertrag.normen if n.geltung is SchoepfungsGeltung.GESPERRT)
+
+        self.assertIsInstance(vertrag, SchoepfungsVertrag)
+        self.assertIsInstance(norm, SchoepfungsNorm)
+        self.assertEqual(norm.schoepfungs_grad, SchoepfungsGrad.SCHUTZ_SCHOEPFUNG)
+        self.assertEqual(norm.prozedur, SchoepfungsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.schoepfungs_tier, 1)
+
+    def test_kki_schoepfungs_vertrag_builds_gestiftet_ordnungs_norm(self) -> None:
+        vertrag = build_schoepfungs_vertrag(vertrag_id="vertrag-242-governance")
+        norm = next(n for n in vertrag.normen if n.geltung is SchoepfungsGeltung.GESTIFTET)
+
+        self.assertEqual(norm.schoepfungs_grad, SchoepfungsGrad.ORDNUNGS_SCHOEPFUNG)
+        self.assertEqual(norm.prozedur, SchoepfungsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.schoepfungs_weight, 0.45)
+
+    def test_kki_schoepfungs_vertrag_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        vertrag = build_schoepfungs_vertrag(vertrag_id="vertrag-242-expansion")
+        norm = next(n for n in vertrag.normen if n.geltung is SchoepfungsGeltung.GRUNDLEGEND_GESTIFTET)
+
+        self.assertEqual(norm.schoepfungs_grad, SchoepfungsGrad.SOUVERAENITAETS_SCHOEPFUNG)
+        self.assertEqual(norm.prozedur, SchoepfungsProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_schoepfungs_vertrag_aggregates_vertrag_signal(self) -> None:
+        vertrag = build_schoepfungs_vertrag(vertrag_id="vertrag-242-signal")
+
+        self.assertEqual(vertrag.vertrag_signal.status, "vertrag-gesperrt")
+        self.assertEqual(vertrag.gesperrt_norm_ids, ("vertrag-242-signal-stability-lane",))
+        self.assertEqual(vertrag.gestiftet_norm_ids, ("vertrag-242-signal-governance-lane",))
+        self.assertEqual(vertrag.grundlegend_norm_ids, ("vertrag-242-signal-expansion-lane",))
+
+    def test_kki_ursprungs_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_ursprungs_charta(charta_id="charta-241-stability")
+        norm = next(n for n in charta.normen if n.geltung is UrsprungsGeltung.GESPERRT)
+
+        self.assertIsInstance(charta, UrsprungsCharta)
+        self.assertIsInstance(norm, UrsprungsNorm)
+        self.assertEqual(norm.ursprungs_typ, UrsprungsTyp.SCHUTZ_URSPRUNG)
+        self.assertEqual(norm.prozedur, UrsprungsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.ursprungs_tier, 1)
+
+    def test_kki_ursprungs_charta_builds_verbrieft_ordnungs_norm(self) -> None:
+        charta = build_ursprungs_charta(charta_id="charta-241-governance")
+        norm = next(n for n in charta.normen if n.geltung is UrsprungsGeltung.VERBRIEFT)
+
+        self.assertEqual(norm.ursprungs_typ, UrsprungsTyp.ORDNUNGS_URSPRUNG)
+        self.assertEqual(norm.prozedur, UrsprungsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.ursprungs_weight, 0.45)
+
+    def test_kki_ursprungs_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_ursprungs_charta(charta_id="charta-241-expansion")
+        norm = next(n for n in charta.normen if n.geltung is UrsprungsGeltung.GRUNDLEGEND_VERBRIEFT)
+
+        self.assertEqual(norm.ursprungs_typ, UrsprungsTyp.SOUVERAENITAETS_URSPRUNG)
+        self.assertEqual(norm.prozedur, UrsprungsProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_ursprungs_charta_aggregates_charta_signal(self) -> None:
+        charta = build_ursprungs_charta(charta_id="charta-241-signal")
+
+        self.assertEqual(charta.charta_signal.status, "charta-gesperrt")
+        self.assertEqual(charta.gesperrt_norm_ids, ("charta-241-signal-stability-lane",))
+        self.assertEqual(charta.verbrieft_norm_ids, ("charta-241-signal-governance-lane",))
+        self.assertEqual(charta.grundlegend_norm_ids, ("charta-241-signal-expansion-lane",))
 
     def test_kki_universal_kodex_builds_gesperrt_schutz_norm(self) -> None:
         kodex = build_universal_kodex(kodex_id="kodex-240-stability")

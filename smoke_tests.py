@@ -254,6 +254,30 @@ from kki import (
     AllianzTyp,
     AllianzVertrag,
     build_allianz_vertrag,
+    KooperationsGeltung,
+    KooperationsGrad,
+    KooperationsManifest,
+    KooperationsNorm,
+    KooperationsProzedur,
+    build_kooperations_manifest,
+    SolidaritaetsGeltung,
+    SolidaritaetsNorm,
+    SolidaritaetsPakt,
+    SolidaritaetsProzedur,
+    SolidaritaetsTyp,
+    build_solidaritaets_pakt,
+    UniversalrechtsGeltung,
+    UniversalrechtsNorm,
+    UniversalrechtsProzedur,
+    UniversalrechtsRang,
+    UniversalrechtsRegister,
+    build_universalrechts_register,
+    KosmosEbene,
+    KosmosGeltung,
+    KosmosNorm,
+    KosmosNormEintrag,
+    KosmosProzedur,
+    build_kosmos_norm,
     DiplomatieCharta,
     DiplomatieGeltung,
     DiplomatieNorm,
@@ -5441,6 +5465,142 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(konvent.begrenzt_line_ids, ("konvent-203-signal-stability-lane",))
         self.assertEqual(konvent.delegiert_line_ids, ("konvent-203-signal-governance-lane",))
         self.assertEqual(konvent.verankert_line_ids, ("konvent-203-signal-expansion-lane",))
+
+    def test_kki_kosmos_norm_builds_gesperrt_schutz_norm(self) -> None:
+        kosmos = build_kosmos_norm(norm_id="norm-238-stability")
+        eintrag = next(n for n in kosmos.normen if n.geltung is KosmosGeltung.GESPERRT)
+
+        self.assertIsInstance(kosmos, KosmosNorm)
+        self.assertIsInstance(eintrag, KosmosNormEintrag)
+        self.assertEqual(eintrag.kosmos_ebene, KosmosEbene.SCHUTZ_EBENE)
+        self.assertEqual(eintrag.prozedur, KosmosProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(eintrag.kosmos_tier, 1)
+
+    def test_kki_kosmos_norm_builds_kosmisch_ordnungs_norm(self) -> None:
+        kosmos = build_kosmos_norm(norm_id="norm-238-governance")
+        eintrag = next(n for n in kosmos.normen if n.geltung is KosmosGeltung.KOSMISCH)
+
+        self.assertEqual(eintrag.kosmos_ebene, KosmosEbene.ORDNUNGS_EBENE)
+        self.assertEqual(eintrag.prozedur, KosmosProzedur.REGELPROTOKOLL)
+        self.assertGreater(eintrag.kosmos_weight, 0.45)
+
+    def test_kki_kosmos_norm_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        kosmos = build_kosmos_norm(norm_id="norm-238-expansion")
+        eintrag = next(n for n in kosmos.normen if n.geltung is KosmosGeltung.GRUNDLEGEND_KOSMISCH)
+
+        self.assertEqual(eintrag.kosmos_ebene, KosmosEbene.SOUVERAENITAETS_EBENE)
+        self.assertEqual(eintrag.prozedur, KosmosProzedur.PLENARPROTOKOLL)
+        self.assertTrue(eintrag.canonical)
+
+    def test_kki_kosmos_norm_aggregates_norm_signal(self) -> None:
+        kosmos = build_kosmos_norm(norm_id="norm-238-signal")
+
+        self.assertEqual(kosmos.norm_signal.status, "norm-gesperrt")
+        self.assertEqual(kosmos.gesperrt_norm_ids, ("norm-238-signal-stability-lane",))
+        self.assertEqual(kosmos.kosmisch_norm_ids, ("norm-238-signal-governance-lane",))
+        self.assertEqual(kosmos.grundlegend_norm_ids, ("norm-238-signal-expansion-lane",))
+
+    def test_kki_universalrechts_register_builds_gesperrt_schutz_norm(self) -> None:
+        register = build_universalrechts_register(register_id="register-237-stability")
+        norm = next(n for n in register.normen if n.geltung is UniversalrechtsGeltung.GESPERRT)
+
+        self.assertIsInstance(register, UniversalrechtsRegister)
+        self.assertIsInstance(norm, UniversalrechtsNorm)
+        self.assertEqual(norm.universalrechts_rang, UniversalrechtsRang.SCHUTZ_RANG)
+        self.assertEqual(norm.prozedur, UniversalrechtsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.universalrechts_tier, 1)
+
+    def test_kki_universalrechts_register_builds_registriert_ordnungs_norm(self) -> None:
+        register = build_universalrechts_register(register_id="register-237-governance")
+        norm = next(n for n in register.normen if n.geltung is UniversalrechtsGeltung.REGISTRIERT)
+
+        self.assertEqual(norm.universalrechts_rang, UniversalrechtsRang.ORDNUNGS_RANG)
+        self.assertEqual(norm.prozedur, UniversalrechtsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.universalrechts_weight, 0.45)
+
+    def test_kki_universalrechts_register_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        register = build_universalrechts_register(register_id="register-237-expansion")
+        norm = next(n for n in register.normen if n.geltung is UniversalrechtsGeltung.GRUNDLEGEND_REGISTRIERT)
+
+        self.assertEqual(norm.universalrechts_rang, UniversalrechtsRang.SOUVERAENITAETS_RANG)
+        self.assertEqual(norm.prozedur, UniversalrechtsProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_universalrechts_register_aggregates_register_signal(self) -> None:
+        register = build_universalrechts_register(register_id="register-237-signal")
+
+        self.assertEqual(register.register_signal.status, "register-gesperrt")
+        self.assertEqual(register.gesperrt_norm_ids, ("register-237-signal-stability-lane",))
+        self.assertEqual(register.registriert_norm_ids, ("register-237-signal-governance-lane",))
+        self.assertEqual(register.grundlegend_norm_ids, ("register-237-signal-expansion-lane",))
+
+    def test_kki_solidaritaets_pakt_builds_gesperrt_schutz_norm(self) -> None:
+        pakt = build_solidaritaets_pakt(pakt_id="pakt-236-stability")
+        norm = next(n for n in pakt.normen if n.geltung is SolidaritaetsGeltung.GESPERRT)
+
+        self.assertIsInstance(pakt, SolidaritaetsPakt)
+        self.assertIsInstance(norm, SolidaritaetsNorm)
+        self.assertEqual(norm.solidaritaets_typ, SolidaritaetsTyp.SCHUTZ_SOLIDARITAET)
+        self.assertEqual(norm.prozedur, SolidaritaetsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.solidaritaets_tier, 1)
+
+    def test_kki_solidaritaets_pakt_builds_besiegelt_ordnungs_norm(self) -> None:
+        pakt = build_solidaritaets_pakt(pakt_id="pakt-236-governance")
+        norm = next(n for n in pakt.normen if n.geltung is SolidaritaetsGeltung.BESIEGELT)
+
+        self.assertEqual(norm.solidaritaets_typ, SolidaritaetsTyp.ORDNUNGS_SOLIDARITAET)
+        self.assertEqual(norm.prozedur, SolidaritaetsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.solidaritaets_weight, 0.45)
+
+    def test_kki_solidaritaets_pakt_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        pakt = build_solidaritaets_pakt(pakt_id="pakt-236-expansion")
+        norm = next(n for n in pakt.normen if n.geltung is SolidaritaetsGeltung.GRUNDLEGEND_BESIEGELT)
+
+        self.assertEqual(norm.solidaritaets_typ, SolidaritaetsTyp.SOUVERAENITAETS_SOLIDARITAET)
+        self.assertEqual(norm.prozedur, SolidaritaetsProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_solidaritaets_pakt_aggregates_pakt_signal(self) -> None:
+        pakt = build_solidaritaets_pakt(pakt_id="pakt-236-signal")
+
+        self.assertEqual(pakt.pakt_signal.status, "pakt-gesperrt")
+        self.assertEqual(pakt.gesperrt_norm_ids, ("pakt-236-signal-stability-lane",))
+        self.assertEqual(pakt.besiegelt_norm_ids, ("pakt-236-signal-governance-lane",))
+        self.assertEqual(pakt.grundlegend_norm_ids, ("pakt-236-signal-expansion-lane",))
+
+    def test_kki_kooperations_manifest_builds_gesperrt_schutz_norm(self) -> None:
+        manifest = build_kooperations_manifest(manifest_id="manifest-235-stability")
+        norm = next(n for n in manifest.normen if n.geltung is KooperationsGeltung.GESPERRT)
+
+        self.assertIsInstance(manifest, KooperationsManifest)
+        self.assertIsInstance(norm, KooperationsNorm)
+        self.assertEqual(norm.kooperations_grad, KooperationsGrad.SCHUTZ_KOOPERATION)
+        self.assertEqual(norm.prozedur, KooperationsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.kooperations_tier, 1)
+
+    def test_kki_kooperations_manifest_builds_kooperiert_ordnungs_norm(self) -> None:
+        manifest = build_kooperations_manifest(manifest_id="manifest-235-governance")
+        norm = next(n for n in manifest.normen if n.geltung is KooperationsGeltung.KOOPERIERT)
+
+        self.assertEqual(norm.kooperations_grad, KooperationsGrad.ORDNUNGS_KOOPERATION)
+        self.assertEqual(norm.prozedur, KooperationsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.kooperations_weight, 0.45)
+
+    def test_kki_kooperations_manifest_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        manifest = build_kooperations_manifest(manifest_id="manifest-235-expansion")
+        norm = next(n for n in manifest.normen if n.geltung is KooperationsGeltung.GRUNDLEGEND_KOOPERIERT)
+
+        self.assertEqual(norm.kooperations_grad, KooperationsGrad.SOUVERAENITAETS_KOOPERATION)
+        self.assertEqual(norm.prozedur, KooperationsProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_kooperations_manifest_aggregates_manifest_signal(self) -> None:
+        manifest = build_kooperations_manifest(manifest_id="manifest-235-signal")
+
+        self.assertEqual(manifest.manifest_signal.status, "manifest-gesperrt")
+        self.assertEqual(manifest.gesperrt_norm_ids, ("manifest-235-signal-stability-lane",))
+        self.assertEqual(manifest.kooperiert_norm_ids, ("manifest-235-signal-governance-lane",))
+        self.assertEqual(manifest.grundlegend_norm_ids, ("manifest-235-signal-expansion-lane",))
 
     def test_kki_allianz_vertrag_builds_gesperrt_schutz_norm(self) -> None:
         vertrag = build_allianz_vertrag(vertrag_id="vertrag-234-stability")

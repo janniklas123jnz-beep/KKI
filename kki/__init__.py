@@ -491,6 +491,22 @@ from .kosmos_norm import (
     KosmosProzedur,
     build_kosmos_norm,
 )
+from .weltgeist_senat import (
+    WeltgeistGeltung,
+    WeltgeistProzedur,
+    WeltgeistRang,
+    WeltgeistSenat,
+    WeltgeistSitz,
+    build_weltgeist_senat,
+)
+from .universal_kodex import (
+    UniversalKodex,
+    UniversalKodexGeltung,
+    UniversalKodexKlasse,
+    UniversalKodexNorm,
+    UniversalKodexProzedur,
+    build_universal_kodex,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -1072,6 +1088,16 @@ __all__ = [
     "KosmosNorm",
     "KosmosNormEintrag",
     "KosmosProzedur",
+    "WeltgeistGeltung",
+    "WeltgeistProzedur",
+    "WeltgeistRang",
+    "WeltgeistSenat",
+    "WeltgeistSitz",
+    "UniversalKodex",
+    "UniversalKodexGeltung",
+    "UniversalKodexKlasse",
+    "UniversalKodexNorm",
+    "UniversalKodexProzedur",
     "ExceptionCase",
     "ExceptionKind",
     "ExceptionRegister",
@@ -1305,6 +1331,8 @@ __all__ = [
     "build_solidaritaets_pakt",
     "build_universalrechts_register",
     "build_kosmos_norm",
+    "build_weltgeist_senat",
+    "build_universal_kodex",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

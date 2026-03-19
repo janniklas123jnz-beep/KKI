@@ -272,6 +272,18 @@ from kki import (
     UniversalrechtsRang,
     UniversalrechtsRegister,
     build_universalrechts_register,
+    UniversalKodex,
+    UniversalKodexGeltung,
+    UniversalKodexKlasse,
+    UniversalKodexNorm,
+    UniversalKodexProzedur,
+    build_universal_kodex,
+    WeltgeistGeltung,
+    WeltgeistProzedur,
+    WeltgeistRang,
+    WeltgeistSenat,
+    WeltgeistSitz,
+    build_weltgeist_senat,
     KosmosEbene,
     KosmosGeltung,
     KosmosNorm,
@@ -5465,6 +5477,74 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(konvent.begrenzt_line_ids, ("konvent-203-signal-stability-lane",))
         self.assertEqual(konvent.delegiert_line_ids, ("konvent-203-signal-governance-lane",))
         self.assertEqual(konvent.verankert_line_ids, ("konvent-203-signal-expansion-lane",))
+
+    def test_kki_universal_kodex_builds_gesperrt_schutz_norm(self) -> None:
+        kodex = build_universal_kodex(kodex_id="kodex-240-stability")
+        norm = next(n for n in kodex.normen if n.geltung is UniversalKodexGeltung.GESPERRT)
+
+        self.assertIsInstance(kodex, UniversalKodex)
+        self.assertIsInstance(norm, UniversalKodexNorm)
+        self.assertEqual(norm.universal_kodex_klasse, UniversalKodexKlasse.SCHUTZ_KLASSE)
+        self.assertEqual(norm.prozedur, UniversalKodexProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.universal_tier, 1)
+
+    def test_kki_universal_kodex_builds_universell_ordnungs_norm(self) -> None:
+        kodex = build_universal_kodex(kodex_id="kodex-240-governance")
+        norm = next(n for n in kodex.normen if n.geltung is UniversalKodexGeltung.UNIVERSELL)
+
+        self.assertEqual(norm.universal_kodex_klasse, UniversalKodexKlasse.ORDNUNGS_KLASSE)
+        self.assertEqual(norm.prozedur, UniversalKodexProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.universal_weight, 0.45)
+
+    def test_kki_universal_kodex_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        kodex = build_universal_kodex(kodex_id="kodex-240-expansion")
+        norm = next(n for n in kodex.normen if n.geltung is UniversalKodexGeltung.GRUNDLEGEND_UNIVERSELL)
+
+        self.assertEqual(norm.universal_kodex_klasse, UniversalKodexKlasse.SOUVERAENITAETS_KLASSE)
+        self.assertEqual(norm.prozedur, UniversalKodexProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_universal_kodex_aggregates_kodex_signal(self) -> None:
+        kodex = build_universal_kodex(kodex_id="kodex-240-signal")
+
+        self.assertEqual(kodex.kodex_signal.status, "kodex-gesperrt")
+        self.assertEqual(kodex.gesperrt_norm_ids, ("kodex-240-signal-stability-lane",))
+        self.assertEqual(kodex.universell_norm_ids, ("kodex-240-signal-governance-lane",))
+        self.assertEqual(kodex.grundlegend_norm_ids, ("kodex-240-signal-expansion-lane",))
+
+    def test_kki_weltgeist_senat_builds_gesperrt_schutz_sitz(self) -> None:
+        senat = build_weltgeist_senat(senat_id="senat-239-stability")
+        sitz = next(s for s in senat.sitze if s.geltung is WeltgeistGeltung.GESPERRT)
+
+        self.assertIsInstance(senat, WeltgeistSenat)
+        self.assertIsInstance(sitz, WeltgeistSitz)
+        self.assertEqual(sitz.weltgeist_rang, WeltgeistRang.SCHUTZ_RANG)
+        self.assertEqual(sitz.prozedur, WeltgeistProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(sitz.weltgeist_tier, 1)
+
+    def test_kki_weltgeist_senat_builds_erhoben_ordnungs_sitz(self) -> None:
+        senat = build_weltgeist_senat(senat_id="senat-239-governance")
+        sitz = next(s for s in senat.sitze if s.geltung is WeltgeistGeltung.ERHOBEN)
+
+        self.assertEqual(sitz.weltgeist_rang, WeltgeistRang.ORDNUNGS_RANG)
+        self.assertEqual(sitz.prozedur, WeltgeistProzedur.REGELPROTOKOLL)
+        self.assertGreater(sitz.weltgeist_weight, 0.45)
+
+    def test_kki_weltgeist_senat_builds_grundlegend_souveraenitaets_sitz(self) -> None:
+        senat = build_weltgeist_senat(senat_id="senat-239-expansion")
+        sitz = next(s for s in senat.sitze if s.geltung is WeltgeistGeltung.GRUNDLEGEND_ERHOBEN)
+
+        self.assertEqual(sitz.weltgeist_rang, WeltgeistRang.SOUVERAENITAETS_RANG)
+        self.assertEqual(sitz.prozedur, WeltgeistProzedur.PLENARPROTOKOLL)
+        self.assertTrue(sitz.canonical)
+
+    def test_kki_weltgeist_senat_aggregates_senat_signal(self) -> None:
+        senat = build_weltgeist_senat(senat_id="senat-239-signal")
+
+        self.assertEqual(senat.senat_signal.status, "senat-gesperrt")
+        self.assertEqual(senat.gesperrt_sitz_ids, ("senat-239-signal-stability-lane",))
+        self.assertEqual(senat.erhoben_sitz_ids, ("senat-239-signal-governance-lane",))
+        self.assertEqual(senat.grundlegend_sitz_ids, ("senat-239-signal-expansion-lane",))
 
     def test_kki_kosmos_norm_builds_gesperrt_schutz_norm(self) -> None:
         kosmos = build_kosmos_norm(norm_id="norm-238-stability")

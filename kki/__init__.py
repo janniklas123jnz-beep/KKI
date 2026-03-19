@@ -443,6 +443,14 @@ from .voelkerrechts_kodex import (
     VoelkerrechtsProzedur,
     build_voelkerrechts_kodex,
 )
+from .diplomatie_charta import (
+    DiplomatieCharta,
+    DiplomatieGeltung,
+    DiplomatieNorm,
+    DiplomatieProzedur,
+    DiplomatieRang,
+    build_diplomatie_charta,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -994,6 +1002,11 @@ __all__ = [
     "VoelkerrechtsKodex",
     "VoelkerrechtsNorm",
     "VoelkerrechtsProzedur",
+    "DiplomatieCharta",
+    "DiplomatieGeltung",
+    "DiplomatieNorm",
+    "DiplomatieProzedur",
+    "DiplomatieRang",
     "ExceptionCase",
     "ExceptionKind",
     "ExceptionRegister",
@@ -1221,6 +1234,7 @@ __all__ = [
     "build_verfassungs_kodex",
     "build_weltordnungs_prinzip",
     "build_voelkerrechts_kodex",
+    "build_diplomatie_charta",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

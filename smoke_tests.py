@@ -248,6 +248,12 @@ from kki import (
     VerfassungsKodexProzedur,
     VerfassungsKodexRang,
     build_verfassungs_kodex,
+    DiplomatieCharta,
+    DiplomatieGeltung,
+    DiplomatieNorm,
+    DiplomatieProzedur,
+    DiplomatieRang,
+    build_diplomatie_charta,
     VoelkerrechtsGeltung,
     VoelkerrechtsKlasse,
     VoelkerrechtsKodex,
@@ -5429,6 +5435,40 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(konvent.begrenzt_line_ids, ("konvent-203-signal-stability-lane",))
         self.assertEqual(konvent.delegiert_line_ids, ("konvent-203-signal-governance-lane",))
         self.assertEqual(konvent.verankert_line_ids, ("konvent-203-signal-expansion-lane",))
+
+    def test_kki_diplomatie_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_diplomatie_charta(charta_id="charta-233-stability")
+        norm = next(n for n in charta.normen if n.geltung is DiplomatieGeltung.GESPERRT)
+
+        self.assertIsInstance(charta, DiplomatieCharta)
+        self.assertIsInstance(norm, DiplomatieNorm)
+        self.assertEqual(norm.diplomatie_rang, DiplomatieRang.SCHUTZ_RANG)
+        self.assertEqual(norm.prozedur, DiplomatieProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.diplomatie_tier, 1)
+
+    def test_kki_diplomatie_charta_builds_akkreditiert_ordnungs_norm(self) -> None:
+        charta = build_diplomatie_charta(charta_id="charta-233-governance")
+        norm = next(n for n in charta.normen if n.geltung is DiplomatieGeltung.AKKREDITIERT)
+
+        self.assertEqual(norm.diplomatie_rang, DiplomatieRang.ORDNUNGS_RANG)
+        self.assertEqual(norm.prozedur, DiplomatieProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.diplomatie_weight, 0.45)
+
+    def test_kki_diplomatie_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_diplomatie_charta(charta_id="charta-233-expansion")
+        norm = next(n for n in charta.normen if n.geltung is DiplomatieGeltung.GRUNDLEGEND_AKKREDITIERT)
+
+        self.assertEqual(norm.diplomatie_rang, DiplomatieRang.SOUVERAENITAETS_RANG)
+        self.assertEqual(norm.prozedur, DiplomatieProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_diplomatie_charta_aggregates_charta_signal(self) -> None:
+        charta = build_diplomatie_charta(charta_id="charta-233-signal")
+
+        self.assertEqual(charta.charta_signal.status, "charta-gesperrt")
+        self.assertEqual(charta.gesperrt_norm_ids, ("charta-233-signal-stability-lane",))
+        self.assertEqual(charta.akkreditiert_norm_ids, ("charta-233-signal-governance-lane",))
+        self.assertEqual(charta.grundlegend_norm_ids, ("charta-233-signal-expansion-lane",))
 
     def test_kki_voelkerrechts_kodex_builds_gesperrt_schutz_norm(self) -> None:
         kodex = build_voelkerrechts_kodex(kodex_id="kodex-232-stability")

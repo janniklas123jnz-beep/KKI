@@ -301,6 +301,18 @@ from kki import (
     KosmosEwigkeitsProzedur,
     KosmosEwigkeitsRang,
     build_kosmos_ewigkeit,
+    AbsolutCharta,
+    AbsolutGeltung,
+    AbsolutNorm,
+    AbsolutProzedur,
+    AbsolutTyp,
+    build_absolut_charta,
+    KosmosVerfassung,
+    KosmosVerfassungsGeltung,
+    KosmosVerfassungsNorm,
+    KosmosVerfassungsProzedur,
+    KosmosVerfassungsTyp,
+    build_kosmos_verfassung,
     KausalitaetsGeltung,
     KausalitaetsNorm,
     KausalitaetsProzedur,
@@ -5590,6 +5602,74 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(konvent.begrenzt_line_ids, ("konvent-203-signal-stability-lane",))
         self.assertEqual(konvent.delegiert_line_ids, ("konvent-203-signal-governance-lane",))
         self.assertEqual(konvent.verankert_line_ids, ("konvent-203-signal-expansion-lane",))
+
+    def test_kki_kosmos_verfassung_builds_gesperrt_schutz_norm(self) -> None:
+        verfassung = build_kosmos_verfassung(verfassung_id="verfassung-260-stability")
+        norm = next(n for n in verfassung.normen if n.geltung is KosmosVerfassungsGeltung.GESPERRT)
+
+        self.assertIsInstance(verfassung, KosmosVerfassung)
+        self.assertIsInstance(norm, KosmosVerfassungsNorm)
+        self.assertEqual(norm.kosmos_verfassungs_typ, KosmosVerfassungsTyp.SCHUTZ_VERFASSUNG)
+        self.assertEqual(norm.prozedur, KosmosVerfassungsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.kosmos_verfassungs_tier, 1)
+
+    def test_kki_kosmos_verfassung_builds_verfasst_ordnungs_norm(self) -> None:
+        verfassung = build_kosmos_verfassung(verfassung_id="verfassung-260-governance")
+        norm = next(n for n in verfassung.normen if n.geltung is KosmosVerfassungsGeltung.VERFASST)
+
+        self.assertEqual(norm.kosmos_verfassungs_typ, KosmosVerfassungsTyp.ORDNUNGS_VERFASSUNG)
+        self.assertEqual(norm.prozedur, KosmosVerfassungsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.kosmos_verfassungs_weight, 0.45)
+
+    def test_kki_kosmos_verfassung_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        verfassung = build_kosmos_verfassung(verfassung_id="verfassung-260-expansion")
+        norm = next(n for n in verfassung.normen if n.geltung is KosmosVerfassungsGeltung.GRUNDLEGEND_VERFASST)
+
+        self.assertEqual(norm.kosmos_verfassungs_typ, KosmosVerfassungsTyp.SOUVERAENITAETS_VERFASSUNG)
+        self.assertEqual(norm.prozedur, KosmosVerfassungsProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_kosmos_verfassung_aggregates_verfassung_signal(self) -> None:
+        verfassung = build_kosmos_verfassung(verfassung_id="verfassung-260-signal")
+
+        self.assertEqual(verfassung.verfassung_signal.status, "verfassung-gesperrt")
+        self.assertEqual(verfassung.gesperrt_norm_ids, ("verfassung-260-signal-stability-lane",))
+        self.assertEqual(verfassung.verfasst_norm_ids, ("verfassung-260-signal-governance-lane",))
+        self.assertEqual(verfassung.grundlegend_norm_ids, ("verfassung-260-signal-expansion-lane",))
+
+    def test_kki_absolut_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_absolut_charta(charta_id="charta-259-stability")
+        norm = next(n for n in charta.normen if n.geltung is AbsolutGeltung.GESPERRT)
+
+        self.assertIsInstance(charta, AbsolutCharta)
+        self.assertIsInstance(norm, AbsolutNorm)
+        self.assertEqual(norm.absolut_typ, AbsolutTyp.SCHUTZ_ABSOLUT)
+        self.assertEqual(norm.prozedur, AbsolutProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.absolut_tier, 1)
+
+    def test_kki_absolut_charta_builds_absolut_ordnungs_norm(self) -> None:
+        charta = build_absolut_charta(charta_id="charta-259-governance")
+        norm = next(n for n in charta.normen if n.geltung is AbsolutGeltung.ABSOLUT)
+
+        self.assertEqual(norm.absolut_typ, AbsolutTyp.ORDNUNGS_ABSOLUT)
+        self.assertEqual(norm.prozedur, AbsolutProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.absolut_weight, 0.45)
+
+    def test_kki_absolut_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_absolut_charta(charta_id="charta-259-expansion")
+        norm = next(n for n in charta.normen if n.geltung is AbsolutGeltung.GRUNDLEGEND_ABSOLUT)
+
+        self.assertEqual(norm.absolut_typ, AbsolutTyp.SOUVERAENITAETS_ABSOLUT)
+        self.assertEqual(norm.prozedur, AbsolutProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_absolut_charta_aggregates_charta_signal(self) -> None:
+        charta = build_absolut_charta(charta_id="charta-259-signal")
+
+        self.assertEqual(charta.charta_signal.status, "charta-gesperrt")
+        self.assertEqual(charta.gesperrt_norm_ids, ("charta-259-signal-stability-lane",))
+        self.assertEqual(charta.absolut_norm_ids, ("charta-259-signal-governance-lane",))
+        self.assertEqual(charta.grundlegend_norm_ids, ("charta-259-signal-expansion-lane",))
 
     def test_kki_kosmos_ewigkeit_builds_gesperrt_schutz_norm(self) -> None:
         ewigkeit = build_kosmos_ewigkeit(ewigkeit_id="norm-258-stability")

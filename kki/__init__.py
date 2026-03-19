@@ -651,6 +651,22 @@ from .kosmos_ewigkeit import (
     KosmosEwigkeitsRang,
     build_kosmos_ewigkeit,
 )
+from .absolut_charta import (
+    AbsolutCharta,
+    AbsolutGeltung,
+    AbsolutNorm,
+    AbsolutProzedur,
+    AbsolutTyp,
+    build_absolut_charta,
+)
+from .kosmos_verfassung import (
+    KosmosVerfassung,
+    KosmosVerfassungsGeltung,
+    KosmosVerfassungsNorm,
+    KosmosVerfassungsProzedur,
+    KosmosVerfassungsTyp,
+    build_kosmos_verfassung,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -1315,6 +1331,16 @@ __all__ = [
     "KosmosEwigkeitsNormEintrag",
     "KosmosEwigkeitsProzedur",
     "KosmosEwigkeitsRang",
+    "AbsolutCharta",
+    "AbsolutGeltung",
+    "AbsolutNorm",
+    "AbsolutProzedur",
+    "AbsolutTyp",
+    "KosmosVerfassung",
+    "KosmosVerfassungsGeltung",
+    "KosmosVerfassungsNorm",
+    "KosmosVerfassungsProzedur",
+    "KosmosVerfassungsTyp",
     "EinheitsGeltung",
     "EinheitsNorm",
     "EinheitsProzedur",
@@ -1583,6 +1609,8 @@ __all__ = [
     "build_harmonie_pakt",
     "build_einheits_senat",
     "build_kosmos_ewigkeit",
+    "build_absolut_charta",
+    "build_kosmos_verfassung",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

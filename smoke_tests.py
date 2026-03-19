@@ -248,6 +248,12 @@ from kki import (
     VerfassungsKodexProzedur,
     VerfassungsKodexRang,
     build_verfassungs_kodex,
+    WeltordnungsEbene,
+    WeltordnungsGeltung,
+    WeltordnungsNorm,
+    WeltordnungsPrinzip,
+    WeltordnungsProzedur,
+    build_weltordnungs_prinzip,
     DoctrineClause,
     DoctrinePrinciple,
     DoctrineScope,
@@ -5417,6 +5423,40 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(konvent.begrenzt_line_ids, ("konvent-203-signal-stability-lane",))
         self.assertEqual(konvent.delegiert_line_ids, ("konvent-203-signal-governance-lane",))
         self.assertEqual(konvent.verankert_line_ids, ("konvent-203-signal-expansion-lane",))
+
+    def test_kki_weltordnungs_prinzip_builds_gesperrt_schutz_norm(self) -> None:
+        prinzip = build_weltordnungs_prinzip(prinzip_id="prinzip-231-stability")
+        norm = next(n for n in prinzip.normen if n.geltung is WeltordnungsGeltung.GESPERRT)
+
+        self.assertIsInstance(prinzip, WeltordnungsPrinzip)
+        self.assertIsInstance(norm, WeltordnungsNorm)
+        self.assertEqual(norm.weltordnungs_ebene, WeltordnungsEbene.SCHUTZ_ORDNUNG)
+        self.assertEqual(norm.prozedur, WeltordnungsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.weltordnungs_tier, 1)
+
+    def test_kki_weltordnungs_prinzip_builds_geordnet_ordnungs_norm(self) -> None:
+        prinzip = build_weltordnungs_prinzip(prinzip_id="prinzip-231-governance")
+        norm = next(n for n in prinzip.normen if n.geltung is WeltordnungsGeltung.GEORDNET)
+
+        self.assertEqual(norm.weltordnungs_ebene, WeltordnungsEbene.ORDNUNGS_ORDNUNG)
+        self.assertEqual(norm.prozedur, WeltordnungsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.weltordnungs_weight, 0.45)
+
+    def test_kki_weltordnungs_prinzip_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        prinzip = build_weltordnungs_prinzip(prinzip_id="prinzip-231-expansion")
+        norm = next(n for n in prinzip.normen if n.geltung is WeltordnungsGeltung.GRUNDLEGEND_GEORDNET)
+
+        self.assertEqual(norm.weltordnungs_ebene, WeltordnungsEbene.SOUVERAENITAETS_ORDNUNG)
+        self.assertEqual(norm.prozedur, WeltordnungsProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_weltordnungs_prinzip_aggregates_prinzip_signal(self) -> None:
+        prinzip = build_weltordnungs_prinzip(prinzip_id="prinzip-231-signal")
+
+        self.assertEqual(prinzip.prinzip_signal.status, "prinzip-gesperrt")
+        self.assertEqual(prinzip.gesperrt_norm_ids, ("prinzip-231-signal-stability-lane",))
+        self.assertEqual(prinzip.geordnet_norm_ids, ("prinzip-231-signal-governance-lane",))
+        self.assertEqual(prinzip.grundlegend_norm_ids, ("prinzip-231-signal-expansion-lane",))
 
     def test_kki_verfassungs_kodex_builds_gesperrt_schutz_norm(self) -> None:
         kodex = build_verfassungs_kodex(kodex_id="kodex-230-stability")

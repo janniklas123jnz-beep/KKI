@@ -427,6 +427,14 @@ from .verfassungs_kodex import (
     VerfassungsKodexRang,
     build_verfassungs_kodex,
 )
+from .weltordnungs_prinzip import (
+    WeltordnungsEbene,
+    WeltordnungsGeltung,
+    WeltordnungsNorm,
+    WeltordnungsPrinzip,
+    WeltordnungsProzedur,
+    build_weltordnungs_prinzip,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -968,6 +976,11 @@ __all__ = [
     "VerfassungsKodexNorm",
     "VerfassungsKodexProzedur",
     "VerfassungsKodexRang",
+    "WeltordnungsEbene",
+    "WeltordnungsGeltung",
+    "WeltordnungsNorm",
+    "WeltordnungsPrinzip",
+    "WeltordnungsProzedur",
     "ExceptionCase",
     "ExceptionKind",
     "ExceptionRegister",
@@ -1193,6 +1206,7 @@ __all__ = [
     "build_ewigkeits_norm",
     "build_grundrechts_senat",
     "build_verfassungs_kodex",
+    "build_weltordnungs_prinzip",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

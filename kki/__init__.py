@@ -451,6 +451,14 @@ from .diplomatie_charta import (
     DiplomatieRang,
     build_diplomatie_charta,
 )
+from .allianz_vertrag import (
+    AllianzGeltung,
+    AllianzNorm,
+    AllianzProzedur,
+    AllianzTyp,
+    AllianzVertrag,
+    build_allianz_vertrag,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -1007,6 +1015,11 @@ __all__ = [
     "DiplomatieNorm",
     "DiplomatieProzedur",
     "DiplomatieRang",
+    "AllianzGeltung",
+    "AllianzNorm",
+    "AllianzProzedur",
+    "AllianzTyp",
+    "AllianzVertrag",
     "ExceptionCase",
     "ExceptionKind",
     "ExceptionRegister",
@@ -1235,6 +1248,7 @@ __all__ = [
     "build_weltordnungs_prinzip",
     "build_voelkerrechts_kodex",
     "build_diplomatie_charta",
+    "build_allianz_vertrag",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

@@ -248,6 +248,12 @@ from kki import (
     VerfassungsKodexProzedur,
     VerfassungsKodexRang,
     build_verfassungs_kodex,
+    AllianzGeltung,
+    AllianzNorm,
+    AllianzProzedur,
+    AllianzTyp,
+    AllianzVertrag,
+    build_allianz_vertrag,
     DiplomatieCharta,
     DiplomatieGeltung,
     DiplomatieNorm,
@@ -5435,6 +5441,40 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(konvent.begrenzt_line_ids, ("konvent-203-signal-stability-lane",))
         self.assertEqual(konvent.delegiert_line_ids, ("konvent-203-signal-governance-lane",))
         self.assertEqual(konvent.verankert_line_ids, ("konvent-203-signal-expansion-lane",))
+
+    def test_kki_allianz_vertrag_builds_gesperrt_schutz_norm(self) -> None:
+        vertrag = build_allianz_vertrag(vertrag_id="vertrag-234-stability")
+        norm = next(n for n in vertrag.normen if n.geltung is AllianzGeltung.GESPERRT)
+
+        self.assertIsInstance(vertrag, AllianzVertrag)
+        self.assertIsInstance(norm, AllianzNorm)
+        self.assertEqual(norm.allianz_typ, AllianzTyp.SCHUTZ_ALLIANZ)
+        self.assertEqual(norm.prozedur, AllianzProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.allianz_tier, 1)
+
+    def test_kki_allianz_vertrag_builds_verbunden_ordnungs_norm(self) -> None:
+        vertrag = build_allianz_vertrag(vertrag_id="vertrag-234-governance")
+        norm = next(n for n in vertrag.normen if n.geltung is AllianzGeltung.VERBUNDEN)
+
+        self.assertEqual(norm.allianz_typ, AllianzTyp.ORDNUNGS_ALLIANZ)
+        self.assertEqual(norm.prozedur, AllianzProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.allianz_weight, 0.45)
+
+    def test_kki_allianz_vertrag_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        vertrag = build_allianz_vertrag(vertrag_id="vertrag-234-expansion")
+        norm = next(n for n in vertrag.normen if n.geltung is AllianzGeltung.GRUNDLEGEND_VERBUNDEN)
+
+        self.assertEqual(norm.allianz_typ, AllianzTyp.SOUVERAENITAETS_ALLIANZ)
+        self.assertEqual(norm.prozedur, AllianzProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_allianz_vertrag_aggregates_vertrag_signal(self) -> None:
+        vertrag = build_allianz_vertrag(vertrag_id="vertrag-234-signal")
+
+        self.assertEqual(vertrag.vertrag_signal.status, "vertrag-gesperrt")
+        self.assertEqual(vertrag.gesperrt_norm_ids, ("vertrag-234-signal-stability-lane",))
+        self.assertEqual(vertrag.verbunden_norm_ids, ("vertrag-234-signal-governance-lane",))
+        self.assertEqual(vertrag.grundlegend_norm_ids, ("vertrag-234-signal-expansion-lane",))
 
     def test_kki_diplomatie_charta_builds_gesperrt_schutz_norm(self) -> None:
         charta = build_diplomatie_charta(charta_id="charta-233-stability")

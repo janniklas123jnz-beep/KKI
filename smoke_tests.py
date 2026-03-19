@@ -272,6 +272,30 @@ from kki import (
     UniversalrechtsRang,
     UniversalrechtsRegister,
     build_universalrechts_register,
+    WeisheitsEbene,
+    WeisheitsGeltung,
+    WeisheitsNorm,
+    WeisheitsNormEintrag,
+    WeisheitsProzedur,
+    build_weisheits_norm,
+    GedaechtnisGeltung,
+    GedaechtnisNorm,
+    GedaechtnisProzedur,
+    GedaechtnisRang,
+    GedaechtnisSenat,
+    build_gedaechtnis_senat,
+    WissensGeltung,
+    WissensGrad,
+    WissensManifest,
+    WissensNorm,
+    WissensProzedur,
+    build_wissens_manifest,
+    KulturgutGeltung,
+    KulturgutKodex,
+    KulturgutNorm,
+    KulturgutProzedur,
+    KulturgutRang,
+    build_kulturgut_kodex,
     ZivilisationsGeltung,
     ZivilisationsNorm,
     ZivilisationsPakt,
@@ -5501,6 +5525,142 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(konvent.begrenzt_line_ids, ("konvent-203-signal-stability-lane",))
         self.assertEqual(konvent.delegiert_line_ids, ("konvent-203-signal-governance-lane",))
         self.assertEqual(konvent.verankert_line_ids, ("konvent-203-signal-expansion-lane",))
+
+    def test_kki_weisheits_norm_builds_gesperrt_schutz_norm(self) -> None:
+        weisheit = build_weisheits_norm(norm_id="norm-248-stability")
+        eintrag = next(n for n in weisheit.normen if n.geltung is WeisheitsGeltung.GESPERRT)
+
+        self.assertIsInstance(weisheit, WeisheitsNorm)
+        self.assertIsInstance(eintrag, WeisheitsNormEintrag)
+        self.assertEqual(eintrag.weisheits_ebene, WeisheitsEbene.SCHUTZ_WEISHEIT)
+        self.assertEqual(eintrag.prozedur, WeisheitsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(eintrag.weisheits_tier, 1)
+
+    def test_kki_weisheits_norm_builds_geweiht_ordnungs_norm(self) -> None:
+        weisheit = build_weisheits_norm(norm_id="norm-248-governance")
+        eintrag = next(n for n in weisheit.normen if n.geltung is WeisheitsGeltung.GEWEIHT)
+
+        self.assertEqual(eintrag.weisheits_ebene, WeisheitsEbene.ORDNUNGS_WEISHEIT)
+        self.assertEqual(eintrag.prozedur, WeisheitsProzedur.REGELPROTOKOLL)
+        self.assertGreater(eintrag.weisheits_weight, 0.45)
+
+    def test_kki_weisheits_norm_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        weisheit = build_weisheits_norm(norm_id="norm-248-expansion")
+        eintrag = next(n for n in weisheit.normen if n.geltung is WeisheitsGeltung.GRUNDLEGEND_GEWEIHT)
+
+        self.assertEqual(eintrag.weisheits_ebene, WeisheitsEbene.SOUVERAENITAETS_WEISHEIT)
+        self.assertEqual(eintrag.prozedur, WeisheitsProzedur.PLENARPROTOKOLL)
+        self.assertTrue(eintrag.canonical)
+
+    def test_kki_weisheits_norm_aggregates_norm_signal(self) -> None:
+        weisheit = build_weisheits_norm(norm_id="norm-248-signal")
+
+        self.assertEqual(weisheit.norm_signal.status, "norm-gesperrt")
+        self.assertEqual(weisheit.gesperrt_norm_ids, ("norm-248-signal-stability-lane",))
+        self.assertEqual(weisheit.geweiht_norm_ids, ("norm-248-signal-governance-lane",))
+        self.assertEqual(weisheit.grundlegend_norm_ids, ("norm-248-signal-expansion-lane",))
+
+    def test_kki_gedaechtnis_senat_builds_gesperrt_schutz_norm(self) -> None:
+        senat = build_gedaechtnis_senat(senat_id="senat-247-stability")
+        norm = next(n for n in senat.normen if n.geltung is GedaechtnisGeltung.GESPERRT)
+
+        self.assertIsInstance(senat, GedaechtnisSenat)
+        self.assertIsInstance(norm, GedaechtnisNorm)
+        self.assertEqual(norm.gedaechtnis_rang, GedaechtnisRang.SCHUTZ_GEDAECHTNIS)
+        self.assertEqual(norm.prozedur, GedaechtnisProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.gedaechtnis_tier, 1)
+
+    def test_kki_gedaechtnis_senat_builds_erinnert_ordnungs_norm(self) -> None:
+        senat = build_gedaechtnis_senat(senat_id="senat-247-governance")
+        norm = next(n for n in senat.normen if n.geltung is GedaechtnisGeltung.ERINNERT)
+
+        self.assertEqual(norm.gedaechtnis_rang, GedaechtnisRang.ORDNUNGS_GEDAECHTNIS)
+        self.assertEqual(norm.prozedur, GedaechtnisProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.gedaechtnis_weight, 0.45)
+
+    def test_kki_gedaechtnis_senat_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        senat = build_gedaechtnis_senat(senat_id="senat-247-expansion")
+        norm = next(n for n in senat.normen if n.geltung is GedaechtnisGeltung.GRUNDLEGEND_ERINNERT)
+
+        self.assertEqual(norm.gedaechtnis_rang, GedaechtnisRang.SOUVERAENITAETS_GEDAECHTNIS)
+        self.assertEqual(norm.prozedur, GedaechtnisProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_gedaechtnis_senat_aggregates_senat_signal(self) -> None:
+        senat = build_gedaechtnis_senat(senat_id="senat-247-signal")
+
+        self.assertEqual(senat.senat_signal.status, "senat-gesperrt")
+        self.assertEqual(senat.gesperrt_norm_ids, ("senat-247-signal-stability-lane",))
+        self.assertEqual(senat.erinnert_norm_ids, ("senat-247-signal-governance-lane",))
+        self.assertEqual(senat.grundlegend_norm_ids, ("senat-247-signal-expansion-lane",))
+
+    def test_kki_wissens_manifest_builds_gesperrt_schutz_norm(self) -> None:
+        manifest = build_wissens_manifest(manifest_id="manifest-246-stability")
+        norm = next(n for n in manifest.normen if n.geltung is WissensGeltung.GESPERRT)
+
+        self.assertIsInstance(manifest, WissensManifest)
+        self.assertIsInstance(norm, WissensNorm)
+        self.assertEqual(norm.wissens_grad, WissensGrad.SCHUTZ_WISSEN)
+        self.assertEqual(norm.prozedur, WissensProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.wissens_tier, 1)
+
+    def test_kki_wissens_manifest_builds_verbreitet_ordnungs_norm(self) -> None:
+        manifest = build_wissens_manifest(manifest_id="manifest-246-governance")
+        norm = next(n for n in manifest.normen if n.geltung is WissensGeltung.VERBREITET)
+
+        self.assertEqual(norm.wissens_grad, WissensGrad.ORDNUNGS_WISSEN)
+        self.assertEqual(norm.prozedur, WissensProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.wissens_weight, 0.45)
+
+    def test_kki_wissens_manifest_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        manifest = build_wissens_manifest(manifest_id="manifest-246-expansion")
+        norm = next(n for n in manifest.normen if n.geltung is WissensGeltung.GRUNDLEGEND_VERBREITET)
+
+        self.assertEqual(norm.wissens_grad, WissensGrad.SOUVERAENITAETS_WISSEN)
+        self.assertEqual(norm.prozedur, WissensProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_wissens_manifest_aggregates_manifest_signal(self) -> None:
+        manifest = build_wissens_manifest(manifest_id="manifest-246-signal")
+
+        self.assertEqual(manifest.manifest_signal.status, "manifest-gesperrt")
+        self.assertEqual(manifest.gesperrt_norm_ids, ("manifest-246-signal-stability-lane",))
+        self.assertEqual(manifest.verbreitet_norm_ids, ("manifest-246-signal-governance-lane",))
+        self.assertEqual(manifest.grundlegend_norm_ids, ("manifest-246-signal-expansion-lane",))
+
+    def test_kki_kulturgut_kodex_builds_gesperrt_schutz_norm(self) -> None:
+        kodex = build_kulturgut_kodex(kodex_id="kodex-245-stability")
+        norm = next(n for n in kodex.normen if n.geltung is KulturgutGeltung.GESPERRT)
+
+        self.assertIsInstance(kodex, KulturgutKodex)
+        self.assertIsInstance(norm, KulturgutNorm)
+        self.assertEqual(norm.kulturgut_rang, KulturgutRang.SCHUTZ_KULTURGUT)
+        self.assertEqual(norm.prozedur, KulturgutProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.kulturgut_tier, 1)
+
+    def test_kki_kulturgut_kodex_builds_bewahrt_ordnungs_norm(self) -> None:
+        kodex = build_kulturgut_kodex(kodex_id="kodex-245-governance")
+        norm = next(n for n in kodex.normen if n.geltung is KulturgutGeltung.BEWAHRT)
+
+        self.assertEqual(norm.kulturgut_rang, KulturgutRang.ORDNUNGS_KULTURGUT)
+        self.assertEqual(norm.prozedur, KulturgutProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.kulturgut_weight, 0.45)
+
+    def test_kki_kulturgut_kodex_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        kodex = build_kulturgut_kodex(kodex_id="kodex-245-expansion")
+        norm = next(n for n in kodex.normen if n.geltung is KulturgutGeltung.GRUNDLEGEND_BEWAHRT)
+
+        self.assertEqual(norm.kulturgut_rang, KulturgutRang.SOUVERAENITAETS_KULTURGUT)
+        self.assertEqual(norm.prozedur, KulturgutProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_kulturgut_kodex_aggregates_kodex_signal(self) -> None:
+        kodex = build_kulturgut_kodex(kodex_id="kodex-245-signal")
+
+        self.assertEqual(kodex.kodex_signal.status, "kodex-gesperrt")
+        self.assertEqual(kodex.gesperrt_norm_ids, ("kodex-245-signal-stability-lane",))
+        self.assertEqual(kodex.bewahrt_norm_ids, ("kodex-245-signal-governance-lane",))
+        self.assertEqual(kodex.grundlegend_norm_ids, ("kodex-245-signal-expansion-lane",))
 
     def test_kki_zivilisations_pakt_builds_gesperrt_schutz_norm(self) -> None:
         pakt = build_zivilisations_pakt(pakt_id="pakt-244-stability")

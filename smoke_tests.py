@@ -126,7 +126,6 @@ from kki import (
     OrdnungsKraft,
     OrdnungsNorm,
     OrdnungsRang,
-    OrdnungsTyp,
     build_leitordnung,
     AutoritaetsDekret,
     DekretGeltung,
@@ -272,6 +271,36 @@ from kki import (
     UniversalrechtsRang,
     UniversalrechtsRegister,
     build_universalrechts_register,
+    EwigkeitsEintrag,
+    EwigkeitsGeltung,
+    EwigkeitsNorm,
+    EwigkeitsProzedur,
+    EwigkeitsTyp,
+    build_ewigkeits_norm,
+    EinheitsGeltung,
+    EinheitsNorm,
+    EinheitsProzedur,
+    EinheitsSenat,
+    EinheitsTyp,
+    build_einheits_senat,
+    HarmonieGeltung,
+    HarmonieNorm,
+    HarmoniePakt,
+    HarmonieProzedur,
+    HarmonieTyp,
+    build_harmonie_pakt,
+    KosmosOrdnung,
+    KosmosOrdnungsGeltung,
+    KosmosOrdnungsNorm,
+    KosmosOrdnungsProzedur,
+    KosmosOrdnungsTyp,
+    build_kosmos_ordnung,
+    KosmosEwigkeit,
+    KosmosEwigkeitsGeltung,
+    KosmosEwigkeitsNormEintrag,
+    KosmosEwigkeitsProzedur,
+    KosmosEwigkeitsRang,
+    build_kosmos_ewigkeit,
     KausalitaetsGeltung,
     KausalitaetsNorm,
     KausalitaetsProzedur,
@@ -5561,6 +5590,142 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(konvent.begrenzt_line_ids, ("konvent-203-signal-stability-lane",))
         self.assertEqual(konvent.delegiert_line_ids, ("konvent-203-signal-governance-lane",))
         self.assertEqual(konvent.verankert_line_ids, ("konvent-203-signal-expansion-lane",))
+
+    def test_kki_kosmos_ewigkeit_builds_gesperrt_schutz_norm(self) -> None:
+        ewigkeit = build_kosmos_ewigkeit(ewigkeit_id="norm-258-stability")
+        eintrag = next(n for n in ewigkeit.normen if n.geltung is KosmosEwigkeitsGeltung.GESPERRT)
+
+        self.assertIsInstance(ewigkeit, KosmosEwigkeit)
+        self.assertIsInstance(eintrag, KosmosEwigkeitsNormEintrag)
+        self.assertEqual(eintrag.kosmos_ewigkeits_rang, KosmosEwigkeitsRang.SCHUTZ_EWIGKEIT)
+        self.assertEqual(eintrag.prozedur, KosmosEwigkeitsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(eintrag.kosmos_ewigkeits_tier, 1)
+
+    def test_kki_kosmos_ewigkeit_builds_ewig_ordnungs_norm(self) -> None:
+        ewigkeit = build_kosmos_ewigkeit(ewigkeit_id="norm-258-governance")
+        eintrag = next(n for n in ewigkeit.normen if n.geltung is KosmosEwigkeitsGeltung.EWIG)
+
+        self.assertEqual(eintrag.kosmos_ewigkeits_rang, KosmosEwigkeitsRang.ORDNUNGS_EWIGKEIT)
+        self.assertEqual(eintrag.prozedur, KosmosEwigkeitsProzedur.REGELPROTOKOLL)
+        self.assertGreater(eintrag.kosmos_ewigkeits_weight, 0.45)
+
+    def test_kki_kosmos_ewigkeit_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        ewigkeit = build_kosmos_ewigkeit(ewigkeit_id="norm-258-expansion")
+        eintrag = next(n for n in ewigkeit.normen if n.geltung is KosmosEwigkeitsGeltung.GRUNDLEGEND_EWIG)
+
+        self.assertEqual(eintrag.kosmos_ewigkeits_rang, KosmosEwigkeitsRang.SOUVERAENITAETS_EWIGKEIT)
+        self.assertEqual(eintrag.prozedur, KosmosEwigkeitsProzedur.PLENARPROTOKOLL)
+        self.assertTrue(eintrag.canonical)
+
+    def test_kki_kosmos_ewigkeit_aggregates_ewigkeit_signal(self) -> None:
+        ewigkeit = build_kosmos_ewigkeit(ewigkeit_id="norm-258-signal")
+
+        self.assertEqual(ewigkeit.ewigkeit_signal.status, "ewigkeit-gesperrt")
+        self.assertEqual(ewigkeit.gesperrt_norm_ids, ("norm-258-signal-stability-lane",))
+        self.assertEqual(ewigkeit.ewig_norm_ids, ("norm-258-signal-governance-lane",))
+        self.assertEqual(ewigkeit.grundlegend_norm_ids, ("norm-258-signal-expansion-lane",))
+
+    def test_kki_einheits_senat_builds_gesperrt_schutz_norm(self) -> None:
+        senat = build_einheits_senat(senat_id="senat-257-stability")
+        norm = next(n for n in senat.normen if n.geltung is EinheitsGeltung.GESPERRT)
+
+        self.assertIsInstance(senat, EinheitsSenat)
+        self.assertIsInstance(norm, EinheitsNorm)
+        self.assertEqual(norm.einheits_typ, EinheitsTyp.SCHUTZ_EINHEIT)
+        self.assertEqual(norm.prozedur, EinheitsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.einheits_tier, 1)
+
+    def test_kki_einheits_senat_builds_geeint_ordnungs_norm(self) -> None:
+        senat = build_einheits_senat(senat_id="senat-257-governance")
+        norm = next(n for n in senat.normen if n.geltung is EinheitsGeltung.GEEINT)
+
+        self.assertEqual(norm.einheits_typ, EinheitsTyp.ORDNUNGS_EINHEIT)
+        self.assertEqual(norm.prozedur, EinheitsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.einheits_weight, 0.45)
+
+    def test_kki_einheits_senat_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        senat = build_einheits_senat(senat_id="senat-257-expansion")
+        norm = next(n for n in senat.normen if n.geltung is EinheitsGeltung.GRUNDLEGEND_GEEINT)
+
+        self.assertEqual(norm.einheits_typ, EinheitsTyp.SOUVERAENITAETS_EINHEIT)
+        self.assertEqual(norm.prozedur, EinheitsProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_einheits_senat_aggregates_senat_signal(self) -> None:
+        senat = build_einheits_senat(senat_id="senat-257-signal")
+
+        self.assertEqual(senat.senat_signal.status, "senat-gesperrt")
+        self.assertEqual(senat.gesperrt_norm_ids, ("senat-257-signal-stability-lane",))
+        self.assertEqual(senat.geeint_norm_ids, ("senat-257-signal-governance-lane",))
+        self.assertEqual(senat.grundlegend_norm_ids, ("senat-257-signal-expansion-lane",))
+
+    def test_kki_harmonie_pakt_builds_gesperrt_schutz_norm(self) -> None:
+        pakt = build_harmonie_pakt(pakt_id="pakt-256-stability")
+        norm = next(n for n in pakt.normen if n.geltung is HarmonieGeltung.GESPERRT)
+
+        self.assertIsInstance(pakt, HarmoniePakt)
+        self.assertIsInstance(norm, HarmonieNorm)
+        self.assertEqual(norm.harmonie_typ, HarmonieTyp.SCHUTZ_HARMONIE)
+        self.assertEqual(norm.prozedur, HarmonieProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.harmonie_tier, 1)
+
+    def test_kki_harmonie_pakt_builds_harmonisiert_ordnungs_norm(self) -> None:
+        pakt = build_harmonie_pakt(pakt_id="pakt-256-governance")
+        norm = next(n for n in pakt.normen if n.geltung is HarmonieGeltung.HARMONISIERT)
+
+        self.assertEqual(norm.harmonie_typ, HarmonieTyp.ORDNUNGS_HARMONIE)
+        self.assertEqual(norm.prozedur, HarmonieProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.harmonie_weight, 0.45)
+
+    def test_kki_harmonie_pakt_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        pakt = build_harmonie_pakt(pakt_id="pakt-256-expansion")
+        norm = next(n for n in pakt.normen if n.geltung is HarmonieGeltung.GRUNDLEGEND_HARMONISIERT)
+
+        self.assertEqual(norm.harmonie_typ, HarmonieTyp.SOUVERAENITAETS_HARMONIE)
+        self.assertEqual(norm.prozedur, HarmonieProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_harmonie_pakt_aggregates_pakt_signal(self) -> None:
+        pakt = build_harmonie_pakt(pakt_id="pakt-256-signal")
+
+        self.assertEqual(pakt.pakt_signal.status, "pakt-gesperrt")
+        self.assertEqual(pakt.gesperrt_norm_ids, ("pakt-256-signal-stability-lane",))
+        self.assertEqual(pakt.harmonisiert_norm_ids, ("pakt-256-signal-governance-lane",))
+        self.assertEqual(pakt.grundlegend_norm_ids, ("pakt-256-signal-expansion-lane",))
+
+    def test_kki_kosmos_ordnung_builds_gesperrt_schutz_norm(self) -> None:
+        ordnung = build_kosmos_ordnung(ordnung_id="manifest-255-stability")
+        norm = next(n for n in ordnung.normen if n.geltung is KosmosOrdnungsGeltung.GESPERRT)
+
+        self.assertIsInstance(ordnung, KosmosOrdnung)
+        self.assertIsInstance(norm, KosmosOrdnungsNorm)
+        self.assertEqual(norm.kosmos_ordnungs_typ, KosmosOrdnungsTyp.SCHUTZ_ORDNUNG)
+        self.assertEqual(norm.prozedur, KosmosOrdnungsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.kosmos_ordnungs_tier, 1)
+
+    def test_kki_kosmos_ordnung_builds_geordnet_ordnungs_norm(self) -> None:
+        ordnung = build_kosmos_ordnung(ordnung_id="manifest-255-governance")
+        norm = next(n for n in ordnung.normen if n.geltung is KosmosOrdnungsGeltung.GEORDNET)
+
+        self.assertEqual(norm.kosmos_ordnungs_typ, KosmosOrdnungsTyp.ORDNUNGS_KOSMOLOGIE)
+        self.assertEqual(norm.prozedur, KosmosOrdnungsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.kosmos_ordnungs_weight, 0.45)
+
+    def test_kki_kosmos_ordnung_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        ordnung = build_kosmos_ordnung(ordnung_id="manifest-255-expansion")
+        norm = next(n for n in ordnung.normen if n.geltung is KosmosOrdnungsGeltung.GRUNDLEGEND_GEORDNET)
+
+        self.assertEqual(norm.kosmos_ordnungs_typ, KosmosOrdnungsTyp.SOUVERAENITAETS_ORDNUNG)
+        self.assertEqual(norm.prozedur, KosmosOrdnungsProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_kosmos_ordnung_aggregates_ordnung_signal(self) -> None:
+        ordnung = build_kosmos_ordnung(ordnung_id="manifest-255-signal")
+
+        self.assertEqual(ordnung.ordnung_signal.status, "ordnung-gesperrt")
+        self.assertEqual(ordnung.gesperrt_norm_ids, ("manifest-255-signal-stability-lane",))
+        self.assertEqual(ordnung.geordnet_norm_ids, ("manifest-255-signal-governance-lane",))
+        self.assertEqual(ordnung.grundlegend_norm_ids, ("manifest-255-signal-expansion-lane",))
 
     def test_kki_kausalitaets_register_builds_gesperrt_schutz_norm(self) -> None:
         register = build_kausalitaets_register(register_id="register-254-stability")

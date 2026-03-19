@@ -435,6 +435,14 @@ from .weltordnungs_prinzip import (
     WeltordnungsProzedur,
     build_weltordnungs_prinzip,
 )
+from .voelkerrechts_kodex import (
+    VoelkerrechtsGeltung,
+    VoelkerrechtsKlasse,
+    VoelkerrechtsKodex,
+    VoelkerrechtsNorm,
+    VoelkerrechtsProzedur,
+    build_voelkerrechts_kodex,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -981,6 +989,11 @@ __all__ = [
     "WeltordnungsNorm",
     "WeltordnungsPrinzip",
     "WeltordnungsProzedur",
+    "VoelkerrechtsGeltung",
+    "VoelkerrechtsKlasse",
+    "VoelkerrechtsKodex",
+    "VoelkerrechtsNorm",
+    "VoelkerrechtsProzedur",
     "ExceptionCase",
     "ExceptionKind",
     "ExceptionRegister",
@@ -1207,6 +1220,7 @@ __all__ = [
     "build_grundrechts_senat",
     "build_verfassungs_kodex",
     "build_weltordnungs_prinzip",
+    "build_voelkerrechts_kodex",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

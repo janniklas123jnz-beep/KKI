@@ -248,6 +248,12 @@ from kki import (
     VerfassungsKodexProzedur,
     VerfassungsKodexRang,
     build_verfassungs_kodex,
+    VoelkerrechtsGeltung,
+    VoelkerrechtsKlasse,
+    VoelkerrechtsKodex,
+    VoelkerrechtsNorm,
+    VoelkerrechtsProzedur,
+    build_voelkerrechts_kodex,
     WeltordnungsEbene,
     WeltordnungsGeltung,
     WeltordnungsNorm,
@@ -5423,6 +5429,40 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(konvent.begrenzt_line_ids, ("konvent-203-signal-stability-lane",))
         self.assertEqual(konvent.delegiert_line_ids, ("konvent-203-signal-governance-lane",))
         self.assertEqual(konvent.verankert_line_ids, ("konvent-203-signal-expansion-lane",))
+
+    def test_kki_voelkerrechts_kodex_builds_gesperrt_schutz_norm(self) -> None:
+        kodex = build_voelkerrechts_kodex(kodex_id="kodex-232-stability")
+        norm = next(n for n in kodex.normen if n.geltung is VoelkerrechtsGeltung.GESPERRT)
+
+        self.assertIsInstance(kodex, VoelkerrechtsKodex)
+        self.assertIsInstance(norm, VoelkerrechtsNorm)
+        self.assertEqual(norm.voelkerrechts_klasse, VoelkerrechtsKlasse.SCHUTZ_KLASSE)
+        self.assertEqual(norm.prozedur, VoelkerrechtsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.voelkerrechts_tier, 1)
+
+    def test_kki_voelkerrechts_kodex_builds_kodifiziert_ordnungs_norm(self) -> None:
+        kodex = build_voelkerrechts_kodex(kodex_id="kodex-232-governance")
+        norm = next(n for n in kodex.normen if n.geltung is VoelkerrechtsGeltung.KODIFIZIERT)
+
+        self.assertEqual(norm.voelkerrechts_klasse, VoelkerrechtsKlasse.ORDNUNGS_KLASSE)
+        self.assertEqual(norm.prozedur, VoelkerrechtsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.voelkerrechts_weight, 0.45)
+
+    def test_kki_voelkerrechts_kodex_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        kodex = build_voelkerrechts_kodex(kodex_id="kodex-232-expansion")
+        norm = next(n for n in kodex.normen if n.geltung is VoelkerrechtsGeltung.GRUNDLEGEND_KODIFIZIERT)
+
+        self.assertEqual(norm.voelkerrechts_klasse, VoelkerrechtsKlasse.SOUVERAENITAETS_KLASSE)
+        self.assertEqual(norm.prozedur, VoelkerrechtsProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_voelkerrechts_kodex_aggregates_kodex_signal(self) -> None:
+        kodex = build_voelkerrechts_kodex(kodex_id="kodex-232-signal")
+
+        self.assertEqual(kodex.kodex_signal.status, "kodex-gesperrt")
+        self.assertEqual(kodex.gesperrt_norm_ids, ("kodex-232-signal-stability-lane",))
+        self.assertEqual(kodex.kodifiziert_norm_ids, ("kodex-232-signal-governance-lane",))
+        self.assertEqual(kodex.grundlegend_norm_ids, ("kodex-232-signal-expansion-lane",))
 
     def test_kki_weltordnungs_prinzip_builds_gesperrt_schutz_norm(self) -> None:
         prinzip = build_weltordnungs_prinzip(prinzip_id="prinzip-231-stability")

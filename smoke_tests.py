@@ -272,6 +272,30 @@ from kki import (
     UniversalrechtsRang,
     UniversalrechtsRegister,
     build_universalrechts_register,
+    KausalitaetsGeltung,
+    KausalitaetsNorm,
+    KausalitaetsProzedur,
+    KausalitaetsRang,
+    KausalitaetsRegister,
+    build_kausalitaets_register,
+    WirklichkeitsEbene,
+    WirklichkeitsGeltung,
+    WirklichkeitsKodex,
+    WirklichkeitsNorm,
+    WirklichkeitsProzedur,
+    build_wirklichkeits_kodex,
+    SeinsCharta,
+    SeinsGeltung,
+    SeinsNorm,
+    SeinsProzedur,
+    SeinsTyp,
+    build_seins_charta,
+    AxiomGeltung,
+    AxiomProzedur,
+    AxiomRang,
+    UrsprungsAxiom,
+    UrsprungsAxiomEintrag,
+    build_ursprungs_axiom,
     TranszendenzEbene,
     TranszendenzGeltung,
     TranszendenzKodex,
@@ -5537,6 +5561,142 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(konvent.begrenzt_line_ids, ("konvent-203-signal-stability-lane",))
         self.assertEqual(konvent.delegiert_line_ids, ("konvent-203-signal-governance-lane",))
         self.assertEqual(konvent.verankert_line_ids, ("konvent-203-signal-expansion-lane",))
+
+    def test_kki_kausalitaets_register_builds_gesperrt_schutz_norm(self) -> None:
+        register = build_kausalitaets_register(register_id="register-254-stability")
+        norm = next(n for n in register.normen if n.geltung is KausalitaetsGeltung.GESPERRT)
+
+        self.assertIsInstance(register, KausalitaetsRegister)
+        self.assertIsInstance(norm, KausalitaetsNorm)
+        self.assertEqual(norm.kausalitaets_rang, KausalitaetsRang.SCHUTZ_KAUSALITAET)
+        self.assertEqual(norm.prozedur, KausalitaetsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.kausalitaets_tier, 1)
+
+    def test_kki_kausalitaets_register_builds_kausal_ordnungs_norm(self) -> None:
+        register = build_kausalitaets_register(register_id="register-254-governance")
+        norm = next(n for n in register.normen if n.geltung is KausalitaetsGeltung.KAUSAL)
+
+        self.assertEqual(norm.kausalitaets_rang, KausalitaetsRang.ORDNUNGS_KAUSALITAET)
+        self.assertEqual(norm.prozedur, KausalitaetsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.kausalitaets_weight, 0.45)
+
+    def test_kki_kausalitaets_register_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        register = build_kausalitaets_register(register_id="register-254-expansion")
+        norm = next(n for n in register.normen if n.geltung is KausalitaetsGeltung.GRUNDLEGEND_KAUSAL)
+
+        self.assertEqual(norm.kausalitaets_rang, KausalitaetsRang.SOUVERAENITAETS_KAUSALITAET)
+        self.assertEqual(norm.prozedur, KausalitaetsProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_kausalitaets_register_aggregates_register_signal(self) -> None:
+        register = build_kausalitaets_register(register_id="register-254-signal")
+
+        self.assertEqual(register.register_signal.status, "register-gesperrt")
+        self.assertEqual(register.gesperrt_norm_ids, ("register-254-signal-stability-lane",))
+        self.assertEqual(register.kausal_norm_ids, ("register-254-signal-governance-lane",))
+        self.assertEqual(register.grundlegend_norm_ids, ("register-254-signal-expansion-lane",))
+
+    def test_kki_wirklichkeits_kodex_builds_gesperrt_schutz_norm(self) -> None:
+        kodex = build_wirklichkeits_kodex(kodex_id="kodex-253-stability")
+        norm = next(n for n in kodex.normen if n.geltung is WirklichkeitsGeltung.GESPERRT)
+
+        self.assertIsInstance(kodex, WirklichkeitsKodex)
+        self.assertIsInstance(norm, WirklichkeitsNorm)
+        self.assertEqual(norm.wirklichkeits_ebene, WirklichkeitsEbene.SCHUTZ_WIRKLICHKEIT)
+        self.assertEqual(norm.prozedur, WirklichkeitsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.wirklichkeits_tier, 1)
+
+    def test_kki_wirklichkeits_kodex_builds_manifestiert_ordnungs_norm(self) -> None:
+        kodex = build_wirklichkeits_kodex(kodex_id="kodex-253-governance")
+        norm = next(n for n in kodex.normen if n.geltung is WirklichkeitsGeltung.MANIFESTIERT)
+
+        self.assertEqual(norm.wirklichkeits_ebene, WirklichkeitsEbene.ORDNUNGS_WIRKLICHKEIT)
+        self.assertEqual(norm.prozedur, WirklichkeitsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.wirklichkeits_weight, 0.45)
+
+    def test_kki_wirklichkeits_kodex_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        kodex = build_wirklichkeits_kodex(kodex_id="kodex-253-expansion")
+        norm = next(n for n in kodex.normen if n.geltung is WirklichkeitsGeltung.GRUNDLEGEND_MANIFESTIERT)
+
+        self.assertEqual(norm.wirklichkeits_ebene, WirklichkeitsEbene.SOUVERAENITAETS_WIRKLICHKEIT)
+        self.assertEqual(norm.prozedur, WirklichkeitsProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_wirklichkeits_kodex_aggregates_kodex_signal(self) -> None:
+        kodex = build_wirklichkeits_kodex(kodex_id="kodex-253-signal")
+
+        self.assertEqual(kodex.kodex_signal.status, "kodex-gesperrt")
+        self.assertEqual(kodex.gesperrt_norm_ids, ("kodex-253-signal-stability-lane",))
+        self.assertEqual(kodex.manifestiert_norm_ids, ("kodex-253-signal-governance-lane",))
+        self.assertEqual(kodex.grundlegend_norm_ids, ("kodex-253-signal-expansion-lane",))
+
+    def test_kki_seins_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_seins_charta(charta_id="charta-252-stability")
+        norm = next(n for n in charta.normen if n.geltung is SeinsGeltung.GESPERRT)
+
+        self.assertIsInstance(charta, SeinsCharta)
+        self.assertIsInstance(norm, SeinsNorm)
+        self.assertEqual(norm.seins_typ, SeinsTyp.SCHUTZ_SEIN)
+        self.assertEqual(norm.prozedur, SeinsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.seins_tier, 1)
+
+    def test_kki_seins_charta_builds_verankert_ordnungs_norm(self) -> None:
+        charta = build_seins_charta(charta_id="charta-252-governance")
+        norm = next(n for n in charta.normen if n.geltung is SeinsGeltung.VERANKERT)
+
+        self.assertEqual(norm.seins_typ, SeinsTyp.ORDNUNGS_SEIN)
+        self.assertEqual(norm.prozedur, SeinsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.seins_weight, 0.45)
+
+    def test_kki_seins_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_seins_charta(charta_id="charta-252-expansion")
+        norm = next(n for n in charta.normen if n.geltung is SeinsGeltung.GRUNDLEGEND_VERANKERT)
+
+        self.assertEqual(norm.seins_typ, SeinsTyp.SOUVERAENITAETS_SEIN)
+        self.assertEqual(norm.prozedur, SeinsProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_seins_charta_aggregates_charta_signal(self) -> None:
+        charta = build_seins_charta(charta_id="charta-252-signal")
+
+        self.assertEqual(charta.charta_signal.status, "charta-gesperrt")
+        self.assertEqual(charta.gesperrt_norm_ids, ("charta-252-signal-stability-lane",))
+        self.assertEqual(charta.verankert_norm_ids, ("charta-252-signal-governance-lane",))
+        self.assertEqual(charta.grundlegend_norm_ids, ("charta-252-signal-expansion-lane",))
+
+    def test_kki_ursprungs_axiom_builds_gesperrt_schutz_norm(self) -> None:
+        axiom = build_ursprungs_axiom(axiom_id="axiom-251-stability")
+        eintrag = next(n for n in axiom.normen if n.geltung is AxiomGeltung.GESPERRT)
+
+        self.assertIsInstance(axiom, UrsprungsAxiom)
+        self.assertIsInstance(eintrag, UrsprungsAxiomEintrag)
+        self.assertEqual(eintrag.axiom_rang, AxiomRang.SCHUTZ_AXIOM)
+        self.assertEqual(eintrag.prozedur, AxiomProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(eintrag.axiom_tier, 1)
+
+    def test_kki_ursprungs_axiom_builds_axiomatisch_ordnungs_norm(self) -> None:
+        axiom = build_ursprungs_axiom(axiom_id="axiom-251-governance")
+        eintrag = next(n for n in axiom.normen if n.geltung is AxiomGeltung.AXIOMATISCH)
+
+        self.assertEqual(eintrag.axiom_rang, AxiomRang.ORDNUNGS_AXIOM)
+        self.assertEqual(eintrag.prozedur, AxiomProzedur.REGELPROTOKOLL)
+        self.assertGreater(eintrag.axiom_weight, 0.45)
+
+    def test_kki_ursprungs_axiom_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        axiom = build_ursprungs_axiom(axiom_id="axiom-251-expansion")
+        eintrag = next(n for n in axiom.normen if n.geltung is AxiomGeltung.GRUNDLEGEND_AXIOMATISCH)
+
+        self.assertEqual(eintrag.axiom_rang, AxiomRang.SOUVERAENITAETS_AXIOM)
+        self.assertEqual(eintrag.prozedur, AxiomProzedur.PLENARPROTOKOLL)
+        self.assertTrue(eintrag.canonical)
+
+    def test_kki_ursprungs_axiom_aggregates_axiom_signal(self) -> None:
+        axiom = build_ursprungs_axiom(axiom_id="axiom-251-signal")
+
+        self.assertEqual(axiom.axiom_signal.status, "axiom-gesperrt")
+        self.assertEqual(axiom.gesperrt_norm_ids, ("axiom-251-signal-stability-lane",))
+        self.assertEqual(axiom.axiomatisch_norm_ids, ("axiom-251-signal-governance-lane",))
+        self.assertEqual(axiom.grundlegend_norm_ids, ("axiom-251-signal-expansion-lane",))
 
     def test_kki_transzendenz_kodex_builds_gesperrt_schutz_norm(self) -> None:
         kodex = build_transzendenz_kodex(kodex_id="kodex-250-stability")

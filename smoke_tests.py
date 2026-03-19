@@ -272,6 +272,18 @@ from kki import (
     UniversalrechtsRang,
     UniversalrechtsRegister,
     build_universalrechts_register,
+    TranszendenzEbene,
+    TranszendenzGeltung,
+    TranszendenzKodex,
+    TranszendenzNorm,
+    TranszendenzProzedur,
+    build_transzendenz_kodex,
+    ErkenntnisCharta,
+    ErkenntnisGeltung,
+    ErkenntnisNorm,
+    ErkenntnisProzedur,
+    ErkenntnisTyp,
+    build_erkenntnis_charta,
     WeisheitsEbene,
     WeisheitsGeltung,
     WeisheitsNorm,
@@ -5525,6 +5537,74 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(konvent.begrenzt_line_ids, ("konvent-203-signal-stability-lane",))
         self.assertEqual(konvent.delegiert_line_ids, ("konvent-203-signal-governance-lane",))
         self.assertEqual(konvent.verankert_line_ids, ("konvent-203-signal-expansion-lane",))
+
+    def test_kki_transzendenz_kodex_builds_gesperrt_schutz_norm(self) -> None:
+        kodex = build_transzendenz_kodex(kodex_id="kodex-250-stability")
+        norm = next(n for n in kodex.normen if n.geltung is TranszendenzGeltung.GESPERRT)
+
+        self.assertIsInstance(kodex, TranszendenzKodex)
+        self.assertIsInstance(norm, TranszendenzNorm)
+        self.assertEqual(norm.transzendenz_ebene, TranszendenzEbene.SCHUTZ_TRANSZENDENZ)
+        self.assertEqual(norm.prozedur, TranszendenzProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.transzendenz_tier, 1)
+
+    def test_kki_transzendenz_kodex_builds_transzendiert_ordnungs_norm(self) -> None:
+        kodex = build_transzendenz_kodex(kodex_id="kodex-250-governance")
+        norm = next(n for n in kodex.normen if n.geltung is TranszendenzGeltung.TRANSZENDIERT)
+
+        self.assertEqual(norm.transzendenz_ebene, TranszendenzEbene.ORDNUNGS_TRANSZENDENZ)
+        self.assertEqual(norm.prozedur, TranszendenzProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.transzendenz_weight, 0.45)
+
+    def test_kki_transzendenz_kodex_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        kodex = build_transzendenz_kodex(kodex_id="kodex-250-expansion")
+        norm = next(n for n in kodex.normen if n.geltung is TranszendenzGeltung.GRUNDLEGEND_TRANSZENDIERT)
+
+        self.assertEqual(norm.transzendenz_ebene, TranszendenzEbene.SOUVERAENITAETS_TRANSZENDENZ)
+        self.assertEqual(norm.prozedur, TranszendenzProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_transzendenz_kodex_aggregates_kodex_signal(self) -> None:
+        kodex = build_transzendenz_kodex(kodex_id="kodex-250-signal")
+
+        self.assertEqual(kodex.kodex_signal.status, "kodex-gesperrt")
+        self.assertEqual(kodex.gesperrt_norm_ids, ("kodex-250-signal-stability-lane",))
+        self.assertEqual(kodex.transzendiert_norm_ids, ("kodex-250-signal-governance-lane",))
+        self.assertEqual(kodex.grundlegend_norm_ids, ("kodex-250-signal-expansion-lane",))
+
+    def test_kki_erkenntnis_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_erkenntnis_charta(charta_id="charta-249-stability")
+        norm = next(n for n in charta.normen if n.geltung is ErkenntnisGeltung.GESPERRT)
+
+        self.assertIsInstance(charta, ErkenntnisCharta)
+        self.assertIsInstance(norm, ErkenntnisNorm)
+        self.assertEqual(norm.erkenntnis_typ, ErkenntnisTyp.SCHUTZ_ERKENNTNIS)
+        self.assertEqual(norm.prozedur, ErkenntnisProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.erkenntnis_tier, 1)
+
+    def test_kki_erkenntnis_charta_builds_erleuchtet_ordnungs_norm(self) -> None:
+        charta = build_erkenntnis_charta(charta_id="charta-249-governance")
+        norm = next(n for n in charta.normen if n.geltung is ErkenntnisGeltung.ERLEUCHTET)
+
+        self.assertEqual(norm.erkenntnis_typ, ErkenntnisTyp.ORDNUNGS_ERKENNTNIS)
+        self.assertEqual(norm.prozedur, ErkenntnisProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.erkenntnis_weight, 0.45)
+
+    def test_kki_erkenntnis_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_erkenntnis_charta(charta_id="charta-249-expansion")
+        norm = next(n for n in charta.normen if n.geltung is ErkenntnisGeltung.GRUNDLEGEND_ERLEUCHTET)
+
+        self.assertEqual(norm.erkenntnis_typ, ErkenntnisTyp.SOUVERAENITAETS_ERKENNTNIS)
+        self.assertEqual(norm.prozedur, ErkenntnisProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_erkenntnis_charta_aggregates_charta_signal(self) -> None:
+        charta = build_erkenntnis_charta(charta_id="charta-249-signal")
+
+        self.assertEqual(charta.charta_signal.status, "charta-gesperrt")
+        self.assertEqual(charta.gesperrt_norm_ids, ("charta-249-signal-stability-lane",))
+        self.assertEqual(charta.erleuchtet_norm_ids, ("charta-249-signal-governance-lane",))
+        self.assertEqual(charta.grundlegend_norm_ids, ("charta-249-signal-expansion-lane",))
 
     def test_kki_weisheits_norm_builds_gesperrt_schutz_norm(self) -> None:
         weisheit = build_weisheits_norm(norm_id="norm-248-stability")

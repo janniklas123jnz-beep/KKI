@@ -571,6 +571,22 @@ from .weisheits_norm import (
     WeisheitsProzedur,
     build_weisheits_norm,
 )
+from .erkenntnis_charta import (
+    ErkenntnisCharta,
+    ErkenntnisGeltung,
+    ErkenntnisNorm,
+    ErkenntnisProzedur,
+    ErkenntnisTyp,
+    build_erkenntnis_charta,
+)
+from .transzendenz_kodex import (
+    TranszendenzEbene,
+    TranszendenzGeltung,
+    TranszendenzKodex,
+    TranszendenzNorm,
+    TranszendenzProzedur,
+    build_transzendenz_kodex,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -1202,6 +1218,16 @@ __all__ = [
     "WeisheitsNorm",
     "WeisheitsNormEintrag",
     "WeisheitsProzedur",
+    "ErkenntnisCharta",
+    "ErkenntnisGeltung",
+    "ErkenntnisNorm",
+    "ErkenntnisProzedur",
+    "ErkenntnisTyp",
+    "TranszendenzEbene",
+    "TranszendenzGeltung",
+    "TranszendenzKodex",
+    "TranszendenzNorm",
+    "TranszendenzProzedur",
     "ExceptionCase",
     "ExceptionKind",
     "ExceptionRegister",
@@ -1445,6 +1471,8 @@ __all__ = [
     "build_wissens_manifest",
     "build_gedaechtnis_senat",
     "build_weisheits_norm",
+    "build_erkenntnis_charta",
+    "build_transzendenz_kodex",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

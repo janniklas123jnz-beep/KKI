@@ -541,6 +541,18 @@ from kki import (
     PhotonNormSatz,
     PhotonNormTyp,
     build_photon_norm,
+    PhotoeffektCharta,
+    PhotoeffektGeltung,
+    PhotoeffektNorm,
+    PhotoeffektProzedur,
+    PhotoeffektTyp,
+    build_photoeffekt_charta,
+    ElektromagnetikVerfassung,
+    ElektroverfassungsGeltung,
+    ElektroverfassungsNorm,
+    ElektroverfassungsProzedur,
+    ElektroverfassungsTyp,
+    build_elektromagnetik_verfassung,
     KausalitaetsGeltung,
     KausalitaetsNorm,
     KausalitaetsProzedur,
@@ -6270,6 +6282,82 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(satz.gesperrt_norm_ids, ("photon-norm-298-signal-stability-lane",))
         self.assertEqual(satz.photonisch_norm_ids, ("photon-norm-298-signal-governance-lane",))
         self.assertEqual(satz.grundlegend_norm_ids, ("photon-norm-298-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #299 PhotoeffektCharta
+    # ------------------------------------------------------------------
+
+    def test_kki_photoeffekt_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_photoeffekt_charta(charta_id="charta-299-stability")
+        norm = next(n for n in charta.normen if n.geltung is PhotoeffektGeltung.GESPERRT)
+
+        self.assertIsInstance(charta, PhotoeffektCharta)
+        self.assertIsInstance(norm, PhotoeffektNorm)
+        self.assertEqual(norm.photoeffekt_typ, PhotoeffektTyp.SCHUTZ_PHOTOEFFEKT)
+        self.assertEqual(norm.prozedur, PhotoeffektProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.photoeffekt_tier, 1)
+
+    def test_kki_photoeffekt_charta_builds_photoeffektiv_ordnungs_norm(self) -> None:
+        charta = build_photoeffekt_charta(charta_id="charta-299-governance")
+        norm = next(n for n in charta.normen if n.geltung is PhotoeffektGeltung.PHOTOEFFEKTIV)
+
+        self.assertEqual(norm.photoeffekt_typ, PhotoeffektTyp.ORDNUNGS_PHOTOEFFEKT)
+        self.assertEqual(norm.prozedur, PhotoeffektProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.photoeffekt_weight, 0.0)
+
+    def test_kki_photoeffekt_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_photoeffekt_charta(charta_id="charta-299-expansion")
+        norm = next(n for n in charta.normen if n.geltung is PhotoeffektGeltung.GRUNDLEGEND_PHOTOEFFEKTIV)
+
+        self.assertEqual(norm.photoeffekt_typ, PhotoeffektTyp.SOUVERAENITAETS_PHOTOEFFEKT)
+        self.assertEqual(norm.prozedur, PhotoeffektProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_photoeffekt_charta_aggregates_charta_signal(self) -> None:
+        charta = build_photoeffekt_charta(charta_id="charta-299-signal")
+
+        self.assertEqual(charta.charta_signal.status, "charta-gesperrt")
+        self.assertEqual(charta.gesperrt_norm_ids, ("charta-299-signal-stability-lane",))
+        self.assertEqual(charta.photoeffektiv_norm_ids, ("charta-299-signal-governance-lane",))
+        self.assertEqual(charta.grundlegend_norm_ids, ("charta-299-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #300 ElektromagnetikVerfassung – Block-Krone
+    # ------------------------------------------------------------------
+
+    def test_kki_elektromagnetik_verfassung_builds_gesperrt_schutz_norm(self) -> None:
+        verfassung = build_elektromagnetik_verfassung(verfassung_id="verfassung-300-stability")
+        norm = next(n for n in verfassung.normen if n.geltung is ElektroverfassungsGeltung.GESPERRT)
+
+        self.assertIsInstance(verfassung, ElektromagnetikVerfassung)
+        self.assertIsInstance(norm, ElektroverfassungsNorm)
+        self.assertEqual(norm.elektroverfassungs_typ, ElektroverfassungsTyp.SCHUTZ_ELEKTROVERFASSUNG)
+        self.assertEqual(norm.prozedur, ElektroverfassungsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.elektroverfassungs_tier, 1)
+
+    def test_kki_elektromagnetik_verfassung_builds_elektroverfasst_ordnungs_norm(self) -> None:
+        verfassung = build_elektromagnetik_verfassung(verfassung_id="verfassung-300-governance")
+        norm = next(n for n in verfassung.normen if n.geltung is ElektroverfassungsGeltung.ELEKTROVERFASST)
+
+        self.assertEqual(norm.elektroverfassungs_typ, ElektroverfassungsTyp.ORDNUNGS_ELEKTROVERFASSUNG)
+        self.assertEqual(norm.prozedur, ElektroverfassungsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.elektroverfassungs_weight, 0.0)
+
+    def test_kki_elektromagnetik_verfassung_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        verfassung = build_elektromagnetik_verfassung(verfassung_id="verfassung-300-expansion")
+        norm = next(n for n in verfassung.normen if n.geltung is ElektroverfassungsGeltung.GRUNDLEGEND_ELEKTROVERFASST)
+
+        self.assertEqual(norm.elektroverfassungs_typ, ElektroverfassungsTyp.SOUVERAENITAETS_ELEKTROVERFASSUNG)
+        self.assertEqual(norm.prozedur, ElektroverfassungsProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_elektromagnetik_verfassung_aggregates_verfassung_signal(self) -> None:
+        verfassung = build_elektromagnetik_verfassung(verfassung_id="verfassung-300-signal")
+
+        self.assertEqual(verfassung.verfassung_signal.status, "verfassung-gesperrt")
+        self.assertEqual(verfassung.gesperrt_norm_ids, ("verfassung-300-signal-stability-lane",))
+        self.assertEqual(verfassung.elektroverfasst_norm_ids, ("verfassung-300-signal-governance-lane",))
+        self.assertEqual(verfassung.grundlegend_norm_ids, ("verfassung-300-signal-expansion-lane",))
 
     def test_kki_waermestrahlung_charta_builds_gesperrt_schutz_norm(self) -> None:
         charta = build_waermestrahlung_charta(charta_id="charta-289-stability")

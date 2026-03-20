@@ -971,6 +971,22 @@ from .photon_norm import (
     PhotonNormTyp,
     build_photon_norm,
 )
+from .photoeffekt_charta import (
+    PhotoeffektCharta,
+    PhotoeffektGeltung,
+    PhotoeffektNorm,
+    PhotoeffektProzedur,
+    PhotoeffektTyp,
+    build_photoeffekt_charta,
+)
+from .elektromagnetik_verfassung import (
+    ElektromagnetikVerfassung,
+    ElektroverfassungsGeltung,
+    ElektroverfassungsNorm,
+    ElektroverfassungsProzedur,
+    ElektroverfassungsTyp,
+    build_elektromagnetik_verfassung,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -2103,6 +2119,8 @@ __all__ = [
     "build_lichtgeschwindigkeits_manifest",
     "build_spektral_senat",
     "build_photon_norm",
+    "build_photoeffekt_charta",
+    "build_elektromagnetik_verfassung",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

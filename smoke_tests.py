@@ -337,6 +337,30 @@ from kki import (
     SuperpositionsProzedur,
     SuperpositionsTyp,
     build_superpositions_kodex,
+    VerschraenkunsGeltung,
+    VerschraenkunsNorm,
+    VerschraenkunsPakt,
+    VerschraenkunsProzedur,
+    VerschraenkunsTyp,
+    build_verschraenkungs_pakt,
+    KollapsGeltung,
+    KollapsManifest,
+    KollapsNorm,
+    KollapsProzedur,
+    KollapsTyp,
+    build_kollaps_manifest,
+    QuantenSenat,
+    QuantenSenatGeltung,
+    QuantenSenatNorm,
+    QuantenSenatProzedur,
+    QuantenSenatTyp,
+    build_quanten_senat,
+    PlanckGeltung,
+    PlanckNorm,
+    PlanckNormEintrag,
+    PlanckProzedur,
+    PlanckTyp,
+    build_planck_norm,
     KausalitaetsGeltung,
     KausalitaetsNorm,
     KausalitaetsProzedur,
@@ -5626,6 +5650,142 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(konvent.begrenzt_line_ids, ("konvent-203-signal-stability-lane",))
         self.assertEqual(konvent.delegiert_line_ids, ("konvent-203-signal-governance-lane",))
         self.assertEqual(konvent.verankert_line_ids, ("konvent-203-signal-expansion-lane",))
+
+    def test_kki_planck_norm_builds_gesperrt_schutz_norm(self) -> None:
+        norm = build_planck_norm(norm_id="planck-268-stability")
+        eintrag = next(n for n in norm.normen if n.geltung is PlanckGeltung.GESPERRT)
+
+        self.assertIsInstance(norm, PlanckNorm)
+        self.assertIsInstance(eintrag, PlanckNormEintrag)
+        self.assertEqual(eintrag.planck_typ, PlanckTyp.SCHUTZ_PLANCK)
+        self.assertEqual(eintrag.prozedur, PlanckProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(eintrag.planck_tier, 1)
+
+    def test_kki_planck_norm_builds_planck_gebunden_ordnungs_norm(self) -> None:
+        norm = build_planck_norm(norm_id="planck-268-governance")
+        eintrag = next(n for n in norm.normen if n.geltung is PlanckGeltung.PLANCK_GEBUNDEN)
+
+        self.assertEqual(eintrag.planck_typ, PlanckTyp.ORDNUNGS_PLANCK)
+        self.assertEqual(eintrag.prozedur, PlanckProzedur.REGELPROTOKOLL)
+        self.assertGreater(eintrag.planck_weight, 0.0)
+
+    def test_kki_planck_norm_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        norm = build_planck_norm(norm_id="planck-268-expansion")
+        eintrag = next(n for n in norm.normen if n.geltung is PlanckGeltung.GRUNDLEGEND_PLANCK)
+
+        self.assertEqual(eintrag.planck_typ, PlanckTyp.SOUVERAENITAETS_PLANCK)
+        self.assertEqual(eintrag.prozedur, PlanckProzedur.PLENARPROTOKOLL)
+        self.assertTrue(eintrag.canonical)
+
+    def test_kki_planck_norm_aggregates_norm_signal(self) -> None:
+        norm = build_planck_norm(norm_id="planck-268-signal")
+
+        self.assertEqual(norm.norm_signal.status, "norm-gesperrt")
+        self.assertEqual(norm.gesperrt_norm_ids, ("planck-268-signal-stability-lane",))
+        self.assertEqual(norm.planck_gebunden_norm_ids, ("planck-268-signal-governance-lane",))
+        self.assertEqual(norm.grundlegend_norm_ids, ("planck-268-signal-expansion-lane",))
+
+    def test_kki_quanten_senat_builds_gesperrt_schutz_norm(self) -> None:
+        senat = build_quanten_senat(senat_id="senat-267-stability")
+        norm = next(n for n in senat.normen if n.geltung is QuantenSenatGeltung.GESPERRT)
+
+        self.assertIsInstance(senat, QuantenSenat)
+        self.assertIsInstance(norm, QuantenSenatNorm)
+        self.assertEqual(norm.quanten_senat_typ, QuantenSenatTyp.SCHUTZ_SENAT)
+        self.assertEqual(norm.prozedur, QuantenSenatProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.quanten_senat_tier, 1)
+
+    def test_kki_quanten_senat_builds_senatsreif_ordnungs_norm(self) -> None:
+        senat = build_quanten_senat(senat_id="senat-267-governance")
+        norm = next(n for n in senat.normen if n.geltung is QuantenSenatGeltung.SENATSREIF)
+
+        self.assertEqual(norm.quanten_senat_typ, QuantenSenatTyp.ORDNUNGS_SENAT)
+        self.assertEqual(norm.prozedur, QuantenSenatProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.quanten_senat_weight, 0.0)
+
+    def test_kki_quanten_senat_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        senat = build_quanten_senat(senat_id="senat-267-expansion")
+        norm = next(n for n in senat.normen if n.geltung is QuantenSenatGeltung.GRUNDLEGEND_SENATSREIF)
+
+        self.assertEqual(norm.quanten_senat_typ, QuantenSenatTyp.SOUVERAENITAETS_SENAT)
+        self.assertEqual(norm.prozedur, QuantenSenatProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_quanten_senat_aggregates_senat_signal(self) -> None:
+        senat = build_quanten_senat(senat_id="senat-267-signal")
+
+        self.assertEqual(senat.senat_signal.status, "senat-gesperrt")
+        self.assertEqual(senat.gesperrt_norm_ids, ("senat-267-signal-stability-lane",))
+        self.assertEqual(senat.senatsreif_norm_ids, ("senat-267-signal-governance-lane",))
+        self.assertEqual(senat.grundlegend_norm_ids, ("senat-267-signal-expansion-lane",))
+
+    def test_kki_kollaps_manifest_builds_gesperrt_schutz_norm(self) -> None:
+        manifest = build_kollaps_manifest(manifest_id="manifest-266-stability")
+        norm = next(n for n in manifest.normen if n.geltung is KollapsGeltung.GESPERRT)
+
+        self.assertIsInstance(manifest, KollapsManifest)
+        self.assertIsInstance(norm, KollapsNorm)
+        self.assertEqual(norm.kollaps_typ, KollapsTyp.SCHUTZ_KOLLAPS)
+        self.assertEqual(norm.prozedur, KollapsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.kollaps_tier, 1)
+
+    def test_kki_kollaps_manifest_builds_kollabiert_ordnungs_norm(self) -> None:
+        manifest = build_kollaps_manifest(manifest_id="manifest-266-governance")
+        norm = next(n for n in manifest.normen if n.geltung is KollapsGeltung.KOLLABIERT)
+
+        self.assertEqual(norm.kollaps_typ, KollapsTyp.ORDNUNGS_KOLLAPS)
+        self.assertEqual(norm.prozedur, KollapsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.kollaps_weight, 0.0)
+
+    def test_kki_kollaps_manifest_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        manifest = build_kollaps_manifest(manifest_id="manifest-266-expansion")
+        norm = next(n for n in manifest.normen if n.geltung is KollapsGeltung.GRUNDLEGEND_KOLLABIERT)
+
+        self.assertEqual(norm.kollaps_typ, KollapsTyp.SOUVERAENITAETS_KOLLAPS)
+        self.assertEqual(norm.prozedur, KollapsProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_kollaps_manifest_aggregates_manifest_signal(self) -> None:
+        manifest = build_kollaps_manifest(manifest_id="manifest-266-signal")
+
+        self.assertEqual(manifest.manifest_signal.status, "manifest-gesperrt")
+        self.assertEqual(manifest.gesperrt_norm_ids, ("manifest-266-signal-stability-lane",))
+        self.assertEqual(manifest.kollabiert_norm_ids, ("manifest-266-signal-governance-lane",))
+        self.assertEqual(manifest.grundlegend_norm_ids, ("manifest-266-signal-expansion-lane",))
+
+    def test_kki_verschraenkungs_pakt_builds_gesperrt_schutz_norm(self) -> None:
+        pakt = build_verschraenkungs_pakt(pakt_id="pakt-265-stability")
+        norm = next(n for n in pakt.normen if n.geltung is VerschraenkunsGeltung.GESPERRT)
+
+        self.assertIsInstance(pakt, VerschraenkunsPakt)
+        self.assertIsInstance(norm, VerschraenkunsNorm)
+        self.assertEqual(norm.verschraenkungs_typ, VerschraenkunsTyp.SCHUTZ_VERSCHRAENKUNG)
+        self.assertEqual(norm.prozedur, VerschraenkunsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.verschraenkungs_tier, 1)
+
+    def test_kki_verschraenkungs_pakt_builds_verschraenkt_ordnungs_norm(self) -> None:
+        pakt = build_verschraenkungs_pakt(pakt_id="pakt-265-governance")
+        norm = next(n for n in pakt.normen if n.geltung is VerschraenkunsGeltung.VERSCHRAENKT)
+
+        self.assertEqual(norm.verschraenkungs_typ, VerschraenkunsTyp.ORDNUNGS_VERSCHRAENKUNG)
+        self.assertEqual(norm.prozedur, VerschraenkunsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.verschraenkungs_weight, 0.0)
+
+    def test_kki_verschraenkungs_pakt_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        pakt = build_verschraenkungs_pakt(pakt_id="pakt-265-expansion")
+        norm = next(n for n in pakt.normen if n.geltung is VerschraenkunsGeltung.GRUNDLEGEND_VERSCHRAENKT)
+
+        self.assertEqual(norm.verschraenkungs_typ, VerschraenkunsTyp.SOUVERAENITAETS_VERSCHRAENKUNG)
+        self.assertEqual(norm.prozedur, VerschraenkunsProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_verschraenkungs_pakt_aggregates_pakt_signal(self) -> None:
+        pakt = build_verschraenkungs_pakt(pakt_id="pakt-265-signal")
+
+        self.assertEqual(pakt.pakt_signal.status, "pakt-gesperrt")
+        self.assertEqual(pakt.gesperrt_norm_ids, ("pakt-265-signal-stability-lane",))
+        self.assertEqual(pakt.verschraenkt_norm_ids, ("pakt-265-signal-governance-lane",))
+        self.assertEqual(pakt.grundlegend_norm_ids, ("pakt-265-signal-expansion-lane",))
 
     def test_kki_superpositions_kodex_builds_gesperrt_schutz_norm(self) -> None:
         kodex = build_superpositions_kodex(kodex_id="kodex-264-stability")

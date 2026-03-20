@@ -421,6 +421,18 @@ from kki import (
     EreignishorizontProzedur,
     EreignishorizontTyp,
     build_ereignishorizont_norm,
+    ZeitdilatationsCharta,
+    ZeitdilatationsGeltung,
+    ZeitdilatationsNorm,
+    ZeitdilatationsProzedur,
+    ZeitdilatationsTyp,
+    build_zeitdilatations_charta,
+    RelativitaetsGeltung,
+    RelativitaetsNorm,
+    RelativitaetsProzedur,
+    RelativitaetsTyp,
+    RelativitaetsVerfassung,
+    build_relativitaets_verfassung,
     KausalitaetsGeltung,
     KausalitaetsNorm,
     KausalitaetsProzedur,
@@ -5812,6 +5824,74 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(manifest.gesperrt_norm_ids, ("manifest-276-signal-stability-lane",))
         self.assertEqual(manifest.singulaer_norm_ids, ("manifest-276-signal-governance-lane",))
         self.assertEqual(manifest.grundlegend_norm_ids, ("manifest-276-signal-expansion-lane",))
+
+    def test_kki_relativitaets_verfassung_builds_gesperrt_schutz_norm(self) -> None:
+        verfassung = build_relativitaets_verfassung(verfassung_id="verfassung-280-stability")
+        norm = next(n for n in verfassung.normen if n.geltung is RelativitaetsGeltung.GESPERRT)
+
+        self.assertIsInstance(verfassung, RelativitaetsVerfassung)
+        self.assertIsInstance(norm, RelativitaetsNorm)
+        self.assertEqual(norm.relativitaets_typ, RelativitaetsTyp.SCHUTZ_RELATIVITAET)
+        self.assertEqual(norm.prozedur, RelativitaetsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.relativitaets_tier, 1)
+
+    def test_kki_relativitaets_verfassung_builds_relativverfasst_ordnungs_norm(self) -> None:
+        verfassung = build_relativitaets_verfassung(verfassung_id="verfassung-280-governance")
+        norm = next(n for n in verfassung.normen if n.geltung is RelativitaetsGeltung.RELATIVVERFASST)
+
+        self.assertEqual(norm.relativitaets_typ, RelativitaetsTyp.ORDNUNGS_RELATIVITAET)
+        self.assertEqual(norm.prozedur, RelativitaetsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.relativitaets_weight, 0.0)
+
+    def test_kki_relativitaets_verfassung_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        verfassung = build_relativitaets_verfassung(verfassung_id="verfassung-280-expansion")
+        norm = next(n for n in verfassung.normen if n.geltung is RelativitaetsGeltung.GRUNDLEGEND_RELATIVVERFASST)
+
+        self.assertEqual(norm.relativitaets_typ, RelativitaetsTyp.SOUVERAENITAETS_RELATIVITAET)
+        self.assertEqual(norm.prozedur, RelativitaetsProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_relativitaets_verfassung_aggregates_verfassung_signal(self) -> None:
+        verfassung = build_relativitaets_verfassung(verfassung_id="verfassung-280-signal")
+
+        self.assertEqual(verfassung.verfassung_signal.status, "verfassung-gesperrt")
+        self.assertEqual(verfassung.gesperrt_norm_ids, ("verfassung-280-signal-stability-lane",))
+        self.assertEqual(verfassung.relativverfasst_norm_ids, ("verfassung-280-signal-governance-lane",))
+        self.assertEqual(verfassung.grundlegend_norm_ids, ("verfassung-280-signal-expansion-lane",))
+
+    def test_kki_zeitdilatations_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_zeitdilatations_charta(charta_id="charta-279-stability")
+        norm = next(n for n in charta.normen if n.geltung is ZeitdilatationsGeltung.GESPERRT)
+
+        self.assertIsInstance(charta, ZeitdilatationsCharta)
+        self.assertIsInstance(norm, ZeitdilatationsNorm)
+        self.assertEqual(norm.zeitdilatations_typ, ZeitdilatationsTyp.SCHUTZ_ZEITDILATATION)
+        self.assertEqual(norm.prozedur, ZeitdilatationsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.zeitdilatations_tier, 1)
+
+    def test_kki_zeitdilatations_charta_builds_zeitdilatatiert_ordnungs_norm(self) -> None:
+        charta = build_zeitdilatations_charta(charta_id="charta-279-governance")
+        norm = next(n for n in charta.normen if n.geltung is ZeitdilatationsGeltung.ZEITDILATATIERT)
+
+        self.assertEqual(norm.zeitdilatations_typ, ZeitdilatationsTyp.ORDNUNGS_ZEITDILATATION)
+        self.assertEqual(norm.prozedur, ZeitdilatationsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.zeitdilatations_weight, 0.0)
+
+    def test_kki_zeitdilatations_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_zeitdilatations_charta(charta_id="charta-279-expansion")
+        norm = next(n for n in charta.normen if n.geltung is ZeitdilatationsGeltung.GRUNDLEGEND_ZEITDILATATIERT)
+
+        self.assertEqual(norm.zeitdilatations_typ, ZeitdilatationsTyp.SOUVERAENITAETS_ZEITDILATATION)
+        self.assertEqual(norm.prozedur, ZeitdilatationsProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_zeitdilatations_charta_aggregates_charta_signal(self) -> None:
+        charta = build_zeitdilatations_charta(charta_id="charta-279-signal")
+
+        self.assertEqual(charta.charta_signal.status, "charta-gesperrt")
+        self.assertEqual(charta.gesperrt_norm_ids, ("charta-279-signal-stability-lane",))
+        self.assertEqual(charta.zeitdilatatiert_norm_ids, ("charta-279-signal-governance-lane",))
+        self.assertEqual(charta.grundlegend_norm_ids, ("charta-279-signal-expansion-lane",))
 
     def test_kki_kruemmungs_pakt_builds_gesperrt_schutz_norm(self) -> None:
         pakt = build_kruemmungs_pakt(pakt_id="pakt-275-stability")

@@ -811,6 +811,22 @@ from .ereignishorizont_norm import (
     EreignishorizontTyp,
     build_ereignishorizont_norm,
 )
+from .zeitdilatations_charta import (
+    ZeitdilatationsCharta,
+    ZeitdilatationsGeltung,
+    ZeitdilatationsNorm,
+    ZeitdilatationsProzedur,
+    ZeitdilatationsTyp,
+    build_zeitdilatations_charta,
+)
+from .relativitaets_verfassung import (
+    RelativitaetsGeltung,
+    RelativitaetsNorm,
+    RelativitaetsProzedur,
+    RelativitaetsTyp,
+    RelativitaetsVerfassung,
+    build_relativitaets_verfassung,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -1575,6 +1591,16 @@ __all__ = [
     "EreignishorizontNormEintrag",
     "EreignishorizontProzedur",
     "EreignishorizontTyp",
+    "ZeitdilatationsCharta",
+    "ZeitdilatationsGeltung",
+    "ZeitdilatationsNorm",
+    "ZeitdilatationsProzedur",
+    "ZeitdilatationsTyp",
+    "RelativitaetsGeltung",
+    "RelativitaetsNorm",
+    "RelativitaetsProzedur",
+    "RelativitaetsTyp",
+    "RelativitaetsVerfassung",
     "EinheitsGeltung",
     "EinheitsNorm",
     "EinheitsProzedur",
@@ -1863,6 +1889,8 @@ __all__ = [
     "build_singularitaets_manifest",
     "build_schwarzes_loch_senat",
     "build_ereignishorizont_norm",
+    "build_zeitdilatations_charta",
+    "build_relativitaets_verfassung",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

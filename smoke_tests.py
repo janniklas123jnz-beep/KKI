@@ -313,6 +313,30 @@ from kki import (
     KosmosVerfassungsProzedur,
     KosmosVerfassungsTyp,
     build_kosmos_verfassung,
+    QuantenFeld,
+    QuantenFeldGeltung,
+    QuantenFeldNorm,
+    QuantenFeldProzedur,
+    QuantenFeldTyp,
+    build_quanten_feld,
+    DimensionsGeltung,
+    DimensionsNorm,
+    DimensionsProzedur,
+    DimensionsRang,
+    DimensionsRegister,
+    build_dimensions_register,
+    WellenCharta,
+    WellenGeltung,
+    WellenNorm,
+    WellenProzedur,
+    WellenTyp,
+    build_wellen_charta,
+    SuperpositionsGeltung,
+    SuperpositionsKodex,
+    SuperpositionsNorm,
+    SuperpositionsProzedur,
+    SuperpositionsTyp,
+    build_superpositions_kodex,
     KausalitaetsGeltung,
     KausalitaetsNorm,
     KausalitaetsProzedur,
@@ -5602,6 +5626,142 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(konvent.begrenzt_line_ids, ("konvent-203-signal-stability-lane",))
         self.assertEqual(konvent.delegiert_line_ids, ("konvent-203-signal-governance-lane",))
         self.assertEqual(konvent.verankert_line_ids, ("konvent-203-signal-expansion-lane",))
+
+    def test_kki_superpositions_kodex_builds_gesperrt_schutz_norm(self) -> None:
+        kodex = build_superpositions_kodex(kodex_id="kodex-264-stability")
+        norm = next(n for n in kodex.normen if n.geltung is SuperpositionsGeltung.GESPERRT)
+
+        self.assertIsInstance(kodex, SuperpositionsKodex)
+        self.assertIsInstance(norm, SuperpositionsNorm)
+        self.assertEqual(norm.superpositions_typ, SuperpositionsTyp.SCHUTZ_SUPERPOSITION)
+        self.assertEqual(norm.prozedur, SuperpositionsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.superpositions_tier, 1)
+
+    def test_kki_superpositions_kodex_builds_superponiert_ordnungs_norm(self) -> None:
+        kodex = build_superpositions_kodex(kodex_id="kodex-264-governance")
+        norm = next(n for n in kodex.normen if n.geltung is SuperpositionsGeltung.SUPERPONIERT)
+
+        self.assertEqual(norm.superpositions_typ, SuperpositionsTyp.ORDNUNGS_SUPERPOSITION)
+        self.assertEqual(norm.prozedur, SuperpositionsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.superpositions_weight, 0.0)
+
+    def test_kki_superpositions_kodex_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        kodex = build_superpositions_kodex(kodex_id="kodex-264-expansion")
+        norm = next(n for n in kodex.normen if n.geltung is SuperpositionsGeltung.GRUNDLEGEND_SUPERPONIERT)
+
+        self.assertEqual(norm.superpositions_typ, SuperpositionsTyp.SOUVERAENITAETS_SUPERPOSITION)
+        self.assertEqual(norm.prozedur, SuperpositionsProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_superpositions_kodex_aggregates_kodex_signal(self) -> None:
+        kodex = build_superpositions_kodex(kodex_id="kodex-264-signal")
+
+        self.assertEqual(kodex.kodex_signal.status, "kodex-gesperrt")
+        self.assertEqual(kodex.gesperrt_norm_ids, ("kodex-264-signal-stability-lane",))
+        self.assertEqual(kodex.superponiert_norm_ids, ("kodex-264-signal-governance-lane",))
+        self.assertEqual(kodex.grundlegend_norm_ids, ("kodex-264-signal-expansion-lane",))
+
+    def test_kki_wellen_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_wellen_charta(charta_id="charta-263-stability")
+        norm = next(n for n in charta.normen if n.geltung is WellenGeltung.GESPERRT)
+
+        self.assertIsInstance(charta, WellenCharta)
+        self.assertIsInstance(norm, WellenNorm)
+        self.assertEqual(norm.wellen_typ, WellenTyp.SCHUTZ_WELLE)
+        self.assertEqual(norm.prozedur, WellenProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.wellen_tier, 1)
+
+    def test_kki_wellen_charta_builds_wellend_ordnungs_norm(self) -> None:
+        charta = build_wellen_charta(charta_id="charta-263-governance")
+        norm = next(n for n in charta.normen if n.geltung is WellenGeltung.WELLEND)
+
+        self.assertEqual(norm.wellen_typ, WellenTyp.ORDNUNGS_WELLE)
+        self.assertEqual(norm.prozedur, WellenProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.wellen_weight, 0.0)
+
+    def test_kki_wellen_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_wellen_charta(charta_id="charta-263-expansion")
+        norm = next(n for n in charta.normen if n.geltung is WellenGeltung.GRUNDLEGEND_WELLEND)
+
+        self.assertEqual(norm.wellen_typ, WellenTyp.SOUVERAENITAETS_WELLE)
+        self.assertEqual(norm.prozedur, WellenProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_wellen_charta_aggregates_charta_signal(self) -> None:
+        charta = build_wellen_charta(charta_id="charta-263-signal")
+
+        self.assertEqual(charta.charta_signal.status, "charta-gesperrt")
+        self.assertEqual(charta.gesperrt_norm_ids, ("charta-263-signal-stability-lane",))
+        self.assertEqual(charta.wellend_norm_ids, ("charta-263-signal-governance-lane",))
+        self.assertEqual(charta.grundlegend_norm_ids, ("charta-263-signal-expansion-lane",))
+
+    def test_kki_dimensions_register_builds_gesperrt_schutz_norm(self) -> None:
+        register = build_dimensions_register(register_id="register-262-stability")
+        norm = next(n for n in register.normen if n.geltung is DimensionsGeltung.GESPERRT)
+
+        self.assertIsInstance(register, DimensionsRegister)
+        self.assertIsInstance(norm, DimensionsNorm)
+        self.assertEqual(norm.dimensions_rang, DimensionsRang.SCHUTZ_DIMENSION)
+        self.assertEqual(norm.prozedur, DimensionsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.dimensions_tier, 1)
+
+    def test_kki_dimensions_register_builds_dimensioniert_ordnungs_norm(self) -> None:
+        register = build_dimensions_register(register_id="register-262-governance")
+        norm = next(n for n in register.normen if n.geltung is DimensionsGeltung.DIMENSIONIERT)
+
+        self.assertEqual(norm.dimensions_rang, DimensionsRang.ORDNUNGS_DIMENSION)
+        self.assertEqual(norm.prozedur, DimensionsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.dimensions_weight, 0.0)
+
+    def test_kki_dimensions_register_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        register = build_dimensions_register(register_id="register-262-expansion")
+        norm = next(n for n in register.normen if n.geltung is DimensionsGeltung.GRUNDLEGEND_DIMENSIONIERT)
+
+        self.assertEqual(norm.dimensions_rang, DimensionsRang.SOUVERAENITAETS_DIMENSION)
+        self.assertEqual(norm.prozedur, DimensionsProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_dimensions_register_aggregates_register_signal(self) -> None:
+        register = build_dimensions_register(register_id="register-262-signal")
+
+        self.assertEqual(register.register_signal.status, "register-gesperrt")
+        self.assertEqual(register.gesperrt_norm_ids, ("register-262-signal-stability-lane",))
+        self.assertEqual(register.dimensioniert_norm_ids, ("register-262-signal-governance-lane",))
+        self.assertEqual(register.grundlegend_norm_ids, ("register-262-signal-expansion-lane",))
+
+    def test_kki_quanten_feld_builds_gesperrt_schutz_norm(self) -> None:
+        feld = build_quanten_feld(feld_id="feld-261-stability")
+        norm = next(n for n in feld.normen if n.geltung is QuantenFeldGeltung.GESPERRT)
+
+        self.assertIsInstance(feld, QuantenFeld)
+        self.assertIsInstance(norm, QuantenFeldNorm)
+        self.assertEqual(norm.quanten_feld_typ, QuantenFeldTyp.SCHUTZ_QUANT)
+        self.assertEqual(norm.prozedur, QuantenFeldProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.quanten_feld_tier, 1)
+
+    def test_kki_quanten_feld_builds_quantisiert_ordnungs_norm(self) -> None:
+        feld = build_quanten_feld(feld_id="feld-261-governance")
+        norm = next(n for n in feld.normen if n.geltung is QuantenFeldGeltung.QUANTISIERT)
+
+        self.assertEqual(norm.quanten_feld_typ, QuantenFeldTyp.ORDNUNGS_QUANT)
+        self.assertEqual(norm.prozedur, QuantenFeldProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.quanten_feld_weight, 0.0)
+
+    def test_kki_quanten_feld_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        feld = build_quanten_feld(feld_id="feld-261-expansion")
+        norm = next(n for n in feld.normen if n.geltung is QuantenFeldGeltung.GRUNDLEGEND_QUANTISIERT)
+
+        self.assertEqual(norm.quanten_feld_typ, QuantenFeldTyp.SOUVERAENITAETS_QUANT)
+        self.assertEqual(norm.prozedur, QuantenFeldProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_quanten_feld_aggregates_feld_signal(self) -> None:
+        feld = build_quanten_feld(feld_id="feld-261-signal")
+
+        self.assertEqual(feld.feld_signal.status, "feld-gesperrt")
+        self.assertEqual(feld.gesperrt_norm_ids, ("feld-261-signal-stability-lane",))
+        self.assertEqual(feld.quantisiert_norm_ids, ("feld-261-signal-governance-lane",))
+        self.assertEqual(feld.grundlegend_norm_ids, ("feld-261-signal-expansion-lane",))
 
     def test_kki_kosmos_verfassung_builds_gesperrt_schutz_norm(self) -> None:
         verfassung = build_kosmos_verfassung(verfassung_id="verfassung-260-stability")

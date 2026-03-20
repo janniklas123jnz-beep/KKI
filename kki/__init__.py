@@ -891,6 +891,22 @@ from .entropie_norm import (
     EntropieNormTyp,
     build_entropie_norm,
 )
+from .waermestrahlung_charta import (
+    WaermestrahlungsCharta,
+    WaermestrahlungsGeltung,
+    WaermestrahlungsNorm,
+    WaermestrahlungsProzedur,
+    WaermestrahlungsTyp,
+    build_waermestrahlung_charta,
+)
+from .thermodynamik_verfassung import (
+    ThermodynamikVerfassung,
+    ThermoverfassungsGeltung,
+    ThermoverfassungsNorm,
+    ThermoverfassungsProzedur,
+    ThermoverfassungsTyp,
+    build_thermodynamik_verfassung,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -1705,6 +1721,16 @@ __all__ = [
     "EntropieNormProzedur",
     "EntropieNormSatz",
     "EntropieNormTyp",
+    "WaermestrahlungsCharta",
+    "WaermestrahlungsGeltung",
+    "WaermestrahlungsNorm",
+    "WaermestrahlungsProzedur",
+    "WaermestrahlungsTyp",
+    "ThermodynamikVerfassung",
+    "ThermoverfassungsGeltung",
+    "ThermoverfassungsNorm",
+    "ThermoverfassungsProzedur",
+    "ThermoverfassungsTyp",
     "EinheitsGeltung",
     "EinheitsNorm",
     "EinheitsProzedur",
@@ -2003,6 +2029,8 @@ __all__ = [
     "build_carnot_manifest",
     "build_boltzmann_senat",
     "build_entropie_norm",
+    "build_waermestrahlung_charta",
+    "build_thermodynamik_verfassung",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

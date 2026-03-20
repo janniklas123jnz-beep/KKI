@@ -481,6 +481,18 @@ from kki import (
     EntropieNormSatz,
     EntropieNormTyp,
     build_entropie_norm,
+    WaermestrahlungsCharta,
+    WaermestrahlungsGeltung,
+    WaermestrahlungsNorm,
+    WaermestrahlungsProzedur,
+    WaermestrahlungsTyp,
+    build_waermestrahlung_charta,
+    ThermodynamikVerfassung,
+    ThermoverfassungsGeltung,
+    ThermoverfassungsNorm,
+    ThermoverfassungsProzedur,
+    ThermoverfassungsTyp,
+    build_thermodynamik_verfassung,
     KausalitaetsGeltung,
     KausalitaetsNorm,
     KausalitaetsProzedur,
@@ -5872,6 +5884,74 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(manifest.gesperrt_norm_ids, ("manifest-276-signal-stability-lane",))
         self.assertEqual(manifest.singulaer_norm_ids, ("manifest-276-signal-governance-lane",))
         self.assertEqual(manifest.grundlegend_norm_ids, ("manifest-276-signal-expansion-lane",))
+
+    def test_kki_thermodynamik_verfassung_builds_gesperrt_schutz_norm(self) -> None:
+        verfassung = build_thermodynamik_verfassung(verfassung_id="verfassung-290-stability")
+        norm = next(n for n in verfassung.normen if n.geltung is ThermoverfassungsGeltung.GESPERRT)
+
+        self.assertIsInstance(verfassung, ThermodynamikVerfassung)
+        self.assertIsInstance(norm, ThermoverfassungsNorm)
+        self.assertEqual(norm.thermoverfassungs_typ, ThermoverfassungsTyp.SCHUTZ_THERMOVERFASSUNG)
+        self.assertEqual(norm.prozedur, ThermoverfassungsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.thermoverfassungs_tier, 1)
+
+    def test_kki_thermodynamik_verfassung_builds_thermoverfasst_ordnungs_norm(self) -> None:
+        verfassung = build_thermodynamik_verfassung(verfassung_id="verfassung-290-governance")
+        norm = next(n for n in verfassung.normen if n.geltung is ThermoverfassungsGeltung.THERMOVERFASST)
+
+        self.assertEqual(norm.thermoverfassungs_typ, ThermoverfassungsTyp.ORDNUNGS_THERMOVERFASSUNG)
+        self.assertEqual(norm.prozedur, ThermoverfassungsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.thermoverfassungs_weight, 0.0)
+
+    def test_kki_thermodynamik_verfassung_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        verfassung = build_thermodynamik_verfassung(verfassung_id="verfassung-290-expansion")
+        norm = next(n for n in verfassung.normen if n.geltung is ThermoverfassungsGeltung.GRUNDLEGEND_THERMOVERFASST)
+
+        self.assertEqual(norm.thermoverfassungs_typ, ThermoverfassungsTyp.SOUVERAENITAETS_THERMOVERFASSUNG)
+        self.assertEqual(norm.prozedur, ThermoverfassungsProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_thermodynamik_verfassung_aggregates_verfassung_signal(self) -> None:
+        verfassung = build_thermodynamik_verfassung(verfassung_id="verfassung-290-signal")
+
+        self.assertEqual(verfassung.verfassung_signal.status, "verfassung-gesperrt")
+        self.assertEqual(verfassung.gesperrt_norm_ids, ("verfassung-290-signal-stability-lane",))
+        self.assertEqual(verfassung.thermoverfasst_norm_ids, ("verfassung-290-signal-governance-lane",))
+        self.assertEqual(verfassung.grundlegend_norm_ids, ("verfassung-290-signal-expansion-lane",))
+
+    def test_kki_waermestrahlung_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_waermestrahlung_charta(charta_id="charta-289-stability")
+        norm = next(n for n in charta.normen if n.geltung is WaermestrahlungsGeltung.GESPERRT)
+
+        self.assertIsInstance(charta, WaermestrahlungsCharta)
+        self.assertIsInstance(norm, WaermestrahlungsNorm)
+        self.assertEqual(norm.waermestrahlung_typ, WaermestrahlungsTyp.SCHUTZ_WAERMESTRAHLUNG)
+        self.assertEqual(norm.prozedur, WaermestrahlungsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.waermestrahlung_tier, 1)
+
+    def test_kki_waermestrahlung_charta_builds_strahlend_ordnungs_norm(self) -> None:
+        charta = build_waermestrahlung_charta(charta_id="charta-289-governance")
+        norm = next(n for n in charta.normen if n.geltung is WaermestrahlungsGeltung.STRAHLEND)
+
+        self.assertEqual(norm.waermestrahlung_typ, WaermestrahlungsTyp.ORDNUNGS_WAERMESTRAHLUNG)
+        self.assertEqual(norm.prozedur, WaermestrahlungsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.waermestrahlung_weight, 0.0)
+
+    def test_kki_waermestrahlung_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_waermestrahlung_charta(charta_id="charta-289-expansion")
+        norm = next(n for n in charta.normen if n.geltung is WaermestrahlungsGeltung.GRUNDLEGEND_STRAHLEND)
+
+        self.assertEqual(norm.waermestrahlung_typ, WaermestrahlungsTyp.SOUVERAENITAETS_WAERMESTRAHLUNG)
+        self.assertEqual(norm.prozedur, WaermestrahlungsProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_waermestrahlung_charta_aggregates_charta_signal(self) -> None:
+        charta = build_waermestrahlung_charta(charta_id="charta-289-signal")
+
+        self.assertEqual(charta.charta_signal.status, "charta-gesperrt")
+        self.assertEqual(charta.gesperrt_norm_ids, ("charta-289-signal-stability-lane",))
+        self.assertEqual(charta.strahlend_norm_ids, ("charta-289-signal-governance-lane",))
+        self.assertEqual(charta.grundlegend_norm_ids, ("charta-289-signal-expansion-lane",))
 
     def test_kki_entropie_norm_builds_gesperrt_schutz_eintrag(self) -> None:
         satz = build_entropie_norm(norm_id="norm-288-stability")

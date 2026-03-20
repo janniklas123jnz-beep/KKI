@@ -939,6 +939,38 @@ from .induktions_kodex import (
     InduktionsTyp,
     build_induktions_kodex,
 )
+from .wellenausbreitung_pakt import (
+    WellenausbreitungsGeltung,
+    WellenausbreitungsNorm,
+    WellenausbreitungsPakt,
+    WellenausbreitungsProzedur,
+    WellenausbreitungsTyp,
+    build_wellenausbreitung_pakt,
+)
+from .lichtgeschwindigkeits_manifest import (
+    LichtgeschwindigkeitsGeltung,
+    LichtgeschwindigkeitsManifest,
+    LichtgeschwindigkeitsNorm,
+    LichtgeschwindigkeitsProzedur,
+    LichtgeschwindigkeitsTyp,
+    build_lichtgeschwindigkeits_manifest,
+)
+from .spektral_senat import (
+    SpektralGeltung,
+    SpektralNorm,
+    SpektralProzedur,
+    SpektralSenat,
+    SpektralTyp,
+    build_spektral_senat,
+)
+from .photon_norm import (
+    PhotonNormEintrag,
+    PhotonNormGeltung,
+    PhotonNormProzedur,
+    PhotonNormSatz,
+    PhotonNormTyp,
+    build_photon_norm,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -2067,6 +2099,10 @@ __all__ = [
     "build_ladungs_register",
     "build_maxwell_charta",
     "build_induktions_kodex",
+    "build_wellenausbreitung_pakt",
+    "build_lichtgeschwindigkeits_manifest",
+    "build_spektral_senat",
+    "build_photon_norm",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

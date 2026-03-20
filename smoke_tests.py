@@ -517,6 +517,30 @@ from kki import (
     InduktionsProzedur,
     InduktionsTyp,
     build_induktions_kodex,
+    WellenausbreitungsGeltung,
+    WellenausbreitungsNorm,
+    WellenausbreitungsPakt,
+    WellenausbreitungsProzedur,
+    WellenausbreitungsTyp,
+    build_wellenausbreitung_pakt,
+    LichtgeschwindigkeitsGeltung,
+    LichtgeschwindigkeitsManifest,
+    LichtgeschwindigkeitsNorm,
+    LichtgeschwindigkeitsProzedur,
+    LichtgeschwindigkeitsTyp,
+    build_lichtgeschwindigkeits_manifest,
+    SpektralGeltung,
+    SpektralNorm,
+    SpektralProzedur,
+    SpektralSenat,
+    SpektralTyp,
+    build_spektral_senat,
+    PhotonNormEintrag,
+    PhotonNormGeltung,
+    PhotonNormProzedur,
+    PhotonNormSatz,
+    PhotonNormTyp,
+    build_photon_norm,
     KausalitaetsGeltung,
     KausalitaetsNorm,
     KausalitaetsProzedur,
@@ -6094,6 +6118,158 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(kodex.gesperrt_norm_ids, ("kodex-294-signal-stability-lane",))
         self.assertEqual(kodex.induziert_norm_ids, ("kodex-294-signal-governance-lane",))
         self.assertEqual(kodex.grundlegend_norm_ids, ("kodex-294-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #295 WellenausbreitungsPakt
+    # ------------------------------------------------------------------
+
+    def test_kki_wellenausbreitung_pakt_builds_gesperrt_schutz_norm(self) -> None:
+        pakt = build_wellenausbreitung_pakt(pakt_id="pakt-295-stability")
+        norm = next(n for n in pakt.normen if n.geltung is WellenausbreitungsGeltung.GESPERRT)
+
+        self.assertIsInstance(pakt, WellenausbreitungsPakt)
+        self.assertIsInstance(norm, WellenausbreitungsNorm)
+        self.assertEqual(norm.wellenausbreitung_typ, WellenausbreitungsTyp.SCHUTZ_WELLENAUSBREITUNG)
+        self.assertEqual(norm.prozedur, WellenausbreitungsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.wellenausbreitung_tier, 1)
+
+    def test_kki_wellenausbreitung_pakt_builds_wellenausbreitend_ordnungs_norm(self) -> None:
+        pakt = build_wellenausbreitung_pakt(pakt_id="pakt-295-governance")
+        norm = next(n for n in pakt.normen if n.geltung is WellenausbreitungsGeltung.WELLENAUSBREITEND)
+
+        self.assertEqual(norm.wellenausbreitung_typ, WellenausbreitungsTyp.ORDNUNGS_WELLENAUSBREITUNG)
+        self.assertEqual(norm.prozedur, WellenausbreitungsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.wellenausbreitung_weight, 0.0)
+
+    def test_kki_wellenausbreitung_pakt_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        pakt = build_wellenausbreitung_pakt(pakt_id="pakt-295-expansion")
+        norm = next(n for n in pakt.normen if n.geltung is WellenausbreitungsGeltung.GRUNDLEGEND_WELLENAUSBREITEND)
+
+        self.assertEqual(norm.wellenausbreitung_typ, WellenausbreitungsTyp.SOUVERAENITAETS_WELLENAUSBREITUNG)
+        self.assertEqual(norm.prozedur, WellenausbreitungsProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_wellenausbreitung_pakt_aggregates_pakt_signal(self) -> None:
+        pakt = build_wellenausbreitung_pakt(pakt_id="pakt-295-signal")
+
+        self.assertEqual(pakt.pakt_signal.status, "pakt-gesperrt")
+        self.assertEqual(pakt.gesperrt_norm_ids, ("pakt-295-signal-stability-lane",))
+        self.assertEqual(pakt.wellenausbreitend_norm_ids, ("pakt-295-signal-governance-lane",))
+        self.assertEqual(pakt.grundlegend_norm_ids, ("pakt-295-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #296 LichtgeschwindigkeitsManifest
+    # ------------------------------------------------------------------
+
+    def test_kki_lichtgeschwindigkeits_manifest_builds_gesperrt_schutz_norm(self) -> None:
+        manifest = build_lichtgeschwindigkeits_manifest(manifest_id="manifest-296-stability")
+        norm = next(n for n in manifest.normen if n.geltung is LichtgeschwindigkeitsGeltung.GESPERRT)
+
+        self.assertIsInstance(manifest, LichtgeschwindigkeitsManifest)
+        self.assertIsInstance(norm, LichtgeschwindigkeitsNorm)
+        self.assertEqual(norm.lichtgeschwindigkeits_typ, LichtgeschwindigkeitsTyp.SCHUTZ_LICHTGESCHWINDIGKEIT)
+        self.assertEqual(norm.prozedur, LichtgeschwindigkeitsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.lichtgeschwindigkeits_tier, 1)
+
+    def test_kki_lichtgeschwindigkeits_manifest_builds_lichtschnell_ordnungs_norm(self) -> None:
+        manifest = build_lichtgeschwindigkeits_manifest(manifest_id="manifest-296-governance")
+        norm = next(n for n in manifest.normen if n.geltung is LichtgeschwindigkeitsGeltung.LICHTSCHNELL)
+
+        self.assertEqual(norm.lichtgeschwindigkeits_typ, LichtgeschwindigkeitsTyp.ORDNUNGS_LICHTGESCHWINDIGKEIT)
+        self.assertEqual(norm.prozedur, LichtgeschwindigkeitsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.lichtgeschwindigkeits_weight, 0.0)
+
+    def test_kki_lichtgeschwindigkeits_manifest_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        manifest = build_lichtgeschwindigkeits_manifest(manifest_id="manifest-296-expansion")
+        norm = next(n for n in manifest.normen if n.geltung is LichtgeschwindigkeitsGeltung.GRUNDLEGEND_LICHTSCHNELL)
+
+        self.assertEqual(norm.lichtgeschwindigkeits_typ, LichtgeschwindigkeitsTyp.SOUVERAENITAETS_LICHTGESCHWINDIGKEIT)
+        self.assertEqual(norm.prozedur, LichtgeschwindigkeitsProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_lichtgeschwindigkeits_manifest_aggregates_manifest_signal(self) -> None:
+        manifest = build_lichtgeschwindigkeits_manifest(manifest_id="manifest-296-signal")
+
+        self.assertEqual(manifest.manifest_signal.status, "manifest-gesperrt")
+        self.assertEqual(manifest.gesperrt_norm_ids, ("manifest-296-signal-stability-lane",))
+        self.assertEqual(manifest.lichtschnell_norm_ids, ("manifest-296-signal-governance-lane",))
+        self.assertEqual(manifest.grundlegend_norm_ids, ("manifest-296-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #297 SpektralSenat
+    # ------------------------------------------------------------------
+
+    def test_kki_spektral_senat_builds_gesperrt_schutz_norm(self) -> None:
+        senat = build_spektral_senat(senat_id="senat-297-stability")
+        norm = next(n for n in senat.normen if n.geltung is SpektralGeltung.GESPERRT)
+
+        self.assertIsInstance(senat, SpektralSenat)
+        self.assertIsInstance(norm, SpektralNorm)
+        self.assertEqual(norm.spektral_typ, SpektralTyp.SCHUTZ_SPEKTRUM)
+        self.assertEqual(norm.prozedur, SpektralProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.spektral_tier, 1)
+
+    def test_kki_spektral_senat_builds_spektral_ordnungs_norm(self) -> None:
+        senat = build_spektral_senat(senat_id="senat-297-governance")
+        norm = next(n for n in senat.normen if n.geltung is SpektralGeltung.SPEKTRAL)
+
+        self.assertEqual(norm.spektral_typ, SpektralTyp.ORDNUNGS_SPEKTRUM)
+        self.assertEqual(norm.prozedur, SpektralProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.spektral_weight, 0.0)
+
+    def test_kki_spektral_senat_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        senat = build_spektral_senat(senat_id="senat-297-expansion")
+        norm = next(n for n in senat.normen if n.geltung is SpektralGeltung.GRUNDLEGEND_SPEKTRAL)
+
+        self.assertEqual(norm.spektral_typ, SpektralTyp.SOUVERAENITAETS_SPEKTRUM)
+        self.assertEqual(norm.prozedur, SpektralProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_spektral_senat_aggregates_senat_signal(self) -> None:
+        senat = build_spektral_senat(senat_id="senat-297-signal")
+
+        self.assertEqual(senat.senat_signal.status, "senat-gesperrt")
+        self.assertEqual(senat.gesperrt_norm_ids, ("senat-297-signal-stability-lane",))
+        self.assertEqual(senat.spektral_norm_ids, ("senat-297-signal-governance-lane",))
+        self.assertEqual(senat.grundlegend_norm_ids, ("senat-297-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #298 PhotonNorm (*_norm-Muster)
+    # ------------------------------------------------------------------
+
+    def test_kki_photon_norm_builds_gesperrt_schutz_eintrag(self) -> None:
+        satz = build_photon_norm(norm_id="photon-norm-298-stability")
+        eintrag = next(n for n in satz.normen if n.geltung is PhotonNormGeltung.GESPERRT)
+
+        self.assertIsInstance(satz, PhotonNormSatz)
+        self.assertIsInstance(eintrag, PhotonNormEintrag)
+        self.assertEqual(eintrag.photon_norm_typ, PhotonNormTyp.SCHUTZ_PHOTONNORM)
+        self.assertEqual(eintrag.prozedur, PhotonNormProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(eintrag.photon_norm_tier, 1)
+
+    def test_kki_photon_norm_builds_photonisch_ordnungs_eintrag(self) -> None:
+        satz = build_photon_norm(norm_id="photon-norm-298-governance")
+        eintrag = next(n for n in satz.normen if n.geltung is PhotonNormGeltung.PHOTONISCH)
+
+        self.assertEqual(eintrag.photon_norm_typ, PhotonNormTyp.ORDNUNGS_PHOTONNORM)
+        self.assertEqual(eintrag.prozedur, PhotonNormProzedur.REGELPROTOKOLL)
+        self.assertGreater(eintrag.photon_norm_weight, 0.0)
+
+    def test_kki_photon_norm_builds_grundlegend_souveraenitaets_eintrag(self) -> None:
+        satz = build_photon_norm(norm_id="photon-norm-298-expansion")
+        eintrag = next(n for n in satz.normen if n.geltung is PhotonNormGeltung.GRUNDLEGEND_PHOTONISCH)
+
+        self.assertEqual(eintrag.photon_norm_typ, PhotonNormTyp.SOUVERAENITAETS_PHOTONNORM)
+        self.assertEqual(eintrag.prozedur, PhotonNormProzedur.PLENARPROTOKOLL)
+        self.assertTrue(eintrag.canonical)
+
+    def test_kki_photon_norm_aggregates_norm_signal(self) -> None:
+        satz = build_photon_norm(norm_id="photon-norm-298-signal")
+
+        self.assertEqual(satz.norm_signal.status, "norm-gesperrt")
+        self.assertEqual(satz.gesperrt_norm_ids, ("photon-norm-298-signal-stability-lane",))
+        self.assertEqual(satz.photonisch_norm_ids, ("photon-norm-298-signal-governance-lane",))
+        self.assertEqual(satz.grundlegend_norm_ids, ("photon-norm-298-signal-expansion-lane",))
 
     def test_kki_waermestrahlung_charta_builds_gesperrt_schutz_norm(self) -> None:
         charta = build_waermestrahlung_charta(charta_id="charta-289-stability")

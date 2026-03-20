@@ -553,6 +553,30 @@ from kki import (
     ElektroverfassungsProzedur,
     ElektroverfassungsTyp,
     build_elektromagnetik_verfassung,
+    KernphysikFeld,
+    KernphysikGeltung,
+    KernphysikNorm,
+    KernphysikProzedur,
+    KernphysikTyp,
+    build_kernphysik_feld,
+    NukleonGeltung,
+    NukleonNorm,
+    NukleonProzedur,
+    NukleonRegister,
+    NukleonTyp,
+    build_nukleon_register,
+    StarkCharta,
+    StarkGeltung,
+    StarkNorm,
+    StarkProzedur,
+    StarkTyp,
+    build_stark_charta,
+    SchwachGeltung,
+    SchwachKodex,
+    SchwachNorm,
+    SchwachProzedur,
+    SchwachTyp,
+    build_schwach_kodex,
     KausalitaetsGeltung,
     KausalitaetsNorm,
     KausalitaetsProzedur,
@@ -6358,6 +6382,158 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(verfassung.gesperrt_norm_ids, ("verfassung-300-signal-stability-lane",))
         self.assertEqual(verfassung.elektroverfasst_norm_ids, ("verfassung-300-signal-governance-lane",))
         self.assertEqual(verfassung.grundlegend_norm_ids, ("verfassung-300-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #301 KernphysikFeld
+    # ------------------------------------------------------------------
+
+    def test_kki_kernphysik_feld_builds_gesperrt_schutz_norm(self) -> None:
+        feld = build_kernphysik_feld(feld_id="feld-301-stability")
+        norm = next(n for n in feld.normen if n.geltung is KernphysikGeltung.GESPERRT)
+
+        self.assertIsInstance(feld, KernphysikFeld)
+        self.assertIsInstance(norm, KernphysikNorm)
+        self.assertEqual(norm.kernphysik_typ, KernphysikTyp.SCHUTZ_KERNPHYSIK)
+        self.assertEqual(norm.prozedur, KernphysikProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.kernphysik_tier, 1)
+
+    def test_kki_kernphysik_feld_builds_kernphysikalisch_ordnungs_norm(self) -> None:
+        feld = build_kernphysik_feld(feld_id="feld-301-governance")
+        norm = next(n for n in feld.normen if n.geltung is KernphysikGeltung.KERNPHYSIKALISCH)
+
+        self.assertEqual(norm.kernphysik_typ, KernphysikTyp.ORDNUNGS_KERNPHYSIK)
+        self.assertEqual(norm.prozedur, KernphysikProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.kernphysik_weight, 0.0)
+
+    def test_kki_kernphysik_feld_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        feld = build_kernphysik_feld(feld_id="feld-301-expansion")
+        norm = next(n for n in feld.normen if n.geltung is KernphysikGeltung.GRUNDLEGEND_KERNPHYSIKALISCH)
+
+        self.assertEqual(norm.kernphysik_typ, KernphysikTyp.SOUVERAENITAETS_KERNPHYSIK)
+        self.assertEqual(norm.prozedur, KernphysikProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_kernphysik_feld_aggregates_feld_signal(self) -> None:
+        feld = build_kernphysik_feld(feld_id="feld-301-signal")
+
+        self.assertEqual(feld.feld_signal.status, "feld-gesperrt")
+        self.assertEqual(feld.gesperrt_norm_ids, ("feld-301-signal-stability-lane",))
+        self.assertEqual(feld.kernphysikalisch_norm_ids, ("feld-301-signal-governance-lane",))
+        self.assertEqual(feld.grundlegend_norm_ids, ("feld-301-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #302 NukleonRegister
+    # ------------------------------------------------------------------
+
+    def test_kki_nukleon_register_builds_gesperrt_schutz_norm(self) -> None:
+        register = build_nukleon_register(register_id="register-302-stability")
+        norm = next(n for n in register.normen if n.geltung is NukleonGeltung.GESPERRT)
+
+        self.assertIsInstance(register, NukleonRegister)
+        self.assertIsInstance(norm, NukleonNorm)
+        self.assertEqual(norm.nukleon_typ, NukleonTyp.SCHUTZ_NUKLEON)
+        self.assertEqual(norm.prozedur, NukleonProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.nukleon_tier, 1)
+
+    def test_kki_nukleon_register_builds_nukleonisch_ordnungs_norm(self) -> None:
+        register = build_nukleon_register(register_id="register-302-governance")
+        norm = next(n for n in register.normen if n.geltung is NukleonGeltung.NUKLEONISCH)
+
+        self.assertEqual(norm.nukleon_typ, NukleonTyp.ORDNUNGS_NUKLEON)
+        self.assertEqual(norm.prozedur, NukleonProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.nukleon_weight, 0.0)
+
+    def test_kki_nukleon_register_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        register = build_nukleon_register(register_id="register-302-expansion")
+        norm = next(n for n in register.normen if n.geltung is NukleonGeltung.GRUNDLEGEND_NUKLEONISCH)
+
+        self.assertEqual(norm.nukleon_typ, NukleonTyp.SOUVERAENITAETS_NUKLEON)
+        self.assertEqual(norm.prozedur, NukleonProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_nukleon_register_aggregates_register_signal(self) -> None:
+        register = build_nukleon_register(register_id="register-302-signal")
+
+        self.assertEqual(register.register_signal.status, "register-gesperrt")
+        self.assertEqual(register.gesperrt_norm_ids, ("register-302-signal-stability-lane",))
+        self.assertEqual(register.nukleonisch_norm_ids, ("register-302-signal-governance-lane",))
+        self.assertEqual(register.grundlegend_norm_ids, ("register-302-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #303 StarkCharta
+    # ------------------------------------------------------------------
+
+    def test_kki_stark_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_stark_charta(charta_id="charta-303-stability")
+        norm = next(n for n in charta.normen if n.geltung is StarkGeltung.GESPERRT)
+
+        self.assertIsInstance(charta, StarkCharta)
+        self.assertIsInstance(norm, StarkNorm)
+        self.assertEqual(norm.stark_typ, StarkTyp.SCHUTZ_STARKRAFT)
+        self.assertEqual(norm.prozedur, StarkProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.stark_tier, 1)
+
+    def test_kki_stark_charta_builds_stark_ordnungs_norm(self) -> None:
+        charta = build_stark_charta(charta_id="charta-303-governance")
+        norm = next(n for n in charta.normen if n.geltung is StarkGeltung.STARK)
+
+        self.assertEqual(norm.stark_typ, StarkTyp.ORDNUNGS_STARKRAFT)
+        self.assertEqual(norm.prozedur, StarkProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.stark_weight, 0.0)
+
+    def test_kki_stark_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_stark_charta(charta_id="charta-303-expansion")
+        norm = next(n for n in charta.normen if n.geltung is StarkGeltung.GRUNDLEGEND_STARK)
+
+        self.assertEqual(norm.stark_typ, StarkTyp.SOUVERAENITAETS_STARKRAFT)
+        self.assertEqual(norm.prozedur, StarkProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_stark_charta_aggregates_charta_signal(self) -> None:
+        charta = build_stark_charta(charta_id="charta-303-signal")
+
+        self.assertEqual(charta.charta_signal.status, "charta-gesperrt")
+        self.assertEqual(charta.gesperrt_norm_ids, ("charta-303-signal-stability-lane",))
+        self.assertEqual(charta.stark_norm_ids, ("charta-303-signal-governance-lane",))
+        self.assertEqual(charta.grundlegend_norm_ids, ("charta-303-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #304 SchwachKodex
+    # ------------------------------------------------------------------
+
+    def test_kki_schwach_kodex_builds_gesperrt_schutz_norm(self) -> None:
+        kodex = build_schwach_kodex(kodex_id="kodex-304-stability")
+        norm = next(n for n in kodex.normen if n.geltung is SchwachGeltung.GESPERRT)
+
+        self.assertIsInstance(kodex, SchwachKodex)
+        self.assertIsInstance(norm, SchwachNorm)
+        self.assertEqual(norm.schwach_typ, SchwachTyp.SCHUTZ_SCHWACHKRAFT)
+        self.assertEqual(norm.prozedur, SchwachProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.schwach_tier, 1)
+
+    def test_kki_schwach_kodex_builds_schwach_ordnungs_norm(self) -> None:
+        kodex = build_schwach_kodex(kodex_id="kodex-304-governance")
+        norm = next(n for n in kodex.normen if n.geltung is SchwachGeltung.SCHWACH)
+
+        self.assertEqual(norm.schwach_typ, SchwachTyp.ORDNUNGS_SCHWACHKRAFT)
+        self.assertEqual(norm.prozedur, SchwachProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.schwach_weight, 0.0)
+
+    def test_kki_schwach_kodex_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        kodex = build_schwach_kodex(kodex_id="kodex-304-expansion")
+        norm = next(n for n in kodex.normen if n.geltung is SchwachGeltung.GRUNDLEGEND_SCHWACH)
+
+        self.assertEqual(norm.schwach_typ, SchwachTyp.SOUVERAENITAETS_SCHWACHKRAFT)
+        self.assertEqual(norm.prozedur, SchwachProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_schwach_kodex_aggregates_kodex_signal(self) -> None:
+        kodex = build_schwach_kodex(kodex_id="kodex-304-signal")
+
+        self.assertEqual(kodex.kodex_signal.status, "kodex-gesperrt")
+        self.assertEqual(kodex.gesperrt_norm_ids, ("kodex-304-signal-stability-lane",))
+        self.assertEqual(kodex.schwach_norm_ids, ("kodex-304-signal-governance-lane",))
+        self.assertEqual(kodex.grundlegend_norm_ids, ("kodex-304-signal-expansion-lane",))
 
     def test_kki_waermestrahlung_charta_builds_gesperrt_schutz_norm(self) -> None:
         charta = build_waermestrahlung_charta(charta_id="charta-289-stability")

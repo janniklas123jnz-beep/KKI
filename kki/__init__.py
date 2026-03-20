@@ -987,6 +987,38 @@ from .elektromagnetik_verfassung import (
     ElektroverfassungsTyp,
     build_elektromagnetik_verfassung,
 )
+from .kernphysik_feld import (
+    KernphysikFeld,
+    KernphysikGeltung,
+    KernphysikNorm,
+    KernphysikProzedur,
+    KernphysikTyp,
+    build_kernphysik_feld,
+)
+from .nukleon_register import (
+    NukleonGeltung,
+    NukleonNorm,
+    NukleonProzedur,
+    NukleonRegister,
+    NukleonTyp,
+    build_nukleon_register,
+)
+from .stark_charta import (
+    StarkCharta,
+    StarkGeltung,
+    StarkNorm,
+    StarkProzedur,
+    StarkTyp,
+    build_stark_charta,
+)
+from .schwach_kodex import (
+    SchwachGeltung,
+    SchwachKodex,
+    SchwachNorm,
+    SchwachProzedur,
+    SchwachTyp,
+    build_schwach_kodex,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -2121,6 +2153,10 @@ __all__ = [
     "build_photon_norm",
     "build_photoeffekt_charta",
     "build_elektromagnetik_verfassung",
+    "build_kernphysik_feld",
+    "build_nukleon_register",
+    "build_stark_charta",
+    "build_schwach_kodex",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

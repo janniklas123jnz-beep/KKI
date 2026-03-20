@@ -1019,6 +1019,38 @@ from .schwach_kodex import (
     SchwachTyp,
     build_schwach_kodex,
 )
+from .kernspaltungs_pakt import (
+    KernspaltungsGeltung,
+    KernspaltungsNorm,
+    KernspaltungsPakt,
+    KernspaltungsProzedur,
+    KernspaltungsTyp,
+    build_kernspaltungs_pakt,
+)
+from .kernfusions_manifest import (
+    KernfusionsGeltung,
+    KernfusionsManifest,
+    KernfusionsNorm,
+    KernfusionsProzedur,
+    KernfusionsTyp,
+    build_kernfusions_manifest,
+)
+from .radioaktivitaets_senat import (
+    RadioaktivitaetsGeltung,
+    RadioaktivitaetsNorm,
+    RadioaktivitaetsProzedur,
+    RadioaktivitaetsSenat,
+    RadioaktivitaetsTyp,
+    build_radioaktivitaets_senat,
+)
+from .zerfalls_norm import (
+    ZerfallsNormEintrag,
+    ZerfallsNormGeltung,
+    ZerfallsNormProzedur,
+    ZerfallsNormSatz,
+    ZerfallsNormTyp,
+    build_zerfalls_norm,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -2157,6 +2189,10 @@ __all__ = [
     "build_nukleon_register",
     "build_stark_charta",
     "build_schwach_kodex",
+    "build_kernspaltungs_pakt",
+    "build_kernfusions_manifest",
+    "build_radioaktivitaets_senat",
+    "build_zerfalls_norm",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

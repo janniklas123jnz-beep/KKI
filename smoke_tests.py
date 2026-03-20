@@ -577,6 +577,30 @@ from kki import (
     SchwachProzedur,
     SchwachTyp,
     build_schwach_kodex,
+    KernspaltungsGeltung,
+    KernspaltungsNorm,
+    KernspaltungsPakt,
+    KernspaltungsProzedur,
+    KernspaltungsTyp,
+    build_kernspaltungs_pakt,
+    KernfusionsGeltung,
+    KernfusionsManifest,
+    KernfusionsNorm,
+    KernfusionsProzedur,
+    KernfusionsTyp,
+    build_kernfusions_manifest,
+    RadioaktivitaetsGeltung,
+    RadioaktivitaetsNorm,
+    RadioaktivitaetsProzedur,
+    RadioaktivitaetsSenat,
+    RadioaktivitaetsTyp,
+    build_radioaktivitaets_senat,
+    ZerfallsNormEintrag,
+    ZerfallsNormGeltung,
+    ZerfallsNormProzedur,
+    ZerfallsNormSatz,
+    ZerfallsNormTyp,
+    build_zerfalls_norm,
     KausalitaetsGeltung,
     KausalitaetsNorm,
     KausalitaetsProzedur,
@@ -6534,6 +6558,158 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(kodex.gesperrt_norm_ids, ("kodex-304-signal-stability-lane",))
         self.assertEqual(kodex.schwach_norm_ids, ("kodex-304-signal-governance-lane",))
         self.assertEqual(kodex.grundlegend_norm_ids, ("kodex-304-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #305 KernspaltungsPakt
+    # ------------------------------------------------------------------
+
+    def test_kki_kernspaltungs_pakt_builds_gesperrt_schutz_norm(self) -> None:
+        pakt = build_kernspaltungs_pakt(pakt_id="pakt-305-stability")
+        norm = next(n for n in pakt.normen if n.geltung is KernspaltungsGeltung.GESPERRT)
+
+        self.assertIsInstance(pakt, KernspaltungsPakt)
+        self.assertIsInstance(norm, KernspaltungsNorm)
+        self.assertEqual(norm.kernspaltungs_typ, KernspaltungsTyp.SCHUTZ_KERNSPALTUNG)
+        self.assertEqual(norm.prozedur, KernspaltungsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.kernspaltungs_tier, 1)
+
+    def test_kki_kernspaltungs_pakt_builds_kerngespalten_ordnungs_norm(self) -> None:
+        pakt = build_kernspaltungs_pakt(pakt_id="pakt-305-governance")
+        norm = next(n for n in pakt.normen if n.geltung is KernspaltungsGeltung.KERNGESPALTEN)
+
+        self.assertEqual(norm.kernspaltungs_typ, KernspaltungsTyp.ORDNUNGS_KERNSPALTUNG)
+        self.assertEqual(norm.prozedur, KernspaltungsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.kernspaltungs_weight, 0.0)
+
+    def test_kki_kernspaltungs_pakt_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        pakt = build_kernspaltungs_pakt(pakt_id="pakt-305-expansion")
+        norm = next(n for n in pakt.normen if n.geltung is KernspaltungsGeltung.GRUNDLEGEND_KERNGESPALTEN)
+
+        self.assertEqual(norm.kernspaltungs_typ, KernspaltungsTyp.SOUVERAENITAETS_KERNSPALTUNG)
+        self.assertEqual(norm.prozedur, KernspaltungsProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_kernspaltungs_pakt_aggregates_pakt_signal(self) -> None:
+        pakt = build_kernspaltungs_pakt(pakt_id="pakt-305-signal")
+
+        self.assertEqual(pakt.pakt_signal.status, "pakt-gesperrt")
+        self.assertEqual(pakt.gesperrt_norm_ids, ("pakt-305-signal-stability-lane",))
+        self.assertEqual(pakt.kerngespalten_norm_ids, ("pakt-305-signal-governance-lane",))
+        self.assertEqual(pakt.grundlegend_norm_ids, ("pakt-305-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #306 KernfusionsManifest
+    # ------------------------------------------------------------------
+
+    def test_kki_kernfusions_manifest_builds_gesperrt_schutz_norm(self) -> None:
+        manifest = build_kernfusions_manifest(manifest_id="manifest-306-stability")
+        norm = next(n for n in manifest.normen if n.geltung is KernfusionsGeltung.GESPERRT)
+
+        self.assertIsInstance(manifest, KernfusionsManifest)
+        self.assertIsInstance(norm, KernfusionsNorm)
+        self.assertEqual(norm.kernfusions_typ, KernfusionsTyp.SCHUTZ_KERNFUSION)
+        self.assertEqual(norm.prozedur, KernfusionsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.kernfusions_tier, 1)
+
+    def test_kki_kernfusions_manifest_builds_kernverschmolzen_ordnungs_norm(self) -> None:
+        manifest = build_kernfusions_manifest(manifest_id="manifest-306-governance")
+        norm = next(n for n in manifest.normen if n.geltung is KernfusionsGeltung.KERNVERSCHMOLZEN)
+
+        self.assertEqual(norm.kernfusions_typ, KernfusionsTyp.ORDNUNGS_KERNFUSION)
+        self.assertEqual(norm.prozedur, KernfusionsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.kernfusions_weight, 0.0)
+
+    def test_kki_kernfusions_manifest_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        manifest = build_kernfusions_manifest(manifest_id="manifest-306-expansion")
+        norm = next(n for n in manifest.normen if n.geltung is KernfusionsGeltung.GRUNDLEGEND_KERNVERSCHMOLZEN)
+
+        self.assertEqual(norm.kernfusions_typ, KernfusionsTyp.SOUVERAENITAETS_KERNFUSION)
+        self.assertEqual(norm.prozedur, KernfusionsProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_kernfusions_manifest_aggregates_manifest_signal(self) -> None:
+        manifest = build_kernfusions_manifest(manifest_id="manifest-306-signal")
+
+        self.assertEqual(manifest.manifest_signal.status, "manifest-gesperrt")
+        self.assertEqual(manifest.gesperrt_norm_ids, ("manifest-306-signal-stability-lane",))
+        self.assertEqual(manifest.kernverschmolzen_norm_ids, ("manifest-306-signal-governance-lane",))
+        self.assertEqual(manifest.grundlegend_norm_ids, ("manifest-306-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #307 RadioaktivitaetsSenat
+    # ------------------------------------------------------------------
+
+    def test_kki_radioaktivitaets_senat_builds_gesperrt_schutz_norm(self) -> None:
+        senat = build_radioaktivitaets_senat(senat_id="senat-307-stability")
+        norm = next(n for n in senat.normen if n.geltung is RadioaktivitaetsGeltung.GESPERRT)
+
+        self.assertIsInstance(senat, RadioaktivitaetsSenat)
+        self.assertIsInstance(norm, RadioaktivitaetsNorm)
+        self.assertEqual(norm.radioaktivitaets_typ, RadioaktivitaetsTyp.SCHUTZ_RADIOAKTIVITAET)
+        self.assertEqual(norm.prozedur, RadioaktivitaetsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.radioaktivitaets_tier, 1)
+
+    def test_kki_radioaktivitaets_senat_builds_radioaktiv_ordnungs_norm(self) -> None:
+        senat = build_radioaktivitaets_senat(senat_id="senat-307-governance")
+        norm = next(n for n in senat.normen if n.geltung is RadioaktivitaetsGeltung.RADIOAKTIV)
+
+        self.assertEqual(norm.radioaktivitaets_typ, RadioaktivitaetsTyp.ORDNUNGS_RADIOAKTIVITAET)
+        self.assertEqual(norm.prozedur, RadioaktivitaetsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.radioaktivitaets_weight, 0.0)
+
+    def test_kki_radioaktivitaets_senat_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        senat = build_radioaktivitaets_senat(senat_id="senat-307-expansion")
+        norm = next(n for n in senat.normen if n.geltung is RadioaktivitaetsGeltung.GRUNDLEGEND_RADIOAKTIV)
+
+        self.assertEqual(norm.radioaktivitaets_typ, RadioaktivitaetsTyp.SOUVERAENITAETS_RADIOAKTIVITAET)
+        self.assertEqual(norm.prozedur, RadioaktivitaetsProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_radioaktivitaets_senat_aggregates_senat_signal(self) -> None:
+        senat = build_radioaktivitaets_senat(senat_id="senat-307-signal")
+
+        self.assertEqual(senat.senat_signal.status, "senat-gesperrt")
+        self.assertEqual(senat.gesperrt_norm_ids, ("senat-307-signal-stability-lane",))
+        self.assertEqual(senat.radioaktiv_norm_ids, ("senat-307-signal-governance-lane",))
+        self.assertEqual(senat.grundlegend_norm_ids, ("senat-307-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #308 ZerfallsNorm  (*_norm pattern)
+    # ------------------------------------------------------------------
+
+    def test_kki_zerfalls_norm_builds_gesperrt_schutz_eintrag(self) -> None:
+        satz = build_zerfalls_norm(norm_id="zerfalls-norm-308-stability")
+        eintrag = next(n for n in satz.normen if n.geltung is ZerfallsNormGeltung.GESPERRT)
+
+        self.assertIsInstance(satz, ZerfallsNormSatz)
+        self.assertIsInstance(eintrag, ZerfallsNormEintrag)
+        self.assertEqual(eintrag.zerfalls_norm_typ, ZerfallsNormTyp.SCHUTZ_ZERFALL)
+        self.assertEqual(eintrag.prozedur, ZerfallsNormProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(eintrag.zerfalls_norm_tier, 1)
+
+    def test_kki_zerfalls_norm_builds_zerfallen_ordnungs_eintrag(self) -> None:
+        satz = build_zerfalls_norm(norm_id="zerfalls-norm-308-governance")
+        eintrag = next(n for n in satz.normen if n.geltung is ZerfallsNormGeltung.ZERFALLEN)
+
+        self.assertEqual(eintrag.zerfalls_norm_typ, ZerfallsNormTyp.ORDNUNGS_ZERFALL)
+        self.assertEqual(eintrag.prozedur, ZerfallsNormProzedur.REGELPROTOKOLL)
+        self.assertGreater(eintrag.zerfalls_norm_weight, 0.0)
+
+    def test_kki_zerfalls_norm_builds_grundlegend_souveraenitaets_eintrag(self) -> None:
+        satz = build_zerfalls_norm(norm_id="zerfalls-norm-308-expansion")
+        eintrag = next(n for n in satz.normen if n.geltung is ZerfallsNormGeltung.GRUNDLEGEND_ZERFALLEN)
+
+        self.assertEqual(eintrag.zerfalls_norm_typ, ZerfallsNormTyp.SOUVERAENITAETS_ZERFALL)
+        self.assertEqual(eintrag.prozedur, ZerfallsNormProzedur.PLENARPROTOKOLL)
+        self.assertTrue(eintrag.canonical)
+
+    def test_kki_zerfalls_norm_aggregates_norm_signal(self) -> None:
+        satz = build_zerfalls_norm(norm_id="zerfalls-norm-308-signal")
+
+        self.assertEqual(satz.norm_signal.status, "norm-gesperrt")
+        self.assertEqual(satz.gesperrt_norm_ids, ("zerfalls-norm-308-signal-stability-lane",))
+        self.assertEqual(satz.zerfallen_norm_ids, ("zerfalls-norm-308-signal-governance-lane",))
+        self.assertEqual(satz.grundlegend_norm_ids, ("zerfalls-norm-308-signal-expansion-lane",))
 
     def test_kki_waermestrahlung_charta_builds_gesperrt_schutz_norm(self) -> None:
         charta = build_waermestrahlung_charta(charta_id="charta-289-stability")

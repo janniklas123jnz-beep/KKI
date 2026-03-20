@@ -613,6 +613,30 @@ from kki import (
     KernphysikVerfassungsProzedur,
     KernphysikVerfassungsTyp,
     build_kernphysik_verfassung,
+    TeilchenFeld,
+    TeilchenGeltung,
+    TeilchenNorm,
+    TeilchenProzedur,
+    TeilchenTyp,
+    build_teilchen_feld,
+    QuarkGeltung,
+    QuarkNorm,
+    QuarkProzedur,
+    QuarkRegister,
+    QuarkTyp,
+    build_quark_register,
+    LeptonCharta,
+    LeptonGeltung,
+    LeptonNorm,
+    LeptonProzedur,
+    LeptonTyp,
+    build_lepton_charta,
+    GluonGeltung,
+    GluonKodex,
+    GluonNorm,
+    GluonProzedur,
+    GluonTyp,
+    build_gluon_kodex,
     KausalitaetsGeltung,
     KausalitaetsNorm,
     KausalitaetsProzedur,
@@ -6798,6 +6822,158 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(verfassung.gesperrt_norm_ids, ("verfassung-310-signal-stability-lane",))
         self.assertEqual(verfassung.kernphysikverfasst_norm_ids, ("verfassung-310-signal-governance-lane",))
         self.assertEqual(verfassung.grundlegend_norm_ids, ("verfassung-310-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #311 TeilchenFeld
+    # ------------------------------------------------------------------
+
+    def test_kki_teilchen_feld_builds_gesperrt_schutz_norm(self) -> None:
+        feld = build_teilchen_feld(feld_id="feld-311-stability")
+        norm = next(n for n in feld.normen if n.geltung is TeilchenGeltung.GESPERRT)
+
+        self.assertIsInstance(feld, TeilchenFeld)
+        self.assertIsInstance(norm, TeilchenNorm)
+        self.assertEqual(norm.teilchen_typ, TeilchenTyp.SCHUTZ_TEILCHEN)
+        self.assertEqual(norm.prozedur, TeilchenProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.teilchen_tier, 1)
+
+    def test_kki_teilchen_feld_builds_teilchengebunden_ordnungs_norm(self) -> None:
+        feld = build_teilchen_feld(feld_id="feld-311-governance")
+        norm = next(n for n in feld.normen if n.geltung is TeilchenGeltung.TEILCHENGEBUNDEN)
+
+        self.assertEqual(norm.teilchen_typ, TeilchenTyp.ORDNUNGS_TEILCHEN)
+        self.assertEqual(norm.prozedur, TeilchenProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.teilchen_weight, 0.0)
+
+    def test_kki_teilchen_feld_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        feld = build_teilchen_feld(feld_id="feld-311-expansion")
+        norm = next(n for n in feld.normen if n.geltung is TeilchenGeltung.GRUNDLEGEND_TEILCHENGEBUNDEN)
+
+        self.assertEqual(norm.teilchen_typ, TeilchenTyp.SOUVERAENITAETS_TEILCHEN)
+        self.assertEqual(norm.prozedur, TeilchenProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_teilchen_feld_aggregates_feld_signal(self) -> None:
+        feld = build_teilchen_feld(feld_id="feld-311-signal")
+
+        self.assertEqual(feld.feld_signal.status, "feld-gesperrt")
+        self.assertEqual(feld.gesperrt_norm_ids, ("feld-311-signal-stability-lane",))
+        self.assertEqual(feld.teilchengebunden_norm_ids, ("feld-311-signal-governance-lane",))
+        self.assertEqual(feld.grundlegend_norm_ids, ("feld-311-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #312 QuarkRegister
+    # ------------------------------------------------------------------
+
+    def test_kki_quark_register_builds_gesperrt_schutz_norm(self) -> None:
+        register = build_quark_register(register_id="register-312-stability")
+        norm = next(n for n in register.normen if n.geltung is QuarkGeltung.GESPERRT)
+
+        self.assertIsInstance(register, QuarkRegister)
+        self.assertIsInstance(norm, QuarkNorm)
+        self.assertEqual(norm.quark_typ, QuarkTyp.SCHUTZ_QUARK)
+        self.assertEqual(norm.prozedur, QuarkProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.quark_tier, 1)
+
+    def test_kki_quark_register_builds_quarkgebunden_ordnungs_norm(self) -> None:
+        register = build_quark_register(register_id="register-312-governance")
+        norm = next(n for n in register.normen if n.geltung is QuarkGeltung.QUARKGEBUNDEN)
+
+        self.assertEqual(norm.quark_typ, QuarkTyp.ORDNUNGS_QUARK)
+        self.assertEqual(norm.prozedur, QuarkProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.quark_weight, 0.0)
+
+    def test_kki_quark_register_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        register = build_quark_register(register_id="register-312-expansion")
+        norm = next(n for n in register.normen if n.geltung is QuarkGeltung.GRUNDLEGEND_QUARKGEBUNDEN)
+
+        self.assertEqual(norm.quark_typ, QuarkTyp.SOUVERAENITAETS_QUARK)
+        self.assertEqual(norm.prozedur, QuarkProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_quark_register_aggregates_register_signal(self) -> None:
+        register = build_quark_register(register_id="register-312-signal")
+
+        self.assertEqual(register.register_signal.status, "register-gesperrt")
+        self.assertEqual(register.gesperrt_norm_ids, ("register-312-signal-stability-lane",))
+        self.assertEqual(register.quarkgebunden_norm_ids, ("register-312-signal-governance-lane",))
+        self.assertEqual(register.grundlegend_norm_ids, ("register-312-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #313 LeptonCharta
+    # ------------------------------------------------------------------
+
+    def test_kki_lepton_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_lepton_charta(charta_id="charta-313-stability")
+        norm = next(n for n in charta.normen if n.geltung is LeptonGeltung.GESPERRT)
+
+        self.assertIsInstance(charta, LeptonCharta)
+        self.assertIsInstance(norm, LeptonNorm)
+        self.assertEqual(norm.lepton_typ, LeptonTyp.SCHUTZ_LEPTON)
+        self.assertEqual(norm.prozedur, LeptonProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.lepton_tier, 1)
+
+    def test_kki_lepton_charta_builds_leptonisch_ordnungs_norm(self) -> None:
+        charta = build_lepton_charta(charta_id="charta-313-governance")
+        norm = next(n for n in charta.normen if n.geltung is LeptonGeltung.LEPTONISCH)
+
+        self.assertEqual(norm.lepton_typ, LeptonTyp.ORDNUNGS_LEPTON)
+        self.assertEqual(norm.prozedur, LeptonProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.lepton_weight, 0.0)
+
+    def test_kki_lepton_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_lepton_charta(charta_id="charta-313-expansion")
+        norm = next(n for n in charta.normen if n.geltung is LeptonGeltung.GRUNDLEGEND_LEPTONISCH)
+
+        self.assertEqual(norm.lepton_typ, LeptonTyp.SOUVERAENITAETS_LEPTON)
+        self.assertEqual(norm.prozedur, LeptonProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_lepton_charta_aggregates_charta_signal(self) -> None:
+        charta = build_lepton_charta(charta_id="charta-313-signal")
+
+        self.assertEqual(charta.charta_signal.status, "charta-gesperrt")
+        self.assertEqual(charta.gesperrt_norm_ids, ("charta-313-signal-stability-lane",))
+        self.assertEqual(charta.leptonisch_norm_ids, ("charta-313-signal-governance-lane",))
+        self.assertEqual(charta.grundlegend_norm_ids, ("charta-313-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #314 GluonKodex
+    # ------------------------------------------------------------------
+
+    def test_kki_gluon_kodex_builds_gesperrt_schutz_norm(self) -> None:
+        kodex = build_gluon_kodex(kodex_id="kodex-314-stability")
+        norm = next(n for n in kodex.normen if n.geltung is GluonGeltung.GESPERRT)
+
+        self.assertIsInstance(kodex, GluonKodex)
+        self.assertIsInstance(norm, GluonNorm)
+        self.assertEqual(norm.gluon_typ, GluonTyp.SCHUTZ_GLUON)
+        self.assertEqual(norm.prozedur, GluonProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.gluon_tier, 1)
+
+    def test_kki_gluon_kodex_builds_gluonisch_ordnungs_norm(self) -> None:
+        kodex = build_gluon_kodex(kodex_id="kodex-314-governance")
+        norm = next(n for n in kodex.normen if n.geltung is GluonGeltung.GLUONISCH)
+
+        self.assertEqual(norm.gluon_typ, GluonTyp.ORDNUNGS_GLUON)
+        self.assertEqual(norm.prozedur, GluonProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.gluon_weight, 0.0)
+
+    def test_kki_gluon_kodex_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        kodex = build_gluon_kodex(kodex_id="kodex-314-expansion")
+        norm = next(n for n in kodex.normen if n.geltung is GluonGeltung.GRUNDLEGEND_GLUONISCH)
+
+        self.assertEqual(norm.gluon_typ, GluonTyp.SOUVERAENITAETS_GLUON)
+        self.assertEqual(norm.prozedur, GluonProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_gluon_kodex_aggregates_kodex_signal(self) -> None:
+        kodex = build_gluon_kodex(kodex_id="kodex-314-signal")
+
+        self.assertEqual(kodex.kodex_signal.status, "kodex-gesperrt")
+        self.assertEqual(kodex.gesperrt_norm_ids, ("kodex-314-signal-stability-lane",))
+        self.assertEqual(kodex.gluonisch_norm_ids, ("kodex-314-signal-governance-lane",))
+        self.assertEqual(kodex.grundlegend_norm_ids, ("kodex-314-signal-expansion-lane",))
 
     def test_kki_waermestrahlung_charta_builds_gesperrt_schutz_norm(self) -> None:
         charta = build_waermestrahlung_charta(charta_id="charta-289-stability")

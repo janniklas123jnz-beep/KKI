@@ -1067,6 +1067,38 @@ from .kernphysik_verfassung import (
     KernphysikVerfassungsTyp,
     build_kernphysik_verfassung,
 )
+from .teilchen_feld import (
+    TeilchenFeld,
+    TeilchenGeltung,
+    TeilchenNorm,
+    TeilchenProzedur,
+    TeilchenTyp,
+    build_teilchen_feld,
+)
+from .quark_register import (
+    QuarkGeltung,
+    QuarkNorm,
+    QuarkProzedur,
+    QuarkRegister,
+    QuarkTyp,
+    build_quark_register,
+)
+from .lepton_charta import (
+    LeptonCharta,
+    LeptonGeltung,
+    LeptonNorm,
+    LeptonProzedur,
+    LeptonTyp,
+    build_lepton_charta,
+)
+from .gluon_kodex import (
+    GluonGeltung,
+    GluonKodex,
+    GluonNorm,
+    GluonProzedur,
+    GluonTyp,
+    build_gluon_kodex,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -2211,6 +2243,10 @@ __all__ = [
     "build_zerfalls_norm",
     "build_nuklear_charta",
     "build_kernphysik_verfassung",
+    "build_teilchen_feld",
+    "build_quark_register",
+    "build_lepton_charta",
+    "build_gluon_kodex",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

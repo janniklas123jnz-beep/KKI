@@ -457,6 +457,30 @@ from kki import (
     EnergieerhaltungsProzedur,
     EnergieerhaltungsTyp,
     build_energieerhaltungs_kodex,
+    GleichgewichtsGeltung,
+    GleichgewichtsNorm,
+    GleichgewichtsPakt,
+    GleichgewichtsProzedur,
+    GleichgewichtsTyp,
+    build_gleichgewichts_pakt,
+    CarnotGeltung,
+    CarnotManifest,
+    CarnotNorm,
+    CarnotProzedur,
+    CarnotTyp,
+    build_carnot_manifest,
+    BoltzmannGeltung,
+    BoltzmannNorm,
+    BoltzmannSenat,
+    BoltzmannProzedur,
+    BoltzmannTyp,
+    build_boltzmann_senat,
+    EntropieNormEintrag,
+    EntropieNormGeltung,
+    EntropieNormProzedur,
+    EntropieNormSatz,
+    EntropieNormTyp,
+    build_entropie_norm,
     KausalitaetsGeltung,
     KausalitaetsNorm,
     KausalitaetsProzedur,
@@ -5848,6 +5872,142 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(manifest.gesperrt_norm_ids, ("manifest-276-signal-stability-lane",))
         self.assertEqual(manifest.singulaer_norm_ids, ("manifest-276-signal-governance-lane",))
         self.assertEqual(manifest.grundlegend_norm_ids, ("manifest-276-signal-expansion-lane",))
+
+    def test_kki_entropie_norm_builds_gesperrt_schutz_eintrag(self) -> None:
+        satz = build_entropie_norm(norm_id="norm-288-stability")
+        eintrag = next(n for n in satz.normen if n.geltung is EntropieNormGeltung.GESPERRT)
+
+        self.assertIsInstance(satz, EntropieNormSatz)
+        self.assertIsInstance(eintrag, EntropieNormEintrag)
+        self.assertEqual(eintrag.entropie_norm_typ, EntropieNormTyp.SCHUTZ_ENTROPIENORM)
+        self.assertEqual(eintrag.prozedur, EntropieNormProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(eintrag.entropie_norm_tier, 1)
+
+    def test_kki_entropie_norm_builds_entropienormiert_ordnungs_eintrag(self) -> None:
+        satz = build_entropie_norm(norm_id="norm-288-governance")
+        eintrag = next(n for n in satz.normen if n.geltung is EntropieNormGeltung.ENTROPIENORMIERT)
+
+        self.assertEqual(eintrag.entropie_norm_typ, EntropieNormTyp.ORDNUNGS_ENTROPIENORM)
+        self.assertEqual(eintrag.prozedur, EntropieNormProzedur.REGELPROTOKOLL)
+        self.assertGreater(eintrag.entropie_norm_weight, 0.0)
+
+    def test_kki_entropie_norm_builds_grundlegend_souveraenitaets_eintrag(self) -> None:
+        satz = build_entropie_norm(norm_id="norm-288-expansion")
+        eintrag = next(n for n in satz.normen if n.geltung is EntropieNormGeltung.GRUNDLEGEND_ENTROPIENORMIERT)
+
+        self.assertEqual(eintrag.entropie_norm_typ, EntropieNormTyp.SOUVERAENITAETS_ENTROPIENORM)
+        self.assertEqual(eintrag.prozedur, EntropieNormProzedur.PLENARPROTOKOLL)
+        self.assertTrue(eintrag.canonical)
+
+    def test_kki_entropie_norm_aggregates_norm_signal(self) -> None:
+        satz = build_entropie_norm(norm_id="norm-288-signal")
+
+        self.assertEqual(satz.norm_signal.status, "norm-gesperrt")
+        self.assertEqual(satz.gesperrt_norm_ids, ("norm-288-signal-stability-lane",))
+        self.assertEqual(satz.entropienormiert_norm_ids, ("norm-288-signal-governance-lane",))
+        self.assertEqual(satz.grundlegend_norm_ids, ("norm-288-signal-expansion-lane",))
+
+    def test_kki_boltzmann_senat_builds_gesperrt_schutz_norm(self) -> None:
+        senat = build_boltzmann_senat(senat_id="senat-287-stability")
+        norm = next(n for n in senat.normen if n.geltung is BoltzmannGeltung.GESPERRT)
+
+        self.assertIsInstance(senat, BoltzmannSenat)
+        self.assertIsInstance(norm, BoltzmannNorm)
+        self.assertEqual(norm.boltzmann_typ, BoltzmannTyp.SCHUTZ_BOLTZMANN)
+        self.assertEqual(norm.prozedur, BoltzmannProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.boltzmann_tier, 1)
+
+    def test_kki_boltzmann_senat_builds_statistisch_ordnungs_norm(self) -> None:
+        senat = build_boltzmann_senat(senat_id="senat-287-governance")
+        norm = next(n for n in senat.normen if n.geltung is BoltzmannGeltung.STATISTISCH)
+
+        self.assertEqual(norm.boltzmann_typ, BoltzmannTyp.ORDNUNGS_BOLTZMANN)
+        self.assertEqual(norm.prozedur, BoltzmannProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.boltzmann_weight, 0.0)
+
+    def test_kki_boltzmann_senat_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        senat = build_boltzmann_senat(senat_id="senat-287-expansion")
+        norm = next(n for n in senat.normen if n.geltung is BoltzmannGeltung.GRUNDLEGEND_STATISTISCH)
+
+        self.assertEqual(norm.boltzmann_typ, BoltzmannTyp.SOUVERAENITAETS_BOLTZMANN)
+        self.assertEqual(norm.prozedur, BoltzmannProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_boltzmann_senat_aggregates_senat_signal(self) -> None:
+        senat = build_boltzmann_senat(senat_id="senat-287-signal")
+
+        self.assertEqual(senat.senat_signal.status, "senat-gesperrt")
+        self.assertEqual(senat.gesperrt_norm_ids, ("senat-287-signal-stability-lane",))
+        self.assertEqual(senat.statistisch_norm_ids, ("senat-287-signal-governance-lane",))
+        self.assertEqual(senat.grundlegend_norm_ids, ("senat-287-signal-expansion-lane",))
+
+    def test_kki_carnot_manifest_builds_gesperrt_schutz_norm(self) -> None:
+        manifest = build_carnot_manifest(manifest_id="manifest-286-stability")
+        norm = next(n for n in manifest.normen if n.geltung is CarnotGeltung.GESPERRT)
+
+        self.assertIsInstance(manifest, CarnotManifest)
+        self.assertIsInstance(norm, CarnotNorm)
+        self.assertEqual(norm.carnot_typ, CarnotTyp.SCHUTZ_CARNOT)
+        self.assertEqual(norm.prozedur, CarnotProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.carnot_tier, 1)
+
+    def test_kki_carnot_manifest_builds_carnotisch_ordnungs_norm(self) -> None:
+        manifest = build_carnot_manifest(manifest_id="manifest-286-governance")
+        norm = next(n for n in manifest.normen if n.geltung is CarnotGeltung.CARNOTISCH)
+
+        self.assertEqual(norm.carnot_typ, CarnotTyp.ORDNUNGS_CARNOT)
+        self.assertEqual(norm.prozedur, CarnotProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.carnot_weight, 0.0)
+
+    def test_kki_carnot_manifest_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        manifest = build_carnot_manifest(manifest_id="manifest-286-expansion")
+        norm = next(n for n in manifest.normen if n.geltung is CarnotGeltung.GRUNDLEGEND_CARNOTISCH)
+
+        self.assertEqual(norm.carnot_typ, CarnotTyp.SOUVERAENITAETS_CARNOT)
+        self.assertEqual(norm.prozedur, CarnotProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_carnot_manifest_aggregates_manifest_signal(self) -> None:
+        manifest = build_carnot_manifest(manifest_id="manifest-286-signal")
+
+        self.assertEqual(manifest.manifest_signal.status, "manifest-gesperrt")
+        self.assertEqual(manifest.gesperrt_norm_ids, ("manifest-286-signal-stability-lane",))
+        self.assertEqual(manifest.carnotisch_norm_ids, ("manifest-286-signal-governance-lane",))
+        self.assertEqual(manifest.grundlegend_norm_ids, ("manifest-286-signal-expansion-lane",))
+
+    def test_kki_gleichgewichts_pakt_builds_gesperrt_schutz_norm(self) -> None:
+        pakt = build_gleichgewichts_pakt(pakt_id="pakt-285-stability")
+        norm = next(n for n in pakt.normen if n.geltung is GleichgewichtsGeltung.GESPERRT)
+
+        self.assertIsInstance(pakt, GleichgewichtsPakt)
+        self.assertIsInstance(norm, GleichgewichtsNorm)
+        self.assertEqual(norm.gleichgewichts_typ, GleichgewichtsTyp.SCHUTZ_GLEICHGEWICHT)
+        self.assertEqual(norm.prozedur, GleichgewichtsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.gleichgewichts_tier, 1)
+
+    def test_kki_gleichgewichts_pakt_builds_equilibriert_ordnungs_norm(self) -> None:
+        pakt = build_gleichgewichts_pakt(pakt_id="pakt-285-governance")
+        norm = next(n for n in pakt.normen if n.geltung is GleichgewichtsGeltung.EQUILIBRIERT)
+
+        self.assertEqual(norm.gleichgewichts_typ, GleichgewichtsTyp.ORDNUNGS_GLEICHGEWICHT)
+        self.assertEqual(norm.prozedur, GleichgewichtsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.gleichgewichts_weight, 0.0)
+
+    def test_kki_gleichgewichts_pakt_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        pakt = build_gleichgewichts_pakt(pakt_id="pakt-285-expansion")
+        norm = next(n for n in pakt.normen if n.geltung is GleichgewichtsGeltung.GRUNDLEGEND_EQUILIBRIERT)
+
+        self.assertEqual(norm.gleichgewichts_typ, GleichgewichtsTyp.SOUVERAENITAETS_GLEICHGEWICHT)
+        self.assertEqual(norm.prozedur, GleichgewichtsProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_gleichgewichts_pakt_aggregates_pakt_signal(self) -> None:
+        pakt = build_gleichgewichts_pakt(pakt_id="pakt-285-signal")
+
+        self.assertEqual(pakt.pakt_signal.status, "pakt-gesperrt")
+        self.assertEqual(pakt.gesperrt_norm_ids, ("pakt-285-signal-stability-lane",))
+        self.assertEqual(pakt.equilibriert_norm_ids, ("pakt-285-signal-governance-lane",))
+        self.assertEqual(pakt.grundlegend_norm_ids, ("pakt-285-signal-expansion-lane",))
 
     def test_kki_energieerhaltungs_kodex_builds_gesperrt_schutz_norm(self) -> None:
         kodex = build_energieerhaltungs_kodex(kodex_id="kodex-284-stability")

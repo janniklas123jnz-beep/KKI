@@ -731,6 +731,22 @@ from .planck_norm import (
     PlanckTyp,
     build_planck_norm,
 )
+from .stringtheorie_charta import (
+    StringtheorieCharta,
+    StringtheorieGeltung,
+    StringtheorieNorm,
+    StringtheorieProzedur,
+    StringtheorieTyp,
+    build_stringtheorie_charta,
+)
+from .quanten_verfassung import (
+    QuantenVerfassung,
+    QuantenVerfassungsGeltung,
+    QuantenVerfassungsNorm,
+    QuantenVerfassungsProzedur,
+    QuantenVerfassungsTyp,
+    build_quanten_verfassung,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -1445,6 +1461,16 @@ __all__ = [
     "PlanckNormEintrag",
     "PlanckProzedur",
     "PlanckTyp",
+    "StringtheorieCharta",
+    "StringtheorieGeltung",
+    "StringtheorieNorm",
+    "StringtheorieProzedur",
+    "StringtheorieTyp",
+    "QuantenVerfassung",
+    "QuantenVerfassungsGeltung",
+    "QuantenVerfassungsNorm",
+    "QuantenVerfassungsProzedur",
+    "QuantenVerfassungsTyp",
     "EinheitsGeltung",
     "EinheitsNorm",
     "EinheitsProzedur",
@@ -1723,6 +1749,8 @@ __all__ = [
     "build_kollaps_manifest",
     "build_quanten_senat",
     "build_planck_norm",
+    "build_stringtheorie_charta",
+    "build_quanten_verfassung",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

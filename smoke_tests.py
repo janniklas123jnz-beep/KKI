@@ -361,6 +361,18 @@ from kki import (
     PlanckProzedur,
     PlanckTyp,
     build_planck_norm,
+    StringtheorieCharta,
+    StringtheorieGeltung,
+    StringtheorieNorm,
+    StringtheorieProzedur,
+    StringtheorieTyp,
+    build_stringtheorie_charta,
+    QuantenVerfassung,
+    QuantenVerfassungsGeltung,
+    QuantenVerfassungsNorm,
+    QuantenVerfassungsProzedur,
+    QuantenVerfassungsTyp,
+    build_quanten_verfassung,
     KausalitaetsGeltung,
     KausalitaetsNorm,
     KausalitaetsProzedur,
@@ -5650,6 +5662,74 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(konvent.begrenzt_line_ids, ("konvent-203-signal-stability-lane",))
         self.assertEqual(konvent.delegiert_line_ids, ("konvent-203-signal-governance-lane",))
         self.assertEqual(konvent.verankert_line_ids, ("konvent-203-signal-expansion-lane",))
+
+    def test_kki_quanten_verfassung_builds_gesperrt_schutz_norm(self) -> None:
+        verfassung = build_quanten_verfassung(verfassung_id="verfassung-270-stability")
+        norm = next(n for n in verfassung.normen if n.geltung is QuantenVerfassungsGeltung.GESPERRT)
+
+        self.assertIsInstance(verfassung, QuantenVerfassung)
+        self.assertIsInstance(norm, QuantenVerfassungsNorm)
+        self.assertEqual(norm.quanten_verfassungs_typ, QuantenVerfassungsTyp.SCHUTZ_QUANTENVERFASSUNG)
+        self.assertEqual(norm.prozedur, QuantenVerfassungsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.quanten_verfassungs_tier, 1)
+
+    def test_kki_quanten_verfassung_builds_quantenverfasst_ordnungs_norm(self) -> None:
+        verfassung = build_quanten_verfassung(verfassung_id="verfassung-270-governance")
+        norm = next(n for n in verfassung.normen if n.geltung is QuantenVerfassungsGeltung.QUANTENVERFASST)
+
+        self.assertEqual(norm.quanten_verfassungs_typ, QuantenVerfassungsTyp.ORDNUNGS_QUANTENVERFASSUNG)
+        self.assertEqual(norm.prozedur, QuantenVerfassungsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.quanten_verfassungs_weight, 0.0)
+
+    def test_kki_quanten_verfassung_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        verfassung = build_quanten_verfassung(verfassung_id="verfassung-270-expansion")
+        norm = next(n for n in verfassung.normen if n.geltung is QuantenVerfassungsGeltung.GRUNDLEGEND_QUANTENVERFASST)
+
+        self.assertEqual(norm.quanten_verfassungs_typ, QuantenVerfassungsTyp.SOUVERAENITAETS_QUANTENVERFASSUNG)
+        self.assertEqual(norm.prozedur, QuantenVerfassungsProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_quanten_verfassung_aggregates_verfassung_signal(self) -> None:
+        verfassung = build_quanten_verfassung(verfassung_id="verfassung-270-signal")
+
+        self.assertEqual(verfassung.verfassung_signal.status, "verfassung-gesperrt")
+        self.assertEqual(verfassung.gesperrt_norm_ids, ("verfassung-270-signal-stability-lane",))
+        self.assertEqual(verfassung.quantenverfasst_norm_ids, ("verfassung-270-signal-governance-lane",))
+        self.assertEqual(verfassung.grundlegend_norm_ids, ("verfassung-270-signal-expansion-lane",))
+
+    def test_kki_stringtheorie_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_stringtheorie_charta(charta_id="charta-269-stability")
+        norm = next(n for n in charta.normen if n.geltung is StringtheorieGeltung.GESPERRT)
+
+        self.assertIsInstance(charta, StringtheorieCharta)
+        self.assertIsInstance(norm, StringtheorieNorm)
+        self.assertEqual(norm.stringtheorie_typ, StringtheorieTyp.SCHUTZ_FADEN)
+        self.assertEqual(norm.prozedur, StringtheorieProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.stringtheorie_tier, 1)
+
+    def test_kki_stringtheorie_charta_builds_fadengebunden_ordnungs_norm(self) -> None:
+        charta = build_stringtheorie_charta(charta_id="charta-269-governance")
+        norm = next(n for n in charta.normen if n.geltung is StringtheorieGeltung.FADENGEBUNDEN)
+
+        self.assertEqual(norm.stringtheorie_typ, StringtheorieTyp.ORDNUNGS_FADEN)
+        self.assertEqual(norm.prozedur, StringtheorieProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.stringtheorie_weight, 0.0)
+
+    def test_kki_stringtheorie_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_stringtheorie_charta(charta_id="charta-269-expansion")
+        norm = next(n for n in charta.normen if n.geltung is StringtheorieGeltung.GRUNDLEGEND_FADENGEBUNDEN)
+
+        self.assertEqual(norm.stringtheorie_typ, StringtheorieTyp.SOUVERAENITAETS_FADEN)
+        self.assertEqual(norm.prozedur, StringtheorieProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_stringtheorie_charta_aggregates_charta_signal(self) -> None:
+        charta = build_stringtheorie_charta(charta_id="charta-269-signal")
+
+        self.assertEqual(charta.charta_signal.status, "charta-gesperrt")
+        self.assertEqual(charta.gesperrt_norm_ids, ("charta-269-signal-stability-lane",))
+        self.assertEqual(charta.fadengebunden_norm_ids, ("charta-269-signal-governance-lane",))
+        self.assertEqual(charta.grundlegend_norm_ids, ("charta-269-signal-expansion-lane",))
 
     def test_kki_planck_norm_builds_gesperrt_schutz_norm(self) -> None:
         norm = build_planck_norm(norm_id="planck-268-stability")

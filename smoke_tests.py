@@ -661,6 +661,18 @@ from kki import (
     FeynmanNormSatz,
     FeynmanNormTyp,
     build_feynman_norm,
+    StandardmodellCharta,
+    StandardmodellGeltung,
+    StandardmodellNorm,
+    StandardmodellProzedur,
+    StandardmodellTyp,
+    build_standardmodell_charta,
+    TeilchenphysikGeltung,
+    TeilchenphysikNorm,
+    TeilchenphysikProzedur,
+    TeilchenphysikTyp,
+    TeilchenphysikVerfassung,
+    build_teilchenphysik_verfassung,
     KausalitaetsGeltung,
     KausalitaetsNorm,
     KausalitaetsProzedur,
@@ -7150,6 +7162,82 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(satz.gesperrt_norm_ids, ("feynman-norm-318-signal-stability-lane",))
         self.assertEqual(satz.feynmandiagrammiert_norm_ids, ("feynman-norm-318-signal-governance-lane",))
         self.assertEqual(satz.grundlegend_norm_ids, ("feynman-norm-318-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #319 StandardmodellCharta
+    # ------------------------------------------------------------------
+
+    def test_kki_standardmodell_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_standardmodell_charta(charta_id="charta-319-stability")
+        norm = next(n for n in charta.normen if n.geltung is StandardmodellGeltung.GESPERRT)
+
+        self.assertIsInstance(charta, StandardmodellCharta)
+        self.assertIsInstance(norm, StandardmodellNorm)
+        self.assertEqual(norm.standardmodell_typ, StandardmodellTyp.SCHUTZ_STANDARDMODELL)
+        self.assertEqual(norm.prozedur, StandardmodellProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.standardmodell_tier, 1)
+
+    def test_kki_standardmodell_charta_builds_standardmodelliert_ordnungs_norm(self) -> None:
+        charta = build_standardmodell_charta(charta_id="charta-319-governance")
+        norm = next(n for n in charta.normen if n.geltung is StandardmodellGeltung.STANDARDMODELLIERT)
+
+        self.assertEqual(norm.standardmodell_typ, StandardmodellTyp.ORDNUNGS_STANDARDMODELL)
+        self.assertEqual(norm.prozedur, StandardmodellProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.standardmodell_weight, 0.0)
+
+    def test_kki_standardmodell_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_standardmodell_charta(charta_id="charta-319-expansion")
+        norm = next(n for n in charta.normen if n.geltung is StandardmodellGeltung.GRUNDLEGEND_STANDARDMODELLIERT)
+
+        self.assertEqual(norm.standardmodell_typ, StandardmodellTyp.SOUVERAENITAETS_STANDARDMODELL)
+        self.assertEqual(norm.prozedur, StandardmodellProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_standardmodell_charta_aggregates_charta_signal(self) -> None:
+        charta = build_standardmodell_charta(charta_id="charta-319-signal")
+
+        self.assertEqual(charta.charta_signal.status, "charta-gesperrt")
+        self.assertEqual(charta.gesperrt_norm_ids, ("charta-319-signal-stability-lane",))
+        self.assertEqual(charta.standardmodelliert_norm_ids, ("charta-319-signal-governance-lane",))
+        self.assertEqual(charta.grundlegend_norm_ids, ("charta-319-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #320 TeilchenphysikVerfassung  (Block-Krone)
+    # ------------------------------------------------------------------
+
+    def test_kki_teilchenphysik_verfassung_builds_gesperrt_schutz_norm(self) -> None:
+        verfassung = build_teilchenphysik_verfassung(verfassung_id="verfassung-320-stability")
+        norm = next(n for n in verfassung.normen if n.geltung is TeilchenphysikGeltung.GESPERRT)
+
+        self.assertIsInstance(verfassung, TeilchenphysikVerfassung)
+        self.assertIsInstance(norm, TeilchenphysikNorm)
+        self.assertEqual(norm.teilchenphysik_typ, TeilchenphysikTyp.SCHUTZ_TEILCHENPHYSIK)
+        self.assertEqual(norm.prozedur, TeilchenphysikProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.teilchenphysik_tier, 1)
+
+    def test_kki_teilchenphysik_verfassung_builds_teilchenphysikverfasst_ordnungs_norm(self) -> None:
+        verfassung = build_teilchenphysik_verfassung(verfassung_id="verfassung-320-governance")
+        norm = next(n for n in verfassung.normen if n.geltung is TeilchenphysikGeltung.TEILCHENPHYSIKVERFASST)
+
+        self.assertEqual(norm.teilchenphysik_typ, TeilchenphysikTyp.ORDNUNGS_TEILCHENPHYSIK)
+        self.assertEqual(norm.prozedur, TeilchenphysikProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.teilchenphysik_weight, 0.0)
+
+    def test_kki_teilchenphysik_verfassung_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        verfassung = build_teilchenphysik_verfassung(verfassung_id="verfassung-320-expansion")
+        norm = next(n for n in verfassung.normen if n.geltung is TeilchenphysikGeltung.GRUNDLEGEND_TEILCHENPHYSIKVERFASST)
+
+        self.assertEqual(norm.teilchenphysik_typ, TeilchenphysikTyp.SOUVERAENITAETS_TEILCHENPHYSIK)
+        self.assertEqual(norm.prozedur, TeilchenphysikProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_teilchenphysik_verfassung_aggregates_verfassung_signal(self) -> None:
+        verfassung = build_teilchenphysik_verfassung(verfassung_id="verfassung-320-signal")
+
+        self.assertEqual(verfassung.verfassung_signal.status, "verfassung-gesperrt")
+        self.assertEqual(verfassung.gesperrt_norm_ids, ("verfassung-320-signal-stability-lane",))
+        self.assertEqual(verfassung.teilchenphysikverfasst_norm_ids, ("verfassung-320-signal-governance-lane",))
+        self.assertEqual(verfassung.grundlegend_norm_ids, ("verfassung-320-signal-expansion-lane",))
 
     def test_kki_waermestrahlung_charta_builds_gesperrt_schutz_norm(self) -> None:
         charta = build_waermestrahlung_charta(charta_id="charta-289-stability")

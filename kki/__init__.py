@@ -1131,6 +1131,22 @@ from .feynman_norm import (
     FeynmanNormTyp,
     build_feynman_norm,
 )
+from .standardmodell_charta import (
+    StandardmodellCharta,
+    StandardmodellGeltung,
+    StandardmodellNorm,
+    StandardmodellProzedur,
+    StandardmodellTyp,
+    build_standardmodell_charta,
+)
+from .teilchenphysik_verfassung import (
+    TeilchenphysikGeltung,
+    TeilchenphysikNorm,
+    TeilchenphysikProzedur,
+    TeilchenphysikTyp,
+    TeilchenphysikVerfassung,
+    build_teilchenphysik_verfassung,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -2283,6 +2299,8 @@ __all__ = [
     "build_higgs_manifest",
     "build_symmetriebrechungs_senat",
     "build_feynman_norm",
+    "build_standardmodell_charta",
+    "build_teilchenphysik_verfassung",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

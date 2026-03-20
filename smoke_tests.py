@@ -433,6 +433,30 @@ from kki import (
     RelativitaetsTyp,
     RelativitaetsVerfassung,
     build_relativitaets_verfassung,
+    ThermodynamikFeld,
+    ThermodynamikGeltung,
+    ThermodynamikNorm,
+    ThermodynamikProzedur,
+    ThermodynamikTyp,
+    build_thermodynamik_feld,
+    EntropieGeltung,
+    EntropieNorm,
+    EntropieRegister,
+    EntropieProzedur,
+    EntropieTyp,
+    build_entropie_register,
+    WaermeCharta,
+    WaermeGeltung,
+    WaermeNorm,
+    WaermeProzedur,
+    WaermeTyp,
+    build_waerme_charta,
+    EnergieerhaltungsGeltung,
+    EnergieerhaltungsKodex,
+    EnergieerhaltungsNorm,
+    EnergieerhaltungsProzedur,
+    EnergieerhaltungsTyp,
+    build_energieerhaltungs_kodex,
     KausalitaetsGeltung,
     KausalitaetsNorm,
     KausalitaetsProzedur,
@@ -5824,6 +5848,142 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(manifest.gesperrt_norm_ids, ("manifest-276-signal-stability-lane",))
         self.assertEqual(manifest.singulaer_norm_ids, ("manifest-276-signal-governance-lane",))
         self.assertEqual(manifest.grundlegend_norm_ids, ("manifest-276-signal-expansion-lane",))
+
+    def test_kki_energieerhaltungs_kodex_builds_gesperrt_schutz_norm(self) -> None:
+        kodex = build_energieerhaltungs_kodex(kodex_id="kodex-284-stability")
+        norm = next(n for n in kodex.normen if n.geltung is EnergieerhaltungsGeltung.GESPERRT)
+
+        self.assertIsInstance(kodex, EnergieerhaltungsKodex)
+        self.assertIsInstance(norm, EnergieerhaltungsNorm)
+        self.assertEqual(norm.energieerhaltungs_typ, EnergieerhaltungsTyp.SCHUTZ_ENERGIEERHALTUNG)
+        self.assertEqual(norm.prozedur, EnergieerhaltungsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.energieerhaltungs_tier, 1)
+
+    def test_kki_energieerhaltungs_kodex_builds_energieerhaltend_ordnungs_norm(self) -> None:
+        kodex = build_energieerhaltungs_kodex(kodex_id="kodex-284-governance")
+        norm = next(n for n in kodex.normen if n.geltung is EnergieerhaltungsGeltung.ENERGIEERHALTEND)
+
+        self.assertEqual(norm.energieerhaltungs_typ, EnergieerhaltungsTyp.ORDNUNGS_ENERGIEERHALTUNG)
+        self.assertEqual(norm.prozedur, EnergieerhaltungsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.energieerhaltungs_weight, 0.0)
+
+    def test_kki_energieerhaltungs_kodex_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        kodex = build_energieerhaltungs_kodex(kodex_id="kodex-284-expansion")
+        norm = next(n for n in kodex.normen if n.geltung is EnergieerhaltungsGeltung.GRUNDLEGEND_ENERGIEERHALTEND)
+
+        self.assertEqual(norm.energieerhaltungs_typ, EnergieerhaltungsTyp.SOUVERAENITAETS_ENERGIEERHALTUNG)
+        self.assertEqual(norm.prozedur, EnergieerhaltungsProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_energieerhaltungs_kodex_aggregates_kodex_signal(self) -> None:
+        kodex = build_energieerhaltungs_kodex(kodex_id="kodex-284-signal")
+
+        self.assertEqual(kodex.kodex_signal.status, "kodex-gesperrt")
+        self.assertEqual(kodex.gesperrt_norm_ids, ("kodex-284-signal-stability-lane",))
+        self.assertEqual(kodex.energieerhaltend_norm_ids, ("kodex-284-signal-governance-lane",))
+        self.assertEqual(kodex.grundlegend_norm_ids, ("kodex-284-signal-expansion-lane",))
+
+    def test_kki_waerme_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_waerme_charta(charta_id="charta-283-stability")
+        norm = next(n for n in charta.normen if n.geltung is WaermeGeltung.GESPERRT)
+
+        self.assertIsInstance(charta, WaermeCharta)
+        self.assertIsInstance(norm, WaermeNorm)
+        self.assertEqual(norm.waerme_typ, WaermeTyp.SCHUTZ_WAERME)
+        self.assertEqual(norm.prozedur, WaermeProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.waerme_tier, 1)
+
+    def test_kki_waerme_charta_builds_waermeuebertragen_ordnungs_norm(self) -> None:
+        charta = build_waerme_charta(charta_id="charta-283-governance")
+        norm = next(n for n in charta.normen if n.geltung is WaermeGeltung.WAERMEUEBERTRAGEN)
+
+        self.assertEqual(norm.waerme_typ, WaermeTyp.ORDNUNGS_WAERME)
+        self.assertEqual(norm.prozedur, WaermeProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.waerme_weight, 0.0)
+
+    def test_kki_waerme_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_waerme_charta(charta_id="charta-283-expansion")
+        norm = next(n for n in charta.normen if n.geltung is WaermeGeltung.GRUNDLEGEND_WAERMEUEBERTRAGEN)
+
+        self.assertEqual(norm.waerme_typ, WaermeTyp.SOUVERAENITAETS_WAERME)
+        self.assertEqual(norm.prozedur, WaermeProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_waerme_charta_aggregates_charta_signal(self) -> None:
+        charta = build_waerme_charta(charta_id="charta-283-signal")
+
+        self.assertEqual(charta.charta_signal.status, "charta-gesperrt")
+        self.assertEqual(charta.gesperrt_norm_ids, ("charta-283-signal-stability-lane",))
+        self.assertEqual(charta.waermeuebertragen_norm_ids, ("charta-283-signal-governance-lane",))
+        self.assertEqual(charta.grundlegend_norm_ids, ("charta-283-signal-expansion-lane",))
+
+    def test_kki_entropie_register_builds_gesperrt_schutz_norm(self) -> None:
+        register = build_entropie_register(register_id="register-282-stability")
+        norm = next(n for n in register.normen if n.geltung is EntropieGeltung.GESPERRT)
+
+        self.assertIsInstance(register, EntropieRegister)
+        self.assertIsInstance(norm, EntropieNorm)
+        self.assertEqual(norm.entropie_typ, EntropieTyp.SCHUTZ_ENTROPIE)
+        self.assertEqual(norm.prozedur, EntropieProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.entropie_tier, 1)
+
+    def test_kki_entropie_register_builds_entropisch_ordnungs_norm(self) -> None:
+        register = build_entropie_register(register_id="register-282-governance")
+        norm = next(n for n in register.normen if n.geltung is EntropieGeltung.ENTROPISCH)
+
+        self.assertEqual(norm.entropie_typ, EntropieTyp.ORDNUNGS_ENTROPIE)
+        self.assertEqual(norm.prozedur, EntropieProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.entropie_weight, 0.0)
+
+    def test_kki_entropie_register_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        register = build_entropie_register(register_id="register-282-expansion")
+        norm = next(n for n in register.normen if n.geltung is EntropieGeltung.GRUNDLEGEND_ENTROPISCH)
+
+        self.assertEqual(norm.entropie_typ, EntropieTyp.SOUVERAENITAETS_ENTROPIE)
+        self.assertEqual(norm.prozedur, EntropieProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_entropie_register_aggregates_register_signal(self) -> None:
+        register = build_entropie_register(register_id="register-282-signal")
+
+        self.assertEqual(register.register_signal.status, "register-gesperrt")
+        self.assertEqual(register.gesperrt_norm_ids, ("register-282-signal-stability-lane",))
+        self.assertEqual(register.entropisch_norm_ids, ("register-282-signal-governance-lane",))
+        self.assertEqual(register.grundlegend_norm_ids, ("register-282-signal-expansion-lane",))
+
+    def test_kki_thermodynamik_feld_builds_gesperrt_schutz_norm(self) -> None:
+        feld = build_thermodynamik_feld(feld_id="feld-281-stability")
+        norm = next(n for n in feld.normen if n.geltung is ThermodynamikGeltung.GESPERRT)
+
+        self.assertIsInstance(feld, ThermodynamikFeld)
+        self.assertIsInstance(norm, ThermodynamikNorm)
+        self.assertEqual(norm.thermodynamik_typ, ThermodynamikTyp.SCHUTZ_THERMODYNAMIK)
+        self.assertEqual(norm.prozedur, ThermodynamikProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.thermodynamik_tier, 1)
+
+    def test_kki_thermodynamik_feld_builds_thermisch_ordnungs_norm(self) -> None:
+        feld = build_thermodynamik_feld(feld_id="feld-281-governance")
+        norm = next(n for n in feld.normen if n.geltung is ThermodynamikGeltung.THERMISCH)
+
+        self.assertEqual(norm.thermodynamik_typ, ThermodynamikTyp.ORDNUNGS_THERMODYNAMIK)
+        self.assertEqual(norm.prozedur, ThermodynamikProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.thermodynamik_weight, 0.0)
+
+    def test_kki_thermodynamik_feld_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        feld = build_thermodynamik_feld(feld_id="feld-281-expansion")
+        norm = next(n for n in feld.normen if n.geltung is ThermodynamikGeltung.GRUNDLEGEND_THERMISCH)
+
+        self.assertEqual(norm.thermodynamik_typ, ThermodynamikTyp.SOUVERAENITAETS_THERMODYNAMIK)
+        self.assertEqual(norm.prozedur, ThermodynamikProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_thermodynamik_feld_aggregates_feld_signal(self) -> None:
+        feld = build_thermodynamik_feld(feld_id="feld-281-signal")
+
+        self.assertEqual(feld.feld_signal.status, "feld-gesperrt")
+        self.assertEqual(feld.gesperrt_norm_ids, ("feld-281-signal-stability-lane",))
+        self.assertEqual(feld.thermisch_norm_ids, ("feld-281-signal-governance-lane",))
+        self.assertEqual(feld.grundlegend_norm_ids, ("feld-281-signal-expansion-lane",))
 
     def test_kki_relativitaets_verfassung_builds_gesperrt_schutz_norm(self) -> None:
         verfassung = build_relativitaets_verfassung(verfassung_id="verfassung-280-stability")

@@ -907,6 +907,38 @@ from .thermodynamik_verfassung import (
     ThermoverfassungsTyp,
     build_thermodynamik_verfassung,
 )
+from .elektromagnetik_feld import (
+    ElektromagnetikFeld,
+    ElektromagnetikGeltung,
+    ElektromagnetikNorm,
+    ElektromagnetikProzedur,
+    ElektromagnetikTyp,
+    build_elektromagnetik_feld,
+)
+from .ladungs_register import (
+    LadungsGeltung,
+    LadungsNorm,
+    LadungsProzedur,
+    LadungsRegister,
+    LadungsTyp,
+    build_ladungs_register,
+)
+from .maxwell_charta import (
+    MaxwellCharta,
+    MaxwellGeltung,
+    MaxwellNorm,
+    MaxwellProzedur,
+    MaxwellTyp,
+    build_maxwell_charta,
+)
+from .induktions_kodex import (
+    InduktionsGeltung,
+    InduktionsKodex,
+    InduktionsNorm,
+    InduktionsProzedur,
+    InduktionsTyp,
+    build_induktions_kodex,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -2031,6 +2063,10 @@ __all__ = [
     "build_entropie_norm",
     "build_waermestrahlung_charta",
     "build_thermodynamik_verfassung",
+    "build_elektromagnetik_feld",
+    "build_ladungs_register",
+    "build_maxwell_charta",
+    "build_induktions_kodex",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

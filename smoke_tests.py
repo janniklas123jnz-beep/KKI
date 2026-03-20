@@ -493,6 +493,30 @@ from kki import (
     ThermoverfassungsProzedur,
     ThermoverfassungsTyp,
     build_thermodynamik_verfassung,
+    ElektromagnetikFeld,
+    ElektromagnetikGeltung,
+    ElektromagnetikNorm,
+    ElektromagnetikProzedur,
+    ElektromagnetikTyp,
+    build_elektromagnetik_feld,
+    LadungsGeltung,
+    LadungsNorm,
+    LadungsProzedur,
+    LadungsRegister,
+    LadungsTyp,
+    build_ladungs_register,
+    MaxwellCharta,
+    MaxwellGeltung,
+    MaxwellNorm,
+    MaxwellProzedur,
+    MaxwellTyp,
+    build_maxwell_charta,
+    InduktionsGeltung,
+    InduktionsKodex,
+    InduktionsNorm,
+    InduktionsProzedur,
+    InduktionsTyp,
+    build_induktions_kodex,
     KausalitaetsGeltung,
     KausalitaetsNorm,
     KausalitaetsProzedur,
@@ -5918,6 +5942,158 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(verfassung.gesperrt_norm_ids, ("verfassung-290-signal-stability-lane",))
         self.assertEqual(verfassung.thermoverfasst_norm_ids, ("verfassung-290-signal-governance-lane",))
         self.assertEqual(verfassung.grundlegend_norm_ids, ("verfassung-290-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #291 ElektromagnetikFeld
+    # ------------------------------------------------------------------
+
+    def test_kki_elektromagnetik_feld_builds_gesperrt_schutz_norm(self) -> None:
+        feld = build_elektromagnetik_feld(feld_id="feld-291-stability")
+        norm = next(n for n in feld.normen if n.geltung is ElektromagnetikGeltung.GESPERRT)
+
+        self.assertIsInstance(feld, ElektromagnetikFeld)
+        self.assertIsInstance(norm, ElektromagnetikNorm)
+        self.assertEqual(norm.elektromagnetik_typ, ElektromagnetikTyp.SCHUTZ_ELEKTROMAGNETIK)
+        self.assertEqual(norm.prozedur, ElektromagnetikProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.elektromagnetik_tier, 1)
+
+    def test_kki_elektromagnetik_feld_builds_elektromagnetisch_ordnungs_norm(self) -> None:
+        feld = build_elektromagnetik_feld(feld_id="feld-291-governance")
+        norm = next(n for n in feld.normen if n.geltung is ElektromagnetikGeltung.ELEKTROMAGNETISCH)
+
+        self.assertEqual(norm.elektromagnetik_typ, ElektromagnetikTyp.ORDNUNGS_ELEKTROMAGNETIK)
+        self.assertEqual(norm.prozedur, ElektromagnetikProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.elektromagnetik_weight, 0.0)
+
+    def test_kki_elektromagnetik_feld_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        feld = build_elektromagnetik_feld(feld_id="feld-291-expansion")
+        norm = next(n for n in feld.normen if n.geltung is ElektromagnetikGeltung.GRUNDLEGEND_ELEKTROMAGNETISCH)
+
+        self.assertEqual(norm.elektromagnetik_typ, ElektromagnetikTyp.SOUVERAENITAETS_ELEKTROMAGNETIK)
+        self.assertEqual(norm.prozedur, ElektromagnetikProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_elektromagnetik_feld_aggregates_feld_signal(self) -> None:
+        feld = build_elektromagnetik_feld(feld_id="feld-291-signal")
+
+        self.assertEqual(feld.feld_signal.status, "feld-gesperrt")
+        self.assertEqual(feld.gesperrt_norm_ids, ("feld-291-signal-stability-lane",))
+        self.assertEqual(feld.elektromagnetisch_norm_ids, ("feld-291-signal-governance-lane",))
+        self.assertEqual(feld.grundlegend_norm_ids, ("feld-291-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #292 LadungsRegister
+    # ------------------------------------------------------------------
+
+    def test_kki_ladungs_register_builds_gesperrt_schutz_norm(self) -> None:
+        register = build_ladungs_register(register_id="register-292-stability")
+        norm = next(n for n in register.normen if n.geltung is LadungsGeltung.GESPERRT)
+
+        self.assertIsInstance(register, LadungsRegister)
+        self.assertIsInstance(norm, LadungsNorm)
+        self.assertEqual(norm.ladungs_typ, LadungsTyp.SCHUTZ_LADUNG)
+        self.assertEqual(norm.prozedur, LadungsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.ladungs_tier, 1)
+
+    def test_kki_ladungs_register_builds_geladen_ordnungs_norm(self) -> None:
+        register = build_ladungs_register(register_id="register-292-governance")
+        norm = next(n for n in register.normen if n.geltung is LadungsGeltung.GELADEN)
+
+        self.assertEqual(norm.ladungs_typ, LadungsTyp.ORDNUNGS_LADUNG)
+        self.assertEqual(norm.prozedur, LadungsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.ladungs_weight, 0.0)
+
+    def test_kki_ladungs_register_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        register = build_ladungs_register(register_id="register-292-expansion")
+        norm = next(n for n in register.normen if n.geltung is LadungsGeltung.GRUNDLEGEND_GELADEN)
+
+        self.assertEqual(norm.ladungs_typ, LadungsTyp.SOUVERAENITAETS_LADUNG)
+        self.assertEqual(norm.prozedur, LadungsProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_ladungs_register_aggregates_register_signal(self) -> None:
+        register = build_ladungs_register(register_id="register-292-signal")
+
+        self.assertEqual(register.register_signal.status, "register-gesperrt")
+        self.assertEqual(register.gesperrt_norm_ids, ("register-292-signal-stability-lane",))
+        self.assertEqual(register.geladen_norm_ids, ("register-292-signal-governance-lane",))
+        self.assertEqual(register.grundlegend_norm_ids, ("register-292-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #293 MaxwellCharta
+    # ------------------------------------------------------------------
+
+    def test_kki_maxwell_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_maxwell_charta(charta_id="charta-293-stability")
+        norm = next(n for n in charta.normen if n.geltung is MaxwellGeltung.GESPERRT)
+
+        self.assertIsInstance(charta, MaxwellCharta)
+        self.assertIsInstance(norm, MaxwellNorm)
+        self.assertEqual(norm.maxwell_typ, MaxwellTyp.SCHUTZ_MAXWELL)
+        self.assertEqual(norm.prozedur, MaxwellProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.maxwell_tier, 1)
+
+    def test_kki_maxwell_charta_builds_maxwellisch_ordnungs_norm(self) -> None:
+        charta = build_maxwell_charta(charta_id="charta-293-governance")
+        norm = next(n for n in charta.normen if n.geltung is MaxwellGeltung.MAXWELLISCH)
+
+        self.assertEqual(norm.maxwell_typ, MaxwellTyp.ORDNUNGS_MAXWELL)
+        self.assertEqual(norm.prozedur, MaxwellProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.maxwell_weight, 0.0)
+
+    def test_kki_maxwell_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_maxwell_charta(charta_id="charta-293-expansion")
+        norm = next(n for n in charta.normen if n.geltung is MaxwellGeltung.GRUNDLEGEND_MAXWELLISCH)
+
+        self.assertEqual(norm.maxwell_typ, MaxwellTyp.SOUVERAENITAETS_MAXWELL)
+        self.assertEqual(norm.prozedur, MaxwellProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_maxwell_charta_aggregates_charta_signal(self) -> None:
+        charta = build_maxwell_charta(charta_id="charta-293-signal")
+
+        self.assertEqual(charta.charta_signal.status, "charta-gesperrt")
+        self.assertEqual(charta.gesperrt_norm_ids, ("charta-293-signal-stability-lane",))
+        self.assertEqual(charta.maxwellisch_norm_ids, ("charta-293-signal-governance-lane",))
+        self.assertEqual(charta.grundlegend_norm_ids, ("charta-293-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #294 InduktionsKodex
+    # ------------------------------------------------------------------
+
+    def test_kki_induktions_kodex_builds_gesperrt_schutz_norm(self) -> None:
+        kodex = build_induktions_kodex(kodex_id="kodex-294-stability")
+        norm = next(n for n in kodex.normen if n.geltung is InduktionsGeltung.GESPERRT)
+
+        self.assertIsInstance(kodex, InduktionsKodex)
+        self.assertIsInstance(norm, InduktionsNorm)
+        self.assertEqual(norm.induktions_typ, InduktionsTyp.SCHUTZ_INDUKTION)
+        self.assertEqual(norm.prozedur, InduktionsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.induktions_tier, 1)
+
+    def test_kki_induktions_kodex_builds_induziert_ordnungs_norm(self) -> None:
+        kodex = build_induktions_kodex(kodex_id="kodex-294-governance")
+        norm = next(n for n in kodex.normen if n.geltung is InduktionsGeltung.INDUZIERT)
+
+        self.assertEqual(norm.induktions_typ, InduktionsTyp.ORDNUNGS_INDUKTION)
+        self.assertEqual(norm.prozedur, InduktionsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.induktions_weight, 0.0)
+
+    def test_kki_induktions_kodex_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        kodex = build_induktions_kodex(kodex_id="kodex-294-expansion")
+        norm = next(n for n in kodex.normen if n.geltung is InduktionsGeltung.GRUNDLEGEND_INDUZIERT)
+
+        self.assertEqual(norm.induktions_typ, InduktionsTyp.SOUVERAENITAETS_INDUKTION)
+        self.assertEqual(norm.prozedur, InduktionsProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_induktions_kodex_aggregates_kodex_signal(self) -> None:
+        kodex = build_induktions_kodex(kodex_id="kodex-294-signal")
+
+        self.assertEqual(kodex.kodex_signal.status, "kodex-gesperrt")
+        self.assertEqual(kodex.gesperrt_norm_ids, ("kodex-294-signal-stability-lane",))
+        self.assertEqual(kodex.induziert_norm_ids, ("kodex-294-signal-governance-lane",))
+        self.assertEqual(kodex.grundlegend_norm_ids, ("kodex-294-signal-expansion-lane",))
 
     def test_kki_waermestrahlung_charta_builds_gesperrt_schutz_norm(self) -> None:
         charta = build_waermestrahlung_charta(charta_id="charta-289-stability")

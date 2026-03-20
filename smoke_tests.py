@@ -637,6 +637,30 @@ from kki import (
     GluonProzedur,
     GluonTyp,
     build_gluon_kodex,
+    EichbosonGeltung,
+    EichbosonNorm,
+    EichbosonPakt,
+    EichbosonProzedur,
+    EichbosonTyp,
+    build_eichboson_pakt,
+    HiggsGeltung,
+    HiggsManifest,
+    HiggsNorm,
+    HiggsProzedur,
+    HiggsTyp,
+    build_higgs_manifest,
+    SymmetriebrechungsGeltung,
+    SymmetriebrechungsNorm,
+    SymmetriebrechungsProzedur,
+    SymmetriebrechungsSenat,
+    SymmetriebrechungsTyp,
+    build_symmetriebrechungs_senat,
+    FeynmanNormEintrag,
+    FeynmanNormGeltung,
+    FeynmanNormProzedur,
+    FeynmanNormSatz,
+    FeynmanNormTyp,
+    build_feynman_norm,
     KausalitaetsGeltung,
     KausalitaetsNorm,
     KausalitaetsProzedur,
@@ -6974,6 +6998,158 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(kodex.gesperrt_norm_ids, ("kodex-314-signal-stability-lane",))
         self.assertEqual(kodex.gluonisch_norm_ids, ("kodex-314-signal-governance-lane",))
         self.assertEqual(kodex.grundlegend_norm_ids, ("kodex-314-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #315 EichbosonPakt
+    # ------------------------------------------------------------------
+
+    def test_kki_eichboson_pakt_builds_gesperrt_schutz_norm(self) -> None:
+        pakt = build_eichboson_pakt(pakt_id="pakt-315-stability")
+        norm = next(n for n in pakt.normen if n.geltung is EichbosonGeltung.GESPERRT)
+
+        self.assertIsInstance(pakt, EichbosonPakt)
+        self.assertIsInstance(norm, EichbosonNorm)
+        self.assertEqual(norm.eichboson_typ, EichbosonTyp.SCHUTZ_EICHBOSON)
+        self.assertEqual(norm.prozedur, EichbosonProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.eichboson_tier, 1)
+
+    def test_kki_eichboson_pakt_builds_eichbosonal_ordnungs_norm(self) -> None:
+        pakt = build_eichboson_pakt(pakt_id="pakt-315-governance")
+        norm = next(n for n in pakt.normen if n.geltung is EichbosonGeltung.EICHBOSONAL)
+
+        self.assertEqual(norm.eichboson_typ, EichbosonTyp.ORDNUNGS_EICHBOSON)
+        self.assertEqual(norm.prozedur, EichbosonProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.eichboson_weight, 0.0)
+
+    def test_kki_eichboson_pakt_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        pakt = build_eichboson_pakt(pakt_id="pakt-315-expansion")
+        norm = next(n for n in pakt.normen if n.geltung is EichbosonGeltung.GRUNDLEGEND_EICHBOSONAL)
+
+        self.assertEqual(norm.eichboson_typ, EichbosonTyp.SOUVERAENITAETS_EICHBOSON)
+        self.assertEqual(norm.prozedur, EichbosonProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_eichboson_pakt_aggregates_pakt_signal(self) -> None:
+        pakt = build_eichboson_pakt(pakt_id="pakt-315-signal")
+
+        self.assertEqual(pakt.pakt_signal.status, "pakt-gesperrt")
+        self.assertEqual(pakt.gesperrt_norm_ids, ("pakt-315-signal-stability-lane",))
+        self.assertEqual(pakt.eichbosonal_norm_ids, ("pakt-315-signal-governance-lane",))
+        self.assertEqual(pakt.grundlegend_norm_ids, ("pakt-315-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #316 HiggsManifest
+    # ------------------------------------------------------------------
+
+    def test_kki_higgs_manifest_builds_gesperrt_schutz_norm(self) -> None:
+        manifest = build_higgs_manifest(manifest_id="manifest-316-stability")
+        norm = next(n for n in manifest.normen if n.geltung is HiggsGeltung.GESPERRT)
+
+        self.assertIsInstance(manifest, HiggsManifest)
+        self.assertIsInstance(norm, HiggsNorm)
+        self.assertEqual(norm.higgs_typ, HiggsTyp.SCHUTZ_HIGGS)
+        self.assertEqual(norm.prozedur, HiggsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.higgs_tier, 1)
+
+    def test_kki_higgs_manifest_builds_higgsgekoppelt_ordnungs_norm(self) -> None:
+        manifest = build_higgs_manifest(manifest_id="manifest-316-governance")
+        norm = next(n for n in manifest.normen if n.geltung is HiggsGeltung.HIGGSGEKOPPELT)
+
+        self.assertEqual(norm.higgs_typ, HiggsTyp.ORDNUNGS_HIGGS)
+        self.assertEqual(norm.prozedur, HiggsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.higgs_weight, 0.0)
+
+    def test_kki_higgs_manifest_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        manifest = build_higgs_manifest(manifest_id="manifest-316-expansion")
+        norm = next(n for n in manifest.normen if n.geltung is HiggsGeltung.GRUNDLEGEND_HIGGSGEKOPPELT)
+
+        self.assertEqual(norm.higgs_typ, HiggsTyp.SOUVERAENITAETS_HIGGS)
+        self.assertEqual(norm.prozedur, HiggsProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_higgs_manifest_aggregates_manifest_signal(self) -> None:
+        manifest = build_higgs_manifest(manifest_id="manifest-316-signal")
+
+        self.assertEqual(manifest.manifest_signal.status, "manifest-gesperrt")
+        self.assertEqual(manifest.gesperrt_norm_ids, ("manifest-316-signal-stability-lane",))
+        self.assertEqual(manifest.higgsgekoppelt_norm_ids, ("manifest-316-signal-governance-lane",))
+        self.assertEqual(manifest.grundlegend_norm_ids, ("manifest-316-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #317 SymmetriebrechungsSenat
+    # ------------------------------------------------------------------
+
+    def test_kki_symmetriebrechungs_senat_builds_gesperrt_schutz_norm(self) -> None:
+        senat = build_symmetriebrechungs_senat(senat_id="senat-317-stability")
+        norm = next(n for n in senat.normen if n.geltung is SymmetriebrechungsGeltung.GESPERRT)
+
+        self.assertIsInstance(senat, SymmetriebrechungsSenat)
+        self.assertIsInstance(norm, SymmetriebrechungsNorm)
+        self.assertEqual(norm.symmetriebrechungs_typ, SymmetriebrechungsTyp.SCHUTZ_SYMMETRIEBRECHUNG)
+        self.assertEqual(norm.prozedur, SymmetriebrechungsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.symmetriebrechungs_tier, 1)
+
+    def test_kki_symmetriebrechungs_senat_builds_symmetriegebrochen_ordnungs_norm(self) -> None:
+        senat = build_symmetriebrechungs_senat(senat_id="senat-317-governance")
+        norm = next(n for n in senat.normen if n.geltung is SymmetriebrechungsGeltung.SYMMETRIEGEBROCHEN)
+
+        self.assertEqual(norm.symmetriebrechungs_typ, SymmetriebrechungsTyp.ORDNUNGS_SYMMETRIEBRECHUNG)
+        self.assertEqual(norm.prozedur, SymmetriebrechungsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.symmetriebrechungs_weight, 0.0)
+
+    def test_kki_symmetriebrechungs_senat_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        senat = build_symmetriebrechungs_senat(senat_id="senat-317-expansion")
+        norm = next(n for n in senat.normen if n.geltung is SymmetriebrechungsGeltung.GRUNDLEGEND_SYMMETRIEGEBROCHEN)
+
+        self.assertEqual(norm.symmetriebrechungs_typ, SymmetriebrechungsTyp.SOUVERAENITAETS_SYMMETRIEBRECHUNG)
+        self.assertEqual(norm.prozedur, SymmetriebrechungsProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_symmetriebrechungs_senat_aggregates_senat_signal(self) -> None:
+        senat = build_symmetriebrechungs_senat(senat_id="senat-317-signal")
+
+        self.assertEqual(senat.senat_signal.status, "senat-gesperrt")
+        self.assertEqual(senat.gesperrt_norm_ids, ("senat-317-signal-stability-lane",))
+        self.assertEqual(senat.symmetriegebrochen_norm_ids, ("senat-317-signal-governance-lane",))
+        self.assertEqual(senat.grundlegend_norm_ids, ("senat-317-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #318 FeynmanNorm  (*_norm pattern)
+    # ------------------------------------------------------------------
+
+    def test_kki_feynman_norm_builds_gesperrt_schutz_eintrag(self) -> None:
+        satz = build_feynman_norm(norm_id="feynman-norm-318-stability")
+        eintrag = next(n for n in satz.normen if n.geltung is FeynmanNormGeltung.GESPERRT)
+
+        self.assertIsInstance(satz, FeynmanNormSatz)
+        self.assertIsInstance(eintrag, FeynmanNormEintrag)
+        self.assertEqual(eintrag.feynman_norm_typ, FeynmanNormTyp.SCHUTZ_FEYNMAN)
+        self.assertEqual(eintrag.prozedur, FeynmanNormProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(eintrag.feynman_norm_tier, 1)
+
+    def test_kki_feynman_norm_builds_feynmandiagrammiert_ordnungs_eintrag(self) -> None:
+        satz = build_feynman_norm(norm_id="feynman-norm-318-governance")
+        eintrag = next(n for n in satz.normen if n.geltung is FeynmanNormGeltung.FEYNMANDIAGRAMMIERT)
+
+        self.assertEqual(eintrag.feynman_norm_typ, FeynmanNormTyp.ORDNUNGS_FEYNMAN)
+        self.assertEqual(eintrag.prozedur, FeynmanNormProzedur.REGELPROTOKOLL)
+        self.assertGreater(eintrag.feynman_norm_weight, 0.0)
+
+    def test_kki_feynman_norm_builds_grundlegend_souveraenitaets_eintrag(self) -> None:
+        satz = build_feynman_norm(norm_id="feynman-norm-318-expansion")
+        eintrag = next(n for n in satz.normen if n.geltung is FeynmanNormGeltung.GRUNDLEGEND_FEYNMANDIAGRAMMIERT)
+
+        self.assertEqual(eintrag.feynman_norm_typ, FeynmanNormTyp.SOUVERAENITAETS_FEYNMAN)
+        self.assertEqual(eintrag.prozedur, FeynmanNormProzedur.PLENARPROTOKOLL)
+        self.assertTrue(eintrag.canonical)
+
+    def test_kki_feynman_norm_aggregates_norm_signal(self) -> None:
+        satz = build_feynman_norm(norm_id="feynman-norm-318-signal")
+
+        self.assertEqual(satz.norm_signal.status, "norm-gesperrt")
+        self.assertEqual(satz.gesperrt_norm_ids, ("feynman-norm-318-signal-stability-lane",))
+        self.assertEqual(satz.feynmandiagrammiert_norm_ids, ("feynman-norm-318-signal-governance-lane",))
+        self.assertEqual(satz.grundlegend_norm_ids, ("feynman-norm-318-signal-expansion-lane",))
 
     def test_kki_waermestrahlung_charta_builds_gesperrt_schutz_norm(self) -> None:
         charta = build_waermestrahlung_charta(charta_id="charta-289-stability")

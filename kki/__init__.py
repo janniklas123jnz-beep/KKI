@@ -1099,6 +1099,38 @@ from .gluon_kodex import (
     GluonTyp,
     build_gluon_kodex,
 )
+from .eichboson_pakt import (
+    EichbosonGeltung,
+    EichbosonNorm,
+    EichbosonPakt,
+    EichbosonProzedur,
+    EichbosonTyp,
+    build_eichboson_pakt,
+)
+from .higgs_manifest import (
+    HiggsGeltung,
+    HiggsManifest,
+    HiggsNorm,
+    HiggsProzedur,
+    HiggsTyp,
+    build_higgs_manifest,
+)
+from .symmetriebrechungs_senat import (
+    SymmetriebrechungsGeltung,
+    SymmetriebrechungsNorm,
+    SymmetriebrechungsProzedur,
+    SymmetriebrechungsSenat,
+    SymmetriebrechungsTyp,
+    build_symmetriebrechungs_senat,
+)
+from .feynman_norm import (
+    FeynmanNormEintrag,
+    FeynmanNormGeltung,
+    FeynmanNormProzedur,
+    FeynmanNormSatz,
+    FeynmanNormTyp,
+    build_feynman_norm,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -2247,6 +2279,10 @@ __all__ = [
     "build_quark_register",
     "build_lepton_charta",
     "build_gluon_kodex",
+    "build_eichboson_pakt",
+    "build_higgs_manifest",
+    "build_symmetriebrechungs_senat",
+    "build_feynman_norm",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

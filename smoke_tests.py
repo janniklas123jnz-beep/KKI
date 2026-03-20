@@ -601,6 +601,18 @@ from kki import (
     ZerfallsNormSatz,
     ZerfallsNormTyp,
     build_zerfalls_norm,
+    NuklearCharta,
+    NuklearChartaGeltung,
+    NuklearChartaNorm,
+    NuklearChartaProzedur,
+    NuklearChartaTyp,
+    build_nuklear_charta,
+    KernphysikVerfassung,
+    KernphysikVerfassungsGeltung,
+    KernphysikVerfassungsNorm,
+    KernphysikVerfassungsProzedur,
+    KernphysikVerfassungsTyp,
+    build_kernphysik_verfassung,
     KausalitaetsGeltung,
     KausalitaetsNorm,
     KausalitaetsProzedur,
@@ -6710,6 +6722,82 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(satz.gesperrt_norm_ids, ("zerfalls-norm-308-signal-stability-lane",))
         self.assertEqual(satz.zerfallen_norm_ids, ("zerfalls-norm-308-signal-governance-lane",))
         self.assertEqual(satz.grundlegend_norm_ids, ("zerfalls-norm-308-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #309 NuklearCharta
+    # ------------------------------------------------------------------
+
+    def test_kki_nuklear_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_nuklear_charta(charta_id="charta-309-stability")
+        norm = next(n for n in charta.normen if n.geltung is NuklearChartaGeltung.GESPERRT)
+
+        self.assertIsInstance(charta, NuklearCharta)
+        self.assertIsInstance(norm, NuklearChartaNorm)
+        self.assertEqual(norm.nuklear_charta_typ, NuklearChartaTyp.SCHUTZ_NUKLEARSTRUKTUR)
+        self.assertEqual(norm.prozedur, NuklearChartaProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.nuklear_charta_tier, 1)
+
+    def test_kki_nuklear_charta_builds_nuklearchartiert_ordnungs_norm(self) -> None:
+        charta = build_nuklear_charta(charta_id="charta-309-governance")
+        norm = next(n for n in charta.normen if n.geltung is NuklearChartaGeltung.NUKLEARCHARTIERT)
+
+        self.assertEqual(norm.nuklear_charta_typ, NuklearChartaTyp.ORDNUNGS_NUKLEARSTRUKTUR)
+        self.assertEqual(norm.prozedur, NuklearChartaProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.nuklear_charta_weight, 0.0)
+
+    def test_kki_nuklear_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_nuklear_charta(charta_id="charta-309-expansion")
+        norm = next(n for n in charta.normen if n.geltung is NuklearChartaGeltung.GRUNDLEGEND_NUKLEARCHARTIERT)
+
+        self.assertEqual(norm.nuklear_charta_typ, NuklearChartaTyp.SOUVERAENITAETS_NUKLEARSTRUKTUR)
+        self.assertEqual(norm.prozedur, NuklearChartaProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_nuklear_charta_aggregates_charta_signal(self) -> None:
+        charta = build_nuklear_charta(charta_id="charta-309-signal")
+
+        self.assertEqual(charta.charta_signal.status, "charta-gesperrt")
+        self.assertEqual(charta.gesperrt_norm_ids, ("charta-309-signal-stability-lane",))
+        self.assertEqual(charta.nuklearchartiert_norm_ids, ("charta-309-signal-governance-lane",))
+        self.assertEqual(charta.grundlegend_norm_ids, ("charta-309-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #310 KernphysikVerfassung  (Block-Krone)
+    # ------------------------------------------------------------------
+
+    def test_kki_kernphysik_verfassung_builds_gesperrt_schutz_norm(self) -> None:
+        verfassung = build_kernphysik_verfassung(verfassung_id="verfassung-310-stability")
+        norm = next(n for n in verfassung.normen if n.geltung is KernphysikVerfassungsGeltung.GESPERRT)
+
+        self.assertIsInstance(verfassung, KernphysikVerfassung)
+        self.assertIsInstance(norm, KernphysikVerfassungsNorm)
+        self.assertEqual(norm.kernphysikverfassungs_typ, KernphysikVerfassungsTyp.SCHUTZ_KERNPHYSIKVERFASSUNG)
+        self.assertEqual(norm.prozedur, KernphysikVerfassungsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.kernphysikverfassungs_tier, 1)
+
+    def test_kki_kernphysik_verfassung_builds_kernphysikverfasst_ordnungs_norm(self) -> None:
+        verfassung = build_kernphysik_verfassung(verfassung_id="verfassung-310-governance")
+        norm = next(n for n in verfassung.normen if n.geltung is KernphysikVerfassungsGeltung.KERNPHYSIKVERFASST)
+
+        self.assertEqual(norm.kernphysikverfassungs_typ, KernphysikVerfassungsTyp.ORDNUNGS_KERNPHYSIKVERFASSUNG)
+        self.assertEqual(norm.prozedur, KernphysikVerfassungsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.kernphysikverfassungs_weight, 0.0)
+
+    def test_kki_kernphysik_verfassung_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        verfassung = build_kernphysik_verfassung(verfassung_id="verfassung-310-expansion")
+        norm = next(n for n in verfassung.normen if n.geltung is KernphysikVerfassungsGeltung.GRUNDLEGEND_KERNPHYSIKVERFASST)
+
+        self.assertEqual(norm.kernphysikverfassungs_typ, KernphysikVerfassungsTyp.SOUVERAENITAETS_KERNPHYSIKVERFASSUNG)
+        self.assertEqual(norm.prozedur, KernphysikVerfassungsProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_kernphysik_verfassung_aggregates_verfassung_signal(self) -> None:
+        verfassung = build_kernphysik_verfassung(verfassung_id="verfassung-310-signal")
+
+        self.assertEqual(verfassung.verfassung_signal.status, "verfassung-gesperrt")
+        self.assertEqual(verfassung.gesperrt_norm_ids, ("verfassung-310-signal-stability-lane",))
+        self.assertEqual(verfassung.kernphysikverfasst_norm_ids, ("verfassung-310-signal-governance-lane",))
+        self.assertEqual(verfassung.grundlegend_norm_ids, ("verfassung-310-signal-expansion-lane",))
 
     def test_kki_waermestrahlung_charta_builds_gesperrt_schutz_norm(self) -> None:
         charta = build_waermestrahlung_charta(charta_id="charta-289-stability")

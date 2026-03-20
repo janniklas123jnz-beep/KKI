@@ -1051,6 +1051,22 @@ from .zerfalls_norm import (
     ZerfallsNormTyp,
     build_zerfalls_norm,
 )
+from .nuklear_charta import (
+    NuklearCharta,
+    NuklearChartaGeltung,
+    NuklearChartaNorm,
+    NuklearChartaProzedur,
+    NuklearChartaTyp,
+    build_nuklear_charta,
+)
+from .kernphysik_verfassung import (
+    KernphysikVerfassung,
+    KernphysikVerfassungsGeltung,
+    KernphysikVerfassungsNorm,
+    KernphysikVerfassungsProzedur,
+    KernphysikVerfassungsTyp,
+    build_kernphysik_verfassung,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -2193,6 +2209,8 @@ __all__ = [
     "build_kernfusions_manifest",
     "build_radioaktivitaets_senat",
     "build_zerfalls_norm",
+    "build_nuklear_charta",
+    "build_kernphysik_verfassung",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

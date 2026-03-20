@@ -397,6 +397,30 @@ from kki import (
     GravitationsProzedur,
     GravitationsTyp,
     build_gravitations_kodex,
+    KruemmungsGeltung,
+    KruemmungsNorm,
+    KruemmungsPakt,
+    KruemmungsProzedur,
+    KruemmungsTyp,
+    build_kruemmungs_pakt,
+    SingularitaetsGeltung,
+    SingularitaetsManifest,
+    SingularitaetsNorm,
+    SingularitaetsProzedur,
+    SingularitaetsTyp,
+    build_singularitaets_manifest,
+    SchwarzeLoechSenat,
+    SchwarzsLochGeltung,
+    SchwarzsLochNorm,
+    SchwarzsLochProzedur,
+    SchwarzsLochTyp,
+    build_schwarzes_loch_senat,
+    EreignishorizontGeltung,
+    EreignishorizontNorm,
+    EreignishorizontNormEintrag,
+    EreignishorizontProzedur,
+    EreignishorizontTyp,
+    build_ereignishorizont_norm,
     KausalitaetsGeltung,
     KausalitaetsNorm,
     KausalitaetsProzedur,
@@ -5686,6 +5710,142 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(konvent.begrenzt_line_ids, ("konvent-203-signal-stability-lane",))
         self.assertEqual(konvent.delegiert_line_ids, ("konvent-203-signal-governance-lane",))
         self.assertEqual(konvent.verankert_line_ids, ("konvent-203-signal-expansion-lane",))
+
+    def test_kki_ereignishorizont_norm_builds_gesperrt_schutz_norm(self) -> None:
+        norm = build_ereignishorizont_norm(norm_id="horizont-278-stability")
+        eintrag = next(n for n in norm.normen if n.geltung is EreignishorizontGeltung.GESPERRT)
+
+        self.assertIsInstance(norm, EreignishorizontNorm)
+        self.assertIsInstance(eintrag, EreignishorizontNormEintrag)
+        self.assertEqual(eintrag.ereignishorizont_typ, EreignishorizontTyp.SCHUTZ_HORIZONT)
+        self.assertEqual(eintrag.prozedur, EreignishorizontProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(eintrag.ereignishorizont_tier, 1)
+
+    def test_kki_ereignishorizont_norm_builds_horizontiert_ordnungs_norm(self) -> None:
+        norm = build_ereignishorizont_norm(norm_id="horizont-278-governance")
+        eintrag = next(n for n in norm.normen if n.geltung is EreignishorizontGeltung.HORIZONTIERT)
+
+        self.assertEqual(eintrag.ereignishorizont_typ, EreignishorizontTyp.ORDNUNGS_HORIZONT)
+        self.assertEqual(eintrag.prozedur, EreignishorizontProzedur.REGELPROTOKOLL)
+        self.assertGreater(eintrag.ereignishorizont_weight, 0.0)
+
+    def test_kki_ereignishorizont_norm_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        norm = build_ereignishorizont_norm(norm_id="horizont-278-expansion")
+        eintrag = next(n for n in norm.normen if n.geltung is EreignishorizontGeltung.GRUNDLEGEND_HORIZONTIERT)
+
+        self.assertEqual(eintrag.ereignishorizont_typ, EreignishorizontTyp.SOUVERAENITAETS_HORIZONT)
+        self.assertEqual(eintrag.prozedur, EreignishorizontProzedur.PLENARPROTOKOLL)
+        self.assertTrue(eintrag.canonical)
+
+    def test_kki_ereignishorizont_norm_aggregates_norm_signal(self) -> None:
+        norm = build_ereignishorizont_norm(norm_id="horizont-278-signal")
+
+        self.assertEqual(norm.norm_signal.status, "norm-gesperrt")
+        self.assertEqual(norm.gesperrt_norm_ids, ("horizont-278-signal-stability-lane",))
+        self.assertEqual(norm.horizontiert_norm_ids, ("horizont-278-signal-governance-lane",))
+        self.assertEqual(norm.grundlegend_norm_ids, ("horizont-278-signal-expansion-lane",))
+
+    def test_kki_schwarzes_loch_senat_builds_gesperrt_schutz_norm(self) -> None:
+        senat = build_schwarzes_loch_senat(senat_id="senat-277-stability")
+        norm = next(n for n in senat.normen if n.geltung is SchwarzsLochGeltung.GESPERRT)
+
+        self.assertIsInstance(senat, SchwarzeLoechSenat)
+        self.assertIsInstance(norm, SchwarzsLochNorm)
+        self.assertEqual(norm.schwarzes_loch_typ, SchwarzsLochTyp.SCHUTZ_SCHWARZES_LOCH)
+        self.assertEqual(norm.prozedur, SchwarzsLochProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.schwarzes_loch_tier, 1)
+
+    def test_kki_schwarzes_loch_senat_builds_absorbiert_ordnungs_norm(self) -> None:
+        senat = build_schwarzes_loch_senat(senat_id="senat-277-governance")
+        norm = next(n for n in senat.normen if n.geltung is SchwarzsLochGeltung.ABSORBIERT)
+
+        self.assertEqual(norm.schwarzes_loch_typ, SchwarzsLochTyp.ORDNUNGS_SCHWARZES_LOCH)
+        self.assertEqual(norm.prozedur, SchwarzsLochProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.schwarzes_loch_weight, 0.0)
+
+    def test_kki_schwarzes_loch_senat_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        senat = build_schwarzes_loch_senat(senat_id="senat-277-expansion")
+        norm = next(n for n in senat.normen if n.geltung is SchwarzsLochGeltung.GRUNDLEGEND_ABSORBIERT)
+
+        self.assertEqual(norm.schwarzes_loch_typ, SchwarzsLochTyp.SOUVERAENITAETS_SCHWARZES_LOCH)
+        self.assertEqual(norm.prozedur, SchwarzsLochProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_schwarzes_loch_senat_aggregates_senat_signal(self) -> None:
+        senat = build_schwarzes_loch_senat(senat_id="senat-277-signal")
+
+        self.assertEqual(senat.senat_signal.status, "senat-gesperrt")
+        self.assertEqual(senat.gesperrt_norm_ids, ("senat-277-signal-stability-lane",))
+        self.assertEqual(senat.absorbiert_norm_ids, ("senat-277-signal-governance-lane",))
+        self.assertEqual(senat.grundlegend_norm_ids, ("senat-277-signal-expansion-lane",))
+
+    def test_kki_singularitaets_manifest_builds_gesperrt_schutz_norm(self) -> None:
+        manifest = build_singularitaets_manifest(manifest_id="manifest-276-stability")
+        norm = next(n for n in manifest.normen if n.geltung is SingularitaetsGeltung.GESPERRT)
+
+        self.assertIsInstance(manifest, SingularitaetsManifest)
+        self.assertIsInstance(norm, SingularitaetsNorm)
+        self.assertEqual(norm.singularitaets_typ, SingularitaetsTyp.SCHUTZ_SINGULARITAET)
+        self.assertEqual(norm.prozedur, SingularitaetsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.singularitaets_tier, 1)
+
+    def test_kki_singularitaets_manifest_builds_singulaer_ordnungs_norm(self) -> None:
+        manifest = build_singularitaets_manifest(manifest_id="manifest-276-governance")
+        norm = next(n for n in manifest.normen if n.geltung is SingularitaetsGeltung.SINGULAER)
+
+        self.assertEqual(norm.singularitaets_typ, SingularitaetsTyp.ORDNUNGS_SINGULARITAET)
+        self.assertEqual(norm.prozedur, SingularitaetsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.singularitaets_weight, 0.0)
+
+    def test_kki_singularitaets_manifest_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        manifest = build_singularitaets_manifest(manifest_id="manifest-276-expansion")
+        norm = next(n for n in manifest.normen if n.geltung is SingularitaetsGeltung.GRUNDLEGEND_SINGULAER)
+
+        self.assertEqual(norm.singularitaets_typ, SingularitaetsTyp.SOUVERAENITAETS_SINGULARITAET)
+        self.assertEqual(norm.prozedur, SingularitaetsProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_singularitaets_manifest_aggregates_manifest_signal(self) -> None:
+        manifest = build_singularitaets_manifest(manifest_id="manifest-276-signal")
+
+        self.assertEqual(manifest.manifest_signal.status, "manifest-gesperrt")
+        self.assertEqual(manifest.gesperrt_norm_ids, ("manifest-276-signal-stability-lane",))
+        self.assertEqual(manifest.singulaer_norm_ids, ("manifest-276-signal-governance-lane",))
+        self.assertEqual(manifest.grundlegend_norm_ids, ("manifest-276-signal-expansion-lane",))
+
+    def test_kki_kruemmungs_pakt_builds_gesperrt_schutz_norm(self) -> None:
+        pakt = build_kruemmungs_pakt(pakt_id="pakt-275-stability")
+        norm = next(n for n in pakt.normen if n.geltung is KruemmungsGeltung.GESPERRT)
+
+        self.assertIsInstance(pakt, KruemmungsPakt)
+        self.assertIsInstance(norm, KruemmungsNorm)
+        self.assertEqual(norm.kruemmungs_typ, KruemmungsTyp.SCHUTZ_KRUEMMUNG)
+        self.assertEqual(norm.prozedur, KruemmungsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.kruemmungs_tier, 1)
+
+    def test_kki_kruemmungs_pakt_builds_gekruemmt_ordnungs_norm(self) -> None:
+        pakt = build_kruemmungs_pakt(pakt_id="pakt-275-governance")
+        norm = next(n for n in pakt.normen if n.geltung is KruemmungsGeltung.GEKRUEMMT)
+
+        self.assertEqual(norm.kruemmungs_typ, KruemmungsTyp.ORDNUNGS_KRUEMMUNG)
+        self.assertEqual(norm.prozedur, KruemmungsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.kruemmungs_weight, 0.0)
+
+    def test_kki_kruemmungs_pakt_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        pakt = build_kruemmungs_pakt(pakt_id="pakt-275-expansion")
+        norm = next(n for n in pakt.normen if n.geltung is KruemmungsGeltung.GRUNDLEGEND_GEKRUEMMT)
+
+        self.assertEqual(norm.kruemmungs_typ, KruemmungsTyp.SOUVERAENITAETS_KRUEMMUNG)
+        self.assertEqual(norm.prozedur, KruemmungsProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_kruemmungs_pakt_aggregates_pakt_signal(self) -> None:
+        pakt = build_kruemmungs_pakt(pakt_id="pakt-275-signal")
+
+        self.assertEqual(pakt.pakt_signal.status, "pakt-gesperrt")
+        self.assertEqual(pakt.gesperrt_norm_ids, ("pakt-275-signal-stability-lane",))
+        self.assertEqual(pakt.gekruemmt_norm_ids, ("pakt-275-signal-governance-lane",))
+        self.assertEqual(pakt.grundlegend_norm_ids, ("pakt-275-signal-expansion-lane",))
 
     def test_kki_gravitations_kodex_builds_gesperrt_schutz_norm(self) -> None:
         kodex = build_gravitations_kodex(kodex_id="kodex-274-stability")

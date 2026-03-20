@@ -373,6 +373,30 @@ from kki import (
     QuantenVerfassungsProzedur,
     QuantenVerfassungsTyp,
     build_quanten_verfassung,
+    RelativitaetsFeld,
+    RelativitaetsGeltung,
+    RelativitaetsNorm,
+    RelativitaetsProzedur,
+    RelativitaetsTyp,
+    build_relativitaets_feld,
+    RaumzeitGeltung,
+    RaumzeitNorm,
+    RaumzeitProzedur,
+    RaumzeitRang,
+    RaumzeitRegister,
+    build_raumzeit_register,
+    LichtgeschwindigkeitsCharta,
+    LichtgeschwindigkeitsGeltung,
+    LichtgeschwindigkeitsNorm,
+    LichtgeschwindigkeitsProzedur,
+    LichtgeschwindigkeitsTyp,
+    build_lichtgeschwindigkeits_charta,
+    GravitationsGeltung,
+    GravitationsKodex,
+    GravitationsNorm,
+    GravitationsProzedur,
+    GravitationsTyp,
+    build_gravitations_kodex,
     KausalitaetsGeltung,
     KausalitaetsNorm,
     KausalitaetsProzedur,
@@ -5662,6 +5686,142 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(konvent.begrenzt_line_ids, ("konvent-203-signal-stability-lane",))
         self.assertEqual(konvent.delegiert_line_ids, ("konvent-203-signal-governance-lane",))
         self.assertEqual(konvent.verankert_line_ids, ("konvent-203-signal-expansion-lane",))
+
+    def test_kki_gravitations_kodex_builds_gesperrt_schutz_norm(self) -> None:
+        kodex = build_gravitations_kodex(kodex_id="kodex-274-stability")
+        norm = next(n for n in kodex.normen if n.geltung is GravitationsGeltung.GESPERRT)
+
+        self.assertIsInstance(kodex, GravitationsKodex)
+        self.assertIsInstance(norm, GravitationsNorm)
+        self.assertEqual(norm.gravitations_typ, GravitationsTyp.SCHUTZ_GRAVITATION)
+        self.assertEqual(norm.prozedur, GravitationsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.gravitations_tier, 1)
+
+    def test_kki_gravitations_kodex_builds_gravitiert_ordnungs_norm(self) -> None:
+        kodex = build_gravitations_kodex(kodex_id="kodex-274-governance")
+        norm = next(n for n in kodex.normen if n.geltung is GravitationsGeltung.GRAVITIERT)
+
+        self.assertEqual(norm.gravitations_typ, GravitationsTyp.ORDNUNGS_GRAVITATION)
+        self.assertEqual(norm.prozedur, GravitationsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.gravitations_weight, 0.0)
+
+    def test_kki_gravitations_kodex_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        kodex = build_gravitations_kodex(kodex_id="kodex-274-expansion")
+        norm = next(n for n in kodex.normen if n.geltung is GravitationsGeltung.GRUNDLEGEND_GRAVITIERT)
+
+        self.assertEqual(norm.gravitations_typ, GravitationsTyp.SOUVERAENITAETS_GRAVITATION)
+        self.assertEqual(norm.prozedur, GravitationsProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_gravitations_kodex_aggregates_kodex_signal(self) -> None:
+        kodex = build_gravitations_kodex(kodex_id="kodex-274-signal")
+
+        self.assertEqual(kodex.kodex_signal.status, "kodex-gesperrt")
+        self.assertEqual(kodex.gesperrt_norm_ids, ("kodex-274-signal-stability-lane",))
+        self.assertEqual(kodex.gravitiert_norm_ids, ("kodex-274-signal-governance-lane",))
+        self.assertEqual(kodex.grundlegend_norm_ids, ("kodex-274-signal-expansion-lane",))
+
+    def test_kki_lichtgeschwindigkeits_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_lichtgeschwindigkeits_charta(charta_id="charta-273-stability")
+        norm = next(n for n in charta.normen if n.geltung is LichtgeschwindigkeitsGeltung.GESPERRT)
+
+        self.assertIsInstance(charta, LichtgeschwindigkeitsCharta)
+        self.assertIsInstance(norm, LichtgeschwindigkeitsNorm)
+        self.assertEqual(norm.lichtgeschwindigkeits_typ, LichtgeschwindigkeitsTyp.SCHUTZ_LICHT)
+        self.assertEqual(norm.prozedur, LichtgeschwindigkeitsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.lichtgeschwindigkeits_tier, 1)
+
+    def test_kki_lichtgeschwindigkeits_charta_builds_lichtschnell_ordnungs_norm(self) -> None:
+        charta = build_lichtgeschwindigkeits_charta(charta_id="charta-273-governance")
+        norm = next(n for n in charta.normen if n.geltung is LichtgeschwindigkeitsGeltung.LICHTSCHNELL)
+
+        self.assertEqual(norm.lichtgeschwindigkeits_typ, LichtgeschwindigkeitsTyp.ORDNUNGS_LICHT)
+        self.assertEqual(norm.prozedur, LichtgeschwindigkeitsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.lichtgeschwindigkeits_weight, 0.0)
+
+    def test_kki_lichtgeschwindigkeits_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_lichtgeschwindigkeits_charta(charta_id="charta-273-expansion")
+        norm = next(n for n in charta.normen if n.geltung is LichtgeschwindigkeitsGeltung.GRUNDLEGEND_LICHTSCHNELL)
+
+        self.assertEqual(norm.lichtgeschwindigkeits_typ, LichtgeschwindigkeitsTyp.SOUVERAENITAETS_LICHT)
+        self.assertEqual(norm.prozedur, LichtgeschwindigkeitsProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_lichtgeschwindigkeits_charta_aggregates_charta_signal(self) -> None:
+        charta = build_lichtgeschwindigkeits_charta(charta_id="charta-273-signal")
+
+        self.assertEqual(charta.charta_signal.status, "charta-gesperrt")
+        self.assertEqual(charta.gesperrt_norm_ids, ("charta-273-signal-stability-lane",))
+        self.assertEqual(charta.lichtschnell_norm_ids, ("charta-273-signal-governance-lane",))
+        self.assertEqual(charta.grundlegend_norm_ids, ("charta-273-signal-expansion-lane",))
+
+    def test_kki_raumzeit_register_builds_gesperrt_schutz_norm(self) -> None:
+        register = build_raumzeit_register(register_id="register-272-stability")
+        norm = next(n for n in register.normen if n.geltung is RaumzeitGeltung.GESPERRT)
+
+        self.assertIsInstance(register, RaumzeitRegister)
+        self.assertIsInstance(norm, RaumzeitNorm)
+        self.assertEqual(norm.raumzeit_rang, RaumzeitRang.SCHUTZ_RAUMZEIT)
+        self.assertEqual(norm.prozedur, RaumzeitProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.raumzeit_tier, 1)
+
+    def test_kki_raumzeit_register_builds_raumzeitlich_ordnungs_norm(self) -> None:
+        register = build_raumzeit_register(register_id="register-272-governance")
+        norm = next(n for n in register.normen if n.geltung is RaumzeitGeltung.RAUMZEITLICH)
+
+        self.assertEqual(norm.raumzeit_rang, RaumzeitRang.ORDNUNGS_RAUMZEIT)
+        self.assertEqual(norm.prozedur, RaumzeitProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.raumzeit_weight, 0.0)
+
+    def test_kki_raumzeit_register_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        register = build_raumzeit_register(register_id="register-272-expansion")
+        norm = next(n for n in register.normen if n.geltung is RaumzeitGeltung.GRUNDLEGEND_RAUMZEITLICH)
+
+        self.assertEqual(norm.raumzeit_rang, RaumzeitRang.SOUVERAENITAETS_RAUMZEIT)
+        self.assertEqual(norm.prozedur, RaumzeitProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_raumzeit_register_aggregates_register_signal(self) -> None:
+        register = build_raumzeit_register(register_id="register-272-signal")
+
+        self.assertEqual(register.register_signal.status, "register-gesperrt")
+        self.assertEqual(register.gesperrt_norm_ids, ("register-272-signal-stability-lane",))
+        self.assertEqual(register.raumzeitlich_norm_ids, ("register-272-signal-governance-lane",))
+        self.assertEqual(register.grundlegend_norm_ids, ("register-272-signal-expansion-lane",))
+
+    def test_kki_relativitaets_feld_builds_gesperrt_schutz_norm(self) -> None:
+        feld = build_relativitaets_feld(feld_id="feld-271-stability")
+        norm = next(n for n in feld.normen if n.geltung is RelativitaetsGeltung.GESPERRT)
+
+        self.assertIsInstance(feld, RelativitaetsFeld)
+        self.assertIsInstance(norm, RelativitaetsNorm)
+        self.assertEqual(norm.relativitaets_typ, RelativitaetsTyp.SCHUTZ_RELATIVITAET)
+        self.assertEqual(norm.prozedur, RelativitaetsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.relativitaets_tier, 1)
+
+    def test_kki_relativitaets_feld_builds_relativ_ordnungs_norm(self) -> None:
+        feld = build_relativitaets_feld(feld_id="feld-271-governance")
+        norm = next(n for n in feld.normen if n.geltung is RelativitaetsGeltung.RELATIV)
+
+        self.assertEqual(norm.relativitaets_typ, RelativitaetsTyp.ORDNUNGS_RELATIVITAET)
+        self.assertEqual(norm.prozedur, RelativitaetsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.relativitaets_weight, 0.0)
+
+    def test_kki_relativitaets_feld_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        feld = build_relativitaets_feld(feld_id="feld-271-expansion")
+        norm = next(n for n in feld.normen if n.geltung is RelativitaetsGeltung.GRUNDLEGEND_RELATIV)
+
+        self.assertEqual(norm.relativitaets_typ, RelativitaetsTyp.SOUVERAENITAETS_RELATIVITAET)
+        self.assertEqual(norm.prozedur, RelativitaetsProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_relativitaets_feld_aggregates_feld_signal(self) -> None:
+        feld = build_relativitaets_feld(feld_id="feld-271-signal")
+
+        self.assertEqual(feld.feld_signal.status, "feld-gesperrt")
+        self.assertEqual(feld.gesperrt_norm_ids, ("feld-271-signal-stability-lane",))
+        self.assertEqual(feld.relativ_norm_ids, ("feld-271-signal-governance-lane",))
+        self.assertEqual(feld.grundlegend_norm_ids, ("feld-271-signal-expansion-lane",))
 
     def test_kki_quanten_verfassung_builds_gesperrt_schutz_norm(self) -> None:
         verfassung = build_quanten_verfassung(verfassung_id="verfassung-270-stability")

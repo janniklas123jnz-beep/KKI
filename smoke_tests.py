@@ -1057,6 +1057,30 @@ from kki import (
     HodgkinHuxleyProzedur,
     HodgkinHuxleyTyp,
     build_hodgkin_huxley_kodex,
+    SynaptischePlastizitaetGeltung,
+    SynaptischePlastizitaetNorm,
+    SynaptischePlastizitaetPakt,
+    SynaptischePlastizitaetProzedur,
+    SynaptischePlastizitaetTyp,
+    build_synaptische_plastizitaet_pakt,
+    EvolutionGeltung,
+    EvolutionManifest,
+    EvolutionNorm,
+    EvolutionProzedur,
+    EvolutionTyp,
+    build_evolution_manifest,
+    HomoostaseGeltung,
+    HomoostaseNorm,
+    HomoostaseSenat,
+    HomoostaseTyp,
+    HomoostasProzedur,
+    build_homoostase_senat,
+    LotkaVolterraNormEintrag,
+    LotkaVolterraNormGeltung,
+    LotkaVolterraNormProzedur,
+    LotkaVolterraNormSatz,
+    LotkaVolterraNormTyp,
+    build_lotka_volterra_norm,
     KausalitaetsGeltung,
     KausalitaetsNorm,
     KausalitaetsProzedur,
@@ -14646,6 +14670,146 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(kodex.gesperrt_norm_ids, ("kodex-384-signal-stability-lane",))
         self.assertEqual(kodex.aktionspotentiell_norm_ids, ("kodex-384-signal-governance-lane",))
         self.assertEqual(kodex.grundlegend_norm_ids, ("kodex-384-signal-expansion-lane",))
+
+    # #385 SynaptischePlastizitaetPakt
+    def test_kki_synaptische_plastizitaet_pakt_builds_gesperrt_schutz_norm(self) -> None:
+        pakt = build_synaptische_plastizitaet_pakt(pakt_id="pakt-385-stability")
+        norm = next(n for n in pakt.normen if n.geltung is SynaptischePlastizitaetGeltung.GESPERRT)
+
+        self.assertIsInstance(pakt, SynaptischePlastizitaetPakt)
+        self.assertIsInstance(norm, SynaptischePlastizitaetNorm)
+        self.assertEqual(norm.synaptische_plastizitaet_typ, SynaptischePlastizitaetTyp.SCHUTZ_SYNAPTISCHE_PLASTIZITAET)
+        self.assertEqual(norm.prozedur, SynaptischePlastizitaetProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.synaptische_plastizitaet_tier, 1)
+
+    def test_kki_synaptische_plastizitaet_pakt_builds_synaptischplastisch_ordnungs_norm(self) -> None:
+        pakt = build_synaptische_plastizitaet_pakt(pakt_id="pakt-385-governance")
+        norm = next(n for n in pakt.normen if n.geltung is SynaptischePlastizitaetGeltung.SYNAPTISCHPLASTISCH)
+
+        self.assertEqual(norm.synaptische_plastizitaet_typ, SynaptischePlastizitaetTyp.ORDNUNGS_SYNAPTISCHE_PLASTIZITAET)
+        self.assertEqual(norm.prozedur, SynaptischePlastizitaetProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.synaptische_plastizitaet_weight, 0.0)
+
+    def test_kki_synaptische_plastizitaet_pakt_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        pakt = build_synaptische_plastizitaet_pakt(pakt_id="pakt-385-expansion")
+        norm = next(n for n in pakt.normen if n.geltung is SynaptischePlastizitaetGeltung.GRUNDLEGEND_SYNAPTISCHPLASTISCH)
+
+        self.assertEqual(norm.synaptische_plastizitaet_typ, SynaptischePlastizitaetTyp.SOUVERAENITAETS_SYNAPTISCHE_PLASTIZITAET)
+        self.assertEqual(norm.prozedur, SynaptischePlastizitaetProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.synaptische_plastizitaet_weight, 0.0)
+
+    def test_kki_synaptische_plastizitaet_pakt_aggregates_pakt_signal(self) -> None:
+        pakt = build_synaptische_plastizitaet_pakt(pakt_id="pakt-385-signal")
+
+        self.assertEqual(pakt.pakt_signal.status, "pakt-gesperrt")
+        self.assertEqual(pakt.gesperrt_norm_ids, ("pakt-385-signal-stability-lane",))
+        self.assertEqual(pakt.synaptischplastisch_norm_ids, ("pakt-385-signal-governance-lane",))
+        self.assertEqual(pakt.grundlegend_norm_ids, ("pakt-385-signal-expansion-lane",))
+
+    # #386 EvolutionManifest
+    def test_kki_evolution_manifest_builds_gesperrt_schutz_norm(self) -> None:
+        manifest = build_evolution_manifest(manifest_id="manifest-386-stability")
+        norm = next(n for n in manifest.normen if n.geltung is EvolutionGeltung.GESPERRT)
+
+        self.assertIsInstance(manifest, EvolutionManifest)
+        self.assertIsInstance(norm, EvolutionNorm)
+        self.assertEqual(norm.evolution_typ, EvolutionTyp.SCHUTZ_EVOLUTION)
+        self.assertEqual(norm.prozedur, EvolutionProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.evolution_tier, 1)
+
+    def test_kki_evolution_manifest_builds_evolutionaer_ordnungs_norm(self) -> None:
+        manifest = build_evolution_manifest(manifest_id="manifest-386-governance")
+        norm = next(n for n in manifest.normen if n.geltung is EvolutionGeltung.EVOLUTIONAER)
+
+        self.assertEqual(norm.evolution_typ, EvolutionTyp.ORDNUNGS_EVOLUTION)
+        self.assertEqual(norm.prozedur, EvolutionProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.evolution_weight, 0.0)
+
+    def test_kki_evolution_manifest_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        manifest = build_evolution_manifest(manifest_id="manifest-386-expansion")
+        norm = next(n for n in manifest.normen if n.geltung is EvolutionGeltung.GRUNDLEGEND_EVOLUTIONAER)
+
+        self.assertEqual(norm.evolution_typ, EvolutionTyp.SOUVERAENITAETS_EVOLUTION)
+        self.assertEqual(norm.prozedur, EvolutionProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.evolution_weight, 0.0)
+
+    def test_kki_evolution_manifest_aggregates_manifest_signal(self) -> None:
+        manifest = build_evolution_manifest(manifest_id="manifest-386-signal")
+
+        self.assertEqual(manifest.manifest_signal.status, "manifest-gesperrt")
+        self.assertEqual(manifest.gesperrt_norm_ids, ("manifest-386-signal-stability-lane",))
+        self.assertEqual(manifest.evolutionaer_norm_ids, ("manifest-386-signal-governance-lane",))
+        self.assertEqual(manifest.grundlegend_norm_ids, ("manifest-386-signal-expansion-lane",))
+
+    # #387 HomoostaseSenat
+    def test_kki_homoostase_senat_builds_gesperrt_schutz_norm(self) -> None:
+        senat = build_homoostase_senat(senat_id="senat-387-stability")
+        norm = next(n for n in senat.normen if n.geltung is HomoostaseGeltung.GESPERRT)
+
+        self.assertIsInstance(senat, HomoostaseSenat)
+        self.assertIsInstance(norm, HomoostaseNorm)
+        self.assertEqual(norm.homoostase_typ, HomoostaseTyp.SCHUTZ_HOMOOSTASE)
+        self.assertEqual(norm.prozedur, HomoostasProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.homoostase_tier, 1)
+
+    def test_kki_homoostase_senat_builds_homoostatisch_ordnungs_norm(self) -> None:
+        senat = build_homoostase_senat(senat_id="senat-387-governance")
+        norm = next(n for n in senat.normen if n.geltung is HomoostaseGeltung.HOMOOSTATISCH)
+
+        self.assertEqual(norm.homoostase_typ, HomoostaseTyp.ORDNUNGS_HOMOOSTASE)
+        self.assertEqual(norm.prozedur, HomoostasProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.homoostase_weight, 0.0)
+
+    def test_kki_homoostase_senat_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        senat = build_homoostase_senat(senat_id="senat-387-expansion")
+        norm = next(n for n in senat.normen if n.geltung is HomoostaseGeltung.GRUNDLEGEND_HOMOOSTATISCH)
+
+        self.assertEqual(norm.homoostase_typ, HomoostaseTyp.SOUVERAENITAETS_HOMOOSTASE)
+        self.assertEqual(norm.prozedur, HomoostasProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.homoostase_weight, 0.0)
+
+    def test_kki_homoostase_senat_aggregates_senat_signal(self) -> None:
+        senat = build_homoostase_senat(senat_id="senat-387-signal")
+
+        self.assertEqual(senat.senat_signal.status, "senat-gesperrt")
+        self.assertEqual(senat.gesperrt_norm_ids, ("senat-387-signal-stability-lane",))
+        self.assertEqual(senat.homoostatisch_norm_ids, ("senat-387-signal-governance-lane",))
+        self.assertEqual(senat.grundlegend_norm_ids, ("senat-387-signal-expansion-lane",))
+
+    # #388 LotkaVolterraNorm (*_norm)
+    def test_kki_lotka_volterra_norm_builds_gesperrt_schutz_eintrag(self) -> None:
+        satz = build_lotka_volterra_norm(norm_id="norm-388-stability")
+        eintrag = next(n for n in satz.normen if n.geltung is LotkaVolterraNormGeltung.GESPERRT)
+
+        self.assertIsInstance(satz, LotkaVolterraNormSatz)
+        self.assertIsInstance(eintrag, LotkaVolterraNormEintrag)
+        self.assertEqual(eintrag.lotka_volterra_norm_typ, LotkaVolterraNormTyp.SCHUTZ_LOTKA_VOLTERRA_NORM)
+        self.assertEqual(eintrag.prozedur, LotkaVolterraNormProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(eintrag.lotka_volterra_norm_tier, 1)
+
+    def test_kki_lotka_volterra_norm_builds_lotkavolterrabeschr_ordnungs_eintrag(self) -> None:
+        satz = build_lotka_volterra_norm(norm_id="norm-388-governance")
+        eintrag = next(n for n in satz.normen if n.geltung is LotkaVolterraNormGeltung.LOTKAVOLTERRABESCHR)
+
+        self.assertEqual(eintrag.lotka_volterra_norm_typ, LotkaVolterraNormTyp.ORDNUNGS_LOTKA_VOLTERRA_NORM)
+        self.assertEqual(eintrag.prozedur, LotkaVolterraNormProzedur.REGELPROTOKOLL)
+        self.assertGreater(eintrag.lotka_volterra_norm_weight, 0.0)
+
+    def test_kki_lotka_volterra_norm_builds_grundlegend_souveraenitaets_eintrag(self) -> None:
+        satz = build_lotka_volterra_norm(norm_id="norm-388-expansion")
+        eintrag = next(n for n in satz.normen if n.geltung is LotkaVolterraNormGeltung.GRUNDLEGEND_LOTKAVOLTERRABESCHR)
+
+        self.assertEqual(eintrag.lotka_volterra_norm_typ, LotkaVolterraNormTyp.SOUVERAENITAETS_LOTKA_VOLTERRA_NORM)
+        self.assertEqual(eintrag.prozedur, LotkaVolterraNormProzedur.PLENARPROTOKOLL)
+        self.assertGreater(eintrag.lotka_volterra_norm_weight, 0.0)
+
+    def test_kki_lotka_volterra_norm_aggregates_norm_signal(self) -> None:
+        satz = build_lotka_volterra_norm(norm_id="norm-388-signal")
+
+        self.assertEqual(satz.norm_signal.status, "norm-gesperrt")
+        self.assertEqual(satz.gesperrt_norm_ids, ("norm-388-signal-stability-lane",))
+        self.assertEqual(satz.lotkavolterrabeschr_norm_ids, ("norm-388-signal-governance-lane",))
+        self.assertEqual(satz.grundlegend_norm_ids, ("norm-388-signal-expansion-lane",))
 
 
 if __name__ == "__main__":

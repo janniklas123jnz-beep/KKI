@@ -1291,6 +1291,22 @@ from .schwarzes_loch_norm import (
     SchwarzerLochNormTyp,
     build_schwarzes_loch_norm,
 )
+from .hertzsprung_russell_charta import (
+    HertzsprungRussellCharta,
+    HertzsprungRussellGeltung,
+    HertzsprungRussellNorm,
+    HertzsprungRussellProzedur,
+    HertzsprungRussellTyp,
+    build_hertzsprung_russell_charta,
+)
+from .astrophysik_verfassung import (
+    AstrophysikVerfassung,
+    AstrophysikVerfassungsGeltung,
+    AstrophysikVerfassungsNorm,
+    AstrophysikVerfassungsProzedur,
+    AstrophysikVerfassungsTyp,
+    build_astrophysik_verfassung,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -2463,6 +2479,8 @@ __all__ = [
     "build_supernova_manifest",
     "build_neutronenstern_senat",
     "build_schwarzes_loch_norm",
+    "build_hertzsprung_russell_charta",
+    "build_astrophysik_verfassung",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

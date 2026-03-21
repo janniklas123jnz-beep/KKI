@@ -781,6 +781,18 @@ from kki import (
     SchwarzerLochNormSatz,
     SchwarzerLochNormTyp,
     build_schwarzes_loch_norm,
+    HertzsprungRussellCharta,
+    HertzsprungRussellGeltung,
+    HertzsprungRussellNorm,
+    HertzsprungRussellProzedur,
+    HertzsprungRussellTyp,
+    build_hertzsprung_russell_charta,
+    AstrophysikVerfassung,
+    AstrophysikVerfassungsGeltung,
+    AstrophysikVerfassungsNorm,
+    AstrophysikVerfassungsProzedur,
+    AstrophysikVerfassungsTyp,
+    build_astrophysik_verfassung,
     KausalitaetsGeltung,
     KausalitaetsNorm,
     KausalitaetsProzedur,
@@ -8014,6 +8026,78 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(normsatz.gesperrt_norm_ids, ("schwarzes-loch-338-signal-stability-lane",))
         self.assertEqual(normsatz.horizontgebunden_norm_ids, ("schwarzes-loch-338-signal-governance-lane",))
         self.assertEqual(normsatz.grundlegend_norm_ids, ("schwarzes-loch-338-signal-expansion-lane",))
+
+    # #339 HertzsprungRussellCharta
+
+    def test_kki_hertzsprung_russell_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_hertzsprung_russell_charta(charta_id="charta-339-stability")
+        norm = next(n for n in charta.normen if n.geltung is HertzsprungRussellGeltung.GESPERRT)
+
+        self.assertIsInstance(charta, HertzsprungRussellCharta)
+        self.assertIsInstance(norm, HertzsprungRussellNorm)
+        self.assertEqual(norm.hertzsprung_russell_typ, HertzsprungRussellTyp.SCHUTZ_HERTZSPRUNG_RUSSELL)
+        self.assertEqual(norm.prozedur, HertzsprungRussellProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.hertzsprung_russell_tier, 1)
+
+    def test_kki_hertzsprung_russell_charta_builds_hrdiagrammiert_ordnungs_norm(self) -> None:
+        charta = build_hertzsprung_russell_charta(charta_id="charta-339-governance")
+        norm = next(n for n in charta.normen if n.geltung is HertzsprungRussellGeltung.HRDIAGRAMMIERT)
+
+        self.assertEqual(norm.hertzsprung_russell_typ, HertzsprungRussellTyp.ORDNUNGS_HERTZSPRUNG_RUSSELL)
+        self.assertEqual(norm.prozedur, HertzsprungRussellProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.hertzsprung_russell_weight, 0.0)
+
+    def test_kki_hertzsprung_russell_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_hertzsprung_russell_charta(charta_id="charta-339-expansion")
+        norm = next(n for n in charta.normen if n.geltung is HertzsprungRussellGeltung.GRUNDLEGEND_HRDIAGRAMMIERT)
+
+        self.assertEqual(norm.hertzsprung_russell_typ, HertzsprungRussellTyp.SOUVERAENITAETS_HERTZSPRUNG_RUSSELL)
+        self.assertEqual(norm.prozedur, HertzsprungRussellProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.hertzsprung_russell_weight, 0.0)
+
+    def test_kki_hertzsprung_russell_charta_aggregates_charta_signal(self) -> None:
+        charta = build_hertzsprung_russell_charta(charta_id="charta-339-signal")
+
+        self.assertEqual(charta.charta_signal.status, "charta-gesperrt")
+        self.assertEqual(charta.gesperrt_norm_ids, ("charta-339-signal-stability-lane",))
+        self.assertEqual(charta.hrdiagrammiert_norm_ids, ("charta-339-signal-governance-lane",))
+        self.assertEqual(charta.grundlegend_norm_ids, ("charta-339-signal-expansion-lane",))
+
+    # #340 AstrophysikVerfassung (Block-Krone)
+
+    def test_kki_astrophysik_verfassung_builds_gesperrt_schutz_norm(self) -> None:
+        verfassung = build_astrophysik_verfassung(verfassung_id="verfassung-340-stability")
+        norm = next(n for n in verfassung.normen if n.geltung is AstrophysikVerfassungsGeltung.GESPERRT)
+
+        self.assertIsInstance(verfassung, AstrophysikVerfassung)
+        self.assertIsInstance(norm, AstrophysikVerfassungsNorm)
+        self.assertEqual(norm.astrophysik_verfassungs_typ, AstrophysikVerfassungsTyp.SCHUTZ_ASTROPHYSIKVERFASSUNG)
+        self.assertEqual(norm.prozedur, AstrophysikVerfassungsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.astrophysik_verfassungs_tier, 1)
+
+    def test_kki_astrophysik_verfassung_builds_astrophysikverfasst_ordnungs_norm(self) -> None:
+        verfassung = build_astrophysik_verfassung(verfassung_id="verfassung-340-governance")
+        norm = next(n for n in verfassung.normen if n.geltung is AstrophysikVerfassungsGeltung.ASTROPHYSIKVERFASST)
+
+        self.assertEqual(norm.astrophysik_verfassungs_typ, AstrophysikVerfassungsTyp.ORDNUNGS_ASTROPHYSIKVERFASSUNG)
+        self.assertEqual(norm.prozedur, AstrophysikVerfassungsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.astrophysik_verfassungs_weight, 0.0)
+
+    def test_kki_astrophysik_verfassung_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        verfassung = build_astrophysik_verfassung(verfassung_id="verfassung-340-expansion")
+        norm = next(n for n in verfassung.normen if n.geltung is AstrophysikVerfassungsGeltung.GRUNDLEGEND_ASTROPHYSIKVERFASST)
+
+        self.assertEqual(norm.astrophysik_verfassungs_typ, AstrophysikVerfassungsTyp.SOUVERAENITAETS_ASTROPHYSIKVERFASSUNG)
+        self.assertEqual(norm.prozedur, AstrophysikVerfassungsProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.astrophysik_verfassungs_weight, 0.0)
+
+    def test_kki_astrophysik_verfassung_aggregates_verfassung_signal(self) -> None:
+        verfassung = build_astrophysik_verfassung(verfassung_id="verfassung-340-signal")
+
+        self.assertEqual(verfassung.verfassung_signal.status, "verfassung-gesperrt")
+        self.assertEqual(verfassung.gesperrt_norm_ids, ("verfassung-340-signal-stability-lane",))
+        self.assertEqual(verfassung.astrophysikverfasst_norm_ids, ("verfassung-340-signal-governance-lane",))
+        self.assertEqual(verfassung.grundlegend_norm_ids, ("verfassung-340-signal-expansion-lane",))
 
     def test_kki_waermestrahlung_charta_builds_gesperrt_schutz_norm(self) -> None:
         charta = build_waermestrahlung_charta(charta_id="charta-289-stability")

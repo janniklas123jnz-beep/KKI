@@ -937,6 +937,30 @@ from kki import (
     FraktalProzedur,
     FraktalTyp,
     build_fraktal_charta,
+    StrangeAttraktorGeltung,
+    StrangeAttraktorNorm,
+    StrangeAttraktorPakt,
+    StrangeAttraktorProzedur,
+    StrangeAttraktorTyp,
+    build_strange_attraktor_pakt,
+    EmergenzGeltung,
+    EmergenzNorm,
+    EmergenzProzedur,
+    EmergenzSenat,
+    EmergenzTyp,
+    build_emergenz_senat,
+    PerkolationsNormEintrag,
+    PerkolationsNormGeltung,
+    PerkolationsNormProzedur,
+    PerkolationsNormSatz,
+    PerkolationsNormTyp,
+    build_perkolations_norm,
+    KomplexitaetsCharta,
+    KomplexitaetsGeltung,
+    KomplexitaetsNorm,
+    KomplexitaetsProzedur,
+    KomplexitaetsTyp,
+    build_komplexitaets_charta,
     KausalitaetsGeltung,
     KausalitaetsNorm,
     KausalitaetsProzedur,
@@ -13822,6 +13846,147 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(charta.gesperrt_norm_ids, ("charta-364-signal-stability-lane",))
         self.assertEqual(charta.fraktal_norm_ids, ("charta-364-signal-governance-lane",))
         self.assertEqual(charta.grundlegend_norm_ids, ("charta-364-signal-expansion-lane",))
+
+
+    # #365 StrangeAttraktorPakt
+    def test_kki_strange_attraktor_pakt_builds_gesperrt_schutz_norm(self) -> None:
+        pakt = build_strange_attraktor_pakt(pakt_id="pakt-365-stability")
+        norm = next(n for n in pakt.normen if n.geltung is StrangeAttraktorGeltung.GESPERRT)
+
+        self.assertIsInstance(pakt, StrangeAttraktorPakt)
+        self.assertIsInstance(norm, StrangeAttraktorNorm)
+        self.assertEqual(norm.strange_attraktor_typ, StrangeAttraktorTyp.SCHUTZ_STRANGE_ATTRAKTOR)
+        self.assertEqual(norm.prozedur, StrangeAttraktorProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.strange_attraktor_tier, 1)
+
+    def test_kki_strange_attraktor_pakt_builds_strangeattrahiert_ordnungs_norm(self) -> None:
+        pakt = build_strange_attraktor_pakt(pakt_id="pakt-365-governance")
+        norm = next(n for n in pakt.normen if n.geltung is StrangeAttraktorGeltung.STRANGEATTRAHIERT)
+
+        self.assertEqual(norm.strange_attraktor_typ, StrangeAttraktorTyp.ORDNUNGS_STRANGE_ATTRAKTOR)
+        self.assertEqual(norm.prozedur, StrangeAttraktorProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.strange_attraktor_weight, 0.0)
+
+    def test_kki_strange_attraktor_pakt_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        pakt = build_strange_attraktor_pakt(pakt_id="pakt-365-expansion")
+        norm = next(n for n in pakt.normen if n.geltung is StrangeAttraktorGeltung.GRUNDLEGEND_STRANGEATTRAHIERT)
+
+        self.assertEqual(norm.strange_attraktor_typ, StrangeAttraktorTyp.SOUVERAENITAETS_STRANGE_ATTRAKTOR)
+        self.assertEqual(norm.prozedur, StrangeAttraktorProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.strange_attraktor_weight, 0.0)
+
+    def test_kki_strange_attraktor_pakt_aggregates_pakt_signal(self) -> None:
+        pakt = build_strange_attraktor_pakt(pakt_id="pakt-365-signal")
+
+        self.assertEqual(pakt.pakt_signal.status, "pakt-gesperrt")
+        self.assertEqual(pakt.gesperrt_norm_ids, ("pakt-365-signal-stability-lane",))
+        self.assertEqual(pakt.strangeattrahiert_norm_ids, ("pakt-365-signal-governance-lane",))
+        self.assertEqual(pakt.grundlegend_norm_ids, ("pakt-365-signal-expansion-lane",))
+
+    # #366 EmergenzSenat
+    def test_kki_emergenz_senat_builds_gesperrt_schutz_norm(self) -> None:
+        senat = build_emergenz_senat(senat_id="senat-366-stability")
+        norm = next(n for n in senat.normen if n.geltung is EmergenzGeltung.GESPERRT)
+
+        self.assertIsInstance(senat, EmergenzSenat)
+        self.assertIsInstance(norm, EmergenzNorm)
+        self.assertEqual(norm.emergenz_typ, EmergenzTyp.SCHUTZ_EMERGENZ)
+        self.assertEqual(norm.prozedur, EmergenzProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.emergenz_tier, 1)
+
+    def test_kki_emergenz_senat_builds_emergent_ordnungs_norm(self) -> None:
+        senat = build_emergenz_senat(senat_id="senat-366-governance")
+        norm = next(n for n in senat.normen if n.geltung is EmergenzGeltung.EMERGENT)
+
+        self.assertEqual(norm.emergenz_typ, EmergenzTyp.ORDNUNGS_EMERGENZ)
+        self.assertEqual(norm.prozedur, EmergenzProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.emergenz_weight, 0.0)
+
+    def test_kki_emergenz_senat_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        senat = build_emergenz_senat(senat_id="senat-366-expansion")
+        norm = next(n for n in senat.normen if n.geltung is EmergenzGeltung.GRUNDLEGEND_EMERGENT)
+
+        self.assertEqual(norm.emergenz_typ, EmergenzTyp.SOUVERAENITAETS_EMERGENZ)
+        self.assertEqual(norm.prozedur, EmergenzProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.emergenz_weight, 0.0)
+
+    def test_kki_emergenz_senat_aggregates_senat_signal(self) -> None:
+        senat = build_emergenz_senat(senat_id="senat-366-signal")
+
+        self.assertEqual(senat.senat_signal.status, "senat-gesperrt")
+        self.assertEqual(senat.gesperrt_norm_ids, ("senat-366-signal-stability-lane",))
+        self.assertEqual(senat.emergent_norm_ids, ("senat-366-signal-governance-lane",))
+        self.assertEqual(senat.grundlegend_norm_ids, ("senat-366-signal-expansion-lane",))
+
+    # #367 PerkolationsNorm
+    def test_kki_perkolations_norm_builds_gesperrt_schutz_norm(self) -> None:
+        satz = build_perkolations_norm(norm_id="norm-367-stability")
+        norm = next(n for n in satz.normen if n.geltung is PerkolationsNormGeltung.GESPERRT)
+
+        self.assertIsInstance(satz, PerkolationsNormSatz)
+        self.assertIsInstance(norm, PerkolationsNormEintrag)
+        self.assertEqual(norm.perkolations_norm_typ, PerkolationsNormTyp.SCHUTZ_PERKOLATIONS_NORM)
+        self.assertEqual(norm.prozedur, PerkolationsNormProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.perkolations_norm_tier, 1)
+
+    def test_kki_perkolations_norm_builds_perkolierend_ordnungs_norm(self) -> None:
+        satz = build_perkolations_norm(norm_id="norm-367-governance")
+        norm = next(n for n in satz.normen if n.geltung is PerkolationsNormGeltung.PERKOLIEREND)
+
+        self.assertEqual(norm.perkolations_norm_typ, PerkolationsNormTyp.ORDNUNGS_PERKOLATIONS_NORM)
+        self.assertEqual(norm.prozedur, PerkolationsNormProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.perkolations_norm_weight, 0.0)
+
+    def test_kki_perkolations_norm_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        satz = build_perkolations_norm(norm_id="norm-367-expansion")
+        norm = next(n for n in satz.normen if n.geltung is PerkolationsNormGeltung.GRUNDLEGEND_PERKOLIEREND)
+
+        self.assertEqual(norm.perkolations_norm_typ, PerkolationsNormTyp.SOUVERAENITAETS_PERKOLATIONS_NORM)
+        self.assertEqual(norm.prozedur, PerkolationsNormProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.perkolations_norm_weight, 0.0)
+
+    def test_kki_perkolations_norm_aggregates_norm_signal(self) -> None:
+        satz = build_perkolations_norm(norm_id="norm-367-signal")
+
+        self.assertEqual(satz.norm_signal.status, "norm-gesperrt")
+        self.assertEqual(satz.gesperrt_norm_ids, ("norm-367-signal-stability-lane",))
+        self.assertEqual(satz.perkolierend_norm_ids, ("norm-367-signal-governance-lane",))
+        self.assertEqual(satz.grundlegend_norm_ids, ("norm-367-signal-expansion-lane",))
+
+    # #368 KomplexitaetsCharta
+    def test_kki_komplexitaets_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_komplexitaets_charta(charta_id="charta-368-stability")
+        norm = next(n for n in charta.normen if n.geltung is KomplexitaetsGeltung.GESPERRT)
+
+        self.assertIsInstance(charta, KomplexitaetsCharta)
+        self.assertIsInstance(norm, KomplexitaetsNorm)
+        self.assertEqual(norm.komplexitaets_typ, KomplexitaetsTyp.SCHUTZ_KOMPLEXITAET)
+        self.assertEqual(norm.prozedur, KomplexitaetsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.komplexitaets_tier, 1)
+
+    def test_kki_komplexitaets_charta_builds_komplexitaetsbewertet_ordnungs_norm(self) -> None:
+        charta = build_komplexitaets_charta(charta_id="charta-368-governance")
+        norm = next(n for n in charta.normen if n.geltung is KomplexitaetsGeltung.KOMPLEXITAETSBEWERTET)
+
+        self.assertEqual(norm.komplexitaets_typ, KomplexitaetsTyp.ORDNUNGS_KOMPLEXITAET)
+        self.assertEqual(norm.prozedur, KomplexitaetsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.komplexitaets_weight, 0.0)
+
+    def test_kki_komplexitaets_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_komplexitaets_charta(charta_id="charta-368-expansion")
+        norm = next(n for n in charta.normen if n.geltung is KomplexitaetsGeltung.GRUNDLEGEND_KOMPLEXITAETSBEWERTET)
+
+        self.assertEqual(norm.komplexitaets_typ, KomplexitaetsTyp.SOUVERAENITAETS_KOMPLEXITAET)
+        self.assertEqual(norm.prozedur, KomplexitaetsProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.komplexitaets_weight, 0.0)
+
+    def test_kki_komplexitaets_charta_aggregates_charta_signal(self) -> None:
+        charta = build_komplexitaets_charta(charta_id="charta-368-signal")
+
+        self.assertEqual(charta.charta_signal.status, "charta-gesperrt")
+        self.assertEqual(charta.gesperrt_norm_ids, ("charta-368-signal-stability-lane",))
+        self.assertEqual(charta.komplexitaetsbewertet_norm_ids, ("charta-368-signal-governance-lane",))
+        self.assertEqual(charta.grundlegend_norm_ids, ("charta-368-signal-expansion-lane",))
 
 
 if __name__ == "__main__":

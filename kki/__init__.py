@@ -1499,6 +1499,38 @@ from .fraktal_charta import (
     FraktalTyp,
     build_fraktal_charta,
 )
+from .strange_attraktor_pakt import (
+    StrangeAttraktorGeltung,
+    StrangeAttraktorNorm,
+    StrangeAttraktorPakt,
+    StrangeAttraktorProzedur,
+    StrangeAttraktorTyp,
+    build_strange_attraktor_pakt,
+)
+from .emergenz_senat import (
+    EmergenzGeltung,
+    EmergenzNorm,
+    EmergenzProzedur,
+    EmergenzSenat,
+    EmergenzTyp,
+    build_emergenz_senat,
+)
+from .perkolations_norm import (
+    PerkolationsNormEintrag,
+    PerkolationsNormGeltung,
+    PerkolationsNormProzedur,
+    PerkolationsNormSatz,
+    PerkolationsNormTyp,
+    build_perkolations_norm,
+)
+from .komplexitaets_charta import (
+    KomplexitaetsCharta,
+    KomplexitaetsGeltung,
+    KomplexitaetsNorm,
+    KomplexitaetsProzedur,
+    KomplexitaetsTyp,
+    build_komplexitaets_charta,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -2697,6 +2729,10 @@ __all__ = [
     "build_bifurkations_register",
     "build_lyapunov_kodex",
     "build_fraktal_charta",
+    "build_strange_attraktor_pakt",
+    "build_emergenz_senat",
+    "build_perkolations_norm",
+    "build_komplexitaets_charta",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

@@ -793,6 +793,30 @@ from kki import (
     AstrophysikVerfassungsProzedur,
     AstrophysikVerfassungsTyp,
     build_astrophysik_verfassung,
+    FestkoerperFeld,
+    FestkoerperGeltung,
+    FestkoerperNorm,
+    FestkoerperProzedur,
+    FestkoerperTyp,
+    build_festkoerper_feld,
+    KristallgitterRegister,
+    KristallgitterGeltung,
+    KristallgitterNorm,
+    KristallgitterProzedur,
+    KristallgitterTyp,
+    build_kristallgitter_register,
+    BandstrukturCharta,
+    BandstrukturGeltung,
+    BandstrukturNorm,
+    BandstrukturProzedur,
+    BandstrukturTyp,
+    build_bandstruktur_charta,
+    HalbleiterKodex,
+    HalbleiterGeltung,
+    HalbleiterNorm,
+    HalbleiterProzedur,
+    HalbleiterTyp,
+    build_halbleiter_kodex,
     KausalitaetsGeltung,
     KausalitaetsNorm,
     KausalitaetsProzedur,
@@ -12831,6 +12855,147 @@ class SmokeTests(unittest.TestCase):
             self.assert_successful_run(result)
             self.assertTrue((output_dir / "kki_bauphasen_rollout.png").exists())
             self.assertIn("Bester Bauphasen-Rollout", result.stdout)
+
+
+    # #341 FestkoerperFeld
+    def test_kki_festkoerper_feld_builds_gesperrt_schutz_norm(self) -> None:
+        feld = build_festkoerper_feld(feld_id="feld-341-stability")
+        norm = next(n for n in feld.normen if n.geltung is FestkoerperGeltung.GESPERRT)
+
+        self.assertIsInstance(feld, FestkoerperFeld)
+        self.assertIsInstance(norm, FestkoerperNorm)
+        self.assertEqual(norm.festkoerper_typ, FestkoerperTyp.SCHUTZ_FESTKOERPER)
+        self.assertEqual(norm.prozedur, FestkoerperProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.festkoerper_tier, 1)
+
+    def test_kki_festkoerper_feld_builds_festkoerperlich_ordnungs_norm(self) -> None:
+        feld = build_festkoerper_feld(feld_id="feld-341-governance")
+        norm = next(n for n in feld.normen if n.geltung is FestkoerperGeltung.FESTKOERPERLICH)
+
+        self.assertEqual(norm.festkoerper_typ, FestkoerperTyp.ORDNUNGS_FESTKOERPER)
+        self.assertEqual(norm.prozedur, FestkoerperProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.festkoerper_weight, 0.0)
+
+    def test_kki_festkoerper_feld_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        feld = build_festkoerper_feld(feld_id="feld-341-expansion")
+        norm = next(n for n in feld.normen if n.geltung is FestkoerperGeltung.GRUNDLEGEND_FESTKOERPERLICH)
+
+        self.assertEqual(norm.festkoerper_typ, FestkoerperTyp.SOUVERAENITAETS_FESTKOERPER)
+        self.assertEqual(norm.prozedur, FestkoerperProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.festkoerper_weight, 0.0)
+
+    def test_kki_festkoerper_feld_aggregates_feld_signal(self) -> None:
+        feld = build_festkoerper_feld(feld_id="feld-341-signal")
+
+        self.assertEqual(feld.feld_signal.status, "feld-gesperrt")
+        self.assertEqual(feld.gesperrt_norm_ids, ("feld-341-signal-stability-lane",))
+        self.assertEqual(feld.festkoerperlich_norm_ids, ("feld-341-signal-governance-lane",))
+        self.assertEqual(feld.grundlegend_norm_ids, ("feld-341-signal-expansion-lane",))
+
+    # #342 KristallgitterRegister
+    def test_kki_kristallgitter_register_builds_gesperrt_schutz_norm(self) -> None:
+        register = build_kristallgitter_register(register_id="register-342-stability")
+        norm = next(n for n in register.normen if n.geltung is KristallgitterGeltung.GESPERRT)
+
+        self.assertIsInstance(register, KristallgitterRegister)
+        self.assertIsInstance(norm, KristallgitterNorm)
+        self.assertEqual(norm.kristallgitter_typ, KristallgitterTyp.SCHUTZ_KRISTALLGITTER)
+        self.assertEqual(norm.prozedur, KristallgitterProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.kristallgitter_tier, 1)
+
+    def test_kki_kristallgitter_register_builds_gittergeordnet_ordnungs_norm(self) -> None:
+        register = build_kristallgitter_register(register_id="register-342-governance")
+        norm = next(n for n in register.normen if n.geltung is KristallgitterGeltung.GITTERGEORDNET)
+
+        self.assertEqual(norm.kristallgitter_typ, KristallgitterTyp.ORDNUNGS_KRISTALLGITTER)
+        self.assertEqual(norm.prozedur, KristallgitterProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.kristallgitter_weight, 0.0)
+
+    def test_kki_kristallgitter_register_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        register = build_kristallgitter_register(register_id="register-342-expansion")
+        norm = next(n for n in register.normen if n.geltung is KristallgitterGeltung.GRUNDLEGEND_GITTERGEORDNET)
+
+        self.assertEqual(norm.kristallgitter_typ, KristallgitterTyp.SOUVERAENITAETS_KRISTALLGITTER)
+        self.assertEqual(norm.prozedur, KristallgitterProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.kristallgitter_weight, 0.0)
+
+    def test_kki_kristallgitter_register_aggregates_register_signal(self) -> None:
+        register = build_kristallgitter_register(register_id="register-342-signal")
+
+        self.assertEqual(register.register_signal.status, "register-gesperrt")
+        self.assertEqual(register.gesperrt_norm_ids, ("register-342-signal-stability-lane",))
+        self.assertEqual(register.gittergeordnet_norm_ids, ("register-342-signal-governance-lane",))
+        self.assertEqual(register.grundlegend_norm_ids, ("register-342-signal-expansion-lane",))
+
+    # #343 BandstrukturCharta
+    def test_kki_bandstruktur_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_bandstruktur_charta(charta_id="charta-343-stability")
+        norm = next(n for n in charta.normen if n.geltung is BandstrukturGeltung.GESPERRT)
+
+        self.assertIsInstance(charta, BandstrukturCharta)
+        self.assertIsInstance(norm, BandstrukturNorm)
+        self.assertEqual(norm.bandstruktur_typ, BandstrukturTyp.SCHUTZ_BANDSTRUKTUR)
+        self.assertEqual(norm.prozedur, BandstrukturProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.bandstruktur_tier, 1)
+
+    def test_kki_bandstruktur_charta_builds_bandstrukturiert_ordnungs_norm(self) -> None:
+        charta = build_bandstruktur_charta(charta_id="charta-343-governance")
+        norm = next(n for n in charta.normen if n.geltung is BandstrukturGeltung.BANDSTRUKTURIERT)
+
+        self.assertEqual(norm.bandstruktur_typ, BandstrukturTyp.ORDNUNGS_BANDSTRUKTUR)
+        self.assertEqual(norm.prozedur, BandstrukturProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.bandstruktur_weight, 0.0)
+
+    def test_kki_bandstruktur_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_bandstruktur_charta(charta_id="charta-343-expansion")
+        norm = next(n for n in charta.normen if n.geltung is BandstrukturGeltung.GRUNDLEGEND_BANDSTRUKTURIERT)
+
+        self.assertEqual(norm.bandstruktur_typ, BandstrukturTyp.SOUVERAENITAETS_BANDSTRUKTUR)
+        self.assertEqual(norm.prozedur, BandstrukturProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.bandstruktur_weight, 0.0)
+
+    def test_kki_bandstruktur_charta_aggregates_charta_signal(self) -> None:
+        charta = build_bandstruktur_charta(charta_id="charta-343-signal")
+
+        self.assertEqual(charta.charta_signal.status, "charta-gesperrt")
+        self.assertEqual(charta.gesperrt_norm_ids, ("charta-343-signal-stability-lane",))
+        self.assertEqual(charta.bandstrukturiert_norm_ids, ("charta-343-signal-governance-lane",))
+        self.assertEqual(charta.grundlegend_norm_ids, ("charta-343-signal-expansion-lane",))
+
+    # #344 HalbleiterKodex
+    def test_kki_halbleiter_kodex_builds_gesperrt_schutz_norm(self) -> None:
+        kodex = build_halbleiter_kodex(kodex_id="kodex-344-stability")
+        norm = next(n for n in kodex.normen if n.geltung is HalbleiterGeltung.GESPERRT)
+
+        self.assertIsInstance(kodex, HalbleiterKodex)
+        self.assertIsInstance(norm, HalbleiterNorm)
+        self.assertEqual(norm.halbleiter_typ, HalbleiterTyp.SCHUTZ_HALBLEITER)
+        self.assertEqual(norm.prozedur, HalbleiterProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.halbleiter_tier, 1)
+
+    def test_kki_halbleiter_kodex_builds_halbleitend_ordnungs_norm(self) -> None:
+        kodex = build_halbleiter_kodex(kodex_id="kodex-344-governance")
+        norm = next(n for n in kodex.normen if n.geltung is HalbleiterGeltung.HALBLEITEND)
+
+        self.assertEqual(norm.halbleiter_typ, HalbleiterTyp.ORDNUNGS_HALBLEITER)
+        self.assertEqual(norm.prozedur, HalbleiterProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.halbleiter_weight, 0.0)
+
+    def test_kki_halbleiter_kodex_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        kodex = build_halbleiter_kodex(kodex_id="kodex-344-expansion")
+        norm = next(n for n in kodex.normen if n.geltung is HalbleiterGeltung.GRUNDLEGEND_HALBLEITEND)
+
+        self.assertEqual(norm.halbleiter_typ, HalbleiterTyp.SOUVERAENITAETS_HALBLEITER)
+        self.assertEqual(norm.prozedur, HalbleiterProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.halbleiter_weight, 0.0)
+
+    def test_kki_halbleiter_kodex_aggregates_kodex_signal(self) -> None:
+        kodex = build_halbleiter_kodex(kodex_id="kodex-344-signal")
+
+        self.assertEqual(kodex.kodex_signal.status, "kodex-gesperrt")
+        self.assertEqual(kodex.gesperrt_norm_ids, ("kodex-344-signal-stability-lane",))
+        self.assertEqual(kodex.halbleitend_norm_ids, ("kodex-344-signal-governance-lane",))
+        self.assertEqual(kodex.grundlegend_norm_ids, ("kodex-344-signal-expansion-lane",))
 
 
 if __name__ == "__main__":

@@ -1307,6 +1307,38 @@ from .astrophysik_verfassung import (
     AstrophysikVerfassungsTyp,
     build_astrophysik_verfassung,
 )
+from .festkoerper_feld import (
+    FestkoerperFeld,
+    FestkoerperGeltung,
+    FestkoerperNorm,
+    FestkoerperProzedur,
+    FestkoerperTyp,
+    build_festkoerper_feld,
+)
+from .kristallgitter_register import (
+    KristallgitterRegister,
+    KristallgitterGeltung,
+    KristallgitterNorm,
+    KristallgitterProzedur,
+    KristallgitterTyp,
+    build_kristallgitter_register,
+)
+from .bandstruktur_charta import (
+    BandstrukturCharta,
+    BandstrukturGeltung,
+    BandstrukturNorm,
+    BandstrukturProzedur,
+    BandstrukturTyp,
+    build_bandstruktur_charta,
+)
+from .halbleiter_kodex import (
+    HalbleiterKodex,
+    HalbleiterGeltung,
+    HalbleiterNorm,
+    HalbleiterProzedur,
+    HalbleiterTyp,
+    build_halbleiter_kodex,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -2481,6 +2513,10 @@ __all__ = [
     "build_schwarzes_loch_norm",
     "build_hertzsprung_russell_charta",
     "build_astrophysik_verfassung",
+    "build_festkoerper_feld",
+    "build_kristallgitter_register",
+    "build_bandstruktur_charta",
+    "build_halbleiter_kodex",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

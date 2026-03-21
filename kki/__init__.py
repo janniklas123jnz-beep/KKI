@@ -1179,6 +1179,38 @@ from .dunkle_materie_kodex import (
     DunkleMaterieTyp,
     build_dunkle_materie_kodex,
 )
+from .dunkle_energie_pakt import (
+    DunkleEnergieGeltung,
+    DunkleEnergieNorm,
+    DunkleEnergiePakt,
+    DunkleEnergieProzedur,
+    DunkleEnergieTyp,
+    build_dunkle_energie_pakt,
+)
+from .cmb_manifest import (
+    CmbGeltung,
+    CmbManifest,
+    CmbNorm,
+    CmbProzedur,
+    CmbTyp,
+    build_cmb_manifest,
+)
+from .strukturbildungs_senat import (
+    StrukturbildungsGeltung,
+    StrukturbildungsNorm,
+    StrukturbildungsProzedur,
+    StrukturbildungsSenat,
+    StrukturbildungsTyp,
+    build_strukturbildungs_senat,
+)
+from .expansion_norm import (
+    ExpansionNormEintrag,
+    ExpansionNormGeltung,
+    ExpansionNormProzedur,
+    ExpansionNormSatz,
+    ExpansionNormTyp,
+    build_expansion_norm,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -2337,6 +2369,10 @@ __all__ = [
     "build_urknall_register",
     "build_inflation_charta",
     "build_dunkle_materie_kodex",
+    "build_dunkle_energie_pakt",
+    "build_cmb_manifest",
+    "build_strukturbildungs_senat",
+    "build_expansion_norm",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

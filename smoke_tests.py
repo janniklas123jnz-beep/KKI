@@ -697,6 +697,30 @@ from kki import (
     DunkleMaterieProzedue,
     DunkleMaterieTyp,
     build_dunkle_materie_kodex,
+    DunkleEnergieGeltung,
+    DunkleEnergieNorm,
+    DunkleEnergiePakt,
+    DunkleEnergieProzedur,
+    DunkleEnergieTyp,
+    build_dunkle_energie_pakt,
+    CmbGeltung,
+    CmbManifest,
+    CmbNorm,
+    CmbProzedur,
+    CmbTyp,
+    build_cmb_manifest,
+    StrukturbildungsGeltung,
+    StrukturbildungsNorm,
+    StrukturbildungsProzedur,
+    StrukturbildungsSenat,
+    StrukturbildungsTyp,
+    build_strukturbildungs_senat,
+    ExpansionNormEintrag,
+    ExpansionNormGeltung,
+    ExpansionNormProzedur,
+    ExpansionNormSatz,
+    ExpansionNormTyp,
+    build_expansion_norm,
     KausalitaetsGeltung,
     KausalitaetsNorm,
     KausalitaetsProzedur,
@@ -7414,6 +7438,158 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(kodex.gesperrt_norm_ids, ("kodex-324-signal-stability-lane",))
         self.assertEqual(kodex.dunkelmateriell_norm_ids, ("kodex-324-signal-governance-lane",))
         self.assertEqual(kodex.grundlegend_norm_ids, ("kodex-324-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #325 DunkleEnergiePakt
+    # ------------------------------------------------------------------
+
+    def test_kki_dunkle_energie_pakt_builds_gesperrt_schutz_norm(self) -> None:
+        pakt = build_dunkle_energie_pakt(pakt_id="pakt-325-stability")
+        norm = next(n for n in pakt.normen if n.geltung is DunkleEnergieGeltung.GESPERRT)
+
+        self.assertIsInstance(pakt, DunkleEnergiePakt)
+        self.assertIsInstance(norm, DunkleEnergieNorm)
+        self.assertEqual(norm.dunkle_energie_typ, DunkleEnergieTyp.SCHUTZ_DUNKLE_ENERGIE)
+        self.assertEqual(norm.prozedur, DunkleEnergieProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.dunkle_energie_tier, 1)
+
+    def test_kki_dunkle_energie_pakt_builds_dunkelenergisch_ordnungs_norm(self) -> None:
+        pakt = build_dunkle_energie_pakt(pakt_id="pakt-325-governance")
+        norm = next(n for n in pakt.normen if n.geltung is DunkleEnergieGeltung.DUNKELENERGISCH)
+
+        self.assertEqual(norm.dunkle_energie_typ, DunkleEnergieTyp.ORDNUNGS_DUNKLE_ENERGIE)
+        self.assertEqual(norm.prozedur, DunkleEnergieProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.dunkle_energie_weight, 0.0)
+
+    def test_kki_dunkle_energie_pakt_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        pakt = build_dunkle_energie_pakt(pakt_id="pakt-325-expansion")
+        norm = next(n for n in pakt.normen if n.geltung is DunkleEnergieGeltung.GRUNDLEGEND_DUNKELENERGISCH)
+
+        self.assertEqual(norm.dunkle_energie_typ, DunkleEnergieTyp.SOUVERAENITAETS_DUNKLE_ENERGIE)
+        self.assertEqual(norm.prozedur, DunkleEnergieProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_dunkle_energie_pakt_aggregates_pakt_signal(self) -> None:
+        pakt = build_dunkle_energie_pakt(pakt_id="pakt-325-signal")
+
+        self.assertEqual(pakt.pakt_signal.status, "pakt-gesperrt")
+        self.assertEqual(pakt.gesperrt_norm_ids, ("pakt-325-signal-stability-lane",))
+        self.assertEqual(pakt.dunkelenergisch_norm_ids, ("pakt-325-signal-governance-lane",))
+        self.assertEqual(pakt.grundlegend_norm_ids, ("pakt-325-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #326 CmbManifest
+    # ------------------------------------------------------------------
+
+    def test_kki_cmb_manifest_builds_gesperrt_schutz_norm(self) -> None:
+        manifest = build_cmb_manifest(manifest_id="manifest-326-stability")
+        norm = next(n for n in manifest.normen if n.geltung is CmbGeltung.GESPERRT)
+
+        self.assertIsInstance(manifest, CmbManifest)
+        self.assertIsInstance(norm, CmbNorm)
+        self.assertEqual(norm.cmb_typ, CmbTyp.SCHUTZ_CMB)
+        self.assertEqual(norm.prozedur, CmbProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.cmb_tier, 1)
+
+    def test_kki_cmb_manifest_builds_cmbradiiert_ordnungs_norm(self) -> None:
+        manifest = build_cmb_manifest(manifest_id="manifest-326-governance")
+        norm = next(n for n in manifest.normen if n.geltung is CmbGeltung.CMBRADIIERT)
+
+        self.assertEqual(norm.cmb_typ, CmbTyp.ORDNUNGS_CMB)
+        self.assertEqual(norm.prozedur, CmbProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.cmb_weight, 0.0)
+
+    def test_kki_cmb_manifest_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        manifest = build_cmb_manifest(manifest_id="manifest-326-expansion")
+        norm = next(n for n in manifest.normen if n.geltung is CmbGeltung.GRUNDLEGEND_CMBRADIIERT)
+
+        self.assertEqual(norm.cmb_typ, CmbTyp.SOUVERAENITAETS_CMB)
+        self.assertEqual(norm.prozedur, CmbProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_cmb_manifest_aggregates_manifest_signal(self) -> None:
+        manifest = build_cmb_manifest(manifest_id="manifest-326-signal")
+
+        self.assertEqual(manifest.manifest_signal.status, "manifest-gesperrt")
+        self.assertEqual(manifest.gesperrt_norm_ids, ("manifest-326-signal-stability-lane",))
+        self.assertEqual(manifest.cmbradiiert_norm_ids, ("manifest-326-signal-governance-lane",))
+        self.assertEqual(manifest.grundlegend_norm_ids, ("manifest-326-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #327 StrukturbildungsSenat
+    # ------------------------------------------------------------------
+
+    def test_kki_strukturbildungs_senat_builds_gesperrt_schutz_norm(self) -> None:
+        senat = build_strukturbildungs_senat(senat_id="senat-327-stability")
+        norm = next(n for n in senat.normen if n.geltung is StrukturbildungsGeltung.GESPERRT)
+
+        self.assertIsInstance(senat, StrukturbildungsSenat)
+        self.assertIsInstance(norm, StrukturbildungsNorm)
+        self.assertEqual(norm.strukturbildungs_typ, StrukturbildungsTyp.SCHUTZ_STRUKTURBILDUNG)
+        self.assertEqual(norm.prozedur, StrukturbildungsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.strukturbildungs_tier, 1)
+
+    def test_kki_strukturbildungs_senat_builds_strukturbildend_ordnungs_norm(self) -> None:
+        senat = build_strukturbildungs_senat(senat_id="senat-327-governance")
+        norm = next(n for n in senat.normen if n.geltung is StrukturbildungsGeltung.STRUKTURBILDEND)
+
+        self.assertEqual(norm.strukturbildungs_typ, StrukturbildungsTyp.ORDNUNGS_STRUKTURBILDUNG)
+        self.assertEqual(norm.prozedur, StrukturbildungsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.strukturbildungs_weight, 0.0)
+
+    def test_kki_strukturbildungs_senat_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        senat = build_strukturbildungs_senat(senat_id="senat-327-expansion")
+        norm = next(n for n in senat.normen if n.geltung is StrukturbildungsGeltung.GRUNDLEGEND_STRUKTURBILDEND)
+
+        self.assertEqual(norm.strukturbildungs_typ, StrukturbildungsTyp.SOUVERAENITAETS_STRUKTURBILDUNG)
+        self.assertEqual(norm.prozedur, StrukturbildungsProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_strukturbildungs_senat_aggregates_senat_signal(self) -> None:
+        senat = build_strukturbildungs_senat(senat_id="senat-327-signal")
+
+        self.assertEqual(senat.senat_signal.status, "senat-gesperrt")
+        self.assertEqual(senat.gesperrt_norm_ids, ("senat-327-signal-stability-lane",))
+        self.assertEqual(senat.strukturbildend_norm_ids, ("senat-327-signal-governance-lane",))
+        self.assertEqual(senat.grundlegend_norm_ids, ("senat-327-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #328 ExpansionNorm  (*_norm pattern)
+    # ------------------------------------------------------------------
+
+    def test_kki_expansion_norm_builds_gesperrt_schutz_eintrag(self) -> None:
+        satz = build_expansion_norm(norm_id="expansion-norm-328-stability")
+        eintrag = next(n for n in satz.normen if n.geltung is ExpansionNormGeltung.GESPERRT)
+
+        self.assertIsInstance(satz, ExpansionNormSatz)
+        self.assertIsInstance(eintrag, ExpansionNormEintrag)
+        self.assertEqual(eintrag.expansion_norm_typ, ExpansionNormTyp.SCHUTZ_EXPANSION)
+        self.assertEqual(eintrag.prozedur, ExpansionNormProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(eintrag.expansion_norm_tier, 1)
+
+    def test_kki_expansion_norm_builds_expansionsnormiert_ordnungs_eintrag(self) -> None:
+        satz = build_expansion_norm(norm_id="expansion-norm-328-governance")
+        eintrag = next(n for n in satz.normen if n.geltung is ExpansionNormGeltung.EXPANSIONSNORMIERT)
+
+        self.assertEqual(eintrag.expansion_norm_typ, ExpansionNormTyp.ORDNUNGS_EXPANSION)
+        self.assertEqual(eintrag.prozedur, ExpansionNormProzedur.REGELPROTOKOLL)
+        self.assertGreater(eintrag.expansion_norm_weight, 0.0)
+
+    def test_kki_expansion_norm_builds_grundlegend_souveraenitaets_eintrag(self) -> None:
+        satz = build_expansion_norm(norm_id="expansion-norm-328-expansion")
+        eintrag = next(n for n in satz.normen if n.geltung is ExpansionNormGeltung.GRUNDLEGEND_EXPANSIONSNORMIERT)
+
+        self.assertEqual(eintrag.expansion_norm_typ, ExpansionNormTyp.SOUVERAENITAETS_EXPANSION)
+        self.assertEqual(eintrag.prozedur, ExpansionNormProzedur.PLENARPROTOKOLL)
+        self.assertTrue(eintrag.canonical)
+
+    def test_kki_expansion_norm_aggregates_norm_signal(self) -> None:
+        satz = build_expansion_norm(norm_id="expansion-norm-328-signal")
+
+        self.assertEqual(satz.norm_signal.status, "norm-gesperrt")
+        self.assertEqual(satz.gesperrt_norm_ids, ("expansion-norm-328-signal-stability-lane",))
+        self.assertEqual(satz.expansionsnormiert_norm_ids, ("expansion-norm-328-signal-governance-lane",))
+        self.assertEqual(satz.grundlegend_norm_ids, ("expansion-norm-328-signal-expansion-lane",))
 
     def test_kki_waermestrahlung_charta_builds_gesperrt_schutz_norm(self) -> None:
         charta = build_waermestrahlung_charta(charta_id="charta-289-stability")

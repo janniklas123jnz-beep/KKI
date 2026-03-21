@@ -673,6 +673,30 @@ from kki import (
     TeilchenphysikTyp,
     TeilchenphysikVerfassung,
     build_teilchenphysik_verfassung,
+    KosmologieFeld,
+    KosmologieGeltung,
+    KosmologieNorm,
+    KosmologieProzedur,
+    KosmologieTyp,
+    build_kosmologie_feld,
+    UrknallGeltung,
+    UrknallNorm,
+    UrknallProzedur,
+    UrknallRegister,
+    UrknallTyp,
+    build_urknall_register,
+    InflationCharta,
+    InflationGeltung,
+    InflationNorm,
+    InflationProzedur,
+    InflationTyp,
+    build_inflation_charta,
+    DunkleMaterieGeltung,
+    DunkleMaterieKodex,
+    DunkleMaterieNorm,
+    DunkleMaterieProzedue,
+    DunkleMaterieTyp,
+    build_dunkle_materie_kodex,
     KausalitaetsGeltung,
     KausalitaetsNorm,
     KausalitaetsProzedur,
@@ -7238,6 +7262,158 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(verfassung.gesperrt_norm_ids, ("verfassung-320-signal-stability-lane",))
         self.assertEqual(verfassung.teilchenphysikverfasst_norm_ids, ("verfassung-320-signal-governance-lane",))
         self.assertEqual(verfassung.grundlegend_norm_ids, ("verfassung-320-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #321 KosmologieFeld
+    # ------------------------------------------------------------------
+
+    def test_kki_kosmologie_feld_builds_gesperrt_schutz_norm(self) -> None:
+        feld = build_kosmologie_feld(feld_id="feld-321-stability")
+        norm = next(n for n in feld.normen if n.geltung is KosmologieGeltung.GESPERRT)
+
+        self.assertIsInstance(feld, KosmologieFeld)
+        self.assertIsInstance(norm, KosmologieNorm)
+        self.assertEqual(norm.kosmologie_typ, KosmologieTyp.SCHUTZ_KOSMOLOGIE)
+        self.assertEqual(norm.prozedur, KosmologieProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.kosmologie_tier, 1)
+
+    def test_kki_kosmologie_feld_builds_kosmologisch_ordnungs_norm(self) -> None:
+        feld = build_kosmologie_feld(feld_id="feld-321-governance")
+        norm = next(n for n in feld.normen if n.geltung is KosmologieGeltung.KOSMOLOGISCH)
+
+        self.assertEqual(norm.kosmologie_typ, KosmologieTyp.ORDNUNGS_KOSMOLOGIE)
+        self.assertEqual(norm.prozedur, KosmologieProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.kosmologie_weight, 0.0)
+
+    def test_kki_kosmologie_feld_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        feld = build_kosmologie_feld(feld_id="feld-321-expansion")
+        norm = next(n for n in feld.normen if n.geltung is KosmologieGeltung.GRUNDLEGEND_KOSMOLOGISCH)
+
+        self.assertEqual(norm.kosmologie_typ, KosmologieTyp.SOUVERAENITAETS_KOSMOLOGIE)
+        self.assertEqual(norm.prozedur, KosmologieProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_kosmologie_feld_aggregates_feld_signal(self) -> None:
+        feld = build_kosmologie_feld(feld_id="feld-321-signal")
+
+        self.assertEqual(feld.feld_signal.status, "feld-gesperrt")
+        self.assertEqual(feld.gesperrt_norm_ids, ("feld-321-signal-stability-lane",))
+        self.assertEqual(feld.kosmologisch_norm_ids, ("feld-321-signal-governance-lane",))
+        self.assertEqual(feld.grundlegend_norm_ids, ("feld-321-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #322 UrknallRegister
+    # ------------------------------------------------------------------
+
+    def test_kki_urknall_register_builds_gesperrt_schutz_norm(self) -> None:
+        register = build_urknall_register(register_id="register-322-stability")
+        norm = next(n for n in register.normen if n.geltung is UrknallGeltung.GESPERRT)
+
+        self.assertIsInstance(register, UrknallRegister)
+        self.assertIsInstance(norm, UrknallNorm)
+        self.assertEqual(norm.urknall_typ, UrknallTyp.SCHUTZ_URKNALL)
+        self.assertEqual(norm.prozedur, UrknallProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.urknall_tier, 1)
+
+    def test_kki_urknall_register_builds_urknallgebunden_ordnungs_norm(self) -> None:
+        register = build_urknall_register(register_id="register-322-governance")
+        norm = next(n for n in register.normen if n.geltung is UrknallGeltung.URKNALLGEBUNDEN)
+
+        self.assertEqual(norm.urknall_typ, UrknallTyp.ORDNUNGS_URKNALL)
+        self.assertEqual(norm.prozedur, UrknallProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.urknall_weight, 0.0)
+
+    def test_kki_urknall_register_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        register = build_urknall_register(register_id="register-322-expansion")
+        norm = next(n for n in register.normen if n.geltung is UrknallGeltung.GRUNDLEGEND_URKNALLGEBUNDEN)
+
+        self.assertEqual(norm.urknall_typ, UrknallTyp.SOUVERAENITAETS_URKNALL)
+        self.assertEqual(norm.prozedur, UrknallProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_urknall_register_aggregates_register_signal(self) -> None:
+        register = build_urknall_register(register_id="register-322-signal")
+
+        self.assertEqual(register.register_signal.status, "register-gesperrt")
+        self.assertEqual(register.gesperrt_norm_ids, ("register-322-signal-stability-lane",))
+        self.assertEqual(register.urknallgebunden_norm_ids, ("register-322-signal-governance-lane",))
+        self.assertEqual(register.grundlegend_norm_ids, ("register-322-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #323 InflationCharta
+    # ------------------------------------------------------------------
+
+    def test_kki_inflation_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_inflation_charta(charta_id="charta-323-stability")
+        norm = next(n for n in charta.normen if n.geltung is InflationGeltung.GESPERRT)
+
+        self.assertIsInstance(charta, InflationCharta)
+        self.assertIsInstance(norm, InflationNorm)
+        self.assertEqual(norm.inflation_typ, InflationTyp.SCHUTZ_INFLATION)
+        self.assertEqual(norm.prozedur, InflationProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.inflation_tier, 1)
+
+    def test_kki_inflation_charta_builds_inflationaer_ordnungs_norm(self) -> None:
+        charta = build_inflation_charta(charta_id="charta-323-governance")
+        norm = next(n for n in charta.normen if n.geltung is InflationGeltung.INFLATIONAER)
+
+        self.assertEqual(norm.inflation_typ, InflationTyp.ORDNUNGS_INFLATION)
+        self.assertEqual(norm.prozedur, InflationProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.inflation_weight, 0.0)
+
+    def test_kki_inflation_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_inflation_charta(charta_id="charta-323-expansion")
+        norm = next(n for n in charta.normen if n.geltung is InflationGeltung.GRUNDLEGEND_INFLATIONAER)
+
+        self.assertEqual(norm.inflation_typ, InflationTyp.SOUVERAENITAETS_INFLATION)
+        self.assertEqual(norm.prozedur, InflationProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_inflation_charta_aggregates_charta_signal(self) -> None:
+        charta = build_inflation_charta(charta_id="charta-323-signal")
+
+        self.assertEqual(charta.charta_signal.status, "charta-gesperrt")
+        self.assertEqual(charta.gesperrt_norm_ids, ("charta-323-signal-stability-lane",))
+        self.assertEqual(charta.inflationaer_norm_ids, ("charta-323-signal-governance-lane",))
+        self.assertEqual(charta.grundlegend_norm_ids, ("charta-323-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #324 DunkleMaterieKodex
+    # ------------------------------------------------------------------
+
+    def test_kki_dunkle_materie_kodex_builds_gesperrt_schutz_norm(self) -> None:
+        kodex = build_dunkle_materie_kodex(kodex_id="kodex-324-stability")
+        norm = next(n for n in kodex.normen if n.geltung is DunkleMaterieGeltung.GESPERRT)
+
+        self.assertIsInstance(kodex, DunkleMaterieKodex)
+        self.assertIsInstance(norm, DunkleMaterieNorm)
+        self.assertEqual(norm.dunkle_materie_typ, DunkleMaterieTyp.SCHUTZ_DUNKLE_MATERIE)
+        self.assertEqual(norm.prozedur, DunkleMaterieProzedue.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.dunkle_materie_tier, 1)
+
+    def test_kki_dunkle_materie_kodex_builds_dunkelmateriell_ordnungs_norm(self) -> None:
+        kodex = build_dunkle_materie_kodex(kodex_id="kodex-324-governance")
+        norm = next(n for n in kodex.normen if n.geltung is DunkleMaterieGeltung.DUNKELMATERIELL)
+
+        self.assertEqual(norm.dunkle_materie_typ, DunkleMaterieTyp.ORDNUNGS_DUNKLE_MATERIE)
+        self.assertEqual(norm.prozedur, DunkleMaterieProzedue.REGELPROTOKOLL)
+        self.assertGreater(norm.dunkle_materie_weight, 0.0)
+
+    def test_kki_dunkle_materie_kodex_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        kodex = build_dunkle_materie_kodex(kodex_id="kodex-324-expansion")
+        norm = next(n for n in kodex.normen if n.geltung is DunkleMaterieGeltung.GRUNDLEGEND_DUNKELMATERIELL)
+
+        self.assertEqual(norm.dunkle_materie_typ, DunkleMaterieTyp.SOUVERAENITAETS_DUNKLE_MATERIE)
+        self.assertEqual(norm.prozedur, DunkleMaterieProzedue.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_dunkle_materie_kodex_aggregates_kodex_signal(self) -> None:
+        kodex = build_dunkle_materie_kodex(kodex_id="kodex-324-signal")
+
+        self.assertEqual(kodex.kodex_signal.status, "kodex-gesperrt")
+        self.assertEqual(kodex.gesperrt_norm_ids, ("kodex-324-signal-stability-lane",))
+        self.assertEqual(kodex.dunkelmateriell_norm_ids, ("kodex-324-signal-governance-lane",))
+        self.assertEqual(kodex.grundlegend_norm_ids, ("kodex-324-signal-expansion-lane",))
 
     def test_kki_waermestrahlung_charta_builds_gesperrt_schutz_norm(self) -> None:
         charta = build_waermestrahlung_charta(charta_id="charta-289-stability")

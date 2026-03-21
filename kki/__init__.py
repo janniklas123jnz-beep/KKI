@@ -1147,6 +1147,38 @@ from .teilchenphysik_verfassung import (
     TeilchenphysikVerfassung,
     build_teilchenphysik_verfassung,
 )
+from .kosmologie_feld import (
+    KosmologieFeld,
+    KosmologieGeltung,
+    KosmologieNorm,
+    KosmologieProzedur,
+    KosmologieTyp,
+    build_kosmologie_feld,
+)
+from .urknall_register import (
+    UrknallGeltung,
+    UrknallNorm,
+    UrknallProzedur,
+    UrknallRegister,
+    UrknallTyp,
+    build_urknall_register,
+)
+from .inflation_charta import (
+    InflationCharta,
+    InflationGeltung,
+    InflationNorm,
+    InflationProzedur,
+    InflationTyp,
+    build_inflation_charta,
+)
+from .dunkle_materie_kodex import (
+    DunkleMaterieGeltung,
+    DunkleMaterieKodex,
+    DunkleMaterieNorm,
+    DunkleMaterieProzedue,
+    DunkleMaterieTyp,
+    build_dunkle_materie_kodex,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -2301,6 +2333,10 @@ __all__ = [
     "build_feynman_norm",
     "build_standardmodell_charta",
     "build_teilchenphysik_verfassung",
+    "build_kosmologie_feld",
+    "build_urknall_register",
+    "build_inflation_charta",
+    "build_dunkle_materie_kodex",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

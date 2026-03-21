@@ -1579,6 +1579,38 @@ from .verschraenkung_charta import (
     VerschraenkungTyp,
     build_verschraenkung_charta,
 )
+from .quantenfehler_pakt import (
+    QuantenfehlerGeltung,
+    QuantenfehlerNorm,
+    QuantenfehlerPakt,
+    QuantenfehlerProzedur,
+    QuantenfehlerTyp,
+    build_quantenfehler_pakt,
+)
+from .quantenkrypto_senat import (
+    QuantenkryptoGeltung,
+    QuantenkryptoNorm,
+    QuantenkryptoProzedur,
+    QuantenkryptoSenat,
+    QuantenkryptoTyp,
+    build_quantenkrypto_senat,
+)
+from .holographisches_prinzip_norm import (
+    HolographischesPrinzipNormEintrag,
+    HolographischesPrinzipNormGeltung,
+    HolographischesPrinzipNormProzedur,
+    HolographischesPrinzipNormSatz,
+    HolographischesPrinzipNormTyp,
+    build_holographisches_prinzip_norm,
+)
+from .landauer_manifest import (
+    LandauerGeltung,
+    LandauerManifest,
+    LandauerNorm,
+    LandauerProzedur,
+    LandauerTyp,
+    build_landauer_manifest,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -2787,6 +2819,10 @@ __all__ = [
     "build_kanalkapazitaet_register",
     "build_quanten_bit_kodex",
     "build_verschraenkung_charta",
+    "build_quantenfehler_pakt",
+    "build_quantenkrypto_senat",
+    "build_holographisches_prinzip_norm",
+    "build_landauer_manifest",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

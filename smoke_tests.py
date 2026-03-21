@@ -997,6 +997,30 @@ from kki import (
     VerschraenkungProzedur,
     VerschraenkungTyp,
     build_verschraenkung_charta,
+    QuantenfehlerGeltung,
+    QuantenfehlerNorm,
+    QuantenfehlerPakt,
+    QuantenfehlerProzedur,
+    QuantenfehlerTyp,
+    build_quantenfehler_pakt,
+    QuantenkryptoGeltung,
+    QuantenkryptoNorm,
+    QuantenkryptoProzedur,
+    QuantenkryptoSenat,
+    QuantenkryptoTyp,
+    build_quantenkrypto_senat,
+    HolographischesPrinzipNormEintrag,
+    HolographischesPrinzipNormGeltung,
+    HolographischesPrinzipNormProzedur,
+    HolographischesPrinzipNormSatz,
+    HolographischesPrinzipNormTyp,
+    build_holographisches_prinzip_norm,
+    LandauerGeltung,
+    LandauerManifest,
+    LandauerNorm,
+    LandauerProzedur,
+    LandauerTyp,
+    build_landauer_manifest,
     KausalitaetsGeltung,
     KausalitaetsNorm,
     KausalitaetsProzedur,
@@ -14235,6 +14259,147 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(charta.gesperrt_norm_ids, ("charta-374-signal-stability-lane",))
         self.assertEqual(charta.verschraenkt_norm_ids, ("charta-374-signal-governance-lane",))
         self.assertEqual(charta.grundlegend_norm_ids, ("charta-374-signal-expansion-lane",))
+
+
+    # #375 QuantenfehlerPakt
+    def test_kki_quantenfehler_pakt_builds_gesperrt_schutz_norm(self) -> None:
+        pakt = build_quantenfehler_pakt(pakt_id="pakt-375-stability")
+        norm = next(n for n in pakt.normen if n.geltung is QuantenfehlerGeltung.GESPERRT)
+
+        self.assertIsInstance(pakt, QuantenfehlerPakt)
+        self.assertIsInstance(norm, QuantenfehlerNorm)
+        self.assertEqual(norm.quantenfehler_typ, QuantenfehlerTyp.SCHUTZ_QUANTENFEHLER)
+        self.assertEqual(norm.prozedur, QuantenfehlerProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.quantenfehler_tier, 1)
+
+    def test_kki_quantenfehler_pakt_builds_fehlerkorrigiert_ordnungs_norm(self) -> None:
+        pakt = build_quantenfehler_pakt(pakt_id="pakt-375-governance")
+        norm = next(n for n in pakt.normen if n.geltung is QuantenfehlerGeltung.FEHLERKORRIGIERT)
+
+        self.assertEqual(norm.quantenfehler_typ, QuantenfehlerTyp.ORDNUNGS_QUANTENFEHLER)
+        self.assertEqual(norm.prozedur, QuantenfehlerProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.quantenfehler_weight, 0.0)
+
+    def test_kki_quantenfehler_pakt_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        pakt = build_quantenfehler_pakt(pakt_id="pakt-375-expansion")
+        norm = next(n for n in pakt.normen if n.geltung is QuantenfehlerGeltung.GRUNDLEGEND_FEHLERKORRIGIERT)
+
+        self.assertEqual(norm.quantenfehler_typ, QuantenfehlerTyp.SOUVERAENITAETS_QUANTENFEHLER)
+        self.assertEqual(norm.prozedur, QuantenfehlerProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.quantenfehler_weight, 0.0)
+
+    def test_kki_quantenfehler_pakt_aggregates_pakt_signal(self) -> None:
+        pakt = build_quantenfehler_pakt(pakt_id="pakt-375-signal")
+
+        self.assertEqual(pakt.pakt_signal.status, "pakt-gesperrt")
+        self.assertEqual(pakt.gesperrt_norm_ids, ("pakt-375-signal-stability-lane",))
+        self.assertEqual(pakt.fehlerkorrigiert_norm_ids, ("pakt-375-signal-governance-lane",))
+        self.assertEqual(pakt.grundlegend_norm_ids, ("pakt-375-signal-expansion-lane",))
+
+    # #376 QuantenkryptoSenat
+    def test_kki_quantenkrypto_senat_builds_gesperrt_schutz_norm(self) -> None:
+        senat = build_quantenkrypto_senat(senat_id="senat-376-stability")
+        norm = next(n for n in senat.normen if n.geltung is QuantenkryptoGeltung.GESPERRT)
+
+        self.assertIsInstance(senat, QuantenkryptoSenat)
+        self.assertIsInstance(norm, QuantenkryptoNorm)
+        self.assertEqual(norm.quantenkrypto_typ, QuantenkryptoTyp.SCHUTZ_QUANTENKRYPTO)
+        self.assertEqual(norm.prozedur, QuantenkryptoProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.quantenkrypto_tier, 1)
+
+    def test_kki_quantenkrypto_senat_builds_quantengesichert_ordnungs_norm(self) -> None:
+        senat = build_quantenkrypto_senat(senat_id="senat-376-governance")
+        norm = next(n for n in senat.normen if n.geltung is QuantenkryptoGeltung.QUANTENGESICHERT)
+
+        self.assertEqual(norm.quantenkrypto_typ, QuantenkryptoTyp.ORDNUNGS_QUANTENKRYPTO)
+        self.assertEqual(norm.prozedur, QuantenkryptoProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.quantenkrypto_weight, 0.0)
+
+    def test_kki_quantenkrypto_senat_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        senat = build_quantenkrypto_senat(senat_id="senat-376-expansion")
+        norm = next(n for n in senat.normen if n.geltung is QuantenkryptoGeltung.GRUNDLEGEND_QUANTENGESICHERT)
+
+        self.assertEqual(norm.quantenkrypto_typ, QuantenkryptoTyp.SOUVERAENITAETS_QUANTENKRYPTO)
+        self.assertEqual(norm.prozedur, QuantenkryptoProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.quantenkrypto_weight, 0.0)
+
+    def test_kki_quantenkrypto_senat_aggregates_senat_signal(self) -> None:
+        senat = build_quantenkrypto_senat(senat_id="senat-376-signal")
+
+        self.assertEqual(senat.senat_signal.status, "senat-gesperrt")
+        self.assertEqual(senat.gesperrt_norm_ids, ("senat-376-signal-stability-lane",))
+        self.assertEqual(senat.quantengesichert_norm_ids, ("senat-376-signal-governance-lane",))
+        self.assertEqual(senat.grundlegend_norm_ids, ("senat-376-signal-expansion-lane",))
+
+    # #377 HolographischesPrinzipNorm
+    def test_kki_holographisches_prinzip_norm_builds_gesperrt_schutz_norm(self) -> None:
+        satz = build_holographisches_prinzip_norm(norm_id="norm-377-stability")
+        norm = next(n for n in satz.normen if n.geltung is HolographischesPrinzipNormGeltung.GESPERRT)
+
+        self.assertIsInstance(satz, HolographischesPrinzipNormSatz)
+        self.assertIsInstance(norm, HolographischesPrinzipNormEintrag)
+        self.assertEqual(norm.holographisches_prinzip_norm_typ, HolographischesPrinzipNormTyp.SCHUTZ_HOLOGRAPHISCHES_PRINZIP_NORM)
+        self.assertEqual(norm.prozedur, HolographischesPrinzipNormProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.holographisches_prinzip_norm_tier, 1)
+
+    def test_kki_holographisches_prinzip_norm_builds_holographisch_ordnungs_norm(self) -> None:
+        satz = build_holographisches_prinzip_norm(norm_id="norm-377-governance")
+        norm = next(n for n in satz.normen if n.geltung is HolographischesPrinzipNormGeltung.HOLOGRAPHISCH)
+
+        self.assertEqual(norm.holographisches_prinzip_norm_typ, HolographischesPrinzipNormTyp.ORDNUNGS_HOLOGRAPHISCHES_PRINZIP_NORM)
+        self.assertEqual(norm.prozedur, HolographischesPrinzipNormProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.holographisches_prinzip_norm_weight, 0.0)
+
+    def test_kki_holographisches_prinzip_norm_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        satz = build_holographisches_prinzip_norm(norm_id="norm-377-expansion")
+        norm = next(n for n in satz.normen if n.geltung is HolographischesPrinzipNormGeltung.GRUNDLEGEND_HOLOGRAPHISCH)
+
+        self.assertEqual(norm.holographisches_prinzip_norm_typ, HolographischesPrinzipNormTyp.SOUVERAENITAETS_HOLOGRAPHISCHES_PRINZIP_NORM)
+        self.assertEqual(norm.prozedur, HolographischesPrinzipNormProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.holographisches_prinzip_norm_weight, 0.0)
+
+    def test_kki_holographisches_prinzip_norm_aggregates_norm_signal(self) -> None:
+        satz = build_holographisches_prinzip_norm(norm_id="norm-377-signal")
+
+        self.assertEqual(satz.norm_signal.status, "norm-gesperrt")
+        self.assertEqual(satz.gesperrt_norm_ids, ("norm-377-signal-stability-lane",))
+        self.assertEqual(satz.holographisch_norm_ids, ("norm-377-signal-governance-lane",))
+        self.assertEqual(satz.grundlegend_norm_ids, ("norm-377-signal-expansion-lane",))
+
+    # #378 LandauerManifest
+    def test_kki_landauer_manifest_builds_gesperrt_schutz_norm(self) -> None:
+        manifest = build_landauer_manifest(manifest_id="manifest-378-stability")
+        norm = next(n for n in manifest.normen if n.geltung is LandauerGeltung.GESPERRT)
+
+        self.assertIsInstance(manifest, LandauerManifest)
+        self.assertIsInstance(norm, LandauerNorm)
+        self.assertEqual(norm.landauer_typ, LandauerTyp.SCHUTZ_LANDAUER)
+        self.assertEqual(norm.prozedur, LandauerProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.landauer_tier, 1)
+
+    def test_kki_landauer_manifest_builds_landauergebunden_ordnungs_norm(self) -> None:
+        manifest = build_landauer_manifest(manifest_id="manifest-378-governance")
+        norm = next(n for n in manifest.normen if n.geltung is LandauerGeltung.LANDAUERGEBUNDEN)
+
+        self.assertEqual(norm.landauer_typ, LandauerTyp.ORDNUNGS_LANDAUER)
+        self.assertEqual(norm.prozedur, LandauerProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.landauer_weight, 0.0)
+
+    def test_kki_landauer_manifest_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        manifest = build_landauer_manifest(manifest_id="manifest-378-expansion")
+        norm = next(n for n in manifest.normen if n.geltung is LandauerGeltung.GRUNDLEGEND_LANDAUERGEBUNDEN)
+
+        self.assertEqual(norm.landauer_typ, LandauerTyp.SOUVERAENITAETS_LANDAUER)
+        self.assertEqual(norm.prozedur, LandauerProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.landauer_weight, 0.0)
+
+    def test_kki_landauer_manifest_aggregates_manifest_signal(self) -> None:
+        manifest = build_landauer_manifest(manifest_id="manifest-378-signal")
+
+        self.assertEqual(manifest.manifest_signal.status, "manifest-gesperrt")
+        self.assertEqual(manifest.gesperrt_norm_ids, ("manifest-378-signal-stability-lane",))
+        self.assertEqual(manifest.landauergebunden_norm_ids, ("manifest-378-signal-governance-lane",))
+        self.assertEqual(manifest.grundlegend_norm_ids, ("manifest-378-signal-expansion-lane",))
 
 
 if __name__ == "__main__":

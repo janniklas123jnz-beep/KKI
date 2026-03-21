@@ -1547,6 +1547,38 @@ from .chaos_verfassung import (
     ChaosVerfassungsTyp,
     build_chaos_verfassung,
 )
+from .shannon_entropie_feld import (
+    ShannonEntropieFeld,
+    ShannonEntropieGeltung,
+    ShannonEntropieNorm,
+    ShannonEntropieProzedur,
+    ShannonEntropieTyp,
+    build_shannon_entropie_feld,
+)
+from .kanalkapazitaet_register import (
+    KanalkapazitaetGeltung,
+    KanalkapazitaetNorm,
+    KanalkapazitaetProzedur,
+    KanalkapazitaetRegister,
+    KanalkapazitaetTyp,
+    build_kanalkapazitaet_register,
+)
+from .quanten_bit_kodex import (
+    QuantenBitGeltung,
+    QuantenBitKodex,
+    QuantenBitNorm,
+    QuantenBitProzedur,
+    QuantenBitTyp,
+    build_quanten_bit_kodex,
+)
+from .verschraenkung_charta import (
+    VerschraenkungCharta,
+    VerschraenkungGeltung,
+    VerschraenkungNorm,
+    VerschraenkungProzedur,
+    VerschraenkungTyp,
+    build_verschraenkung_charta,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -2751,6 +2783,10 @@ __all__ = [
     "build_komplexitaets_charta",
     "build_adaptiv_schwarm_kodex",
     "build_chaos_verfassung",
+    "build_shannon_entropie_feld",
+    "build_kanalkapazitaet_register",
+    "build_quanten_bit_kodex",
+    "build_verschraenkung_charta",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

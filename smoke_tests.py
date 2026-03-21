@@ -973,6 +973,30 @@ from kki import (
     ChaosVerfassungsProzedur,
     ChaosVerfassungsTyp,
     build_chaos_verfassung,
+    ShannonEntropieFeld,
+    ShannonEntropieGeltung,
+    ShannonEntropieNorm,
+    ShannonEntropieProzedur,
+    ShannonEntropieTyp,
+    build_shannon_entropie_feld,
+    KanalkapazitaetGeltung,
+    KanalkapazitaetNorm,
+    KanalkapazitaetProzedur,
+    KanalkapazitaetRegister,
+    KanalkapazitaetTyp,
+    build_kanalkapazitaet_register,
+    QuantenBitGeltung,
+    QuantenBitKodex,
+    QuantenBitNorm,
+    QuantenBitProzedur,
+    QuantenBitTyp,
+    build_quanten_bit_kodex,
+    VerschraenkungCharta,
+    VerschraenkungGeltung,
+    VerschraenkungNorm,
+    VerschraenkungProzedur,
+    VerschraenkungTyp,
+    build_verschraenkung_charta,
     KausalitaetsGeltung,
     KausalitaetsNorm,
     KausalitaetsProzedur,
@@ -14070,6 +14094,147 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(verfassung.gesperrt_norm_ids, ("verfassung-370-signal-stability-lane",))
         self.assertEqual(verfassung.chaosverfasst_norm_ids, ("verfassung-370-signal-governance-lane",))
         self.assertEqual(verfassung.grundlegend_norm_ids, ("verfassung-370-signal-expansion-lane",))
+
+
+    # #371 ShannonEntropieFeld
+    def test_kki_shannon_entropie_feld_builds_gesperrt_schutz_norm(self) -> None:
+        feld = build_shannon_entropie_feld(feld_id="feld-371-stability")
+        norm = next(n for n in feld.normen if n.geltung is ShannonEntropieGeltung.GESPERRT)
+
+        self.assertIsInstance(feld, ShannonEntropieFeld)
+        self.assertIsInstance(norm, ShannonEntropieNorm)
+        self.assertEqual(norm.shannon_entropie_typ, ShannonEntropieTyp.SCHUTZ_SHANNON_ENTROPIE)
+        self.assertEqual(norm.prozedur, ShannonEntropieProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.shannon_entropie_tier, 1)
+
+    def test_kki_shannon_entropie_feld_builds_entropisch_ordnungs_norm(self) -> None:
+        feld = build_shannon_entropie_feld(feld_id="feld-371-governance")
+        norm = next(n for n in feld.normen if n.geltung is ShannonEntropieGeltung.ENTROPISCH)
+
+        self.assertEqual(norm.shannon_entropie_typ, ShannonEntropieTyp.ORDNUNGS_SHANNON_ENTROPIE)
+        self.assertEqual(norm.prozedur, ShannonEntropieProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.shannon_entropie_weight, 0.0)
+
+    def test_kki_shannon_entropie_feld_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        feld = build_shannon_entropie_feld(feld_id="feld-371-expansion")
+        norm = next(n for n in feld.normen if n.geltung is ShannonEntropieGeltung.GRUNDLEGEND_ENTROPISCH)
+
+        self.assertEqual(norm.shannon_entropie_typ, ShannonEntropieTyp.SOUVERAENITAETS_SHANNON_ENTROPIE)
+        self.assertEqual(norm.prozedur, ShannonEntropieProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.shannon_entropie_weight, 0.0)
+
+    def test_kki_shannon_entropie_feld_aggregates_feld_signal(self) -> None:
+        feld = build_shannon_entropie_feld(feld_id="feld-371-signal")
+
+        self.assertEqual(feld.feld_signal.status, "feld-gesperrt")
+        self.assertEqual(feld.gesperrt_norm_ids, ("feld-371-signal-stability-lane",))
+        self.assertEqual(feld.entropisch_norm_ids, ("feld-371-signal-governance-lane",))
+        self.assertEqual(feld.grundlegend_norm_ids, ("feld-371-signal-expansion-lane",))
+
+    # #372 KanalkapazitaetRegister
+    def test_kki_kanalkapazitaet_register_builds_gesperrt_schutz_norm(self) -> None:
+        register = build_kanalkapazitaet_register(register_id="register-372-stability")
+        norm = next(n for n in register.normen if n.geltung is KanalkapazitaetGeltung.GESPERRT)
+
+        self.assertIsInstance(register, KanalkapazitaetRegister)
+        self.assertIsInstance(norm, KanalkapazitaetNorm)
+        self.assertEqual(norm.kanalkapazitaet_typ, KanalkapazitaetTyp.SCHUTZ_KANALKAPAZITAET)
+        self.assertEqual(norm.prozedur, KanalkapazitaetProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.kanalkapazitaet_tier, 1)
+
+    def test_kki_kanalkapazitaet_register_builds_kapazitiv_ordnungs_norm(self) -> None:
+        register = build_kanalkapazitaet_register(register_id="register-372-governance")
+        norm = next(n for n in register.normen if n.geltung is KanalkapazitaetGeltung.KAPAZITIV)
+
+        self.assertEqual(norm.kanalkapazitaet_typ, KanalkapazitaetTyp.ORDNUNGS_KANALKAPAZITAET)
+        self.assertEqual(norm.prozedur, KanalkapazitaetProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.kanalkapazitaet_weight, 0.0)
+
+    def test_kki_kanalkapazitaet_register_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        register = build_kanalkapazitaet_register(register_id="register-372-expansion")
+        norm = next(n for n in register.normen if n.geltung is KanalkapazitaetGeltung.GRUNDLEGEND_KAPAZITIV)
+
+        self.assertEqual(norm.kanalkapazitaet_typ, KanalkapazitaetTyp.SOUVERAENITAETS_KANALKAPAZITAET)
+        self.assertEqual(norm.prozedur, KanalkapazitaetProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.kanalkapazitaet_weight, 0.0)
+
+    def test_kki_kanalkapazitaet_register_aggregates_register_signal(self) -> None:
+        register = build_kanalkapazitaet_register(register_id="register-372-signal")
+
+        self.assertEqual(register.register_signal.status, "register-gesperrt")
+        self.assertEqual(register.gesperrt_norm_ids, ("register-372-signal-stability-lane",))
+        self.assertEqual(register.kapazitiv_norm_ids, ("register-372-signal-governance-lane",))
+        self.assertEqual(register.grundlegend_norm_ids, ("register-372-signal-expansion-lane",))
+
+    # #373 QuantenBitKodex
+    def test_kki_quanten_bit_kodex_builds_gesperrt_schutz_norm(self) -> None:
+        kodex = build_quanten_bit_kodex(kodex_id="kodex-373-stability")
+        norm = next(n for n in kodex.normen if n.geltung is QuantenBitGeltung.GESPERRT)
+
+        self.assertIsInstance(kodex, QuantenBitKodex)
+        self.assertIsInstance(norm, QuantenBitNorm)
+        self.assertEqual(norm.quanten_bit_typ, QuantenBitTyp.SCHUTZ_QUANTEN_BIT)
+        self.assertEqual(norm.prozedur, QuantenBitProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.quanten_bit_tier, 1)
+
+    def test_kki_quanten_bit_kodex_builds_superponiert_ordnungs_norm(self) -> None:
+        kodex = build_quanten_bit_kodex(kodex_id="kodex-373-governance")
+        norm = next(n for n in kodex.normen if n.geltung is QuantenBitGeltung.SUPERPONIERT)
+
+        self.assertEqual(norm.quanten_bit_typ, QuantenBitTyp.ORDNUNGS_QUANTEN_BIT)
+        self.assertEqual(norm.prozedur, QuantenBitProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.quanten_bit_weight, 0.0)
+
+    def test_kki_quanten_bit_kodex_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        kodex = build_quanten_bit_kodex(kodex_id="kodex-373-expansion")
+        norm = next(n for n in kodex.normen if n.geltung is QuantenBitGeltung.GRUNDLEGEND_SUPERPONIERT)
+
+        self.assertEqual(norm.quanten_bit_typ, QuantenBitTyp.SOUVERAENITAETS_QUANTEN_BIT)
+        self.assertEqual(norm.prozedur, QuantenBitProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.quanten_bit_weight, 0.0)
+
+    def test_kki_quanten_bit_kodex_aggregates_kodex_signal(self) -> None:
+        kodex = build_quanten_bit_kodex(kodex_id="kodex-373-signal")
+
+        self.assertEqual(kodex.kodex_signal.status, "kodex-gesperrt")
+        self.assertEqual(kodex.gesperrt_norm_ids, ("kodex-373-signal-stability-lane",))
+        self.assertEqual(kodex.superponiert_norm_ids, ("kodex-373-signal-governance-lane",))
+        self.assertEqual(kodex.grundlegend_norm_ids, ("kodex-373-signal-expansion-lane",))
+
+    # #374 VerschraenkungCharta
+    def test_kki_verschraenkung_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_verschraenkung_charta(charta_id="charta-374-stability")
+        norm = next(n for n in charta.normen if n.geltung is VerschraenkungGeltung.GESPERRT)
+
+        self.assertIsInstance(charta, VerschraenkungCharta)
+        self.assertIsInstance(norm, VerschraenkungNorm)
+        self.assertEqual(norm.verschraenkung_typ, VerschraenkungTyp.SCHUTZ_VERSCHRAENKUNG)
+        self.assertEqual(norm.prozedur, VerschraenkungProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.verschraenkung_tier, 1)
+
+    def test_kki_verschraenkung_charta_builds_verschraenkt_ordnungs_norm(self) -> None:
+        charta = build_verschraenkung_charta(charta_id="charta-374-governance")
+        norm = next(n for n in charta.normen if n.geltung is VerschraenkungGeltung.VERSCHRAENKT)
+
+        self.assertEqual(norm.verschraenkung_typ, VerschraenkungTyp.ORDNUNGS_VERSCHRAENKUNG)
+        self.assertEqual(norm.prozedur, VerschraenkungProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.verschraenkung_weight, 0.0)
+
+    def test_kki_verschraenkung_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_verschraenkung_charta(charta_id="charta-374-expansion")
+        norm = next(n for n in charta.normen if n.geltung is VerschraenkungGeltung.GRUNDLEGEND_VERSCHRAENKT)
+
+        self.assertEqual(norm.verschraenkung_typ, VerschraenkungTyp.SOUVERAENITAETS_VERSCHRAENKUNG)
+        self.assertEqual(norm.prozedur, VerschraenkungProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.verschraenkung_weight, 0.0)
+
+    def test_kki_verschraenkung_charta_aggregates_charta_signal(self) -> None:
+        charta = build_verschraenkung_charta(charta_id="charta-374-signal")
+
+        self.assertEqual(charta.charta_signal.status, "charta-gesperrt")
+        self.assertEqual(charta.gesperrt_norm_ids, ("charta-374-signal-stability-lane",))
+        self.assertEqual(charta.verschraenkt_norm_ids, ("charta-374-signal-governance-lane",))
+        self.assertEqual(charta.grundlegend_norm_ids, ("charta-374-signal-expansion-lane",))
 
 
 if __name__ == "__main__":

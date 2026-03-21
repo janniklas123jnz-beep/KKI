@@ -1419,6 +1419,38 @@ from .alfven_wellen_kodex import (
     AlfvenWellenTyp,
     build_alfven_wellen_kodex,
 )
+from .z_pinch_pakt import (
+    ZPinchGeltung,
+    ZPinchNorm,
+    ZPinchPakt,
+    ZPinchProzedur,
+    ZPinchTyp,
+    build_z_pinch_pakt,
+)
+from .tokamak_manifest import (
+    TokamakGeltung,
+    TokamakManifest,
+    TokamakNorm,
+    TokamakProzedur,
+    TokamakTyp,
+    build_tokamak_manifest,
+)
+from .traegheitsfusion_senat import (
+    TraegheitsfusionGeltung,
+    TraegheitsfusionNorm,
+    TraegheitsfusionProzedur,
+    TraegheitsfusionSenat,
+    TraegheitsfusionTyp,
+    build_traegheitsfusion_senat,
+)
+from .plasmawellen_norm import (
+    PlasmaWellenNormEintrag,
+    PlasmaWellenNormGeltung,
+    PlasmaWellenNormProzedur,
+    PlasmaWellenNormSatz,
+    PlasmaWellenNormTyp,
+    build_plasmawellen_norm,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -2607,6 +2639,10 @@ __all__ = [
     "build_magnetohydrodynamik_register",
     "build_debye_abschirmung_charta",
     "build_alfven_wellen_kodex",
+    "build_z_pinch_pakt",
+    "build_tokamak_manifest",
+    "build_traegheitsfusion_senat",
+    "build_plasmawellen_norm",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

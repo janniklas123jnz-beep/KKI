@@ -877,6 +877,30 @@ from kki import (
     AlfvenWellenProzedur,
     AlfvenWellenTyp,
     build_alfven_wellen_kodex,
+    ZPinchGeltung,
+    ZPinchNorm,
+    ZPinchPakt,
+    ZPinchProzedur,
+    ZPinchTyp,
+    build_z_pinch_pakt,
+    TokamakGeltung,
+    TokamakManifest,
+    TokamakNorm,
+    TokamakProzedur,
+    TokamakTyp,
+    build_tokamak_manifest,
+    TraegheitsfusionGeltung,
+    TraegheitsfusionNorm,
+    TraegheitsfusionProzedur,
+    TraegheitsfusionSenat,
+    TraegheitsfusionTyp,
+    build_traegheitsfusion_senat,
+    PlasmaWellenNormEintrag,
+    PlasmaWellenNormGeltung,
+    PlasmaWellenNormProzedur,
+    PlasmaWellenNormSatz,
+    PlasmaWellenNormTyp,
+    build_plasmawellen_norm,
     KausalitaetsGeltung,
     KausalitaetsNorm,
     KausalitaetsProzedur,
@@ -13409,6 +13433,147 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(kodex.gesperrt_norm_ids, ("kodex-354-signal-stability-lane",))
         self.assertEqual(kodex.alfvenwellig_norm_ids, ("kodex-354-signal-governance-lane",))
         self.assertEqual(kodex.grundlegend_norm_ids, ("kodex-354-signal-expansion-lane",))
+
+
+    # #355 ZPinchPakt
+    def test_kki_z_pinch_pakt_builds_gesperrt_schutz_norm(self) -> None:
+        pakt = build_z_pinch_pakt(pakt_id="pakt-355-stability")
+        norm = next(n for n in pakt.normen if n.geltung is ZPinchGeltung.GESPERRT)
+
+        self.assertIsInstance(pakt, ZPinchPakt)
+        self.assertIsInstance(norm, ZPinchNorm)
+        self.assertEqual(norm.z_pinch_typ, ZPinchTyp.SCHUTZ_Z_PINCH)
+        self.assertEqual(norm.prozedur, ZPinchProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.z_pinch_tier, 1)
+
+    def test_kki_z_pinch_pakt_builds_zpinchend_ordnungs_norm(self) -> None:
+        pakt = build_z_pinch_pakt(pakt_id="pakt-355-governance")
+        norm = next(n for n in pakt.normen if n.geltung is ZPinchGeltung.ZPINCHEND)
+
+        self.assertEqual(norm.z_pinch_typ, ZPinchTyp.ORDNUNGS_Z_PINCH)
+        self.assertEqual(norm.prozedur, ZPinchProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.z_pinch_weight, 0.0)
+
+    def test_kki_z_pinch_pakt_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        pakt = build_z_pinch_pakt(pakt_id="pakt-355-expansion")
+        norm = next(n for n in pakt.normen if n.geltung is ZPinchGeltung.GRUNDLEGEND_ZPINCHEND)
+
+        self.assertEqual(norm.z_pinch_typ, ZPinchTyp.SOUVERAENITAETS_Z_PINCH)
+        self.assertEqual(norm.prozedur, ZPinchProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.z_pinch_weight, 0.0)
+
+    def test_kki_z_pinch_pakt_aggregates_pakt_signal(self) -> None:
+        pakt = build_z_pinch_pakt(pakt_id="pakt-355-signal")
+
+        self.assertEqual(pakt.pakt_signal.status, "pakt-gesperrt")
+        self.assertEqual(pakt.gesperrt_norm_ids, ("pakt-355-signal-stability-lane",))
+        self.assertEqual(pakt.zpinchend_norm_ids, ("pakt-355-signal-governance-lane",))
+        self.assertEqual(pakt.grundlegend_norm_ids, ("pakt-355-signal-expansion-lane",))
+
+    # #356 TokamakManifest
+    def test_kki_tokamak_manifest_builds_gesperrt_schutz_norm(self) -> None:
+        manifest = build_tokamak_manifest(manifest_id="manifest-356-stability")
+        norm = next(n for n in manifest.normen if n.geltung is TokamakGeltung.GESPERRT)
+
+        self.assertIsInstance(manifest, TokamakManifest)
+        self.assertIsInstance(norm, TokamakNorm)
+        self.assertEqual(norm.tokamak_typ, TokamakTyp.SCHUTZ_TOKAMAK)
+        self.assertEqual(norm.prozedur, TokamakProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.tokamak_tier, 1)
+
+    def test_kki_tokamak_manifest_builds_tokamakisch_ordnungs_norm(self) -> None:
+        manifest = build_tokamak_manifest(manifest_id="manifest-356-governance")
+        norm = next(n for n in manifest.normen if n.geltung is TokamakGeltung.TOKAMAKISCH)
+
+        self.assertEqual(norm.tokamak_typ, TokamakTyp.ORDNUNGS_TOKAMAK)
+        self.assertEqual(norm.prozedur, TokamakProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.tokamak_weight, 0.0)
+
+    def test_kki_tokamak_manifest_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        manifest = build_tokamak_manifest(manifest_id="manifest-356-expansion")
+        norm = next(n for n in manifest.normen if n.geltung is TokamakGeltung.GRUNDLEGEND_TOKAMAKISCH)
+
+        self.assertEqual(norm.tokamak_typ, TokamakTyp.SOUVERAENITAETS_TOKAMAK)
+        self.assertEqual(norm.prozedur, TokamakProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.tokamak_weight, 0.0)
+
+    def test_kki_tokamak_manifest_aggregates_manifest_signal(self) -> None:
+        manifest = build_tokamak_manifest(manifest_id="manifest-356-signal")
+
+        self.assertEqual(manifest.manifest_signal.status, "manifest-gesperrt")
+        self.assertEqual(manifest.gesperrt_norm_ids, ("manifest-356-signal-stability-lane",))
+        self.assertEqual(manifest.tokamakisch_norm_ids, ("manifest-356-signal-governance-lane",))
+        self.assertEqual(manifest.grundlegend_norm_ids, ("manifest-356-signal-expansion-lane",))
+
+    # #357 TraegheitsfusionSenat
+    def test_kki_traegheitsfusion_senat_builds_gesperrt_schutz_norm(self) -> None:
+        senat = build_traegheitsfusion_senat(senat_id="senat-357-stability")
+        norm = next(n for n in senat.normen if n.geltung is TraegheitsfusionGeltung.GESPERRT)
+
+        self.assertIsInstance(senat, TraegheitsfusionSenat)
+        self.assertIsInstance(norm, TraegheitsfusionNorm)
+        self.assertEqual(norm.traegheitsfusion_typ, TraegheitsfusionTyp.SCHUTZ_TRAEGHEITSFUSION)
+        self.assertEqual(norm.prozedur, TraegheitsfusionProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.traegheitsfusion_tier, 1)
+
+    def test_kki_traegheitsfusion_senat_builds_traegheitsfusionierend_ordnungs_norm(self) -> None:
+        senat = build_traegheitsfusion_senat(senat_id="senat-357-governance")
+        norm = next(n for n in senat.normen if n.geltung is TraegheitsfusionGeltung.TRAEGHEITSFUSIONIEREND)
+
+        self.assertEqual(norm.traegheitsfusion_typ, TraegheitsfusionTyp.ORDNUNGS_TRAEGHEITSFUSION)
+        self.assertEqual(norm.prozedur, TraegheitsfusionProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.traegheitsfusion_weight, 0.0)
+
+    def test_kki_traegheitsfusion_senat_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        senat = build_traegheitsfusion_senat(senat_id="senat-357-expansion")
+        norm = next(n for n in senat.normen if n.geltung is TraegheitsfusionGeltung.GRUNDLEGEND_TRAEGHEITSFUSIONIEREND)
+
+        self.assertEqual(norm.traegheitsfusion_typ, TraegheitsfusionTyp.SOUVERAENITAETS_TRAEGHEITSFUSION)
+        self.assertEqual(norm.prozedur, TraegheitsfusionProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.traegheitsfusion_weight, 0.0)
+
+    def test_kki_traegheitsfusion_senat_aggregates_senat_signal(self) -> None:
+        senat = build_traegheitsfusion_senat(senat_id="senat-357-signal")
+
+        self.assertEqual(senat.senat_signal.status, "senat-gesperrt")
+        self.assertEqual(senat.gesperrt_norm_ids, ("senat-357-signal-stability-lane",))
+        self.assertEqual(senat.traegheitsfusionierend_norm_ids, ("senat-357-signal-governance-lane",))
+        self.assertEqual(senat.grundlegend_norm_ids, ("senat-357-signal-expansion-lane",))
+
+    # #358 PlasmaWellenNorm (*_norm)
+    def test_kki_plasmawellen_norm_builds_gesperrt_schutz_norm(self) -> None:
+        normsatz = build_plasmawellen_norm(norm_id="plasmawellen-norm-358-stability")
+        eintrag = next(n for n in normsatz.normen if n.geltung is PlasmaWellenNormGeltung.GESPERRT)
+
+        self.assertIsInstance(normsatz, PlasmaWellenNormSatz)
+        self.assertIsInstance(eintrag, PlasmaWellenNormEintrag)
+        self.assertEqual(eintrag.plasmawellen_norm_typ, PlasmaWellenNormTyp.SCHUTZ_PLASMAWELLEN_NORM)
+        self.assertEqual(eintrag.prozedur, PlasmaWellenNormProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(eintrag.plasmawellen_norm_tier, 1)
+
+    def test_kki_plasmawellen_norm_builds_plasmawellig_ordnungs_norm(self) -> None:
+        normsatz = build_plasmawellen_norm(norm_id="plasmawellen-norm-358-governance")
+        eintrag = next(n for n in normsatz.normen if n.geltung is PlasmaWellenNormGeltung.PLASMAWELLIG)
+
+        self.assertEqual(eintrag.plasmawellen_norm_typ, PlasmaWellenNormTyp.ORDNUNGS_PLASMAWELLEN_NORM)
+        self.assertEqual(eintrag.prozedur, PlasmaWellenNormProzedur.REGELPROTOKOLL)
+        self.assertGreater(eintrag.plasmawellen_norm_weight, 0.0)
+
+    def test_kki_plasmawellen_norm_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        normsatz = build_plasmawellen_norm(norm_id="plasmawellen-norm-358-expansion")
+        eintrag = next(n for n in normsatz.normen if n.geltung is PlasmaWellenNormGeltung.GRUNDLEGEND_PLASMAWELLIG)
+
+        self.assertEqual(eintrag.plasmawellen_norm_typ, PlasmaWellenNormTyp.SOUVERAENITAETS_PLASMAWELLEN_NORM)
+        self.assertEqual(eintrag.prozedur, PlasmaWellenNormProzedur.PLENARPROTOKOLL)
+        self.assertGreater(eintrag.plasmawellen_norm_weight, 0.0)
+
+    def test_kki_plasmawellen_norm_aggregates_norm_signal(self) -> None:
+        normsatz = build_plasmawellen_norm(norm_id="plasmawellen-norm-358-signal")
+
+        self.assertEqual(normsatz.norm_signal.status, "norm-gesperrt")
+        self.assertEqual(normsatz.gesperrt_norm_ids, ("plasmawellen-norm-358-signal-stability-lane",))
+        self.assertEqual(normsatz.plasmawellig_norm_ids, ("plasmawellen-norm-358-signal-governance-lane",))
+        self.assertEqual(normsatz.grundlegend_norm_ids, ("plasmawellen-norm-358-signal-expansion-lane",))
 
 
 if __name__ == "__main__":

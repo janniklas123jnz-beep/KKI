@@ -961,6 +961,18 @@ from kki import (
     KomplexitaetsProzedur,
     KomplexitaetsTyp,
     build_komplexitaets_charta,
+    AdaptivSchwarmGeltung,
+    AdaptivSchwarmKodex,
+    AdaptivSchwarmNorm,
+    AdaptivSchwarmProzedur,
+    AdaptivSchwarmTyp,
+    build_adaptiv_schwarm_kodex,
+    ChaosVerfassung,
+    ChaosVerfassungsGeltung,
+    ChaosVerfassungsNorm,
+    ChaosVerfassungsProzedur,
+    ChaosVerfassungsTyp,
+    build_chaos_verfassung,
     KausalitaetsGeltung,
     KausalitaetsNorm,
     KausalitaetsProzedur,
@@ -13987,6 +13999,77 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(charta.gesperrt_norm_ids, ("charta-368-signal-stability-lane",))
         self.assertEqual(charta.komplexitaetsbewertet_norm_ids, ("charta-368-signal-governance-lane",))
         self.assertEqual(charta.grundlegend_norm_ids, ("charta-368-signal-expansion-lane",))
+
+
+    # #369 AdaptivSchwarmKodex
+    def test_kki_adaptiv_schwarm_kodex_builds_gesperrt_schutz_norm(self) -> None:
+        kodex = build_adaptiv_schwarm_kodex(kodex_id="kodex-369-stability")
+        norm = next(n for n in kodex.normen if n.geltung is AdaptivSchwarmGeltung.GESPERRT)
+
+        self.assertIsInstance(kodex, AdaptivSchwarmKodex)
+        self.assertIsInstance(norm, AdaptivSchwarmNorm)
+        self.assertEqual(norm.adaptiv_schwarm_typ, AdaptivSchwarmTyp.SCHUTZ_ADAPTIV_SCHWARM)
+        self.assertEqual(norm.prozedur, AdaptivSchwarmProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.adaptiv_schwarm_tier, 1)
+
+    def test_kki_adaptiv_schwarm_kodex_builds_adaptivschwarmend_ordnungs_norm(self) -> None:
+        kodex = build_adaptiv_schwarm_kodex(kodex_id="kodex-369-governance")
+        norm = next(n for n in kodex.normen if n.geltung is AdaptivSchwarmGeltung.ADAPTIV_SCHWARMEND)
+
+        self.assertEqual(norm.adaptiv_schwarm_typ, AdaptivSchwarmTyp.ORDNUNGS_ADAPTIV_SCHWARM)
+        self.assertEqual(norm.prozedur, AdaptivSchwarmProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.adaptiv_schwarm_weight, 0.0)
+
+    def test_kki_adaptiv_schwarm_kodex_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        kodex = build_adaptiv_schwarm_kodex(kodex_id="kodex-369-expansion")
+        norm = next(n for n in kodex.normen if n.geltung is AdaptivSchwarmGeltung.GRUNDLEGEND_ADAPTIV_SCHWARMEND)
+
+        self.assertEqual(norm.adaptiv_schwarm_typ, AdaptivSchwarmTyp.SOUVERAENITAETS_ADAPTIV_SCHWARM)
+        self.assertEqual(norm.prozedur, AdaptivSchwarmProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.adaptiv_schwarm_weight, 0.0)
+
+    def test_kki_adaptiv_schwarm_kodex_aggregates_kodex_signal(self) -> None:
+        kodex = build_adaptiv_schwarm_kodex(kodex_id="kodex-369-signal")
+
+        self.assertEqual(kodex.kodex_signal.status, "kodex-gesperrt")
+        self.assertEqual(kodex.gesperrt_norm_ids, ("kodex-369-signal-stability-lane",))
+        self.assertEqual(kodex.adaptivschwarmend_norm_ids, ("kodex-369-signal-governance-lane",))
+        self.assertEqual(kodex.grundlegend_norm_ids, ("kodex-369-signal-expansion-lane",))
+
+    # #370 ChaosVerfassung (Block-Krone)
+    def test_kki_chaos_verfassung_builds_gesperrt_schutz_norm(self) -> None:
+        verfassung = build_chaos_verfassung(verfassung_id="verfassung-370-stability")
+        norm = next(n for n in verfassung.normen if n.geltung is ChaosVerfassungsGeltung.GESPERRT)
+
+        self.assertIsInstance(verfassung, ChaosVerfassung)
+        self.assertIsInstance(norm, ChaosVerfassungsNorm)
+        self.assertEqual(norm.chaos_verfassungs_typ, ChaosVerfassungsTyp.SCHUTZ_CHAOSVERFASSUNG)
+        self.assertEqual(norm.prozedur, ChaosVerfassungsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.chaos_verfassungs_tier, 1)
+
+    def test_kki_chaos_verfassung_builds_chaosverfasst_ordnungs_norm(self) -> None:
+        verfassung = build_chaos_verfassung(verfassung_id="verfassung-370-governance")
+        norm = next(n for n in verfassung.normen if n.geltung is ChaosVerfassungsGeltung.CHAOSVERFASST)
+
+        self.assertEqual(norm.chaos_verfassungs_typ, ChaosVerfassungsTyp.ORDNUNGS_CHAOSVERFASSUNG)
+        self.assertEqual(norm.prozedur, ChaosVerfassungsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.chaos_verfassungs_weight, 0.0)
+
+    def test_kki_chaos_verfassung_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        verfassung = build_chaos_verfassung(verfassung_id="verfassung-370-expansion")
+        norm = next(n for n in verfassung.normen if n.geltung is ChaosVerfassungsGeltung.GRUNDLEGEND_CHAOSVERFASST)
+
+        self.assertEqual(norm.chaos_verfassungs_typ, ChaosVerfassungsTyp.SOUVERAENITAETS_CHAOSVERFASSUNG)
+        self.assertEqual(norm.prozedur, ChaosVerfassungsProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.chaos_verfassungs_weight, 0.0)
+
+    def test_kki_chaos_verfassung_aggregates_verfassung_signal(self) -> None:
+        verfassung = build_chaos_verfassung(verfassung_id="verfassung-370-signal")
+
+        self.assertEqual(verfassung.verfassung_signal.status, "verfassung-gesperrt")
+        self.assertEqual(verfassung.gesperrt_norm_ids, ("verfassung-370-signal-stability-lane",))
+        self.assertEqual(verfassung.chaosverfasst_norm_ids, ("verfassung-370-signal-governance-lane",))
+        self.assertEqual(verfassung.grundlegend_norm_ids, ("verfassung-370-signal-expansion-lane",))
 
 
 if __name__ == "__main__":

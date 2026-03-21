@@ -1531,6 +1531,22 @@ from .komplexitaets_charta import (
     KomplexitaetsTyp,
     build_komplexitaets_charta,
 )
+from .adaptiv_schwarm_kodex import (
+    AdaptivSchwarmGeltung,
+    AdaptivSchwarmKodex,
+    AdaptivSchwarmNorm,
+    AdaptivSchwarmProzedur,
+    AdaptivSchwarmTyp,
+    build_adaptiv_schwarm_kodex,
+)
+from .chaos_verfassung import (
+    ChaosVerfassung,
+    ChaosVerfassungsGeltung,
+    ChaosVerfassungsNorm,
+    ChaosVerfassungsProzedur,
+    ChaosVerfassungsTyp,
+    build_chaos_verfassung,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -2733,6 +2749,8 @@ __all__ = [
     "build_emergenz_senat",
     "build_perkolations_norm",
     "build_komplexitaets_charta",
+    "build_adaptiv_schwarm_kodex",
+    "build_chaos_verfassung",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

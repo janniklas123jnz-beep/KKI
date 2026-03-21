@@ -1211,6 +1211,22 @@ from .expansion_norm import (
     ExpansionNormTyp,
     build_expansion_norm,
 )
+from .hubble_charta import (
+    HubbleCharta,
+    HubbleGeltung,
+    HubbleNorm,
+    HubbleProzedur,
+    HubbleTyp,
+    build_hubble_charta,
+)
+from .kosmologie_verfassung import (
+    KosmologieVerfassung,
+    KosmologieVerfassungsGeltung,
+    KosmologieVerfassungsNorm,
+    KosmologieVerfassungsProzedur,
+    KosmologieVerfassungsTyp,
+    build_kosmologie_verfassung,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -2373,6 +2389,8 @@ __all__ = [
     "build_cmb_manifest",
     "build_strukturbildungs_senat",
     "build_expansion_norm",
+    "build_hubble_charta",
+    "build_kosmologie_verfassung",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

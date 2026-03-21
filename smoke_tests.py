@@ -721,6 +721,18 @@ from kki import (
     ExpansionNormSatz,
     ExpansionNormTyp,
     build_expansion_norm,
+    HubbleCharta,
+    HubbleGeltung,
+    HubbleNorm,
+    HubbleProzedur,
+    HubbleTyp,
+    build_hubble_charta,
+    KosmologieVerfassung,
+    KosmologieVerfassungsGeltung,
+    KosmologieVerfassungsNorm,
+    KosmologieVerfassungsProzedur,
+    KosmologieVerfassungsTyp,
+    build_kosmologie_verfassung,
     KausalitaetsGeltung,
     KausalitaetsNorm,
     KausalitaetsProzedur,
@@ -7590,6 +7602,82 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(satz.gesperrt_norm_ids, ("expansion-norm-328-signal-stability-lane",))
         self.assertEqual(satz.expansionsnormiert_norm_ids, ("expansion-norm-328-signal-governance-lane",))
         self.assertEqual(satz.grundlegend_norm_ids, ("expansion-norm-328-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #329 HubbleCharta
+    # ------------------------------------------------------------------
+
+    def test_kki_hubble_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_hubble_charta(charta_id="charta-329-stability")
+        norm = next(n for n in charta.normen if n.geltung is HubbleGeltung.GESPERRT)
+
+        self.assertIsInstance(charta, HubbleCharta)
+        self.assertIsInstance(norm, HubbleNorm)
+        self.assertEqual(norm.hubble_typ, HubbleTyp.SCHUTZ_HUBBLE)
+        self.assertEqual(norm.prozedur, HubbleProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.hubble_tier, 1)
+
+    def test_kki_hubble_charta_builds_hubblegebunden_ordnungs_norm(self) -> None:
+        charta = build_hubble_charta(charta_id="charta-329-governance")
+        norm = next(n for n in charta.normen if n.geltung is HubbleGeltung.HUBBLEGEBUNDEN)
+
+        self.assertEqual(norm.hubble_typ, HubbleTyp.ORDNUNGS_HUBBLE)
+        self.assertEqual(norm.prozedur, HubbleProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.hubble_weight, 0.0)
+
+    def test_kki_hubble_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_hubble_charta(charta_id="charta-329-expansion")
+        norm = next(n for n in charta.normen if n.geltung is HubbleGeltung.GRUNDLEGEND_HUBBLEGEBUNDEN)
+
+        self.assertEqual(norm.hubble_typ, HubbleTyp.SOUVERAENITAETS_HUBBLE)
+        self.assertEqual(norm.prozedur, HubbleProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_hubble_charta_aggregates_charta_signal(self) -> None:
+        charta = build_hubble_charta(charta_id="charta-329-signal")
+
+        self.assertEqual(charta.charta_signal.status, "charta-gesperrt")
+        self.assertEqual(charta.gesperrt_norm_ids, ("charta-329-signal-stability-lane",))
+        self.assertEqual(charta.hubblegebunden_norm_ids, ("charta-329-signal-governance-lane",))
+        self.assertEqual(charta.grundlegend_norm_ids, ("charta-329-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #330 KosmologieVerfassung  (Block-Krone)
+    # ------------------------------------------------------------------
+
+    def test_kki_kosmologie_verfassung_builds_gesperrt_schutz_norm(self) -> None:
+        verfassung = build_kosmologie_verfassung(verfassung_id="verfassung-330-stability")
+        norm = next(n for n in verfassung.normen if n.geltung is KosmologieVerfassungsGeltung.GESPERRT)
+
+        self.assertIsInstance(verfassung, KosmologieVerfassung)
+        self.assertIsInstance(norm, KosmologieVerfassungsNorm)
+        self.assertEqual(norm.kosmologie_verfassungs_typ, KosmologieVerfassungsTyp.SCHUTZ_KOSMOLOGIEVERFASSUNG)
+        self.assertEqual(norm.prozedur, KosmologieVerfassungsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.kosmologie_verfassungs_tier, 1)
+
+    def test_kki_kosmologie_verfassung_builds_kosmologieverfasst_ordnungs_norm(self) -> None:
+        verfassung = build_kosmologie_verfassung(verfassung_id="verfassung-330-governance")
+        norm = next(n for n in verfassung.normen if n.geltung is KosmologieVerfassungsGeltung.KOSMOLOGIEVERFASST)
+
+        self.assertEqual(norm.kosmologie_verfassungs_typ, KosmologieVerfassungsTyp.ORDNUNGS_KOSMOLOGIEVERFASSUNG)
+        self.assertEqual(norm.prozedur, KosmologieVerfassungsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.kosmologie_verfassungs_weight, 0.0)
+
+    def test_kki_kosmologie_verfassung_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        verfassung = build_kosmologie_verfassung(verfassung_id="verfassung-330-expansion")
+        norm = next(n for n in verfassung.normen if n.geltung is KosmologieVerfassungsGeltung.GRUNDLEGEND_KOSMOLOGIEVERFASST)
+
+        self.assertEqual(norm.kosmologie_verfassungs_typ, KosmologieVerfassungsTyp.SOUVERAENITAETS_KOSMOLOGIEVERFASSUNG)
+        self.assertEqual(norm.prozedur, KosmologieVerfassungsProzedur.PLENARPROTOKOLL)
+        self.assertTrue(norm.canonical)
+
+    def test_kki_kosmologie_verfassung_aggregates_verfassung_signal(self) -> None:
+        verfassung = build_kosmologie_verfassung(verfassung_id="verfassung-330-signal")
+
+        self.assertEqual(verfassung.verfassung_signal.status, "verfassung-gesperrt")
+        self.assertEqual(verfassung.gesperrt_norm_ids, ("verfassung-330-signal-stability-lane",))
+        self.assertEqual(verfassung.kosmologieverfasst_norm_ids, ("verfassung-330-signal-governance-lane",))
+        self.assertEqual(verfassung.grundlegend_norm_ids, ("verfassung-330-signal-expansion-lane",))
 
     def test_kki_waermestrahlung_charta_builds_gesperrt_schutz_norm(self) -> None:
         charta = build_waermestrahlung_charta(charta_id="charta-289-stability")

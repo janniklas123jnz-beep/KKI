@@ -1691,6 +1691,22 @@ from .lotka_volterra_norm import (
     LotkaVolterraNormTyp,
     build_lotka_volterra_norm,
 )
+from .morphogenese_charta import (
+    MorphogeneseCharta,
+    MorphogeneseGeltung,
+    MorphogeneseNorm,
+    MorphogeneseProzedur,
+    MorphogeneseTyp,
+    build_morphogenese_charta,
+)
+from .systembiologie_verfassung import (
+    SystembiologieVerfassung,
+    SystembiologieVerfassungsGeltung,
+    SystembiologieVerfassungsNorm,
+    SystembiologieVerfassungsProzedur,
+    SystembiologieVerfassungsTyp,
+    build_systembiologie_verfassung,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -2963,6 +2979,18 @@ __all__ = [
     "LotkaVolterraNormSatz",
     "LotkaVolterraNormTyp",
     "build_lotka_volterra_norm",
+    "MorphogeneseCharta",
+    "MorphogeneseGeltung",
+    "MorphogeneseNorm",
+    "MorphogeneseProzedur",
+    "MorphogeneseTyp",
+    "build_morphogenese_charta",
+    "SystembiologieVerfassung",
+    "SystembiologieVerfassungsGeltung",
+    "SystembiologieVerfassungsNorm",
+    "SystembiologieVerfassungsProzedur",
+    "SystembiologieVerfassungsTyp",
+    "build_systembiologie_verfassung",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

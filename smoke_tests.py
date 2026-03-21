@@ -1081,6 +1081,18 @@ from kki import (
     LotkaVolterraNormSatz,
     LotkaVolterraNormTyp,
     build_lotka_volterra_norm,
+    MorphogeneseCharta,
+    MorphogeneseGeltung,
+    MorphogeneseNorm,
+    MorphogeneseProzedur,
+    MorphogeneseTyp,
+    build_morphogenese_charta,
+    SystembiologieVerfassung,
+    SystembiologieVerfassungsGeltung,
+    SystembiologieVerfassungsNorm,
+    SystembiologieVerfassungsProzedur,
+    SystembiologieVerfassungsTyp,
+    build_systembiologie_verfassung,
     KausalitaetsGeltung,
     KausalitaetsNorm,
     KausalitaetsProzedur,
@@ -14810,6 +14822,78 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(satz.gesperrt_norm_ids, ("norm-388-signal-stability-lane",))
         self.assertEqual(satz.lotkavolterrabeschr_norm_ids, ("norm-388-signal-governance-lane",))
         self.assertEqual(satz.grundlegend_norm_ids, ("norm-388-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #389 MorphogeneseCharta
+    # ------------------------------------------------------------------
+
+    def test_kki_morphogenese_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_morphogenese_charta(charta_id="charta-389-stability")
+        norm = next(n for n in charta.normen if n.geltung is MorphogeneseGeltung.GESPERRT)
+
+        self.assertEqual(norm.morphogenese_typ, MorphogeneseTyp.SCHUTZ_MORPHOGENESE)
+        self.assertEqual(norm.prozedur, MorphogeneseProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.morphogenese_tier, 1)
+
+    def test_kki_morphogenese_charta_builds_morphogenetisch_ordnungs_norm(self) -> None:
+        charta = build_morphogenese_charta(charta_id="charta-389-governance")
+        norm = next(n for n in charta.normen if n.geltung is MorphogeneseGeltung.MORPHOGENETISCH)
+
+        self.assertEqual(norm.morphogenese_typ, MorphogeneseTyp.ORDNUNGS_MORPHOGENESE)
+        self.assertEqual(norm.prozedur, MorphogeneseProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.morphogenese_weight, 0.0)
+
+    def test_kki_morphogenese_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_morphogenese_charta(charta_id="charta-389-expansion")
+        norm = next(n for n in charta.normen if n.geltung is MorphogeneseGeltung.GRUNDLEGEND_MORPHOGENETISCH)
+
+        self.assertEqual(norm.morphogenese_typ, MorphogeneseTyp.SOUVERAENITAETS_MORPHOGENESE)
+        self.assertEqual(norm.prozedur, MorphogeneseProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.morphogenese_weight, 0.0)
+
+    def test_kki_morphogenese_charta_aggregates_charta_signal(self) -> None:
+        charta = build_morphogenese_charta(charta_id="charta-389-signal")
+
+        self.assertEqual(charta.charta_signal.status, "charta-gesperrt")
+        self.assertEqual(charta.gesperrt_norm_ids, ("charta-389-signal-stability-lane",))
+        self.assertEqual(charta.morphogenetisch_norm_ids, ("charta-389-signal-governance-lane",))
+        self.assertEqual(charta.grundlegend_norm_ids, ("charta-389-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #390 SystembiologieVerfassung (Block-Krone)
+    # ------------------------------------------------------------------
+
+    def test_kki_systembiologie_verfassung_builds_gesperrt_schutz_norm(self) -> None:
+        verfassung = build_systembiologie_verfassung(verfassung_id="verfassung-390-stability")
+        norm = next(n for n in verfassung.normen if n.geltung is SystembiologieVerfassungsGeltung.GESPERRT)
+
+        self.assertEqual(norm.systembiologie_verfassungs_typ, SystembiologieVerfassungsTyp.SCHUTZ_SYSTEMBIOLOGIEVERFASSUNG)
+        self.assertEqual(norm.prozedur, SystembiologieVerfassungsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.systembiologie_verfassungs_tier, 1)
+
+    def test_kki_systembiologie_verfassung_builds_systembiologieverfasst_ordnungs_norm(self) -> None:
+        verfassung = build_systembiologie_verfassung(verfassung_id="verfassung-390-governance")
+        norm = next(n for n in verfassung.normen if n.geltung is SystembiologieVerfassungsGeltung.SYSTEMBIOLOGIEVERFASST)
+
+        self.assertEqual(norm.systembiologie_verfassungs_typ, SystembiologieVerfassungsTyp.ORDNUNGS_SYSTEMBIOLOGIEVERFASSUNG)
+        self.assertEqual(norm.prozedur, SystembiologieVerfassungsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.systembiologie_verfassungs_weight, 0.0)
+
+    def test_kki_systembiologie_verfassung_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        verfassung = build_systembiologie_verfassung(verfassung_id="verfassung-390-expansion")
+        norm = next(n for n in verfassung.normen if n.geltung is SystembiologieVerfassungsGeltung.GRUNDLEGEND_SYSTEMBIOLOGIEVERFASST)
+
+        self.assertEqual(norm.systembiologie_verfassungs_typ, SystembiologieVerfassungsTyp.SOUVERAENITAETS_SYSTEMBIOLOGIEVERFASSUNG)
+        self.assertEqual(norm.prozedur, SystembiologieVerfassungsProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.systembiologie_verfassungs_weight, 0.0)
+
+    def test_kki_systembiologie_verfassung_aggregates_verfassung_signal(self) -> None:
+        verfassung = build_systembiologie_verfassung(verfassung_id="verfassung-390-signal")
+
+        self.assertEqual(verfassung.verfassung_signal.status, "verfassung-gesperrt")
+        self.assertEqual(verfassung.gesperrt_norm_ids, ("verfassung-390-signal-stability-lane",))
+        self.assertEqual(verfassung.systembiologieverfasst_norm_ids, ("verfassung-390-signal-governance-lane",))
+        self.assertEqual(verfassung.grundlegend_norm_ids, ("verfassung-390-signal-expansion-lane",))
 
 
 if __name__ == "__main__":

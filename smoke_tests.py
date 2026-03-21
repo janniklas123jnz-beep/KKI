@@ -817,6 +817,30 @@ from kki import (
     HalbleiterProzedur,
     HalbleiterTyp,
     build_halbleiter_kodex,
+    SupraleitungPakt,
+    SupraleitungGeltung,
+    SupraleitungNorm,
+    SupraleitungProzedur,
+    SupraleitungTyp,
+    build_supraleitung_pakt,
+    QuantenHallManifest,
+    QuantenHallGeltung,
+    QuantenHallNorm,
+    QuantenHallProzedur,
+    QuantenHallTyp,
+    build_quanten_hall_manifest,
+    PhononSenat,
+    PhononGeltung,
+    PhononNorm,
+    PhononProzedur,
+    PhononTyp,
+    build_phonon_senat,
+    FermiNormSatz,
+    FermiNormEintrag,
+    FermiNormGeltung,
+    FermiNormProzedur,
+    FermiNormTyp,
+    build_fermi_norm,
     KausalitaetsGeltung,
     KausalitaetsNorm,
     KausalitaetsProzedur,
@@ -12996,6 +13020,147 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(kodex.gesperrt_norm_ids, ("kodex-344-signal-stability-lane",))
         self.assertEqual(kodex.halbleitend_norm_ids, ("kodex-344-signal-governance-lane",))
         self.assertEqual(kodex.grundlegend_norm_ids, ("kodex-344-signal-expansion-lane",))
+
+
+    # #345 SupraleitungPakt
+    def test_kki_supraleitung_pakt_builds_gesperrt_schutz_norm(self) -> None:
+        pakt = build_supraleitung_pakt(pakt_id="pakt-345-stability")
+        norm = next(n for n in pakt.normen if n.geltung is SupraleitungGeltung.GESPERRT)
+
+        self.assertIsInstance(pakt, SupraleitungPakt)
+        self.assertIsInstance(norm, SupraleitungNorm)
+        self.assertEqual(norm.supraleitung_typ, SupraleitungTyp.SCHUTZ_SUPRALEITUNG)
+        self.assertEqual(norm.prozedur, SupraleitungProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.supraleitung_tier, 1)
+
+    def test_kki_supraleitung_pakt_builds_supraleitend_ordnungs_norm(self) -> None:
+        pakt = build_supraleitung_pakt(pakt_id="pakt-345-governance")
+        norm = next(n for n in pakt.normen if n.geltung is SupraleitungGeltung.SUPRALEITEND)
+
+        self.assertEqual(norm.supraleitung_typ, SupraleitungTyp.ORDNUNGS_SUPRALEITUNG)
+        self.assertEqual(norm.prozedur, SupraleitungProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.supraleitung_weight, 0.0)
+
+    def test_kki_supraleitung_pakt_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        pakt = build_supraleitung_pakt(pakt_id="pakt-345-expansion")
+        norm = next(n for n in pakt.normen if n.geltung is SupraleitungGeltung.GRUNDLEGEND_SUPRALEITEND)
+
+        self.assertEqual(norm.supraleitung_typ, SupraleitungTyp.SOUVERAENITAETS_SUPRALEITUNG)
+        self.assertEqual(norm.prozedur, SupraleitungProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.supraleitung_weight, 0.0)
+
+    def test_kki_supraleitung_pakt_aggregates_pakt_signal(self) -> None:
+        pakt = build_supraleitung_pakt(pakt_id="pakt-345-signal")
+
+        self.assertEqual(pakt.pakt_signal.status, "pakt-gesperrt")
+        self.assertEqual(pakt.gesperrt_norm_ids, ("pakt-345-signal-stability-lane",))
+        self.assertEqual(pakt.supraleitend_norm_ids, ("pakt-345-signal-governance-lane",))
+        self.assertEqual(pakt.grundlegend_norm_ids, ("pakt-345-signal-expansion-lane",))
+
+    # #346 QuantenHallManifest
+    def test_kki_quanten_hall_manifest_builds_gesperrt_schutz_norm(self) -> None:
+        manifest = build_quanten_hall_manifest(manifest_id="manifest-346-stability")
+        norm = next(n for n in manifest.normen if n.geltung is QuantenHallGeltung.GESPERRT)
+
+        self.assertIsInstance(manifest, QuantenHallManifest)
+        self.assertIsInstance(norm, QuantenHallNorm)
+        self.assertEqual(norm.quanten_hall_typ, QuantenHallTyp.SCHUTZ_QUANTEN_HALL)
+        self.assertEqual(norm.prozedur, QuantenHallProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.quanten_hall_tier, 1)
+
+    def test_kki_quanten_hall_manifest_builds_quantenhallisch_ordnungs_norm(self) -> None:
+        manifest = build_quanten_hall_manifest(manifest_id="manifest-346-governance")
+        norm = next(n for n in manifest.normen if n.geltung is QuantenHallGeltung.QUANTENHALLISCH)
+
+        self.assertEqual(norm.quanten_hall_typ, QuantenHallTyp.ORDNUNGS_QUANTEN_HALL)
+        self.assertEqual(norm.prozedur, QuantenHallProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.quanten_hall_weight, 0.0)
+
+    def test_kki_quanten_hall_manifest_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        manifest = build_quanten_hall_manifest(manifest_id="manifest-346-expansion")
+        norm = next(n for n in manifest.normen if n.geltung is QuantenHallGeltung.GRUNDLEGEND_QUANTENHALLISCH)
+
+        self.assertEqual(norm.quanten_hall_typ, QuantenHallTyp.SOUVERAENITAETS_QUANTEN_HALL)
+        self.assertEqual(norm.prozedur, QuantenHallProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.quanten_hall_weight, 0.0)
+
+    def test_kki_quanten_hall_manifest_aggregates_manifest_signal(self) -> None:
+        manifest = build_quanten_hall_manifest(manifest_id="manifest-346-signal")
+
+        self.assertEqual(manifest.manifest_signal.status, "manifest-gesperrt")
+        self.assertEqual(manifest.gesperrt_norm_ids, ("manifest-346-signal-stability-lane",))
+        self.assertEqual(manifest.quantenhallisch_norm_ids, ("manifest-346-signal-governance-lane",))
+        self.assertEqual(manifest.grundlegend_norm_ids, ("manifest-346-signal-expansion-lane",))
+
+    # #347 PhononSenat
+    def test_kki_phonon_senat_builds_gesperrt_schutz_norm(self) -> None:
+        senat = build_phonon_senat(senat_id="senat-347-stability")
+        norm = next(n for n in senat.normen if n.geltung is PhononGeltung.GESPERRT)
+
+        self.assertIsInstance(senat, PhononSenat)
+        self.assertIsInstance(norm, PhononNorm)
+        self.assertEqual(norm.phonon_typ, PhononTyp.SCHUTZ_PHONON)
+        self.assertEqual(norm.prozedur, PhononProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.phonon_tier, 1)
+
+    def test_kki_phonon_senat_builds_phononisch_ordnungs_norm(self) -> None:
+        senat = build_phonon_senat(senat_id="senat-347-governance")
+        norm = next(n for n in senat.normen if n.geltung is PhononGeltung.PHONONISCH)
+
+        self.assertEqual(norm.phonon_typ, PhononTyp.ORDNUNGS_PHONON)
+        self.assertEqual(norm.prozedur, PhononProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.phonon_weight, 0.0)
+
+    def test_kki_phonon_senat_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        senat = build_phonon_senat(senat_id="senat-347-expansion")
+        norm = next(n for n in senat.normen if n.geltung is PhononGeltung.GRUNDLEGEND_PHONONISCH)
+
+        self.assertEqual(norm.phonon_typ, PhononTyp.SOUVERAENITAETS_PHONON)
+        self.assertEqual(norm.prozedur, PhononProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.phonon_weight, 0.0)
+
+    def test_kki_phonon_senat_aggregates_senat_signal(self) -> None:
+        senat = build_phonon_senat(senat_id="senat-347-signal")
+
+        self.assertEqual(senat.senat_signal.status, "senat-gesperrt")
+        self.assertEqual(senat.gesperrt_norm_ids, ("senat-347-signal-stability-lane",))
+        self.assertEqual(senat.phononisch_norm_ids, ("senat-347-signal-governance-lane",))
+        self.assertEqual(senat.grundlegend_norm_ids, ("senat-347-signal-expansion-lane",))
+
+    # #348 FermiNorm (*_norm)
+    def test_kki_fermi_norm_builds_gesperrt_schutz_norm(self) -> None:
+        satz = build_fermi_norm(norm_id="fermi-norm-348-stability")
+        eintrag = next(n for n in satz.normen if n.geltung is FermiNormGeltung.GESPERRT)
+
+        self.assertIsInstance(satz, FermiNormSatz)
+        self.assertIsInstance(eintrag, FermiNormEintrag)
+        self.assertEqual(eintrag.fermi_norm_typ, FermiNormTyp.SCHUTZ_FERMI_NORM)
+        self.assertEqual(eintrag.prozedur, FermiNormProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(eintrag.fermi_norm_tier, 1)
+
+    def test_kki_fermi_norm_builds_ferminormiert_ordnungs_norm(self) -> None:
+        satz = build_fermi_norm(norm_id="fermi-norm-348-governance")
+        eintrag = next(n for n in satz.normen if n.geltung is FermiNormGeltung.FERMINORMIERT)
+
+        self.assertEqual(eintrag.fermi_norm_typ, FermiNormTyp.ORDNUNGS_FERMI_NORM)
+        self.assertEqual(eintrag.prozedur, FermiNormProzedur.REGELPROTOKOLL)
+        self.assertGreater(eintrag.fermi_norm_weight, 0.0)
+
+    def test_kki_fermi_norm_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        satz = build_fermi_norm(norm_id="fermi-norm-348-expansion")
+        eintrag = next(n for n in satz.normen if n.geltung is FermiNormGeltung.GRUNDLEGEND_FERMINORMIERT)
+
+        self.assertEqual(eintrag.fermi_norm_typ, FermiNormTyp.SOUVERAENITAETS_FERMI_NORM)
+        self.assertEqual(eintrag.prozedur, FermiNormProzedur.PLENARPROTOKOLL)
+        self.assertGreater(eintrag.fermi_norm_weight, 0.0)
+
+    def test_kki_fermi_norm_aggregates_norm_signal(self) -> None:
+        satz = build_fermi_norm(norm_id="fermi-norm-348-signal")
+
+        self.assertEqual(satz.norm_signal.status, "norm-gesperrt")
+        self.assertEqual(satz.gesperrt_norm_ids, ("fermi-norm-348-signal-stability-lane",))
+        self.assertEqual(satz.ferminormiert_norm_ids, ("fermi-norm-348-signal-governance-lane",))
+        self.assertEqual(satz.grundlegend_norm_ids, ("fermi-norm-348-signal-expansion-lane",))
 
 
 if __name__ == "__main__":

@@ -1339,6 +1339,38 @@ from .halbleiter_kodex import (
     HalbleiterTyp,
     build_halbleiter_kodex,
 )
+from .supraleitung_pakt import (
+    SupraleitungPakt,
+    SupraleitungGeltung,
+    SupraleitungNorm,
+    SupraleitungProzedur,
+    SupraleitungTyp,
+    build_supraleitung_pakt,
+)
+from .quanten_hall_manifest import (
+    QuantenHallManifest,
+    QuantenHallGeltung,
+    QuantenHallNorm,
+    QuantenHallProzedur,
+    QuantenHallTyp,
+    build_quanten_hall_manifest,
+)
+from .phonon_senat import (
+    PhononSenat,
+    PhononGeltung,
+    PhononNorm,
+    PhononProzedur,
+    PhononTyp,
+    build_phonon_senat,
+)
+from .fermi_norm import (
+    FermiNormSatz,
+    FermiNormEintrag,
+    FermiNormGeltung,
+    FermiNormProzedur,
+    FermiNormTyp,
+    build_fermi_norm,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -2517,6 +2549,10 @@ __all__ = [
     "build_kristallgitter_register",
     "build_bandstruktur_charta",
     "build_halbleiter_kodex",
+    "build_supraleitung_pakt",
+    "build_quanten_hall_manifest",
+    "build_phonon_senat",
+    "build_fermi_norm",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

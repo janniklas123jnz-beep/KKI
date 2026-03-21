@@ -841,6 +841,18 @@ from kki import (
     FermiNormProzedur,
     FermiNormTyp,
     build_fermi_norm,
+    BoseEinsteinCharta,
+    BoseEinsteinGeltung,
+    BoseEinsteinNorm,
+    BoseEinsteinProzedur,
+    BoseEinsteinTyp,
+    build_bose_einstein_charta,
+    FestkoerperVerfassung,
+    FestkoerperVerfassungsGeltung,
+    FestkoerperVerfassungsNorm,
+    FestkoerperVerfassungsProzedur,
+    FestkoerperVerfassungsTyp,
+    build_festkoerper_verfassung,
     KausalitaetsGeltung,
     KausalitaetsNorm,
     KausalitaetsProzedur,
@@ -13161,6 +13173,77 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(satz.gesperrt_norm_ids, ("fermi-norm-348-signal-stability-lane",))
         self.assertEqual(satz.ferminormiert_norm_ids, ("fermi-norm-348-signal-governance-lane",))
         self.assertEqual(satz.grundlegend_norm_ids, ("fermi-norm-348-signal-expansion-lane",))
+
+
+    # #349 BoseEinsteinCharta
+    def test_kki_bose_einstein_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_bose_einstein_charta(charta_id="charta-349-stability")
+        norm = next(n for n in charta.normen if n.geltung is BoseEinsteinGeltung.GESPERRT)
+
+        self.assertIsInstance(charta, BoseEinsteinCharta)
+        self.assertIsInstance(norm, BoseEinsteinNorm)
+        self.assertEqual(norm.bose_einstein_typ, BoseEinsteinTyp.SCHUTZ_BOSE_EINSTEIN)
+        self.assertEqual(norm.prozedur, BoseEinsteinProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.bose_einstein_tier, 1)
+
+    def test_kki_bose_einstein_charta_builds_boseeinsteinkondensiert_ordnungs_norm(self) -> None:
+        charta = build_bose_einstein_charta(charta_id="charta-349-governance")
+        norm = next(n for n in charta.normen if n.geltung is BoseEinsteinGeltung.BOSEEINSTEINKONDENSIERT)
+
+        self.assertEqual(norm.bose_einstein_typ, BoseEinsteinTyp.ORDNUNGS_BOSE_EINSTEIN)
+        self.assertEqual(norm.prozedur, BoseEinsteinProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.bose_einstein_weight, 0.0)
+
+    def test_kki_bose_einstein_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_bose_einstein_charta(charta_id="charta-349-expansion")
+        norm = next(n for n in charta.normen if n.geltung is BoseEinsteinGeltung.GRUNDLEGEND_BOSEEINSTEINKONDENSIERT)
+
+        self.assertEqual(norm.bose_einstein_typ, BoseEinsteinTyp.SOUVERAENITAETS_BOSE_EINSTEIN)
+        self.assertEqual(norm.prozedur, BoseEinsteinProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.bose_einstein_weight, 0.0)
+
+    def test_kki_bose_einstein_charta_aggregates_charta_signal(self) -> None:
+        charta = build_bose_einstein_charta(charta_id="charta-349-signal")
+
+        self.assertEqual(charta.charta_signal.status, "charta-gesperrt")
+        self.assertEqual(charta.gesperrt_norm_ids, ("charta-349-signal-stability-lane",))
+        self.assertEqual(charta.boseeinsteinkondensiert_norm_ids, ("charta-349-signal-governance-lane",))
+        self.assertEqual(charta.grundlegend_norm_ids, ("charta-349-signal-expansion-lane",))
+
+    # #350 FestkoerperVerfassung (Block-Krone)
+    def test_kki_festkoerper_verfassung_builds_gesperrt_schutz_norm(self) -> None:
+        verfassung = build_festkoerper_verfassung(verfassung_id="verfassung-350-stability")
+        norm = next(n for n in verfassung.normen if n.geltung is FestkoerperVerfassungsGeltung.GESPERRT)
+
+        self.assertIsInstance(verfassung, FestkoerperVerfassung)
+        self.assertIsInstance(norm, FestkoerperVerfassungsNorm)
+        self.assertEqual(norm.festkoerper_verfassungs_typ, FestkoerperVerfassungsTyp.SCHUTZ_FESTKOERPERVERFASSUNG)
+        self.assertEqual(norm.prozedur, FestkoerperVerfassungsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.festkoerper_verfassungs_tier, 1)
+
+    def test_kki_festkoerper_verfassung_builds_festkoerperverfasst_ordnungs_norm(self) -> None:
+        verfassung = build_festkoerper_verfassung(verfassung_id="verfassung-350-governance")
+        norm = next(n for n in verfassung.normen if n.geltung is FestkoerperVerfassungsGeltung.FESTKOERPERVERFASST)
+
+        self.assertEqual(norm.festkoerper_verfassungs_typ, FestkoerperVerfassungsTyp.ORDNUNGS_FESTKOERPERVERFASSUNG)
+        self.assertEqual(norm.prozedur, FestkoerperVerfassungsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.festkoerper_verfassungs_weight, 0.0)
+
+    def test_kki_festkoerper_verfassung_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        verfassung = build_festkoerper_verfassung(verfassung_id="verfassung-350-expansion")
+        norm = next(n for n in verfassung.normen if n.geltung is FestkoerperVerfassungsGeltung.GRUNDLEGEND_FESTKOERPERVERFASST)
+
+        self.assertEqual(norm.festkoerper_verfassungs_typ, FestkoerperVerfassungsTyp.SOUVERAENITAETS_FESTKOERPERVERFASSUNG)
+        self.assertEqual(norm.prozedur, FestkoerperVerfassungsProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.festkoerper_verfassungs_weight, 0.0)
+
+    def test_kki_festkoerper_verfassung_aggregates_verfassung_signal(self) -> None:
+        verfassung = build_festkoerper_verfassung(verfassung_id="verfassung-350-signal")
+
+        self.assertEqual(verfassung.verfassung_signal.status, "verfassung-gesperrt")
+        self.assertEqual(verfassung.gesperrt_norm_ids, ("verfassung-350-signal-stability-lane",))
+        self.assertEqual(verfassung.festkoerperverfasst_norm_ids, ("verfassung-350-signal-governance-lane",))
+        self.assertEqual(verfassung.grundlegend_norm_ids, ("verfassung-350-signal-expansion-lane",))
 
 
 if __name__ == "__main__":

@@ -1371,6 +1371,22 @@ from .fermi_norm import (
     FermiNormTyp,
     build_fermi_norm,
 )
+from .bose_einstein_charta import (
+    BoseEinsteinCharta,
+    BoseEinsteinGeltung,
+    BoseEinsteinNorm,
+    BoseEinsteinProzedur,
+    BoseEinsteinTyp,
+    build_bose_einstein_charta,
+)
+from .festkoerper_verfassung import (
+    FestkoerperVerfassung,
+    FestkoerperVerfassungsGeltung,
+    FestkoerperVerfassungsNorm,
+    FestkoerperVerfassungsProzedur,
+    FestkoerperVerfassungsTyp,
+    build_festkoerper_verfassung,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -2553,6 +2569,8 @@ __all__ = [
     "build_quanten_hall_manifest",
     "build_phonon_senat",
     "build_fermi_norm",
+    "build_bose_einstein_charta",
+    "build_festkoerper_verfassung",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

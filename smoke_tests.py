@@ -1153,6 +1153,48 @@ from kki import (
     KognitionsVerfassungsProzedur,
     KognitionsVerfassungsTyp,
     build_kognitions_verfassung,
+)
+from kki.mathematik_feld import (
+    MathematikFeld, MathematikFeldGeltung, MathematikFeldNorm,
+    MathematikFeldTyp, MathematikFeldProzedur, build_mathematik_feld,
+)
+from kki.mengen_register import (
+    MengenRegister, MengenRegisterGeltung, MengenRegisterNorm,
+    MengenRegisterTyp, MengenRegisterProzedur, build_mengen_register,
+)
+from kki.logik_charta import (
+    LogikCharta, LogikChartaGeltung, LogikChartaNorm,
+    LogikChartaTyp, LogikChartaProzedur, build_logik_charta,
+)
+from kki.wahrscheinlichkeits_kodex import (
+    WahrscheinlichkeitsKodex, WahrscheinlichkeitsKodexGeltung, WahrscheinlichkeitsKodexNorm,
+    WahrscheinlichkeitsKodexTyp, WahrscheinlichkeitsKodexProzedur, build_wahrscheinlichkeits_kodex,
+)
+from kki.spieltheorie_pakt import (
+    SpieltheoriePakt, SpieltheoriePaktGeltung, SpieltheoriePaktNorm,
+    SpieltheoriePaktTyp, SpieltheoriePaktProzedur, build_spieltheorie_pakt,
+)
+from kki.graphen_manifest import (
+    GraphenManifest, GraphenManifestGeltung, GraphenManifestNorm,
+    GraphenManifestTyp, GraphenManifestProzedur, build_graphen_manifest,
+)
+from kki.algorithmen_senat import (
+    AlgorithmenSenat, AlgorithmenSenatGeltung, AlgorithmenSenatNorm,
+    AlgorithmenSenatTyp, AlgorithmenSenatProzedur, build_algorithmen_senat,
+)
+from kki.godel_norm import (
+    GodelNormSatz, GodelNormGeltung, GodelNormEintrag,
+    GodelNormTyp, GodelNormProzedur, build_godel_norm,
+)
+from kki.topologie_charta import (
+    TopologieCharta, TopologieChartaGeltung, TopologieChartaNorm,
+    TopologieChartaTyp, TopologieChartaProzedur, build_topologie_charta,
+)
+from kki.mathematik_verfassung import (
+    MathematikVerfassung, MathematikVerfassungsGeltung, MathematikVerfassungsNorm,
+    MathematikVerfassungsTyp, MathematikVerfassungsProzedur, build_mathematik_verfassung,
+)
+from kki import (
     KausalitaetsGeltung,
     KausalitaetsNorm,
     KausalitaetsProzedur,
@@ -15274,6 +15316,327 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(verfassung.gesperrt_norm_ids, ("verfassung-400-signal-stability-lane",))
         self.assertEqual(verfassung.kognitionsverfasst_norm_ids, ("verfassung-400-signal-governance-lane",))
         self.assertEqual(verfassung.grundlegend_norm_ids, ("verfassung-400-signal-expansion-lane",))
+
+
+    # ------------------------------------------------------------------
+    # #401 MathematikFeld
+    # ------------------------------------------------------------------
+
+    def test_kki_mathematik_feld_builds_gesperrt_schutz_norm(self) -> None:
+        obj = build_mathematik_feld(feld_id="feld-401-stability")
+        norm = next(n for n in obj.normen if n.geltung is MathematikFeldGeltung.GESPERRT)
+        self.assertEqual(norm.mathematik_typ, MathematikFeldTyp.SCHUTZ_MATHEMATIK)
+        self.assertEqual(norm.prozedur, MathematikFeldProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.mathematik_tier, 1)
+
+    def test_kki_mathematik_feld_builds_mathematisch_ordnungs_norm(self) -> None:
+        obj = build_mathematik_feld(feld_id="feld-401-governance")
+        norm = next(n for n in obj.normen if n.geltung is MathematikFeldGeltung.MATHEMATISCH)
+        self.assertEqual(norm.mathematik_typ, MathematikFeldTyp.ORDNUNGS_MATHEMATIK)
+        self.assertEqual(norm.prozedur, MathematikFeldProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.mathematik_weight, 0.0)
+
+    def test_kki_mathematik_feld_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        obj = build_mathematik_feld(feld_id="feld-401-expansion")
+        norm = next(n for n in obj.normen if n.geltung is MathematikFeldGeltung.GRUNDLEGEND_MATHEMATISCH)
+        self.assertEqual(norm.mathematik_typ, MathematikFeldTyp.SOUVERAENITAETS_MATHEMATIK)
+        self.assertEqual(norm.prozedur, MathematikFeldProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.mathematik_weight, 0.0)
+
+    def test_kki_mathematik_feld_aggregates_feld_signal(self) -> None:
+        obj = build_mathematik_feld(feld_id="feld-401-signal")
+        self.assertEqual(obj.feld_signal.status, "feld-gesperrt")
+        self.assertEqual(obj.gesperrt_norm_ids, ("feld-401-signal-stability-lane",))
+        self.assertEqual(obj.mathematisch_norm_ids, ("feld-401-signal-governance-lane",))
+        self.assertEqual(obj.grundlegend_norm_ids, ("feld-401-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #402 MengenRegister
+    # ------------------------------------------------------------------
+
+    def test_kki_mengen_register_builds_gesperrt_schutz_norm(self) -> None:
+        obj = build_mengen_register(register_id="register-402-stability")
+        norm = next(n for n in obj.normen if n.geltung is MengenRegisterGeltung.GESPERRT)
+        self.assertEqual(norm.mengen_typ, MengenRegisterTyp.SCHUTZ_MENGEN)
+        self.assertEqual(norm.prozedur, MengenRegisterProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.mengen_tier, 1)
+
+    def test_kki_mengen_register_builds_mengentheoretisch_ordnungs_norm(self) -> None:
+        obj = build_mengen_register(register_id="register-402-governance")
+        norm = next(n for n in obj.normen if n.geltung is MengenRegisterGeltung.MENGENTHEORETISCH)
+        self.assertEqual(norm.mengen_typ, MengenRegisterTyp.ORDNUNGS_MENGEN)
+        self.assertEqual(norm.prozedur, MengenRegisterProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.mengen_weight, 0.0)
+
+    def test_kki_mengen_register_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        obj = build_mengen_register(register_id="register-402-expansion")
+        norm = next(n for n in obj.normen if n.geltung is MengenRegisterGeltung.GRUNDLEGEND_MENGENTHEORETISCH)
+        self.assertEqual(norm.mengen_typ, MengenRegisterTyp.SOUVERAENITAETS_MENGEN)
+        self.assertEqual(norm.prozedur, MengenRegisterProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.mengen_weight, 0.0)
+
+    def test_kki_mengen_register_aggregates_register_signal(self) -> None:
+        obj = build_mengen_register(register_id="register-402-signal")
+        self.assertEqual(obj.register_signal.status, "register-gesperrt")
+        self.assertEqual(obj.gesperrt_norm_ids, ("register-402-signal-stability-lane",))
+        self.assertEqual(obj.mengentheoretisch_norm_ids, ("register-402-signal-governance-lane",))
+        self.assertEqual(obj.grundlegend_norm_ids, ("register-402-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #403 LogikCharta
+    # ------------------------------------------------------------------
+
+    def test_kki_logik_charta_builds_gesperrt_schutz_norm(self) -> None:
+        obj = build_logik_charta(charta_id="charta-403-stability")
+        norm = next(n for n in obj.normen if n.geltung is LogikChartaGeltung.GESPERRT)
+        self.assertEqual(norm.logik_typ, LogikChartaTyp.SCHUTZ_LOGIK)
+        self.assertEqual(norm.prozedur, LogikChartaProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.logik_tier, 1)
+
+    def test_kki_logik_charta_builds_logisch_ordnungs_norm(self) -> None:
+        obj = build_logik_charta(charta_id="charta-403-governance")
+        norm = next(n for n in obj.normen if n.geltung is LogikChartaGeltung.LOGISCH)
+        self.assertEqual(norm.logik_typ, LogikChartaTyp.ORDNUNGS_LOGIK)
+        self.assertEqual(norm.prozedur, LogikChartaProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.logik_weight, 0.0)
+
+    def test_kki_logik_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        obj = build_logik_charta(charta_id="charta-403-expansion")
+        norm = next(n for n in obj.normen if n.geltung is LogikChartaGeltung.GRUNDLEGEND_LOGISCH)
+        self.assertEqual(norm.logik_typ, LogikChartaTyp.SOUVERAENITAETS_LOGIK)
+        self.assertEqual(norm.prozedur, LogikChartaProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.logik_weight, 0.0)
+
+    def test_kki_logik_charta_aggregates_charta_signal(self) -> None:
+        obj = build_logik_charta(charta_id="charta-403-signal")
+        self.assertEqual(obj.charta_signal.status, "charta-gesperrt")
+        self.assertEqual(obj.gesperrt_norm_ids, ("charta-403-signal-stability-lane",))
+        self.assertEqual(obj.logisch_norm_ids, ("charta-403-signal-governance-lane",))
+        self.assertEqual(obj.grundlegend_norm_ids, ("charta-403-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #404 WahrscheinlichkeitsKodex
+    # ------------------------------------------------------------------
+
+    def test_kki_wahrscheinlichkeits_kodex_builds_gesperrt_schutz_norm(self) -> None:
+        obj = build_wahrscheinlichkeits_kodex(kodex_id="kodex-404-stability")
+        norm = next(n for n in obj.normen if n.geltung is WahrscheinlichkeitsKodexGeltung.GESPERRT)
+        self.assertEqual(norm.wahrscheinlichkeits_typ, WahrscheinlichkeitsKodexTyp.SCHUTZ_WAHRSCHEINLICHKEIT)
+        self.assertEqual(norm.prozedur, WahrscheinlichkeitsKodexProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.wahrscheinlichkeits_tier, 1)
+
+    def test_kki_wahrscheinlichkeits_kodex_builds_probabilistisch_ordnungs_norm(self) -> None:
+        obj = build_wahrscheinlichkeits_kodex(kodex_id="kodex-404-governance")
+        norm = next(n for n in obj.normen if n.geltung is WahrscheinlichkeitsKodexGeltung.PROBABILISTISCH)
+        self.assertEqual(norm.wahrscheinlichkeits_typ, WahrscheinlichkeitsKodexTyp.ORDNUNGS_WAHRSCHEINLICHKEIT)
+        self.assertEqual(norm.prozedur, WahrscheinlichkeitsKodexProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.wahrscheinlichkeits_weight, 0.0)
+
+    def test_kki_wahrscheinlichkeits_kodex_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        obj = build_wahrscheinlichkeits_kodex(kodex_id="kodex-404-expansion")
+        norm = next(n for n in obj.normen if n.geltung is WahrscheinlichkeitsKodexGeltung.GRUNDLEGEND_PROBABILISTISCH)
+        self.assertEqual(norm.wahrscheinlichkeits_typ, WahrscheinlichkeitsKodexTyp.SOUVERAENITAETS_WAHRSCHEINLICHKEIT)
+        self.assertEqual(norm.prozedur, WahrscheinlichkeitsKodexProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.wahrscheinlichkeits_weight, 0.0)
+
+    def test_kki_wahrscheinlichkeits_kodex_aggregates_kodex_signal(self) -> None:
+        obj = build_wahrscheinlichkeits_kodex(kodex_id="kodex-404-signal")
+        self.assertEqual(obj.kodex_signal.status, "kodex-gesperrt")
+        self.assertEqual(obj.gesperrt_norm_ids, ("kodex-404-signal-stability-lane",))
+        self.assertEqual(obj.probabilistisch_norm_ids, ("kodex-404-signal-governance-lane",))
+        self.assertEqual(obj.grundlegend_norm_ids, ("kodex-404-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #405 SpieltheoriePakt
+    # ------------------------------------------------------------------
+
+    def test_kki_spieltheorie_pakt_builds_gesperrt_schutz_norm(self) -> None:
+        obj = build_spieltheorie_pakt(pakt_id="pakt-405-stability")
+        norm = next(n for n in obj.normen if n.geltung is SpieltheoriePaktGeltung.GESPERRT)
+        self.assertEqual(norm.spieltheorie_typ, SpieltheoriePaktTyp.SCHUTZ_SPIELTHEORIE)
+        self.assertEqual(norm.prozedur, SpieltheoriePaktProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.spieltheorie_tier, 1)
+
+    def test_kki_spieltheorie_pakt_builds_spieltheoretisch_ordnungs_norm(self) -> None:
+        obj = build_spieltheorie_pakt(pakt_id="pakt-405-governance")
+        norm = next(n for n in obj.normen if n.geltung is SpieltheoriePaktGeltung.SPIELTHEORETISCH)
+        self.assertEqual(norm.spieltheorie_typ, SpieltheoriePaktTyp.ORDNUNGS_SPIELTHEORIE)
+        self.assertEqual(norm.prozedur, SpieltheoriePaktProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.spieltheorie_weight, 0.0)
+
+    def test_kki_spieltheorie_pakt_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        obj = build_spieltheorie_pakt(pakt_id="pakt-405-expansion")
+        norm = next(n for n in obj.normen if n.geltung is SpieltheoriePaktGeltung.GRUNDLEGEND_SPIELTHEORETISCH)
+        self.assertEqual(norm.spieltheorie_typ, SpieltheoriePaktTyp.SOUVERAENITAETS_SPIELTHEORIE)
+        self.assertEqual(norm.prozedur, SpieltheoriePaktProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.spieltheorie_weight, 0.0)
+
+    def test_kki_spieltheorie_pakt_aggregates_pakt_signal(self) -> None:
+        obj = build_spieltheorie_pakt(pakt_id="pakt-405-signal")
+        self.assertEqual(obj.pakt_signal.status, "pakt-gesperrt")
+        self.assertEqual(obj.gesperrt_norm_ids, ("pakt-405-signal-stability-lane",))
+        self.assertEqual(obj.spieltheoretisch_norm_ids, ("pakt-405-signal-governance-lane",))
+        self.assertEqual(obj.grundlegend_norm_ids, ("pakt-405-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #406 GraphenManifest
+    # ------------------------------------------------------------------
+
+    def test_kki_graphen_manifest_builds_gesperrt_schutz_norm(self) -> None:
+        obj = build_graphen_manifest(manifest_id="manifest-406-stability")
+        norm = next(n for n in obj.normen if n.geltung is GraphenManifestGeltung.GESPERRT)
+        self.assertEqual(norm.graphen_typ, GraphenManifestTyp.SCHUTZ_GRAPHEN)
+        self.assertEqual(norm.prozedur, GraphenManifestProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.graphen_tier, 1)
+
+    def test_kki_graphen_manifest_builds_graphentheoretisch_ordnungs_norm(self) -> None:
+        obj = build_graphen_manifest(manifest_id="manifest-406-governance")
+        norm = next(n for n in obj.normen if n.geltung is GraphenManifestGeltung.GRAPHENTHEORETISCH)
+        self.assertEqual(norm.graphen_typ, GraphenManifestTyp.ORDNUNGS_GRAPHEN)
+        self.assertEqual(norm.prozedur, GraphenManifestProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.graphen_weight, 0.0)
+
+    def test_kki_graphen_manifest_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        obj = build_graphen_manifest(manifest_id="manifest-406-expansion")
+        norm = next(n for n in obj.normen if n.geltung is GraphenManifestGeltung.GRUNDLEGEND_GRAPHENTHEORETISCH)
+        self.assertEqual(norm.graphen_typ, GraphenManifestTyp.SOUVERAENITAETS_GRAPHEN)
+        self.assertEqual(norm.prozedur, GraphenManifestProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.graphen_weight, 0.0)
+
+    def test_kki_graphen_manifest_aggregates_manifest_signal(self) -> None:
+        obj = build_graphen_manifest(manifest_id="manifest-406-signal")
+        self.assertEqual(obj.manifest_signal.status, "manifest-gesperrt")
+        self.assertEqual(obj.gesperrt_norm_ids, ("manifest-406-signal-stability-lane",))
+        self.assertEqual(obj.graphentheoretisch_norm_ids, ("manifest-406-signal-governance-lane",))
+        self.assertEqual(obj.grundlegend_norm_ids, ("manifest-406-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #407 AlgorithmenSenat
+    # ------------------------------------------------------------------
+
+    def test_kki_algorithmen_senat_builds_gesperrt_schutz_norm(self) -> None:
+        obj = build_algorithmen_senat(senat_id="senat-407-stability")
+        norm = next(n for n in obj.normen if n.geltung is AlgorithmenSenatGeltung.GESPERRT)
+        self.assertEqual(norm.algorithmen_typ, AlgorithmenSenatTyp.SCHUTZ_ALGORITHMEN)
+        self.assertEqual(norm.prozedur, AlgorithmenSenatProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.algorithmen_tier, 1)
+
+    def test_kki_algorithmen_senat_builds_algorithmisch_ordnungs_norm(self) -> None:
+        obj = build_algorithmen_senat(senat_id="senat-407-governance")
+        norm = next(n for n in obj.normen if n.geltung is AlgorithmenSenatGeltung.ALGORITHMISCH)
+        self.assertEqual(norm.algorithmen_typ, AlgorithmenSenatTyp.ORDNUNGS_ALGORITHMEN)
+        self.assertEqual(norm.prozedur, AlgorithmenSenatProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.algorithmen_weight, 0.0)
+
+    def test_kki_algorithmen_senat_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        obj = build_algorithmen_senat(senat_id="senat-407-expansion")
+        norm = next(n for n in obj.normen if n.geltung is AlgorithmenSenatGeltung.GRUNDLEGEND_ALGORITHMISCH)
+        self.assertEqual(norm.algorithmen_typ, AlgorithmenSenatTyp.SOUVERAENITAETS_ALGORITHMEN)
+        self.assertEqual(norm.prozedur, AlgorithmenSenatProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.algorithmen_weight, 0.0)
+
+    def test_kki_algorithmen_senat_aggregates_senat_signal(self) -> None:
+        obj = build_algorithmen_senat(senat_id="senat-407-signal")
+        self.assertEqual(obj.senat_signal.status, "senat-gesperrt")
+        self.assertEqual(obj.gesperrt_norm_ids, ("senat-407-signal-stability-lane",))
+        self.assertEqual(obj.algorithmisch_norm_ids, ("senat-407-signal-governance-lane",))
+        self.assertEqual(obj.grundlegend_norm_ids, ("senat-407-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #408 GodelNorm (*_norm)
+    # ------------------------------------------------------------------
+
+    def test_kki_godel_norm_builds_gesperrt_schutz_eintrag(self) -> None:
+        satz = build_godel_norm(norm_id="norm-408-stability")
+        eintrag = next(n for n in satz.normen if n.geltung is GodelNormGeltung.GESPERRT)
+        self.assertEqual(eintrag.godel_norm_typ, GodelNormTyp.SCHUTZ_GODEL_NORM)
+        self.assertEqual(eintrag.prozedur, GodelNormProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(eintrag.godel_norm_tier, 1)
+
+    def test_kki_godel_norm_builds_godelunvollstaendig_ordnungs_eintrag(self) -> None:
+        satz = build_godel_norm(norm_id="norm-408-governance")
+        eintrag = next(n for n in satz.normen if n.geltung is GodelNormGeltung.GODELUNVOLLSTAENDIG)
+        self.assertEqual(eintrag.godel_norm_typ, GodelNormTyp.ORDNUNGS_GODEL_NORM)
+        self.assertEqual(eintrag.prozedur, GodelNormProzedur.REGELPROTOKOLL)
+        self.assertGreater(eintrag.godel_norm_weight, 0.0)
+
+    def test_kki_godel_norm_builds_grundlegend_souveraenitaets_eintrag(self) -> None:
+        satz = build_godel_norm(norm_id="norm-408-expansion")
+        eintrag = next(n for n in satz.normen if n.geltung is GodelNormGeltung.GRUNDLEGEND_GODELUNVOLLSTAENDIG)
+        self.assertEqual(eintrag.godel_norm_typ, GodelNormTyp.SOUVERAENITAETS_GODEL_NORM)
+        self.assertEqual(eintrag.prozedur, GodelNormProzedur.PLENARPROTOKOLL)
+        self.assertGreater(eintrag.godel_norm_weight, 0.0)
+
+    def test_kki_godel_norm_aggregates_norm_signal(self) -> None:
+        satz = build_godel_norm(norm_id="norm-408-signal")
+        self.assertEqual(satz.norm_signal.status, "norm-gesperrt")
+        self.assertEqual(satz.gesperrt_norm_ids, ("norm-408-signal-stability-lane",))
+        self.assertEqual(satz.godelunvollstaendig_norm_ids, ("norm-408-signal-governance-lane",))
+        self.assertEqual(satz.grundlegend_norm_ids, ("norm-408-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #409 TopologieCharta
+    # ------------------------------------------------------------------
+
+    def test_kki_topologie_charta_builds_gesperrt_schutz_norm(self) -> None:
+        obj = build_topologie_charta(charta_id="charta-409-stability")
+        norm = next(n for n in obj.normen if n.geltung is TopologieChartaGeltung.GESPERRT)
+        self.assertEqual(norm.topologie_typ, TopologieChartaTyp.SCHUTZ_TOPOLOGIE)
+        self.assertEqual(norm.prozedur, TopologieChartaProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.topologie_tier, 1)
+
+    def test_kki_topologie_charta_builds_topologisch_ordnungs_norm(self) -> None:
+        obj = build_topologie_charta(charta_id="charta-409-governance")
+        norm = next(n for n in obj.normen if n.geltung is TopologieChartaGeltung.TOPOLOGISCH)
+        self.assertEqual(norm.topologie_typ, TopologieChartaTyp.ORDNUNGS_TOPOLOGIE)
+        self.assertEqual(norm.prozedur, TopologieChartaProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.topologie_weight, 0.0)
+
+    def test_kki_topologie_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        obj = build_topologie_charta(charta_id="charta-409-expansion")
+        norm = next(n for n in obj.normen if n.geltung is TopologieChartaGeltung.GRUNDLEGEND_TOPOLOGISCH)
+        self.assertEqual(norm.topologie_typ, TopologieChartaTyp.SOUVERAENITAETS_TOPOLOGIE)
+        self.assertEqual(norm.prozedur, TopologieChartaProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.topologie_weight, 0.0)
+
+    def test_kki_topologie_charta_aggregates_charta_signal(self) -> None:
+        obj = build_topologie_charta(charta_id="charta-409-signal")
+        self.assertEqual(obj.charta_signal.status, "charta-gesperrt")
+        self.assertEqual(obj.gesperrt_norm_ids, ("charta-409-signal-stability-lane",))
+        self.assertEqual(obj.topologisch_norm_ids, ("charta-409-signal-governance-lane",))
+        self.assertEqual(obj.grundlegend_norm_ids, ("charta-409-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #410 MathematikVerfassung (Block-Krone ⭐)
+    # ------------------------------------------------------------------
+
+    def test_kki_mathematik_verfassung_builds_gesperrt_schutz_norm(self) -> None:
+        obj = build_mathematik_verfassung(verfassung_id="verfassung-410-stability")
+        norm = next(n for n in obj.normen if n.geltung is MathematikVerfassungsGeltung.GESPERRT)
+        self.assertEqual(norm.mathematik_verfassungs_typ, MathematikVerfassungsTyp.SCHUTZ_MATHEMATIKVERFASSUNG)
+        self.assertEqual(norm.prozedur, MathematikVerfassungsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.mathematik_verfassungs_tier, 1)
+
+    def test_kki_mathematik_verfassung_builds_mathematikverfasst_ordnungs_norm(self) -> None:
+        obj = build_mathematik_verfassung(verfassung_id="verfassung-410-governance")
+        norm = next(n for n in obj.normen if n.geltung is MathematikVerfassungsGeltung.MATHEMATIKVERFASST)
+        self.assertEqual(norm.mathematik_verfassungs_typ, MathematikVerfassungsTyp.ORDNUNGS_MATHEMATIKVERFASSUNG)
+        self.assertEqual(norm.prozedur, MathematikVerfassungsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.mathematik_verfassungs_weight, 0.0)
+
+    def test_kki_mathematik_verfassung_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        obj = build_mathematik_verfassung(verfassung_id="verfassung-410-expansion")
+        norm = next(n for n in obj.normen if n.geltung is MathematikVerfassungsGeltung.GRUNDLEGEND_MATHEMATIKVERFASST)
+        self.assertEqual(norm.mathematik_verfassungs_typ, MathematikVerfassungsTyp.SOUVERAENITAETS_MATHEMATIKVERFASSUNG)
+        self.assertEqual(norm.prozedur, MathematikVerfassungsProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.mathematik_verfassungs_weight, 0.0)
+
+    def test_kki_mathematik_verfassung_aggregates_verfassung_signal(self) -> None:
+        obj = build_mathematik_verfassung(verfassung_id="verfassung-410-signal")
+        self.assertEqual(obj.verfassung_signal.status, "verfassung-gesperrt")
+        self.assertEqual(obj.gesperrt_norm_ids, ("verfassung-410-signal-stability-lane",))
+        self.assertEqual(obj.mathematikverfasst_norm_ids, ("verfassung-410-signal-governance-lane",))
+        self.assertEqual(obj.grundlegend_norm_ids, ("verfassung-410-signal-expansion-lane",))
 
 
 if __name__ == "__main__":

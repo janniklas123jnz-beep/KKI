@@ -1227,6 +1227,38 @@ from .kosmologie_verfassung import (
     KosmologieVerfassungsTyp,
     build_kosmologie_verfassung,
 )
+from .astrophysik_feld import (
+    AstrophysikFeld,
+    AstrophysikGeltung,
+    AstrophysikNorm,
+    AstrophysikProzedur,
+    AstrophysikTyp,
+    build_astrophysik_feld,
+)
+from .protostellar_register import (
+    ProtostellarGeltung,
+    ProtostellarNorm,
+    ProtostellarProzedur,
+    ProtostellarRegister,
+    ProtostellarTyp,
+    build_protostellar_register,
+)
+from .hauptreihen_charta import (
+    HauptreihenchartaCharta,
+    HauptreihenchartaGeltung,
+    HauptreihenchartaNorm,
+    HauptreihenchartaProzedur,
+    HauptreihenchartaTyp,
+    build_hauptreihen_charta,
+)
+from .fusionsreaktor_kodex import (
+    FusionsreaktorGeltung,
+    FusionsreaktorKodex,
+    FusionsreaktorNorm,
+    FusionsreaktorProzedur,
+    FusionsreaktorTyp,
+    build_fusionsreaktor_kodex,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -2391,6 +2423,10 @@ __all__ = [
     "build_expansion_norm",
     "build_hubble_charta",
     "build_kosmologie_verfassung",
+    "build_astrophysik_feld",
+    "build_protostellar_register",
+    "build_hauptreihen_charta",
+    "build_fusionsreaktor_kodex",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

@@ -733,6 +733,30 @@ from kki import (
     KosmologieVerfassungsProzedur,
     KosmologieVerfassungsTyp,
     build_kosmologie_verfassung,
+    AstrophysikFeld,
+    AstrophysikGeltung,
+    AstrophysikNorm,
+    AstrophysikProzedur,
+    AstrophysikTyp,
+    build_astrophysik_feld,
+    ProtostellarGeltung,
+    ProtostellarNorm,
+    ProtostellarProzedur,
+    ProtostellarRegister,
+    ProtostellarTyp,
+    build_protostellar_register,
+    HauptreihenchartaCharta,
+    HauptreihenchartaGeltung,
+    HauptreihenchartaNorm,
+    HauptreihenchartaProzedur,
+    HauptreihenchartaTyp,
+    build_hauptreihen_charta,
+    FusionsreaktorGeltung,
+    FusionsreaktorKodex,
+    FusionsreaktorNorm,
+    FusionsreaktorProzedur,
+    FusionsreaktorTyp,
+    build_fusionsreaktor_kodex,
     KausalitaetsGeltung,
     KausalitaetsNorm,
     KausalitaetsProzedur,
@@ -7678,6 +7702,150 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(verfassung.gesperrt_norm_ids, ("verfassung-330-signal-stability-lane",))
         self.assertEqual(verfassung.kosmologieverfasst_norm_ids, ("verfassung-330-signal-governance-lane",))
         self.assertEqual(verfassung.grundlegend_norm_ids, ("verfassung-330-signal-expansion-lane",))
+
+    # #331 AstrophysikFeld
+
+    def test_kki_astrophysik_feld_builds_gesperrt_schutz_norm(self) -> None:
+        feld = build_astrophysik_feld(feld_id="feld-331-stability")
+        norm = next(n for n in feld.normen if n.geltung is AstrophysikGeltung.GESPERRT)
+
+        self.assertIsInstance(feld, AstrophysikFeld)
+        self.assertIsInstance(norm, AstrophysikNorm)
+        self.assertEqual(norm.astrophysik_typ, AstrophysikTyp.SCHUTZ_ASTROPHYSIK)
+        self.assertEqual(norm.prozedur, AstrophysikProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.astrophysik_tier, 1)
+
+    def test_kki_astrophysik_feld_builds_astrophysikalisch_ordnungs_norm(self) -> None:
+        feld = build_astrophysik_feld(feld_id="feld-331-governance")
+        norm = next(n for n in feld.normen if n.geltung is AstrophysikGeltung.ASTROPHYSIKALISCH)
+
+        self.assertEqual(norm.astrophysik_typ, AstrophysikTyp.ORDNUNGS_ASTROPHYSIK)
+        self.assertEqual(norm.prozedur, AstrophysikProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.astrophysik_weight, 0.0)
+
+    def test_kki_astrophysik_feld_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        feld = build_astrophysik_feld(feld_id="feld-331-expansion")
+        norm = next(n for n in feld.normen if n.geltung is AstrophysikGeltung.GRUNDLEGEND_ASTROPHYSIKALISCH)
+
+        self.assertEqual(norm.astrophysik_typ, AstrophysikTyp.SOUVERAENITAETS_ASTROPHYSIK)
+        self.assertEqual(norm.prozedur, AstrophysikProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.astrophysik_weight, 0.0)
+
+    def test_kki_astrophysik_feld_aggregates_feld_signal(self) -> None:
+        feld = build_astrophysik_feld(feld_id="feld-331-signal")
+
+        self.assertEqual(feld.feld_signal.status, "feld-gesperrt")
+        self.assertEqual(feld.gesperrt_norm_ids, ("feld-331-signal-stability-lane",))
+        self.assertEqual(feld.astrophysikalisch_norm_ids, ("feld-331-signal-governance-lane",))
+        self.assertEqual(feld.grundlegend_norm_ids, ("feld-331-signal-expansion-lane",))
+
+    # #332 ProtostellarRegister
+
+    def test_kki_protostellar_register_builds_gesperrt_schutz_norm(self) -> None:
+        register = build_protostellar_register(register_id="register-332-stability")
+        norm = next(n for n in register.normen if n.geltung is ProtostellarGeltung.GESPERRT)
+
+        self.assertIsInstance(register, ProtostellarRegister)
+        self.assertIsInstance(norm, ProtostellarNorm)
+        self.assertEqual(norm.protostellar_typ, ProtostellarTyp.SCHUTZ_PROTOSTELLAR)
+        self.assertEqual(norm.prozedur, ProtostellarProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.protostellar_tier, 1)
+
+    def test_kki_protostellar_register_builds_protostellar_ordnungs_norm(self) -> None:
+        register = build_protostellar_register(register_id="register-332-governance")
+        norm = next(n for n in register.normen if n.geltung is ProtostellarGeltung.PROTOSTELLAR)
+
+        self.assertEqual(norm.protostellar_typ, ProtostellarTyp.ORDNUNGS_PROTOSTELLAR)
+        self.assertEqual(norm.prozedur, ProtostellarProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.protostellar_weight, 0.0)
+
+    def test_kki_protostellar_register_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        register = build_protostellar_register(register_id="register-332-expansion")
+        norm = next(n for n in register.normen if n.geltung is ProtostellarGeltung.GRUNDLEGEND_PROTOSTELLAR)
+
+        self.assertEqual(norm.protostellar_typ, ProtostellarTyp.SOUVERAENITAETS_PROTOSTELLAR)
+        self.assertEqual(norm.prozedur, ProtostellarProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.protostellar_weight, 0.0)
+
+    def test_kki_protostellar_register_aggregates_register_signal(self) -> None:
+        register = build_protostellar_register(register_id="register-332-signal")
+
+        self.assertEqual(register.register_signal.status, "register-gesperrt")
+        self.assertEqual(register.gesperrt_norm_ids, ("register-332-signal-stability-lane",))
+        self.assertEqual(register.protostellar_norm_ids, ("register-332-signal-governance-lane",))
+        self.assertEqual(register.grundlegend_norm_ids, ("register-332-signal-expansion-lane",))
+
+    # #333 HauptreihenchartaCharta
+
+    def test_kki_hauptreihen_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_hauptreihen_charta(charta_id="charta-333-stability")
+        norm = next(n for n in charta.normen if n.geltung is HauptreihenchartaGeltung.GESPERRT)
+
+        self.assertIsInstance(charta, HauptreihenchartaCharta)
+        self.assertIsInstance(norm, HauptreihenchartaNorm)
+        self.assertEqual(norm.hauptreihen_typ, HauptreihenchartaTyp.SCHUTZ_HAUPTREIHE)
+        self.assertEqual(norm.prozedur, HauptreihenchartaProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.hauptreihen_tier, 1)
+
+    def test_kki_hauptreihen_charta_builds_hauptreihenstabil_ordnungs_norm(self) -> None:
+        charta = build_hauptreihen_charta(charta_id="charta-333-governance")
+        norm = next(n for n in charta.normen if n.geltung is HauptreihenchartaGeltung.HAUPTREIHENSTABIL)
+
+        self.assertEqual(norm.hauptreihen_typ, HauptreihenchartaTyp.ORDNUNGS_HAUPTREIHE)
+        self.assertEqual(norm.prozedur, HauptreihenchartaProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.hauptreihen_weight, 0.0)
+
+    def test_kki_hauptreihen_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_hauptreihen_charta(charta_id="charta-333-expansion")
+        norm = next(n for n in charta.normen if n.geltung is HauptreihenchartaGeltung.GRUNDLEGEND_HAUPTREIHENSTABIL)
+
+        self.assertEqual(norm.hauptreihen_typ, HauptreihenchartaTyp.SOUVERAENITAETS_HAUPTREIHE)
+        self.assertEqual(norm.prozedur, HauptreihenchartaProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.hauptreihen_weight, 0.0)
+
+    def test_kki_hauptreihen_charta_aggregates_charta_signal(self) -> None:
+        charta = build_hauptreihen_charta(charta_id="charta-333-signal")
+
+        self.assertEqual(charta.charta_signal.status, "charta-gesperrt")
+        self.assertEqual(charta.gesperrt_norm_ids, ("charta-333-signal-stability-lane",))
+        self.assertEqual(charta.hauptreihenstabil_norm_ids, ("charta-333-signal-governance-lane",))
+        self.assertEqual(charta.grundlegend_norm_ids, ("charta-333-signal-expansion-lane",))
+
+    # #334 FusionsreaktorKodex
+
+    def test_kki_fusionsreaktor_kodex_builds_gesperrt_schutz_norm(self) -> None:
+        kodex = build_fusionsreaktor_kodex(kodex_id="kodex-334-stability")
+        norm = next(n for n in kodex.normen if n.geltung is FusionsreaktorGeltung.GESPERRT)
+
+        self.assertIsInstance(kodex, FusionsreaktorKodex)
+        self.assertIsInstance(norm, FusionsreaktorNorm)
+        self.assertEqual(norm.fusionsreaktor_typ, FusionsreaktorTyp.SCHUTZ_FUSIONSREAKTOR)
+        self.assertEqual(norm.prozedur, FusionsreaktorProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.fusionsreaktor_tier, 1)
+
+    def test_kki_fusionsreaktor_kodex_builds_fusionsaktiv_ordnungs_norm(self) -> None:
+        kodex = build_fusionsreaktor_kodex(kodex_id="kodex-334-governance")
+        norm = next(n for n in kodex.normen if n.geltung is FusionsreaktorGeltung.FUSIONSAKTIV)
+
+        self.assertEqual(norm.fusionsreaktor_typ, FusionsreaktorTyp.ORDNUNGS_FUSIONSREAKTOR)
+        self.assertEqual(norm.prozedur, FusionsreaktorProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.fusionsreaktor_weight, 0.0)
+
+    def test_kki_fusionsreaktor_kodex_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        kodex = build_fusionsreaktor_kodex(kodex_id="kodex-334-expansion")
+        norm = next(n for n in kodex.normen if n.geltung is FusionsreaktorGeltung.GRUNDLEGEND_FUSIONSAKTIV)
+
+        self.assertEqual(norm.fusionsreaktor_typ, FusionsreaktorTyp.SOUVERAENITAETS_FUSIONSREAKTOR)
+        self.assertEqual(norm.prozedur, FusionsreaktorProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.fusionsreaktor_weight, 0.0)
+
+    def test_kki_fusionsreaktor_kodex_aggregates_kodex_signal(self) -> None:
+        kodex = build_fusionsreaktor_kodex(kodex_id="kodex-334-signal")
+
+        self.assertEqual(kodex.kodex_signal.status, "kodex-gesperrt")
+        self.assertEqual(kodex.gesperrt_norm_ids, ("kodex-334-signal-stability-lane",))
+        self.assertEqual(kodex.fusionsaktiv_norm_ids, ("kodex-334-signal-governance-lane",))
+        self.assertEqual(kodex.grundlegend_norm_ids, ("kodex-334-signal-expansion-lane",))
 
     def test_kki_waermestrahlung_charta_builds_gesperrt_schutz_norm(self) -> None:
         charta = build_waermestrahlung_charta(charta_id="charta-289-stability")

@@ -1194,6 +1194,46 @@ from kki.mathematik_verfassung import (
     MathematikVerfassung, MathematikVerfassungsGeltung, MathematikVerfassungsNorm,
     MathematikVerfassungsTyp, MathematikVerfassungsProzedur, build_mathematik_verfassung,
 )
+from kki.emergenz_feld import (
+    EmergenzFeld, EmergenzFeldGeltung, EmergenzFeldNorm,
+    EmergenzFeldTyp, EmergenzFeldProzedur, build_emergenz_feld,
+)
+from kki.dissipative_strukturen_register import (
+    DissipativeStrukturenRegister, DissipativeStrukturenRegisterGeltung, DissipativeStrukturenRegisterNorm,
+    DissipativeStrukturenRegisterTyp, DissipativeStrukturenRegisterProzedur, build_dissipative_strukturen_register,
+)
+from kki.kritikalitaets_charta import (
+    KritikalitaetsCharta, KritikalitaetsChartaGeltung, KritikalitaetsChartaNorm,
+    KritikalitaetsChartaTyp, KritikalitaetsChartaProzedur, build_kritikalitaets_charta,
+)
+from kki.fraktal_kodex import (
+    FraktalKodex, FraktalKodexGeltung, FraktalKodexNorm,
+    FraktalKodexTyp, FraktalKodexProzedur, build_fraktal_kodex,
+)
+from kki.zellulaere_automaten_pakt import (
+    ZellulaereAutomatenPakt, ZellulaereAutomatenPaktGeltung, ZellulaereAutomatenPaktNorm,
+    ZellulaereAutomatenPaktTyp, ZellulaereAutomatenPaktProzedur, build_zellulaere_automaten_pakt,
+)
+from kki.fitness_landschaft_manifest import (
+    FitnessLandschaftManifest, FitnessLandschaftManifestGeltung, FitnessLandschaftManifestNorm,
+    FitnessLandschaftManifestTyp, FitnessLandschaftManifestProzedur, build_fitness_landschaft_manifest,
+)
+from kki.adaptive_systeme_senat import (
+    AdaptiveSystemeSenat, AdaptiveSystemeSenatGeltung, AdaptiveSystemeSenatNorm,
+    AdaptiveSystemeSenatTyp, AdaptiveSystemeSenatProzedur, build_adaptive_systeme_senat,
+)
+from kki.synergetik_norm import (
+    SynergetikNormSatz, SynergetikNormGeltung, SynergetikNormEintrag,
+    SynergetikNormTyp, SynergetikNormProzedur, build_synergetik_norm,
+)
+from kki.kuenstliches_leben_charta import (
+    KuenstlichesLebenCharta, KuenstlichesLebenChartaGeltung, KuenstlichesLebenChartaNorm,
+    KuenstlichesLebenChartaTyp, KuenstlichesLebenChartaProzedur, build_kuenstliches_leben_charta,
+)
+from kki.komplexe_systeme_verfassung import (
+    KomplexeSystemeVerfassung, KomplexeSystemeVerfassungsGeltung, KomplexeSystemeVerfassungsNorm,
+    KomplexeSystemeVerfassungsTyp, KomplexeSystemeVerfassungsProzedur, build_komplexe_systeme_verfassung,
+)
 from kki import (
     KausalitaetsGeltung,
     KausalitaetsNorm,
@@ -15637,6 +15677,326 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(obj.gesperrt_norm_ids, ("verfassung-410-signal-stability-lane",))
         self.assertEqual(obj.mathematikverfasst_norm_ids, ("verfassung-410-signal-governance-lane",))
         self.assertEqual(obj.grundlegend_norm_ids, ("verfassung-410-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #411 EmergenzFeld
+    # ------------------------------------------------------------------
+
+    def test_kki_emergenz_feld_builds_gesperrt_schutz_norm(self) -> None:
+        feld = build_emergenz_feld(feld_id="feld-411-stability")
+        norm = next(n for n in feld.normen if n.geltung is EmergenzFeldGeltung.GESPERRT)
+        self.assertEqual(norm.emergenz_typ, EmergenzFeldTyp.SCHUTZ_EMERGENZ)
+        self.assertEqual(norm.prozedur, EmergenzFeldProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.emergenz_tier, 1)
+
+    def test_kki_emergenz_feld_builds_emergent_ordnungs_norm(self) -> None:
+        feld = build_emergenz_feld(feld_id="feld-411-governance")
+        norm = next(n for n in feld.normen if n.geltung is EmergenzFeldGeltung.EMERGENT)
+        self.assertEqual(norm.emergenz_typ, EmergenzFeldTyp.ORDNUNGS_EMERGENZ)
+        self.assertEqual(norm.prozedur, EmergenzFeldProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.emergenz_weight, 0.0)
+
+    def test_kki_emergenz_feld_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        feld = build_emergenz_feld(feld_id="feld-411-expansion")
+        norm = next(n for n in feld.normen if n.geltung is EmergenzFeldGeltung.GRUNDLEGEND_EMERGENT)
+        self.assertEqual(norm.emergenz_typ, EmergenzFeldTyp.SOUVERAENITAETS_EMERGENZ)
+        self.assertEqual(norm.prozedur, EmergenzFeldProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.emergenz_weight, 0.0)
+
+    def test_kki_emergenz_feld_aggregates_feld_signal(self) -> None:
+        feld = build_emergenz_feld(feld_id="feld-411-signal")
+        self.assertEqual(feld.feld_signal.status, "feld-gesperrt")
+        self.assertEqual(feld.gesperrt_norm_ids, ("feld-411-signal-stability-lane",))
+        self.assertEqual(feld.emergent_norm_ids, ("feld-411-signal-governance-lane",))
+        self.assertEqual(feld.grundlegend_norm_ids, ("feld-411-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #412 DissipativeStrukturenRegister
+    # ------------------------------------------------------------------
+
+    def test_kki_dissipative_strukturen_register_builds_gesperrt_schutz_norm(self) -> None:
+        reg = build_dissipative_strukturen_register(register_id="register-412-stability")
+        norm = next(n for n in reg.normen if n.geltung is DissipativeStrukturenRegisterGeltung.GESPERRT)
+        self.assertEqual(norm.dissipation_typ, DissipativeStrukturenRegisterTyp.SCHUTZ_DISSIPATION)
+        self.assertEqual(norm.prozedur, DissipativeStrukturenRegisterProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.dissipation_tier, 1)
+
+    def test_kki_dissipative_strukturen_register_builds_dissipativ_ordnungs_norm(self) -> None:
+        reg = build_dissipative_strukturen_register(register_id="register-412-governance")
+        norm = next(n for n in reg.normen if n.geltung is DissipativeStrukturenRegisterGeltung.DISSIPATIV)
+        self.assertEqual(norm.dissipation_typ, DissipativeStrukturenRegisterTyp.ORDNUNGS_DISSIPATION)
+        self.assertEqual(norm.prozedur, DissipativeStrukturenRegisterProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.dissipation_weight, 0.0)
+
+    def test_kki_dissipative_strukturen_register_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        reg = build_dissipative_strukturen_register(register_id="register-412-expansion")
+        norm = next(n for n in reg.normen if n.geltung is DissipativeStrukturenRegisterGeltung.GRUNDLEGEND_DISSIPATIV)
+        self.assertEqual(norm.dissipation_typ, DissipativeStrukturenRegisterTyp.SOUVERAENITAETS_DISSIPATION)
+        self.assertEqual(norm.prozedur, DissipativeStrukturenRegisterProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.dissipation_weight, 0.0)
+
+    def test_kki_dissipative_strukturen_register_aggregates_register_signal(self) -> None:
+        reg = build_dissipative_strukturen_register(register_id="register-412-signal")
+        self.assertEqual(reg.register_signal.status, "register-gesperrt")
+        self.assertEqual(reg.gesperrt_norm_ids, ("register-412-signal-stability-lane",))
+        self.assertEqual(reg.dissipativ_norm_ids, ("register-412-signal-governance-lane",))
+        self.assertEqual(reg.grundlegend_norm_ids, ("register-412-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #413 KritikalitaetsCharta
+    # ------------------------------------------------------------------
+
+    def test_kki_kritikalitaets_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_kritikalitaets_charta(charta_id="charta-413-stability")
+        norm = next(n for n in charta.normen if n.geltung is KritikalitaetsChartaGeltung.GESPERRT)
+        self.assertEqual(norm.kritikalitaet_typ, KritikalitaetsChartaTyp.SCHUTZ_KRITIKALITAET)
+        self.assertEqual(norm.prozedur, KritikalitaetsChartaProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.kritikalitaet_tier, 1)
+
+    def test_kki_kritikalitaets_charta_builds_kritisch_ordnungs_norm(self) -> None:
+        charta = build_kritikalitaets_charta(charta_id="charta-413-governance")
+        norm = next(n for n in charta.normen if n.geltung is KritikalitaetsChartaGeltung.KRITISCH)
+        self.assertEqual(norm.kritikalitaet_typ, KritikalitaetsChartaTyp.ORDNUNGS_KRITIKALITAET)
+        self.assertEqual(norm.prozedur, KritikalitaetsChartaProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.kritikalitaet_weight, 0.0)
+
+    def test_kki_kritikalitaets_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_kritikalitaets_charta(charta_id="charta-413-expansion")
+        norm = next(n for n in charta.normen if n.geltung is KritikalitaetsChartaGeltung.GRUNDLEGEND_KRITISCH)
+        self.assertEqual(norm.kritikalitaet_typ, KritikalitaetsChartaTyp.SOUVERAENITAETS_KRITIKALITAET)
+        self.assertEqual(norm.prozedur, KritikalitaetsChartaProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.kritikalitaet_weight, 0.0)
+
+    def test_kki_kritikalitaets_charta_aggregates_charta_signal(self) -> None:
+        charta = build_kritikalitaets_charta(charta_id="charta-413-signal")
+        self.assertEqual(charta.charta_signal.status, "charta-gesperrt")
+        self.assertEqual(charta.gesperrt_norm_ids, ("charta-413-signal-stability-lane",))
+        self.assertEqual(charta.kritisch_norm_ids, ("charta-413-signal-governance-lane",))
+        self.assertEqual(charta.grundlegend_norm_ids, ("charta-413-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #414 FraktalKodex
+    # ------------------------------------------------------------------
+
+    def test_kki_fraktal_kodex_builds_gesperrt_schutz_norm(self) -> None:
+        kodex = build_fraktal_kodex(kodex_id="kodex-414-stability")
+        norm = next(n for n in kodex.normen if n.geltung is FraktalKodexGeltung.GESPERRT)
+        self.assertEqual(norm.fraktal_typ, FraktalKodexTyp.SCHUTZ_FRAKTAL)
+        self.assertEqual(norm.prozedur, FraktalKodexProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.fraktal_tier, 1)
+
+    def test_kki_fraktal_kodex_builds_fraktal_ordnungs_norm(self) -> None:
+        kodex = build_fraktal_kodex(kodex_id="kodex-414-governance")
+        norm = next(n for n in kodex.normen if n.geltung is FraktalKodexGeltung.FRAKTAL)
+        self.assertEqual(norm.fraktal_typ, FraktalKodexTyp.ORDNUNGS_FRAKTAL)
+        self.assertEqual(norm.prozedur, FraktalKodexProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.fraktal_weight, 0.0)
+
+    def test_kki_fraktal_kodex_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        kodex = build_fraktal_kodex(kodex_id="kodex-414-expansion")
+        norm = next(n for n in kodex.normen if n.geltung is FraktalKodexGeltung.GRUNDLEGEND_FRAKTAL)
+        self.assertEqual(norm.fraktal_typ, FraktalKodexTyp.SOUVERAENITAETS_FRAKTAL)
+        self.assertEqual(norm.prozedur, FraktalKodexProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.fraktal_weight, 0.0)
+
+    def test_kki_fraktal_kodex_aggregates_kodex_signal(self) -> None:
+        kodex = build_fraktal_kodex(kodex_id="kodex-414-signal")
+        self.assertEqual(kodex.kodex_signal.status, "kodex-gesperrt")
+        self.assertEqual(kodex.gesperrt_norm_ids, ("kodex-414-signal-stability-lane",))
+        self.assertEqual(kodex.fraktal_norm_ids, ("kodex-414-signal-governance-lane",))
+        self.assertEqual(kodex.grundlegend_norm_ids, ("kodex-414-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #415 ZellulaereAutomatenPakt
+    # ------------------------------------------------------------------
+
+    def test_kki_zellulaere_automaten_pakt_builds_gesperrt_schutz_norm(self) -> None:
+        pakt = build_zellulaere_automaten_pakt(pakt_id="pakt-415-stability")
+        norm = next(n for n in pakt.normen if n.geltung is ZellulaereAutomatenPaktGeltung.GESPERRT)
+        self.assertEqual(norm.zellulaerautomat_typ, ZellulaereAutomatenPaktTyp.SCHUTZ_ZELLULAERAUTOMAT)
+        self.assertEqual(norm.prozedur, ZellulaereAutomatenPaktProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.zellulaerautomat_tier, 1)
+
+    def test_kki_zellulaere_automaten_pakt_builds_zellulaerautomat_ordnungs_norm(self) -> None:
+        pakt = build_zellulaere_automaten_pakt(pakt_id="pakt-415-governance")
+        norm = next(n for n in pakt.normen if n.geltung is ZellulaereAutomatenPaktGeltung.ZELLULAERAUTOMAT)
+        self.assertEqual(norm.zellulaerautomat_typ, ZellulaereAutomatenPaktTyp.ORDNUNGS_ZELLULAERAUTOMAT)
+        self.assertEqual(norm.prozedur, ZellulaereAutomatenPaktProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.zellulaerautomat_weight, 0.0)
+
+    def test_kki_zellulaere_automaten_pakt_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        pakt = build_zellulaere_automaten_pakt(pakt_id="pakt-415-expansion")
+        norm = next(n for n in pakt.normen if n.geltung is ZellulaereAutomatenPaktGeltung.GRUNDLEGEND_ZELLULAERAUTOMAT)
+        self.assertEqual(norm.zellulaerautomat_typ, ZellulaereAutomatenPaktTyp.SOUVERAENITAETS_ZELLULAERAUTOMAT)
+        self.assertEqual(norm.prozedur, ZellulaereAutomatenPaktProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.zellulaerautomat_weight, 0.0)
+
+    def test_kki_zellulaere_automaten_pakt_aggregates_pakt_signal(self) -> None:
+        pakt = build_zellulaere_automaten_pakt(pakt_id="pakt-415-signal")
+        self.assertEqual(pakt.pakt_signal.status, "pakt-gesperrt")
+        self.assertEqual(pakt.gesperrt_norm_ids, ("pakt-415-signal-stability-lane",))
+        self.assertEqual(pakt.zellulaerautomat_norm_ids, ("pakt-415-signal-governance-lane",))
+        self.assertEqual(pakt.grundlegend_norm_ids, ("pakt-415-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #416 FitnessLandschaftManifest
+    # ------------------------------------------------------------------
+
+    def test_kki_fitness_landschaft_manifest_builds_gesperrt_schutz_norm(self) -> None:
+        manifest = build_fitness_landschaft_manifest(manifest_id="manifest-416-stability")
+        norm = next(n for n in manifest.normen if n.geltung is FitnessLandschaftManifestGeltung.GESPERRT)
+        self.assertEqual(norm.fitness_landschaft_typ, FitnessLandschaftManifestTyp.SCHUTZ_FITNESS_LANDSCHAFT)
+        self.assertEqual(norm.prozedur, FitnessLandschaftManifestProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.fitness_landschaft_tier, 1)
+
+    def test_kki_fitness_landschaft_manifest_builds_fitnesskartiert_ordnungs_norm(self) -> None:
+        manifest = build_fitness_landschaft_manifest(manifest_id="manifest-416-governance")
+        norm = next(n for n in manifest.normen if n.geltung is FitnessLandschaftManifestGeltung.FITNESSKARTIERT)
+        self.assertEqual(norm.fitness_landschaft_typ, FitnessLandschaftManifestTyp.ORDNUNGS_FITNESS_LANDSCHAFT)
+        self.assertEqual(norm.prozedur, FitnessLandschaftManifestProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.fitness_landschaft_weight, 0.0)
+
+    def test_kki_fitness_landschaft_manifest_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        manifest = build_fitness_landschaft_manifest(manifest_id="manifest-416-expansion")
+        norm = next(n for n in manifest.normen if n.geltung is FitnessLandschaftManifestGeltung.GRUNDLEGEND_FITNESSKARTIERT)
+        self.assertEqual(norm.fitness_landschaft_typ, FitnessLandschaftManifestTyp.SOUVERAENITAETS_FITNESS_LANDSCHAFT)
+        self.assertEqual(norm.prozedur, FitnessLandschaftManifestProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.fitness_landschaft_weight, 0.0)
+
+    def test_kki_fitness_landschaft_manifest_aggregates_manifest_signal(self) -> None:
+        manifest = build_fitness_landschaft_manifest(manifest_id="manifest-416-signal")
+        self.assertEqual(manifest.manifest_signal.status, "manifest-gesperrt")
+        self.assertEqual(manifest.gesperrt_norm_ids, ("manifest-416-signal-stability-lane",))
+        self.assertEqual(manifest.fitnesskartiert_norm_ids, ("manifest-416-signal-governance-lane",))
+        self.assertEqual(manifest.grundlegend_norm_ids, ("manifest-416-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #417 AdaptiveSystemeSenat
+    # ------------------------------------------------------------------
+
+    def test_kki_adaptive_systeme_senat_builds_gesperrt_schutz_norm(self) -> None:
+        senat = build_adaptive_systeme_senat(senat_id="senat-417-stability")
+        norm = next(n for n in senat.normen if n.geltung is AdaptiveSystemeSenatGeltung.GESPERRT)
+        self.assertEqual(norm.adaptiv_typ, AdaptiveSystemeSenatTyp.SCHUTZ_ADAPTIV)
+        self.assertEqual(norm.prozedur, AdaptiveSystemeSenatProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.adaptiv_tier, 1)
+
+    def test_kki_adaptive_systeme_senat_builds_adaptiv_ordnungs_norm(self) -> None:
+        senat = build_adaptive_systeme_senat(senat_id="senat-417-governance")
+        norm = next(n for n in senat.normen if n.geltung is AdaptiveSystemeSenatGeltung.ADAPTIV)
+        self.assertEqual(norm.adaptiv_typ, AdaptiveSystemeSenatTyp.ORDNUNGS_ADAPTIV)
+        self.assertEqual(norm.prozedur, AdaptiveSystemeSenatProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.adaptiv_weight, 0.0)
+
+    def test_kki_adaptive_systeme_senat_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        senat = build_adaptive_systeme_senat(senat_id="senat-417-expansion")
+        norm = next(n for n in senat.normen if n.geltung is AdaptiveSystemeSenatGeltung.GRUNDLEGEND_ADAPTIV)
+        self.assertEqual(norm.adaptiv_typ, AdaptiveSystemeSenatTyp.SOUVERAENITAETS_ADAPTIV)
+        self.assertEqual(norm.prozedur, AdaptiveSystemeSenatProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.adaptiv_weight, 0.0)
+
+    def test_kki_adaptive_systeme_senat_aggregates_senat_signal(self) -> None:
+        senat = build_adaptive_systeme_senat(senat_id="senat-417-signal")
+        self.assertEqual(senat.senat_signal.status, "senat-gesperrt")
+        self.assertEqual(senat.gesperrt_norm_ids, ("senat-417-signal-stability-lane",))
+        self.assertEqual(senat.adaptiv_norm_ids, ("senat-417-signal-governance-lane",))
+        self.assertEqual(senat.grundlegend_norm_ids, ("senat-417-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #418 SynergetikNorm (*_norm)
+    # ------------------------------------------------------------------
+
+    def test_kki_synergetik_norm_builds_gesperrt_schutz_eintrag(self) -> None:
+        satz = build_synergetik_norm(norm_id="norm-418-stability")
+        eintrag = next(n for n in satz.normen if n.geltung is SynergetikNormGeltung.GESPERRT)
+        self.assertEqual(eintrag.synergetik_norm_typ, SynergetikNormTyp.SCHUTZ_SYNERGETIK_NORM)
+        self.assertEqual(eintrag.prozedur, SynergetikNormProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(eintrag.synergetik_norm_tier, 1)
+
+    def test_kki_synergetik_norm_builds_synergetisch_ordnungs_eintrag(self) -> None:
+        satz = build_synergetik_norm(norm_id="norm-418-governance")
+        eintrag = next(n for n in satz.normen if n.geltung is SynergetikNormGeltung.SYNERGETISCH)
+        self.assertEqual(eintrag.synergetik_norm_typ, SynergetikNormTyp.ORDNUNGS_SYNERGETIK_NORM)
+        self.assertEqual(eintrag.prozedur, SynergetikNormProzedur.REGELPROTOKOLL)
+        self.assertGreater(eintrag.synergetik_norm_weight, 0.0)
+
+    def test_kki_synergetik_norm_builds_grundlegend_souveraenitaets_eintrag(self) -> None:
+        satz = build_synergetik_norm(norm_id="norm-418-expansion")
+        eintrag = next(n for n in satz.normen if n.geltung is SynergetikNormGeltung.GRUNDLEGEND_SYNERGETISCH)
+        self.assertEqual(eintrag.synergetik_norm_typ, SynergetikNormTyp.SOUVERAENITAETS_SYNERGETIK_NORM)
+        self.assertEqual(eintrag.prozedur, SynergetikNormProzedur.PLENARPROTOKOLL)
+        self.assertGreater(eintrag.synergetik_norm_weight, 0.0)
+
+    def test_kki_synergetik_norm_aggregates_norm_signal(self) -> None:
+        satz = build_synergetik_norm(norm_id="norm-418-signal")
+        self.assertEqual(satz.norm_signal.status, "norm-gesperrt")
+        self.assertEqual(satz.gesperrt_norm_ids, ("norm-418-signal-stability-lane",))
+        self.assertEqual(satz.synergetisch_norm_ids, ("norm-418-signal-governance-lane",))
+        self.assertEqual(satz.grundlegend_norm_ids, ("norm-418-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #419 KuenstlichesLebenCharta
+    # ------------------------------------------------------------------
+
+    def test_kki_kuenstliches_leben_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_kuenstliches_leben_charta(charta_id="charta-419-stability")
+        norm = next(n for n in charta.normen if n.geltung is KuenstlichesLebenChartaGeltung.GESPERRT)
+        self.assertEqual(norm.kuenstliches_leben_typ, KuenstlichesLebenChartaTyp.SCHUTZ_KUENSTLICHES_LEBEN)
+        self.assertEqual(norm.prozedur, KuenstlichesLebenChartaProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.kuenstliches_leben_tier, 1)
+
+    def test_kki_kuenstliches_leben_charta_builds_alife_ordnungs_norm(self) -> None:
+        charta = build_kuenstliches_leben_charta(charta_id="charta-419-governance")
+        norm = next(n for n in charta.normen if n.geltung is KuenstlichesLebenChartaGeltung.ALIFE)
+        self.assertEqual(norm.kuenstliches_leben_typ, KuenstlichesLebenChartaTyp.ORDNUNGS_KUENSTLICHES_LEBEN)
+        self.assertEqual(norm.prozedur, KuenstlichesLebenChartaProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.kuenstliches_leben_weight, 0.0)
+
+    def test_kki_kuenstliches_leben_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_kuenstliches_leben_charta(charta_id="charta-419-expansion")
+        norm = next(n for n in charta.normen if n.geltung is KuenstlichesLebenChartaGeltung.GRUNDLEGEND_ALIFE)
+        self.assertEqual(norm.kuenstliches_leben_typ, KuenstlichesLebenChartaTyp.SOUVERAENITAETS_KUENSTLICHES_LEBEN)
+        self.assertEqual(norm.prozedur, KuenstlichesLebenChartaProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.kuenstliches_leben_weight, 0.0)
+
+    def test_kki_kuenstliches_leben_charta_aggregates_charta_signal(self) -> None:
+        charta = build_kuenstliches_leben_charta(charta_id="charta-419-signal")
+        self.assertEqual(charta.charta_signal.status, "charta-gesperrt")
+        self.assertEqual(charta.gesperrt_norm_ids, ("charta-419-signal-stability-lane",))
+        self.assertEqual(charta.alife_norm_ids, ("charta-419-signal-governance-lane",))
+        self.assertEqual(charta.grundlegend_norm_ids, ("charta-419-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #420 KomplexeSystemeVerfassung (Block-Krone ⭐)
+    # ------------------------------------------------------------------
+
+    def test_kki_komplexe_systeme_verfassung_builds_gesperrt_schutz_norm(self) -> None:
+        verfassung = build_komplexe_systeme_verfassung(verfassung_id="verfassung-420-stability")
+        norm = next(n for n in verfassung.normen if n.geltung is KomplexeSystemeVerfassungsGeltung.GESPERRT)
+        self.assertEqual(norm.komplexe_systeme_verfassungs_typ, KomplexeSystemeVerfassungsTyp.SCHUTZ_KOMPLEXSYSTEMVERFASSUNG)
+        self.assertEqual(norm.prozedur, KomplexeSystemeVerfassungsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.komplexe_systeme_verfassungs_tier, 1)
+
+    def test_kki_komplexe_systeme_verfassung_builds_komplexsystemverfasst_ordnungs_norm(self) -> None:
+        verfassung = build_komplexe_systeme_verfassung(verfassung_id="verfassung-420-governance")
+        norm = next(n for n in verfassung.normen if n.geltung is KomplexeSystemeVerfassungsGeltung.KOMPLEXSYSTEMVERFASST)
+        self.assertEqual(norm.komplexe_systeme_verfassungs_typ, KomplexeSystemeVerfassungsTyp.ORDNUNGS_KOMPLEXSYSTEMVERFASSUNG)
+        self.assertEqual(norm.prozedur, KomplexeSystemeVerfassungsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.komplexe_systeme_verfassungs_weight, 0.0)
+
+    def test_kki_komplexe_systeme_verfassung_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        verfassung = build_komplexe_systeme_verfassung(verfassung_id="verfassung-420-expansion")
+        norm = next(n for n in verfassung.normen if n.geltung is KomplexeSystemeVerfassungsGeltung.GRUNDLEGEND_KOMPLEXSYSTEMVERFASST)
+        self.assertEqual(norm.komplexe_systeme_verfassungs_typ, KomplexeSystemeVerfassungsTyp.SOUVERAENITAETS_KOMPLEXSYSTEMVERFASSUNG)
+        self.assertEqual(norm.prozedur, KomplexeSystemeVerfassungsProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.komplexe_systeme_verfassungs_weight, 0.0)
+
+    def test_kki_komplexe_systeme_verfassung_aggregates_verfassung_signal(self) -> None:
+        verfassung = build_komplexe_systeme_verfassung(verfassung_id="verfassung-420-signal")
+        self.assertEqual(verfassung.verfassung_signal.status, "verfassung-gesperrt")
+        self.assertEqual(verfassung.gesperrt_norm_ids, ("verfassung-420-signal-stability-lane",))
+        self.assertEqual(verfassung.komplexsystemverfasst_norm_ids, ("verfassung-420-signal-governance-lane",))
+        self.assertEqual(verfassung.grundlegend_norm_ids, ("verfassung-420-signal-expansion-lane",))
 
 
 if __name__ == "__main__":

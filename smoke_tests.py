@@ -853,6 +853,30 @@ from kki import (
     FestkoerperVerfassungsProzedur,
     FestkoerperVerfassungsTyp,
     build_festkoerper_verfassung,
+    PlasmaFeld,
+    PlasmaGeltung,
+    PlasmaNorm,
+    PlasmaProzedur,
+    PlasmaTyp,
+    build_plasma_feld,
+    MagnetohydrodynamikGeltung,
+    MagnetohydrodynamikNorm,
+    MagnetohydrodynamikProzedur,
+    MagnetohydrodynamikRegister,
+    MagnetohydrodynamikTyp,
+    build_magnetohydrodynamik_register,
+    DebyeAbschirmungCharta,
+    DebyeAbschirmungGeltung,
+    DebyeAbschirmungNorm,
+    DebyeAbschirmungProzedur,
+    DebyeAbschirmungTyp,
+    build_debye_abschirmung_charta,
+    AlfvenWellenGeltung,
+    AlfvenWellenKodex,
+    AlfvenWellenNorm,
+    AlfvenWellenProzedur,
+    AlfvenWellenTyp,
+    build_alfven_wellen_kodex,
     KausalitaetsGeltung,
     KausalitaetsNorm,
     KausalitaetsProzedur,
@@ -13244,6 +13268,147 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(verfassung.gesperrt_norm_ids, ("verfassung-350-signal-stability-lane",))
         self.assertEqual(verfassung.festkoerperverfasst_norm_ids, ("verfassung-350-signal-governance-lane",))
         self.assertEqual(verfassung.grundlegend_norm_ids, ("verfassung-350-signal-expansion-lane",))
+
+
+    # #351 PlasmaFeld
+    def test_kki_plasma_feld_builds_gesperrt_schutz_norm(self) -> None:
+        feld = build_plasma_feld(feld_id="feld-351-stability")
+        norm = next(n for n in feld.normen if n.geltung is PlasmaGeltung.GESPERRT)
+
+        self.assertIsInstance(feld, PlasmaFeld)
+        self.assertIsInstance(norm, PlasmaNorm)
+        self.assertEqual(norm.plasma_typ, PlasmaTyp.SCHUTZ_PLASMA)
+        self.assertEqual(norm.prozedur, PlasmaProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.plasma_tier, 1)
+
+    def test_kki_plasma_feld_builds_plasmatisch_ordnungs_norm(self) -> None:
+        feld = build_plasma_feld(feld_id="feld-351-governance")
+        norm = next(n for n in feld.normen if n.geltung is PlasmaGeltung.PLASMATISCH)
+
+        self.assertEqual(norm.plasma_typ, PlasmaTyp.ORDNUNGS_PLASMA)
+        self.assertEqual(norm.prozedur, PlasmaProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.plasma_weight, 0.0)
+
+    def test_kki_plasma_feld_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        feld = build_plasma_feld(feld_id="feld-351-expansion")
+        norm = next(n for n in feld.normen if n.geltung is PlasmaGeltung.GRUNDLEGEND_PLASMATISCH)
+
+        self.assertEqual(norm.plasma_typ, PlasmaTyp.SOUVERAENITAETS_PLASMA)
+        self.assertEqual(norm.prozedur, PlasmaProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.plasma_weight, 0.0)
+
+    def test_kki_plasma_feld_aggregates_feld_signal(self) -> None:
+        feld = build_plasma_feld(feld_id="feld-351-signal")
+
+        self.assertEqual(feld.feld_signal.status, "feld-gesperrt")
+        self.assertEqual(feld.gesperrt_norm_ids, ("feld-351-signal-stability-lane",))
+        self.assertEqual(feld.plasmatisch_norm_ids, ("feld-351-signal-governance-lane",))
+        self.assertEqual(feld.grundlegend_norm_ids, ("feld-351-signal-expansion-lane",))
+
+    # #352 MagnetohydrodynamikRegister
+    def test_kki_magnetohydrodynamik_register_builds_gesperrt_schutz_norm(self) -> None:
+        register = build_magnetohydrodynamik_register(register_id="register-352-stability")
+        norm = next(n for n in register.normen if n.geltung is MagnetohydrodynamikGeltung.GESPERRT)
+
+        self.assertIsInstance(register, MagnetohydrodynamikRegister)
+        self.assertIsInstance(norm, MagnetohydrodynamikNorm)
+        self.assertEqual(norm.magnetohydrodynamik_typ, MagnetohydrodynamikTyp.SCHUTZ_MAGNETOHYDRODYNAMIK)
+        self.assertEqual(norm.prozedur, MagnetohydrodynamikProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.magnetohydrodynamik_tier, 1)
+
+    def test_kki_magnetohydrodynamik_register_builds_magnetohydrodynamisch_ordnungs_norm(self) -> None:
+        register = build_magnetohydrodynamik_register(register_id="register-352-governance")
+        norm = next(n for n in register.normen if n.geltung is MagnetohydrodynamikGeltung.MAGNETOHYDRODYNAMISCH)
+
+        self.assertEqual(norm.magnetohydrodynamik_typ, MagnetohydrodynamikTyp.ORDNUNGS_MAGNETOHYDRODYNAMIK)
+        self.assertEqual(norm.prozedur, MagnetohydrodynamikProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.magnetohydrodynamik_weight, 0.0)
+
+    def test_kki_magnetohydrodynamik_register_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        register = build_magnetohydrodynamik_register(register_id="register-352-expansion")
+        norm = next(n for n in register.normen if n.geltung is MagnetohydrodynamikGeltung.GRUNDLEGEND_MAGNETOHYDRODYNAMISCH)
+
+        self.assertEqual(norm.magnetohydrodynamik_typ, MagnetohydrodynamikTyp.SOUVERAENITAETS_MAGNETOHYDRODYNAMIK)
+        self.assertEqual(norm.prozedur, MagnetohydrodynamikProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.magnetohydrodynamik_weight, 0.0)
+
+    def test_kki_magnetohydrodynamik_register_aggregates_register_signal(self) -> None:
+        register = build_magnetohydrodynamik_register(register_id="register-352-signal")
+
+        self.assertEqual(register.register_signal.status, "register-gesperrt")
+        self.assertEqual(register.gesperrt_norm_ids, ("register-352-signal-stability-lane",))
+        self.assertEqual(register.magnetohydrodynamisch_norm_ids, ("register-352-signal-governance-lane",))
+        self.assertEqual(register.grundlegend_norm_ids, ("register-352-signal-expansion-lane",))
+
+    # #353 DebyeAbschirmungCharta
+    def test_kki_debye_abschirmung_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_debye_abschirmung_charta(charta_id="charta-353-stability")
+        norm = next(n for n in charta.normen if n.geltung is DebyeAbschirmungGeltung.GESPERRT)
+
+        self.assertIsInstance(charta, DebyeAbschirmungCharta)
+        self.assertIsInstance(norm, DebyeAbschirmungNorm)
+        self.assertEqual(norm.debye_abschirmung_typ, DebyeAbschirmungTyp.SCHUTZ_DEBYE_ABSCHIRMUNG)
+        self.assertEqual(norm.prozedur, DebyeAbschirmungProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.debye_abschirmung_tier, 1)
+
+    def test_kki_debye_abschirmung_charta_builds_debyeabgeschirmt_ordnungs_norm(self) -> None:
+        charta = build_debye_abschirmung_charta(charta_id="charta-353-governance")
+        norm = next(n for n in charta.normen if n.geltung is DebyeAbschirmungGeltung.DEBYEABGESCHIRMT)
+
+        self.assertEqual(norm.debye_abschirmung_typ, DebyeAbschirmungTyp.ORDNUNGS_DEBYE_ABSCHIRMUNG)
+        self.assertEqual(norm.prozedur, DebyeAbschirmungProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.debye_abschirmung_weight, 0.0)
+
+    def test_kki_debye_abschirmung_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_debye_abschirmung_charta(charta_id="charta-353-expansion")
+        norm = next(n for n in charta.normen if n.geltung is DebyeAbschirmungGeltung.GRUNDLEGEND_DEBYEABGESCHIRMT)
+
+        self.assertEqual(norm.debye_abschirmung_typ, DebyeAbschirmungTyp.SOUVERAENITAETS_DEBYE_ABSCHIRMUNG)
+        self.assertEqual(norm.prozedur, DebyeAbschirmungProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.debye_abschirmung_weight, 0.0)
+
+    def test_kki_debye_abschirmung_charta_aggregates_charta_signal(self) -> None:
+        charta = build_debye_abschirmung_charta(charta_id="charta-353-signal")
+
+        self.assertEqual(charta.charta_signal.status, "charta-gesperrt")
+        self.assertEqual(charta.gesperrt_norm_ids, ("charta-353-signal-stability-lane",))
+        self.assertEqual(charta.debyeabgeschirmt_norm_ids, ("charta-353-signal-governance-lane",))
+        self.assertEqual(charta.grundlegend_norm_ids, ("charta-353-signal-expansion-lane",))
+
+    # #354 AlfvenWellenKodex
+    def test_kki_alfven_wellen_kodex_builds_gesperrt_schutz_norm(self) -> None:
+        kodex = build_alfven_wellen_kodex(kodex_id="kodex-354-stability")
+        norm = next(n for n in kodex.normen if n.geltung is AlfvenWellenGeltung.GESPERRT)
+
+        self.assertIsInstance(kodex, AlfvenWellenKodex)
+        self.assertIsInstance(norm, AlfvenWellenNorm)
+        self.assertEqual(norm.alfven_wellen_typ, AlfvenWellenTyp.SCHUTZ_ALFVEN_WELLEN)
+        self.assertEqual(norm.prozedur, AlfvenWellenProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.alfven_wellen_tier, 1)
+
+    def test_kki_alfven_wellen_kodex_builds_alfvenwellig_ordnungs_norm(self) -> None:
+        kodex = build_alfven_wellen_kodex(kodex_id="kodex-354-governance")
+        norm = next(n for n in kodex.normen if n.geltung is AlfvenWellenGeltung.ALFVENWELLIG)
+
+        self.assertEqual(norm.alfven_wellen_typ, AlfvenWellenTyp.ORDNUNGS_ALFVEN_WELLEN)
+        self.assertEqual(norm.prozedur, AlfvenWellenProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.alfven_wellen_weight, 0.0)
+
+    def test_kki_alfven_wellen_kodex_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        kodex = build_alfven_wellen_kodex(kodex_id="kodex-354-expansion")
+        norm = next(n for n in kodex.normen if n.geltung is AlfvenWellenGeltung.GRUNDLEGEND_ALFVENWELLIG)
+
+        self.assertEqual(norm.alfven_wellen_typ, AlfvenWellenTyp.SOUVERAENITAETS_ALFVEN_WELLEN)
+        self.assertEqual(norm.prozedur, AlfvenWellenProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.alfven_wellen_weight, 0.0)
+
+    def test_kki_alfven_wellen_kodex_aggregates_kodex_signal(self) -> None:
+        kodex = build_alfven_wellen_kodex(kodex_id="kodex-354-signal")
+
+        self.assertEqual(kodex.kodex_signal.status, "kodex-gesperrt")
+        self.assertEqual(kodex.gesperrt_norm_ids, ("kodex-354-signal-stability-lane",))
+        self.assertEqual(kodex.alfvenwellig_norm_ids, ("kodex-354-signal-governance-lane",))
+        self.assertEqual(kodex.grundlegend_norm_ids, ("kodex-354-signal-expansion-lane",))
 
 
 if __name__ == "__main__":

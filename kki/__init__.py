@@ -1387,6 +1387,38 @@ from .festkoerper_verfassung import (
     FestkoerperVerfassungsTyp,
     build_festkoerper_verfassung,
 )
+from .plasma_feld import (
+    PlasmaFeld,
+    PlasmaGeltung,
+    PlasmaNorm,
+    PlasmaProzedur,
+    PlasmaTyp,
+    build_plasma_feld,
+)
+from .magnetohydrodynamik_register import (
+    MagnetohydrodynamikGeltung,
+    MagnetohydrodynamikNorm,
+    MagnetohydrodynamikProzedur,
+    MagnetohydrodynamikRegister,
+    MagnetohydrodynamikTyp,
+    build_magnetohydrodynamik_register,
+)
+from .debye_abschirmung_charta import (
+    DebyeAbschirmungCharta,
+    DebyeAbschirmungGeltung,
+    DebyeAbschirmungNorm,
+    DebyeAbschirmungProzedur,
+    DebyeAbschirmungTyp,
+    build_debye_abschirmung_charta,
+)
+from .alfven_wellen_kodex import (
+    AlfvenWellenGeltung,
+    AlfvenWellenKodex,
+    AlfvenWellenNorm,
+    AlfvenWellenProzedur,
+    AlfvenWellenTyp,
+    build_alfven_wellen_kodex,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -2571,6 +2603,10 @@ __all__ = [
     "build_fermi_norm",
     "build_bose_einstein_charta",
     "build_festkoerper_verfassung",
+    "build_plasma_feld",
+    "build_magnetohydrodynamik_register",
+    "build_debye_abschirmung_charta",
+    "build_alfven_wellen_kodex",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

@@ -1033,6 +1033,30 @@ from kki import (
     QuanteninformationsVerfassungsProzedur,
     QuanteninformationsVerfassungsTyp,
     build_quanteninformations_verfassung,
+    BiophysikFeld,
+    BiophysikGeltung,
+    BiophysikNorm,
+    BiophysikProzedur,
+    BiophysikTyp,
+    build_biophysik_feld,
+    DnaReplikationGeltung,
+    DnaReplikationNorm,
+    DnaReplikationProzedur,
+    DnaReplikationRegister,
+    DnaReplikationTyp,
+    build_dna_replikation_register,
+    ProteinfaltungCharta,
+    ProteinfaltungGeltung,
+    ProteinfaltungNorm,
+    ProteinfaltungProzedur,
+    ProteinfaltungTyp,
+    build_proteinfaltung_charta,
+    HodgkinHuxleyGeltung,
+    HodgkinHuxleyKodex,
+    HodgkinHuxleyNorm,
+    HodgkinHuxleyProzedur,
+    HodgkinHuxleyTyp,
+    build_hodgkin_huxley_kodex,
     KausalitaetsGeltung,
     KausalitaetsNorm,
     KausalitaetsProzedur,
@@ -14482,6 +14506,146 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(verfassung.gesperrt_norm_ids, ("verfassung-380-signal-stability-lane",))
         self.assertEqual(verfassung.quantenverfasst_norm_ids, ("verfassung-380-signal-governance-lane",))
         self.assertEqual(verfassung.grundlegend_norm_ids, ("verfassung-380-signal-expansion-lane",))
+
+    # #381 BiophysikFeld
+    def test_kki_biophysik_feld_builds_gesperrt_schutz_norm(self) -> None:
+        feld = build_biophysik_feld(feld_id="feld-381-stability")
+        norm = next(n for n in feld.normen if n.geltung is BiophysikGeltung.GESPERRT)
+
+        self.assertIsInstance(feld, BiophysikFeld)
+        self.assertIsInstance(norm, BiophysikNorm)
+        self.assertEqual(norm.biophysik_typ, BiophysikTyp.SCHUTZ_BIOPHYSIK)
+        self.assertEqual(norm.prozedur, BiophysikProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.biophysik_tier, 1)
+
+    def test_kki_biophysik_feld_builds_biophysikalisch_ordnungs_norm(self) -> None:
+        feld = build_biophysik_feld(feld_id="feld-381-governance")
+        norm = next(n for n in feld.normen if n.geltung is BiophysikGeltung.BIOPHYSIKALISCH)
+
+        self.assertEqual(norm.biophysik_typ, BiophysikTyp.ORDNUNGS_BIOPHYSIK)
+        self.assertEqual(norm.prozedur, BiophysikProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.biophysik_weight, 0.0)
+
+    def test_kki_biophysik_feld_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        feld = build_biophysik_feld(feld_id="feld-381-expansion")
+        norm = next(n for n in feld.normen if n.geltung is BiophysikGeltung.GRUNDLEGEND_BIOPHYSIKALISCH)
+
+        self.assertEqual(norm.biophysik_typ, BiophysikTyp.SOUVERAENITAETS_BIOPHYSIK)
+        self.assertEqual(norm.prozedur, BiophysikProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.biophysik_weight, 0.0)
+
+    def test_kki_biophysik_feld_aggregates_feld_signal(self) -> None:
+        feld = build_biophysik_feld(feld_id="feld-381-signal")
+
+        self.assertEqual(feld.feld_signal.status, "feld-gesperrt")
+        self.assertEqual(feld.gesperrt_norm_ids, ("feld-381-signal-stability-lane",))
+        self.assertEqual(feld.biophysikalisch_norm_ids, ("feld-381-signal-governance-lane",))
+        self.assertEqual(feld.grundlegend_norm_ids, ("feld-381-signal-expansion-lane",))
+
+    # #382 DnaReplikationRegister
+    def test_kki_dna_replikation_register_builds_gesperrt_schutz_norm(self) -> None:
+        register = build_dna_replikation_register(register_id="register-382-stability")
+        norm = next(n for n in register.normen if n.geltung is DnaReplikationGeltung.GESPERRT)
+
+        self.assertIsInstance(register, DnaReplikationRegister)
+        self.assertIsInstance(norm, DnaReplikationNorm)
+        self.assertEqual(norm.dna_replikation_typ, DnaReplikationTyp.SCHUTZ_DNA_REPLIKATION)
+        self.assertEqual(norm.prozedur, DnaReplikationProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.dna_replikation_tier, 1)
+
+    def test_kki_dna_replikation_register_builds_dnarepliiert_ordnungs_norm(self) -> None:
+        register = build_dna_replikation_register(register_id="register-382-governance")
+        norm = next(n for n in register.normen if n.geltung is DnaReplikationGeltung.DNAREPLIIERT)
+
+        self.assertEqual(norm.dna_replikation_typ, DnaReplikationTyp.ORDNUNGS_DNA_REPLIKATION)
+        self.assertEqual(norm.prozedur, DnaReplikationProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.dna_replikation_weight, 0.0)
+
+    def test_kki_dna_replikation_register_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        register = build_dna_replikation_register(register_id="register-382-expansion")
+        norm = next(n for n in register.normen if n.geltung is DnaReplikationGeltung.GRUNDLEGEND_DNAREPLIIERT)
+
+        self.assertEqual(norm.dna_replikation_typ, DnaReplikationTyp.SOUVERAENITAETS_DNA_REPLIKATION)
+        self.assertEqual(norm.prozedur, DnaReplikationProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.dna_replikation_weight, 0.0)
+
+    def test_kki_dna_replikation_register_aggregates_register_signal(self) -> None:
+        register = build_dna_replikation_register(register_id="register-382-signal")
+
+        self.assertEqual(register.register_signal.status, "register-gesperrt")
+        self.assertEqual(register.gesperrt_norm_ids, ("register-382-signal-stability-lane",))
+        self.assertEqual(register.dnarepliiert_norm_ids, ("register-382-signal-governance-lane",))
+        self.assertEqual(register.grundlegend_norm_ids, ("register-382-signal-expansion-lane",))
+
+    # #383 ProteinfaltungCharta
+    def test_kki_proteinfaltung_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_proteinfaltung_charta(charta_id="charta-383-stability")
+        norm = next(n for n in charta.normen if n.geltung is ProteinfaltungGeltung.GESPERRT)
+
+        self.assertIsInstance(charta, ProteinfaltungCharta)
+        self.assertIsInstance(norm, ProteinfaltungNorm)
+        self.assertEqual(norm.proteinfaltung_typ, ProteinfaltungTyp.SCHUTZ_PROTEINFALTUNG)
+        self.assertEqual(norm.prozedur, ProteinfaltungProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.proteinfaltung_tier, 1)
+
+    def test_kki_proteinfaltung_charta_builds_proteingefaltet_ordnungs_norm(self) -> None:
+        charta = build_proteinfaltung_charta(charta_id="charta-383-governance")
+        norm = next(n for n in charta.normen if n.geltung is ProteinfaltungGeltung.PROTEINGEFALTET)
+
+        self.assertEqual(norm.proteinfaltung_typ, ProteinfaltungTyp.ORDNUNGS_PROTEINFALTUNG)
+        self.assertEqual(norm.prozedur, ProteinfaltungProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.proteinfaltung_weight, 0.0)
+
+    def test_kki_proteinfaltung_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_proteinfaltung_charta(charta_id="charta-383-expansion")
+        norm = next(n for n in charta.normen if n.geltung is ProteinfaltungGeltung.GRUNDLEGEND_PROTEINGEFALTET)
+
+        self.assertEqual(norm.proteinfaltung_typ, ProteinfaltungTyp.SOUVERAENITAETS_PROTEINFALTUNG)
+        self.assertEqual(norm.prozedur, ProteinfaltungProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.proteinfaltung_weight, 0.0)
+
+    def test_kki_proteinfaltung_charta_aggregates_charta_signal(self) -> None:
+        charta = build_proteinfaltung_charta(charta_id="charta-383-signal")
+
+        self.assertEqual(charta.charta_signal.status, "charta-gesperrt")
+        self.assertEqual(charta.gesperrt_norm_ids, ("charta-383-signal-stability-lane",))
+        self.assertEqual(charta.proteingefaltet_norm_ids, ("charta-383-signal-governance-lane",))
+        self.assertEqual(charta.grundlegend_norm_ids, ("charta-383-signal-expansion-lane",))
+
+    # #384 HodgkinHuxleyKodex
+    def test_kki_hodgkin_huxley_kodex_builds_gesperrt_schutz_norm(self) -> None:
+        kodex = build_hodgkin_huxley_kodex(kodex_id="kodex-384-stability")
+        norm = next(n for n in kodex.normen if n.geltung is HodgkinHuxleyGeltung.GESPERRT)
+
+        self.assertIsInstance(kodex, HodgkinHuxleyKodex)
+        self.assertIsInstance(norm, HodgkinHuxleyNorm)
+        self.assertEqual(norm.hodgkin_huxley_typ, HodgkinHuxleyTyp.SCHUTZ_HODGKIN_HUXLEY)
+        self.assertEqual(norm.prozedur, HodgkinHuxleyProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.hodgkin_huxley_tier, 1)
+
+    def test_kki_hodgkin_huxley_kodex_builds_aktionspotentiell_ordnungs_norm(self) -> None:
+        kodex = build_hodgkin_huxley_kodex(kodex_id="kodex-384-governance")
+        norm = next(n for n in kodex.normen if n.geltung is HodgkinHuxleyGeltung.AKTIONSPOTENTIELL)
+
+        self.assertEqual(norm.hodgkin_huxley_typ, HodgkinHuxleyTyp.ORDNUNGS_HODGKIN_HUXLEY)
+        self.assertEqual(norm.prozedur, HodgkinHuxleyProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.hodgkin_huxley_weight, 0.0)
+
+    def test_kki_hodgkin_huxley_kodex_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        kodex = build_hodgkin_huxley_kodex(kodex_id="kodex-384-expansion")
+        norm = next(n for n in kodex.normen if n.geltung is HodgkinHuxleyGeltung.GRUNDLEGEND_AKTIONSPOTENTIELL)
+
+        self.assertEqual(norm.hodgkin_huxley_typ, HodgkinHuxleyTyp.SOUVERAENITAETS_HODGKIN_HUXLEY)
+        self.assertEqual(norm.prozedur, HodgkinHuxleyProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.hodgkin_huxley_weight, 0.0)
+
+    def test_kki_hodgkin_huxley_kodex_aggregates_kodex_signal(self) -> None:
+        kodex = build_hodgkin_huxley_kodex(kodex_id="kodex-384-signal")
+
+        self.assertEqual(kodex.kodex_signal.status, "kodex-gesperrt")
+        self.assertEqual(kodex.gesperrt_norm_ids, ("kodex-384-signal-stability-lane",))
+        self.assertEqual(kodex.aktionspotentiell_norm_ids, ("kodex-384-signal-governance-lane",))
+        self.assertEqual(kodex.grundlegend_norm_ids, ("kodex-384-signal-expansion-lane",))
 
 
 if __name__ == "__main__":

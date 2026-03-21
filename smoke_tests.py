@@ -757,6 +757,30 @@ from kki import (
     FusionsreaktorProzedur,
     FusionsreaktorTyp,
     build_fusionsreaktor_kodex,
+    RoterRieseGeltung,
+    RoterRieseNorm,
+    RoterRiesePakt,
+    RoterRieseProzedur,
+    RoterRieseTyp,
+    build_roter_riese_pakt,
+    SupernovaGeltung,
+    SupernovaManifest,
+    SupernovaNorm,
+    SupernovaProzedur,
+    SupernovaTyp,
+    build_supernova_manifest,
+    NeutronensternGeltung,
+    NeutronensternNorm,
+    NeutronensternProzedur,
+    NeutronensternSenat,
+    NeutronensternTyp,
+    build_neutronenstern_senat,
+    SchwarzerLochNormEintrag,
+    SchwarzerLochNormGeltung,
+    SchwarzerLochNormProzedur,
+    SchwarzerLochNormSatz,
+    SchwarzerLochNormTyp,
+    build_schwarzes_loch_norm,
     KausalitaetsGeltung,
     KausalitaetsNorm,
     KausalitaetsProzedur,
@@ -7846,6 +7870,150 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(kodex.gesperrt_norm_ids, ("kodex-334-signal-stability-lane",))
         self.assertEqual(kodex.fusionsaktiv_norm_ids, ("kodex-334-signal-governance-lane",))
         self.assertEqual(kodex.grundlegend_norm_ids, ("kodex-334-signal-expansion-lane",))
+
+    # #335 RoterRiesePakt
+
+    def test_kki_roter_riese_pakt_builds_gesperrt_schutz_norm(self) -> None:
+        pakt = build_roter_riese_pakt(pakt_id="pakt-335-stability")
+        norm = next(n for n in pakt.normen if n.geltung is RoterRieseGeltung.GESPERRT)
+
+        self.assertIsInstance(pakt, RoterRiesePakt)
+        self.assertIsInstance(norm, RoterRieseNorm)
+        self.assertEqual(norm.roter_riese_typ, RoterRieseTyp.SCHUTZ_ROTER_RIESE)
+        self.assertEqual(norm.prozedur, RoterRieseProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.roter_riese_tier, 1)
+
+    def test_kki_roter_riese_pakt_builds_riesenphasig_ordnungs_norm(self) -> None:
+        pakt = build_roter_riese_pakt(pakt_id="pakt-335-governance")
+        norm = next(n for n in pakt.normen if n.geltung is RoterRieseGeltung.RIESENPHASIG)
+
+        self.assertEqual(norm.roter_riese_typ, RoterRieseTyp.ORDNUNGS_ROTER_RIESE)
+        self.assertEqual(norm.prozedur, RoterRieseProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.roter_riese_weight, 0.0)
+
+    def test_kki_roter_riese_pakt_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        pakt = build_roter_riese_pakt(pakt_id="pakt-335-expansion")
+        norm = next(n for n in pakt.normen if n.geltung is RoterRieseGeltung.GRUNDLEGEND_RIESENPHASIG)
+
+        self.assertEqual(norm.roter_riese_typ, RoterRieseTyp.SOUVERAENITAETS_ROTER_RIESE)
+        self.assertEqual(norm.prozedur, RoterRieseProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.roter_riese_weight, 0.0)
+
+    def test_kki_roter_riese_pakt_aggregates_pakt_signal(self) -> None:
+        pakt = build_roter_riese_pakt(pakt_id="pakt-335-signal")
+
+        self.assertEqual(pakt.pakt_signal.status, "pakt-gesperrt")
+        self.assertEqual(pakt.gesperrt_norm_ids, ("pakt-335-signal-stability-lane",))
+        self.assertEqual(pakt.riesenphasig_norm_ids, ("pakt-335-signal-governance-lane",))
+        self.assertEqual(pakt.grundlegend_norm_ids, ("pakt-335-signal-expansion-lane",))
+
+    # #336 SupernovaManifest
+
+    def test_kki_supernova_manifest_builds_gesperrt_schutz_norm(self) -> None:
+        manifest = build_supernova_manifest(manifest_id="manifest-336-stability")
+        norm = next(n for n in manifest.normen if n.geltung is SupernovaGeltung.GESPERRT)
+
+        self.assertIsInstance(manifest, SupernovaManifest)
+        self.assertIsInstance(norm, SupernovaNorm)
+        self.assertEqual(norm.supernova_typ, SupernovaTyp.SCHUTZ_SUPERNOVA)
+        self.assertEqual(norm.prozedur, SupernovaProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.supernova_tier, 1)
+
+    def test_kki_supernova_manifest_builds_supernovaexplosiv_ordnungs_norm(self) -> None:
+        manifest = build_supernova_manifest(manifest_id="manifest-336-governance")
+        norm = next(n for n in manifest.normen if n.geltung is SupernovaGeltung.SUPERNOVAEXPLOSIV)
+
+        self.assertEqual(norm.supernova_typ, SupernovaTyp.ORDNUNGS_SUPERNOVA)
+        self.assertEqual(norm.prozedur, SupernovaProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.supernova_weight, 0.0)
+
+    def test_kki_supernova_manifest_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        manifest = build_supernova_manifest(manifest_id="manifest-336-expansion")
+        norm = next(n for n in manifest.normen if n.geltung is SupernovaGeltung.GRUNDLEGEND_SUPERNOVAEXPLOSIV)
+
+        self.assertEqual(norm.supernova_typ, SupernovaTyp.SOUVERAENITAETS_SUPERNOVA)
+        self.assertEqual(norm.prozedur, SupernovaProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.supernova_weight, 0.0)
+
+    def test_kki_supernova_manifest_aggregates_manifest_signal(self) -> None:
+        manifest = build_supernova_manifest(manifest_id="manifest-336-signal")
+
+        self.assertEqual(manifest.manifest_signal.status, "manifest-gesperrt")
+        self.assertEqual(manifest.gesperrt_norm_ids, ("manifest-336-signal-stability-lane",))
+        self.assertEqual(manifest.supernovaexplosiv_norm_ids, ("manifest-336-signal-governance-lane",))
+        self.assertEqual(manifest.grundlegend_norm_ids, ("manifest-336-signal-expansion-lane",))
+
+    # #337 NeutronensternSenat
+
+    def test_kki_neutronenstern_senat_builds_gesperrt_schutz_norm(self) -> None:
+        senat = build_neutronenstern_senat(senat_id="senat-337-stability")
+        norm = next(n for n in senat.normen if n.geltung is NeutronensternGeltung.GESPERRT)
+
+        self.assertIsInstance(senat, NeutronensternSenat)
+        self.assertIsInstance(norm, NeutronensternNorm)
+        self.assertEqual(norm.neutronenstern_typ, NeutronensternTyp.SCHUTZ_NEUTRONENSTERN)
+        self.assertEqual(norm.prozedur, NeutronensternProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.neutronenstern_tier, 1)
+
+    def test_kki_neutronenstern_senat_builds_neutronendicht_ordnungs_norm(self) -> None:
+        senat = build_neutronenstern_senat(senat_id="senat-337-governance")
+        norm = next(n for n in senat.normen if n.geltung is NeutronensternGeltung.NEUTRONENDICHT)
+
+        self.assertEqual(norm.neutronenstern_typ, NeutronensternTyp.ORDNUNGS_NEUTRONENSTERN)
+        self.assertEqual(norm.prozedur, NeutronensternProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.neutronenstern_weight, 0.0)
+
+    def test_kki_neutronenstern_senat_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        senat = build_neutronenstern_senat(senat_id="senat-337-expansion")
+        norm = next(n for n in senat.normen if n.geltung is NeutronensternGeltung.GRUNDLEGEND_NEUTRONENDICHT)
+
+        self.assertEqual(norm.neutronenstern_typ, NeutronensternTyp.SOUVERAENITAETS_NEUTRONENSTERN)
+        self.assertEqual(norm.prozedur, NeutronensternProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.neutronenstern_weight, 0.0)
+
+    def test_kki_neutronenstern_senat_aggregates_senat_signal(self) -> None:
+        senat = build_neutronenstern_senat(senat_id="senat-337-signal")
+
+        self.assertEqual(senat.senat_signal.status, "senat-gesperrt")
+        self.assertEqual(senat.gesperrt_norm_ids, ("senat-337-signal-stability-lane",))
+        self.assertEqual(senat.neutronendicht_norm_ids, ("senat-337-signal-governance-lane",))
+        self.assertEqual(senat.grundlegend_norm_ids, ("senat-337-signal-expansion-lane",))
+
+    # #338 SchwarzerLochNormSatz (*_norm)
+
+    def test_kki_schwarzes_loch_norm_builds_gesperrt_schutz_norm(self) -> None:
+        normsatz = build_schwarzes_loch_norm(norm_id="schwarzes-loch-338-stability")
+        eintrag = next(n for n in normsatz.normen if n.geltung is SchwarzerLochNormGeltung.GESPERRT)
+
+        self.assertIsInstance(normsatz, SchwarzerLochNormSatz)
+        self.assertIsInstance(eintrag, SchwarzerLochNormEintrag)
+        self.assertEqual(eintrag.schwarzes_loch_norm_typ, SchwarzerLochNormTyp.SCHUTZ_SCHWARZES_LOCH)
+        self.assertEqual(eintrag.prozedur, SchwarzerLochNormProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(eintrag.schwarzes_loch_norm_tier, 1)
+
+    def test_kki_schwarzes_loch_norm_builds_horizontgebunden_ordnungs_norm(self) -> None:
+        normsatz = build_schwarzes_loch_norm(norm_id="schwarzes-loch-338-governance")
+        eintrag = next(n for n in normsatz.normen if n.geltung is SchwarzerLochNormGeltung.HORIZONTGEBUNDEN)
+
+        self.assertEqual(eintrag.schwarzes_loch_norm_typ, SchwarzerLochNormTyp.ORDNUNGS_SCHWARZES_LOCH)
+        self.assertEqual(eintrag.prozedur, SchwarzerLochNormProzedur.REGELPROTOKOLL)
+        self.assertGreater(eintrag.schwarzes_loch_norm_weight, 0.0)
+
+    def test_kki_schwarzes_loch_norm_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        normsatz = build_schwarzes_loch_norm(norm_id="schwarzes-loch-338-expansion")
+        eintrag = next(n for n in normsatz.normen if n.geltung is SchwarzerLochNormGeltung.GRUNDLEGEND_HORIZONTGEBUNDEN)
+
+        self.assertEqual(eintrag.schwarzes_loch_norm_typ, SchwarzerLochNormTyp.SOUVERAENITAETS_SCHWARZES_LOCH)
+        self.assertEqual(eintrag.prozedur, SchwarzerLochNormProzedur.PLENARPROTOKOLL)
+        self.assertGreater(eintrag.schwarzes_loch_norm_weight, 0.0)
+
+    def test_kki_schwarzes_loch_norm_aggregates_norm_signal(self) -> None:
+        normsatz = build_schwarzes_loch_norm(norm_id="schwarzes-loch-338-signal")
+
+        self.assertEqual(normsatz.norm_signal.status, "norm-gesperrt")
+        self.assertEqual(normsatz.gesperrt_norm_ids, ("schwarzes-loch-338-signal-stability-lane",))
+        self.assertEqual(normsatz.horizontgebunden_norm_ids, ("schwarzes-loch-338-signal-governance-lane",))
+        self.assertEqual(normsatz.grundlegend_norm_ids, ("schwarzes-loch-338-signal-expansion-lane",))
 
     def test_kki_waermestrahlung_charta_builds_gesperrt_schutz_norm(self) -> None:
         charta = build_waermestrahlung_charta(charta_id="charta-289-stability")

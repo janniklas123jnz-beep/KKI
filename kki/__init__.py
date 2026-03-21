@@ -1259,6 +1259,38 @@ from .fusionsreaktor_kodex import (
     FusionsreaktorTyp,
     build_fusionsreaktor_kodex,
 )
+from .roter_riese_pakt import (
+    RoterRieseGeltung,
+    RoterRieseNorm,
+    RoterRiesePakt,
+    RoterRieseProzedur,
+    RoterRieseTyp,
+    build_roter_riese_pakt,
+)
+from .supernova_manifest import (
+    SupernovaGeltung,
+    SupernovaManifest,
+    SupernovaNorm,
+    SupernovaProzedur,
+    SupernovaTyp,
+    build_supernova_manifest,
+)
+from .neutronenstern_senat import (
+    NeutronensternGeltung,
+    NeutronensternNorm,
+    NeutronensternProzedur,
+    NeutronensternSenat,
+    NeutronensternTyp,
+    build_neutronenstern_senat,
+)
+from .schwarzes_loch_norm import (
+    SchwarzerLochNormEintrag,
+    SchwarzerLochNormGeltung,
+    SchwarzerLochNormProzedur,
+    SchwarzerLochNormSatz,
+    SchwarzerLochNormTyp,
+    build_schwarzes_loch_norm,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -2427,6 +2459,10 @@ __all__ = [
     "build_protostellar_register",
     "build_hauptreihen_charta",
     "build_fusionsreaktor_kodex",
+    "build_roter_riese_pakt",
+    "build_supernova_manifest",
+    "build_neutronenstern_senat",
+    "build_schwarzes_loch_norm",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

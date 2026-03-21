@@ -1451,6 +1451,22 @@ from .plasmawellen_norm import (
     PlasmaWellenNormTyp,
     build_plasmawellen_norm,
 )
+from .kernfusion_charta import (
+    KernfusionCharta,
+    KernfusionGeltung,
+    KernfusionNorm,
+    KernfusionProzedur,
+    KernfusionTyp,
+    build_kernfusion_charta,
+)
+from .plasma_verfassung import (
+    PlasmaVerfassung,
+    PlasmaVerfassungsGeltung,
+    PlasmaVerfassungsNorm,
+    PlasmaVerfassungsProzedur,
+    PlasmaVerfassungsTyp,
+    build_plasma_verfassung,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -2643,6 +2659,8 @@ __all__ = [
     "build_tokamak_manifest",
     "build_traegheitsfusion_senat",
     "build_plasmawellen_norm",
+    "build_kernfusion_charta",
+    "build_plasma_verfassung",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

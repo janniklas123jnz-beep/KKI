@@ -901,6 +901,18 @@ from kki import (
     PlasmaWellenNormSatz,
     PlasmaWellenNormTyp,
     build_plasmawellen_norm,
+    KernfusionCharta,
+    KernfusionGeltung,
+    KernfusionNorm,
+    KernfusionProzedur,
+    KernfusionTyp,
+    build_kernfusion_charta,
+    PlasmaVerfassung,
+    PlasmaVerfassungsGeltung,
+    PlasmaVerfassungsNorm,
+    PlasmaVerfassungsProzedur,
+    PlasmaVerfassungsTyp,
+    build_plasma_verfassung,
     KausalitaetsGeltung,
     KausalitaetsNorm,
     KausalitaetsProzedur,
@@ -13574,6 +13586,77 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(normsatz.gesperrt_norm_ids, ("plasmawellen-norm-358-signal-stability-lane",))
         self.assertEqual(normsatz.plasmawellig_norm_ids, ("plasmawellen-norm-358-signal-governance-lane",))
         self.assertEqual(normsatz.grundlegend_norm_ids, ("plasmawellen-norm-358-signal-expansion-lane",))
+
+
+    # #359 KernfusionCharta
+    def test_kki_kernfusion_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_kernfusion_charta(charta_id="charta-359-stability")
+        norm = next(n for n in charta.normen if n.geltung is KernfusionGeltung.GESPERRT)
+
+        self.assertIsInstance(charta, KernfusionCharta)
+        self.assertIsInstance(norm, KernfusionNorm)
+        self.assertEqual(norm.kernfusion_typ, KernfusionTyp.SCHUTZ_KERNFUSION)
+        self.assertEqual(norm.prozedur, KernfusionProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.kernfusion_tier, 1)
+
+    def test_kki_kernfusion_charta_builds_kernfusionierend_ordnungs_norm(self) -> None:
+        charta = build_kernfusion_charta(charta_id="charta-359-governance")
+        norm = next(n for n in charta.normen if n.geltung is KernfusionGeltung.KERNFUSIONIEREND)
+
+        self.assertEqual(norm.kernfusion_typ, KernfusionTyp.ORDNUNGS_KERNFUSION)
+        self.assertEqual(norm.prozedur, KernfusionProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.kernfusion_weight, 0.0)
+
+    def test_kki_kernfusion_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_kernfusion_charta(charta_id="charta-359-expansion")
+        norm = next(n for n in charta.normen if n.geltung is KernfusionGeltung.GRUNDLEGEND_KERNFUSIONIEREND)
+
+        self.assertEqual(norm.kernfusion_typ, KernfusionTyp.SOUVERAENITAETS_KERNFUSION)
+        self.assertEqual(norm.prozedur, KernfusionProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.kernfusion_weight, 0.0)
+
+    def test_kki_kernfusion_charta_aggregates_charta_signal(self) -> None:
+        charta = build_kernfusion_charta(charta_id="charta-359-signal")
+
+        self.assertEqual(charta.charta_signal.status, "charta-gesperrt")
+        self.assertEqual(charta.gesperrt_norm_ids, ("charta-359-signal-stability-lane",))
+        self.assertEqual(charta.kernfusionierend_norm_ids, ("charta-359-signal-governance-lane",))
+        self.assertEqual(charta.grundlegend_norm_ids, ("charta-359-signal-expansion-lane",))
+
+    # #360 PlasmaVerfassung (Block-Krone)
+    def test_kki_plasma_verfassung_builds_gesperrt_schutz_norm(self) -> None:
+        verfassung = build_plasma_verfassung(verfassung_id="verfassung-360-stability")
+        norm = next(n for n in verfassung.normen if n.geltung is PlasmaVerfassungsGeltung.GESPERRT)
+
+        self.assertIsInstance(verfassung, PlasmaVerfassung)
+        self.assertIsInstance(norm, PlasmaVerfassungsNorm)
+        self.assertEqual(norm.plasma_verfassungs_typ, PlasmaVerfassungsTyp.SCHUTZ_PLASMAVERFASSUNG)
+        self.assertEqual(norm.prozedur, PlasmaVerfassungsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.plasma_verfassungs_tier, 1)
+
+    def test_kki_plasma_verfassung_builds_plasmaverfasst_ordnungs_norm(self) -> None:
+        verfassung = build_plasma_verfassung(verfassung_id="verfassung-360-governance")
+        norm = next(n for n in verfassung.normen if n.geltung is PlasmaVerfassungsGeltung.PLASMAVERFASST)
+
+        self.assertEqual(norm.plasma_verfassungs_typ, PlasmaVerfassungsTyp.ORDNUNGS_PLASMAVERFASSUNG)
+        self.assertEqual(norm.prozedur, PlasmaVerfassungsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.plasma_verfassungs_weight, 0.0)
+
+    def test_kki_plasma_verfassung_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        verfassung = build_plasma_verfassung(verfassung_id="verfassung-360-expansion")
+        norm = next(n for n in verfassung.normen if n.geltung is PlasmaVerfassungsGeltung.GRUNDLEGEND_PLASMAVERFASST)
+
+        self.assertEqual(norm.plasma_verfassungs_typ, PlasmaVerfassungsTyp.SOUVERAENITAETS_PLASMAVERFASSUNG)
+        self.assertEqual(norm.prozedur, PlasmaVerfassungsProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.plasma_verfassungs_weight, 0.0)
+
+    def test_kki_plasma_verfassung_aggregates_verfassung_signal(self) -> None:
+        verfassung = build_plasma_verfassung(verfassung_id="verfassung-360-signal")
+
+        self.assertEqual(verfassung.verfassung_signal.status, "verfassung-gesperrt")
+        self.assertEqual(verfassung.gesperrt_norm_ids, ("verfassung-360-signal-stability-lane",))
+        self.assertEqual(verfassung.plasmaverfasst_norm_ids, ("verfassung-360-signal-governance-lane",))
+        self.assertEqual(verfassung.grundlegend_norm_ids, ("verfassung-360-signal-expansion-lane",))
 
 
 if __name__ == "__main__":

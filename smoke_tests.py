@@ -913,6 +913,30 @@ from kki import (
     PlasmaVerfassungsProzedur,
     PlasmaVerfassungsTyp,
     build_plasma_verfassung,
+    LorenzAttraktorFeld,
+    LorenzAttraktorGeltung,
+    LorenzAttraktorNorm,
+    LorenzAttraktorProzedur,
+    LorenzAttraktorTyp,
+    build_lorenz_attraktor_feld,
+    BifurkationsGeltung,
+    BifurkationsNorm,
+    BifurkationsProzedur,
+    BifurkationsRegister,
+    BifurkationsTyp,
+    build_bifurkations_register,
+    LyapunovGeltung,
+    LyapunovKodex,
+    LyapunovNorm,
+    LyapunovProzedur,
+    LyapunovTyp,
+    build_lyapunov_kodex,
+    FraktalCharta,
+    FraktalGeltung,
+    FraktalNorm,
+    FraktalProzedur,
+    FraktalTyp,
+    build_fraktal_charta,
     KausalitaetsGeltung,
     KausalitaetsNorm,
     KausalitaetsProzedur,
@@ -13657,6 +13681,147 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(verfassung.gesperrt_norm_ids, ("verfassung-360-signal-stability-lane",))
         self.assertEqual(verfassung.plasmaverfasst_norm_ids, ("verfassung-360-signal-governance-lane",))
         self.assertEqual(verfassung.grundlegend_norm_ids, ("verfassung-360-signal-expansion-lane",))
+
+
+    # #361 LorenzAttraktorFeld
+    def test_kki_lorenz_attraktor_feld_builds_gesperrt_schutz_norm(self) -> None:
+        feld = build_lorenz_attraktor_feld(feld_id="feld-361-stability")
+        norm = next(n for n in feld.normen if n.geltung is LorenzAttraktorGeltung.GESPERRT)
+
+        self.assertIsInstance(feld, LorenzAttraktorFeld)
+        self.assertIsInstance(norm, LorenzAttraktorNorm)
+        self.assertEqual(norm.lorenz_attraktor_typ, LorenzAttraktorTyp.SCHUTZ_LORENZ_ATTRAKTOR)
+        self.assertEqual(norm.prozedur, LorenzAttraktorProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.lorenz_attraktor_tier, 1)
+
+    def test_kki_lorenz_attraktor_feld_builds_lorenzattrahiert_ordnungs_norm(self) -> None:
+        feld = build_lorenz_attraktor_feld(feld_id="feld-361-governance")
+        norm = next(n for n in feld.normen if n.geltung is LorenzAttraktorGeltung.LORENZATTRAHIERT)
+
+        self.assertEqual(norm.lorenz_attraktor_typ, LorenzAttraktorTyp.ORDNUNGS_LORENZ_ATTRAKTOR)
+        self.assertEqual(norm.prozedur, LorenzAttraktorProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.lorenz_attraktor_weight, 0.0)
+
+    def test_kki_lorenz_attraktor_feld_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        feld = build_lorenz_attraktor_feld(feld_id="feld-361-expansion")
+        norm = next(n for n in feld.normen if n.geltung is LorenzAttraktorGeltung.GRUNDLEGEND_LORENZATTRAHIERT)
+
+        self.assertEqual(norm.lorenz_attraktor_typ, LorenzAttraktorTyp.SOUVERAENITAETS_LORENZ_ATTRAKTOR)
+        self.assertEqual(norm.prozedur, LorenzAttraktorProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.lorenz_attraktor_weight, 0.0)
+
+    def test_kki_lorenz_attraktor_feld_aggregates_feld_signal(self) -> None:
+        feld = build_lorenz_attraktor_feld(feld_id="feld-361-signal")
+
+        self.assertEqual(feld.feld_signal.status, "feld-gesperrt")
+        self.assertEqual(feld.gesperrt_norm_ids, ("feld-361-signal-stability-lane",))
+        self.assertEqual(feld.lorenzattrahiert_norm_ids, ("feld-361-signal-governance-lane",))
+        self.assertEqual(feld.grundlegend_norm_ids, ("feld-361-signal-expansion-lane",))
+
+    # #362 BifurkationsRegister
+    def test_kki_bifurkations_register_builds_gesperrt_schutz_norm(self) -> None:
+        register = build_bifurkations_register(register_id="register-362-stability")
+        norm = next(n for n in register.normen if n.geltung is BifurkationsGeltung.GESPERRT)
+
+        self.assertIsInstance(register, BifurkationsRegister)
+        self.assertIsInstance(norm, BifurkationsNorm)
+        self.assertEqual(norm.bifurkations_typ, BifurkationsTyp.SCHUTZ_BIFURKATION)
+        self.assertEqual(norm.prozedur, BifurkationsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.bifurkations_tier, 1)
+
+    def test_kki_bifurkations_register_builds_bifurkiert_ordnungs_norm(self) -> None:
+        register = build_bifurkations_register(register_id="register-362-governance")
+        norm = next(n for n in register.normen if n.geltung is BifurkationsGeltung.BIFURKIERT)
+
+        self.assertEqual(norm.bifurkations_typ, BifurkationsTyp.ORDNUNGS_BIFURKATION)
+        self.assertEqual(norm.prozedur, BifurkationsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.bifurkations_weight, 0.0)
+
+    def test_kki_bifurkations_register_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        register = build_bifurkations_register(register_id="register-362-expansion")
+        norm = next(n for n in register.normen if n.geltung is BifurkationsGeltung.GRUNDLEGEND_BIFURKIERT)
+
+        self.assertEqual(norm.bifurkations_typ, BifurkationsTyp.SOUVERAENITAETS_BIFURKATION)
+        self.assertEqual(norm.prozedur, BifurkationsProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.bifurkations_weight, 0.0)
+
+    def test_kki_bifurkations_register_aggregates_register_signal(self) -> None:
+        register = build_bifurkations_register(register_id="register-362-signal")
+
+        self.assertEqual(register.register_signal.status, "register-gesperrt")
+        self.assertEqual(register.gesperrt_norm_ids, ("register-362-signal-stability-lane",))
+        self.assertEqual(register.bifurkiert_norm_ids, ("register-362-signal-governance-lane",))
+        self.assertEqual(register.grundlegend_norm_ids, ("register-362-signal-expansion-lane",))
+
+    # #363 LyapunovKodex
+    def test_kki_lyapunov_kodex_builds_gesperrt_schutz_norm(self) -> None:
+        kodex = build_lyapunov_kodex(kodex_id="kodex-363-stability")
+        norm = next(n for n in kodex.normen if n.geltung is LyapunovGeltung.GESPERRT)
+
+        self.assertIsInstance(kodex, LyapunovKodex)
+        self.assertIsInstance(norm, LyapunovNorm)
+        self.assertEqual(norm.lyapunov_typ, LyapunovTyp.SCHUTZ_LYAPUNOV)
+        self.assertEqual(norm.prozedur, LyapunovProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.lyapunov_tier, 1)
+
+    def test_kki_lyapunov_kodex_builds_lyapunovstabil_ordnungs_norm(self) -> None:
+        kodex = build_lyapunov_kodex(kodex_id="kodex-363-governance")
+        norm = next(n for n in kodex.normen if n.geltung is LyapunovGeltung.LYAPUNOVSTABIL)
+
+        self.assertEqual(norm.lyapunov_typ, LyapunovTyp.ORDNUNGS_LYAPUNOV)
+        self.assertEqual(norm.prozedur, LyapunovProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.lyapunov_weight, 0.0)
+
+    def test_kki_lyapunov_kodex_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        kodex = build_lyapunov_kodex(kodex_id="kodex-363-expansion")
+        norm = next(n for n in kodex.normen if n.geltung is LyapunovGeltung.GRUNDLEGEND_LYAPUNOVSTABIL)
+
+        self.assertEqual(norm.lyapunov_typ, LyapunovTyp.SOUVERAENITAETS_LYAPUNOV)
+        self.assertEqual(norm.prozedur, LyapunovProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.lyapunov_weight, 0.0)
+
+    def test_kki_lyapunov_kodex_aggregates_kodex_signal(self) -> None:
+        kodex = build_lyapunov_kodex(kodex_id="kodex-363-signal")
+
+        self.assertEqual(kodex.kodex_signal.status, "kodex-gesperrt")
+        self.assertEqual(kodex.gesperrt_norm_ids, ("kodex-363-signal-stability-lane",))
+        self.assertEqual(kodex.lyapunovstabil_norm_ids, ("kodex-363-signal-governance-lane",))
+        self.assertEqual(kodex.grundlegend_norm_ids, ("kodex-363-signal-expansion-lane",))
+
+    # #364 FraktalCharta
+    def test_kki_fraktal_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_fraktal_charta(charta_id="charta-364-stability")
+        norm = next(n for n in charta.normen if n.geltung is FraktalGeltung.GESPERRT)
+
+        self.assertIsInstance(charta, FraktalCharta)
+        self.assertIsInstance(norm, FraktalNorm)
+        self.assertEqual(norm.fraktal_typ, FraktalTyp.SCHUTZ_FRAKTAL)
+        self.assertEqual(norm.prozedur, FraktalProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.fraktal_tier, 1)
+
+    def test_kki_fraktal_charta_builds_fraktal_ordnungs_norm(self) -> None:
+        charta = build_fraktal_charta(charta_id="charta-364-governance")
+        norm = next(n for n in charta.normen if n.geltung is FraktalGeltung.FRAKTAL)
+
+        self.assertEqual(norm.fraktal_typ, FraktalTyp.ORDNUNGS_FRAKTAL)
+        self.assertEqual(norm.prozedur, FraktalProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.fraktal_weight, 0.0)
+
+    def test_kki_fraktal_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_fraktal_charta(charta_id="charta-364-expansion")
+        norm = next(n for n in charta.normen if n.geltung is FraktalGeltung.GRUNDLEGEND_FRAKTAL)
+
+        self.assertEqual(norm.fraktal_typ, FraktalTyp.SOUVERAENITAETS_FRAKTAL)
+        self.assertEqual(norm.prozedur, FraktalProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.fraktal_weight, 0.0)
+
+    def test_kki_fraktal_charta_aggregates_charta_signal(self) -> None:
+        charta = build_fraktal_charta(charta_id="charta-364-signal")
+
+        self.assertEqual(charta.charta_signal.status, "charta-gesperrt")
+        self.assertEqual(charta.gesperrt_norm_ids, ("charta-364-signal-stability-lane",))
+        self.assertEqual(charta.fraktal_norm_ids, ("charta-364-signal-governance-lane",))
+        self.assertEqual(charta.grundlegend_norm_ids, ("charta-364-signal-expansion-lane",))
 
 
 if __name__ == "__main__":

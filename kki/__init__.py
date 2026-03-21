@@ -1467,6 +1467,38 @@ from .plasma_verfassung import (
     PlasmaVerfassungsTyp,
     build_plasma_verfassung,
 )
+from .lorenz_attraktor_feld import (
+    LorenzAttraktorFeld,
+    LorenzAttraktorGeltung,
+    LorenzAttraktorNorm,
+    LorenzAttraktorProzedur,
+    LorenzAttraktorTyp,
+    build_lorenz_attraktor_feld,
+)
+from .bifurkations_register import (
+    BifurkationsGeltung,
+    BifurkationsNorm,
+    BifurkationsProzedur,
+    BifurkationsRegister,
+    BifurkationsTyp,
+    build_bifurkations_register,
+)
+from .lyapunov_kodex import (
+    LyapunovGeltung,
+    LyapunovKodex,
+    LyapunovNorm,
+    LyapunovProzedur,
+    LyapunovTyp,
+    build_lyapunov_kodex,
+)
+from .fraktal_charta import (
+    FraktalCharta,
+    FraktalGeltung,
+    FraktalNorm,
+    FraktalProzedur,
+    FraktalTyp,
+    build_fraktal_charta,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -2661,6 +2693,10 @@ __all__ = [
     "build_plasmawellen_norm",
     "build_kernfusion_charta",
     "build_plasma_verfassung",
+    "build_lorenz_attraktor_feld",
+    "build_bifurkations_register",
+    "build_lyapunov_kodex",
+    "build_fraktal_charta",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

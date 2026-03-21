@@ -1021,6 +1021,18 @@ from kki import (
     LandauerProzedur,
     LandauerTyp,
     build_landauer_manifest,
+    NoCloningGeltung,
+    NoCloningKodex,
+    NoCloningNorm,
+    NoCloningProzedur,
+    NoCloningTyp,
+    build_no_cloning_kodex,
+    QuanteninformationsVerfassung,
+    QuanteninformationsVerfassungsGeltung,
+    QuanteninformationsVerfassungsNorm,
+    QuanteninformationsVerfassungsProzedur,
+    QuanteninformationsVerfassungsTyp,
+    build_quanteninformations_verfassung,
     KausalitaetsGeltung,
     KausalitaetsNorm,
     KausalitaetsProzedur,
@@ -14400,6 +14412,76 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(manifest.gesperrt_norm_ids, ("manifest-378-signal-stability-lane",))
         self.assertEqual(manifest.landauergebunden_norm_ids, ("manifest-378-signal-governance-lane",))
         self.assertEqual(manifest.grundlegend_norm_ids, ("manifest-378-signal-expansion-lane",))
+
+    # #379 NoCloningKodex
+    def test_kki_no_cloning_kodex_builds_gesperrt_schutz_norm(self) -> None:
+        kodex = build_no_cloning_kodex(kodex_id="kodex-379-stability")
+        norm = next(n for n in kodex.normen if n.geltung is NoCloningGeltung.GESPERRT)
+
+        self.assertIsInstance(kodex, NoCloningKodex)
+        self.assertIsInstance(norm, NoCloningNorm)
+        self.assertEqual(norm.no_cloning_typ, NoCloningTyp.SCHUTZ_NO_CLONING)
+        self.assertEqual(norm.prozedur, NoCloningProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.no_cloning_tier, 1)
+
+    def test_kki_no_cloning_kodex_builds_nichtklonbar_ordnungs_norm(self) -> None:
+        kodex = build_no_cloning_kodex(kodex_id="kodex-379-governance")
+        norm = next(n for n in kodex.normen if n.geltung is NoCloningGeltung.NICHTKLONBAR)
+
+        self.assertEqual(norm.no_cloning_typ, NoCloningTyp.ORDNUNGS_NO_CLONING)
+        self.assertEqual(norm.prozedur, NoCloningProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.no_cloning_weight, 0.0)
+
+    def test_kki_no_cloning_kodex_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        kodex = build_no_cloning_kodex(kodex_id="kodex-379-expansion")
+        norm = next(n for n in kodex.normen if n.geltung is NoCloningGeltung.GRUNDLEGEND_NICHTKLONBAR)
+
+        self.assertEqual(norm.no_cloning_typ, NoCloningTyp.SOUVERAENITAETS_NO_CLONING)
+        self.assertEqual(norm.prozedur, NoCloningProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.no_cloning_weight, 0.0)
+
+    def test_kki_no_cloning_kodex_aggregates_kodex_signal(self) -> None:
+        kodex = build_no_cloning_kodex(kodex_id="kodex-379-signal")
+
+        self.assertEqual(kodex.kodex_signal.status, "kodex-gesperrt")
+        self.assertEqual(kodex.gesperrt_norm_ids, ("kodex-379-signal-stability-lane",))
+        self.assertEqual(kodex.nichtklonbar_norm_ids, ("kodex-379-signal-governance-lane",))
+        self.assertEqual(kodex.grundlegend_norm_ids, ("kodex-379-signal-expansion-lane",))
+
+    # #380 QuanteninformationsVerfassung (Block-Krone)
+    def test_kki_quanteninformations_verfassung_builds_gesperrt_schutz_norm(self) -> None:
+        verfassung = build_quanteninformations_verfassung(verfassung_id="verfassung-380-stability")
+        norm = next(n for n in verfassung.normen if n.geltung is QuanteninformationsVerfassungsGeltung.GESPERRT)
+
+        self.assertIsInstance(verfassung, QuanteninformationsVerfassung)
+        self.assertIsInstance(norm, QuanteninformationsVerfassungsNorm)
+        self.assertEqual(norm.quanteninformations_verfassungs_typ, QuanteninformationsVerfassungsTyp.SCHUTZ_QUANTENINFORMATIONSVERFASSUNG)
+        self.assertEqual(norm.prozedur, QuanteninformationsVerfassungsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.quanteninformations_verfassungs_tier, 1)
+
+    def test_kki_quanteninformations_verfassung_builds_quantenverfasst_ordnungs_norm(self) -> None:
+        verfassung = build_quanteninformations_verfassung(verfassung_id="verfassung-380-governance")
+        norm = next(n for n in verfassung.normen if n.geltung is QuanteninformationsVerfassungsGeltung.QUANTENVERFASST)
+
+        self.assertEqual(norm.quanteninformations_verfassungs_typ, QuanteninformationsVerfassungsTyp.ORDNUNGS_QUANTENINFORMATIONSVERFASSUNG)
+        self.assertEqual(norm.prozedur, QuanteninformationsVerfassungsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.quanteninformations_verfassungs_weight, 0.0)
+
+    def test_kki_quanteninformations_verfassung_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        verfassung = build_quanteninformations_verfassung(verfassung_id="verfassung-380-expansion")
+        norm = next(n for n in verfassung.normen if n.geltung is QuanteninformationsVerfassungsGeltung.GRUNDLEGEND_QUANTENVERFASST)
+
+        self.assertEqual(norm.quanteninformations_verfassungs_typ, QuanteninformationsVerfassungsTyp.SOUVERAENITAETS_QUANTENINFORMATIONSVERFASSUNG)
+        self.assertEqual(norm.prozedur, QuanteninformationsVerfassungsProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.quanteninformations_verfassungs_weight, 0.0)
+
+    def test_kki_quanteninformations_verfassung_aggregates_verfassung_signal(self) -> None:
+        verfassung = build_quanteninformations_verfassung(verfassung_id="verfassung-380-signal")
+
+        self.assertEqual(verfassung.verfassung_signal.status, "verfassung-gesperrt")
+        self.assertEqual(verfassung.gesperrt_norm_ids, ("verfassung-380-signal-stability-lane",))
+        self.assertEqual(verfassung.quantenverfasst_norm_ids, ("verfassung-380-signal-governance-lane",))
+        self.assertEqual(verfassung.grundlegend_norm_ids, ("verfassung-380-signal-expansion-lane",))
 
 
 if __name__ == "__main__":

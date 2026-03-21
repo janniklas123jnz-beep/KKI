@@ -1611,6 +1611,22 @@ from .landauer_manifest import (
     LandauerTyp,
     build_landauer_manifest,
 )
+from .no_cloning_kodex import (
+    NoCloningGeltung,
+    NoCloningKodex,
+    NoCloningNorm,
+    NoCloningProzedur,
+    NoCloningTyp,
+    build_no_cloning_kodex,
+)
+from .quanteninformation_verfassung import (
+    QuanteninformationsVerfassung,
+    QuanteninformationsVerfassungsGeltung,
+    QuanteninformationsVerfassungsNorm,
+    QuanteninformationsVerfassungsProzedur,
+    QuanteninformationsVerfassungsTyp,
+    build_quanteninformations_verfassung,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -2823,6 +2839,18 @@ __all__ = [
     "build_quantenkrypto_senat",
     "build_holographisches_prinzip_norm",
     "build_landauer_manifest",
+    "NoCloningGeltung",
+    "NoCloningKodex",
+    "NoCloningNorm",
+    "NoCloningProzedur",
+    "NoCloningTyp",
+    "build_no_cloning_kodex",
+    "QuanteninformationsVerfassung",
+    "QuanteninformationsVerfassungsGeltung",
+    "QuanteninformationsVerfassungsNorm",
+    "QuanteninformationsVerfassungsProzedur",
+    "QuanteninformationsVerfassungsTyp",
+    "build_quanteninformations_verfassung",
     "build_exception_register",
     "build_federation_coordination",
     "build_governance_agenda",

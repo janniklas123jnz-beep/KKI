@@ -1315,6 +1315,56 @@ from kki.neurowissenschafts_verfassung import (
     NeurowissenschaftsVerfassungsNorm, NeurowissenschaftsVerfassungsTyp,
     NeurowissenschaftsVerfassungsProzedur, build_neurowissenschafts_verfassung,
 )
+from kki.spieltheorie_feld import (
+    SpieltheorieFeld, SpieltheorieFeldGeltung,
+    SpieltheorieFeldNorm, SpieltheorieFeldTyp,
+    SpieltheorieFeldProzedur, build_spieltheorie_feld,
+)
+from kki.nash_register import (
+    NashRegister, NashRegisterGeltung,
+    NashRegisterNorm, NashRegisterTyp,
+    NashRegisterProzedur, build_nash_register,
+)
+from kki.kooperations_charta import (
+    KooperationsCharta, KooperationsChartaGeltung,
+    KooperationsChartaNorm, KooperationsChartaTyp,
+    KooperationsChartaProzedur, build_kooperations_charta,
+)
+from kki.mechanismus_kodex import (
+    MechanismusKodex, MechanismusKodexGeltung,
+    MechanismusKodexNorm, MechanismusKodexTyp,
+    MechanismusKodexProzedur, build_mechanismus_kodex,
+)
+from kki.entscheidungs_pakt import (
+    EntscheidungsPakt, EntscheidungsPaktGeltung,
+    EntscheidungsPaktNorm, EntscheidungsPaktTyp,
+    EntscheidungsPaktProzedur, build_entscheidungs_pakt,
+)
+from kki.rationalitaets_manifest import (
+    RationalitaetsManifest, RationalitaetsManifestGeltung,
+    RationalitaetsManifestNorm, RationalitaetsManifestTyp,
+    RationalitaetsManifestProzedur, build_rationalitaets_manifest,
+)
+from kki.auktions_senat import (
+    AuktionsSenat, AuktionsSenatGeltung,
+    AuktionsSenatNorm, AuktionsSenatTyp,
+    AuktionsSenatProzedur, build_auktions_senat,
+)
+from kki.spieltheorie_norm import (
+    SpieltheorieNormSatz, SpieltheorieNormGeltung,
+    SpieltheorieNormEintrag, SpieltheorieNormTyp,
+    SpieltheorieNormProzedur, build_spieltheorie_norm,
+)
+from kki.gleichgewichts_charta import (
+    GleichgewichtsCharta, GleichgewichtsChartaGeltung,
+    GleichgewichtsChartaNorm, GleichgewichtsChartaTyp,
+    GleichgewichtsChartaProzedur, build_gleichgewichts_charta,
+)
+from kki.entscheidungstheorie_verfassung import (
+    EntscheidungstheorieVerfassung, EntscheidungstheorieVerfassungsGeltung,
+    EntscheidungstheorieVerfassungsNorm, EntscheidungstheorieVerfassungsTyp,
+    EntscheidungstheorieVerfassungsProzedur, build_entscheidungstheorie_verfassung,
+)
 from kki import (
     KausalitaetsGeltung,
     KausalitaetsNorm,
@@ -16718,6 +16768,326 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(verfassung.gesperrt_norm_ids, ("verfassung-440-signal-stability-lane",))
         self.assertEqual(verfassung.neurowissenschaftlich_norm_ids, ("verfassung-440-signal-governance-lane",))
         self.assertEqual(verfassung.grundlegend_norm_ids, ("verfassung-440-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #441 SpieltheorieFeld
+    # ------------------------------------------------------------------
+
+    def test_kki_spieltheorie_feld_builds_gesperrt_schutz_norm(self) -> None:
+        feld = build_spieltheorie_feld(feld_id="feld-441-g")
+        gesperrt = [n for n in feld.normen if n.geltung is SpieltheorieFeldGeltung.GESPERRT]
+        self.assertEqual(len(gesperrt), 1)
+        self.assertEqual(gesperrt[0].spieltheorie_feld_typ, SpieltheorieFeldTyp.SCHUTZ_SPIELTHEORIE)
+        self.assertEqual(gesperrt[0].prozedur, SpieltheorieFeldProzedur.NOTPROZEDUR)
+
+    def test_kki_spieltheorie_feld_builds_spieltheoretisch_ordnungs_norm(self) -> None:
+        feld = build_spieltheorie_feld(feld_id="feld-441-s")
+        spieltheoretisch = [n for n in feld.normen if n.geltung is SpieltheorieFeldGeltung.SPIELTHEORETISCH]
+        self.assertEqual(len(spieltheoretisch), 1)
+        self.assertEqual(spieltheoretisch[0].spieltheorie_feld_typ, SpieltheorieFeldTyp.ORDNUNGS_SPIELTHEORIE)
+        self.assertEqual(spieltheoretisch[0].prozedur, SpieltheorieFeldProzedur.REGELPROTOKOLL)
+
+    def test_kki_spieltheorie_feld_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        feld = build_spieltheorie_feld(feld_id="feld-441-gs")
+        grundlegend = [n for n in feld.normen if n.geltung is SpieltheorieFeldGeltung.GRUNDLEGEND_SPIELTHEORETISCH]
+        self.assertEqual(len(grundlegend), 1)
+        self.assertEqual(grundlegend[0].spieltheorie_feld_typ, SpieltheorieFeldTyp.SOUVERAENITAETS_SPIELTHEORIE)
+        self.assertTrue(grundlegend[0].canonical)
+
+    def test_kki_spieltheorie_feld_aggregates_feld_signal(self) -> None:
+        feld = build_spieltheorie_feld(feld_id="feld-441-sig")
+        self.assertEqual(feld.feld_signal.status, "feld-gesperrt")
+        self.assertEqual(feld.gesperrt_norm_ids, ("feld-441-sig-stability-lane",))
+        self.assertEqual(feld.spieltheoretisch_norm_ids, ("feld-441-sig-governance-lane",))
+        self.assertEqual(feld.grundlegend_norm_ids, ("feld-441-sig-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #442 NashRegister
+    # ------------------------------------------------------------------
+
+    def test_kki_nash_register_builds_gesperrt_schutz_norm(self) -> None:
+        register = build_nash_register(register_id="reg-442-g")
+        gesperrt = [n for n in register.normen if n.geltung is NashRegisterGeltung.GESPERRT]
+        self.assertEqual(len(gesperrt), 1)
+        self.assertEqual(gesperrt[0].nash_register_typ, NashRegisterTyp.SCHUTZ_NASH)
+        self.assertEqual(gesperrt[0].prozedur, NashRegisterProzedur.NOTPROZEDUR)
+
+    def test_kki_nash_register_builds_nash_ordnungs_norm(self) -> None:
+        register = build_nash_register(register_id="reg-442-n")
+        nash = [n for n in register.normen if n.geltung is NashRegisterGeltung.NASH]
+        self.assertEqual(len(nash), 1)
+        self.assertEqual(nash[0].nash_register_typ, NashRegisterTyp.ORDNUNGS_NASH)
+        self.assertEqual(nash[0].prozedur, NashRegisterProzedur.REGELPROTOKOLL)
+
+    def test_kki_nash_register_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        register = build_nash_register(register_id="reg-442-gs")
+        grundlegend = [n for n in register.normen if n.geltung is NashRegisterGeltung.GRUNDLEGEND_NASH]
+        self.assertEqual(len(grundlegend), 1)
+        self.assertEqual(grundlegend[0].nash_register_typ, NashRegisterTyp.SOUVERAENITAETS_NASH)
+        self.assertTrue(grundlegend[0].canonical)
+
+    def test_kki_nash_register_aggregates_register_signal(self) -> None:
+        register = build_nash_register(register_id="reg-442-sig")
+        self.assertEqual(register.register_signal.status, "register-gesperrt")
+        self.assertEqual(register.gesperrt_norm_ids, ("reg-442-sig-stability-lane",))
+        self.assertEqual(register.nash_norm_ids, ("reg-442-sig-governance-lane",))
+        self.assertEqual(register.grundlegend_norm_ids, ("reg-442-sig-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #443 KooperationsCharta
+    # ------------------------------------------------------------------
+
+    def test_kki_kooperations_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_kooperations_charta(charta_id="charta-443-g")
+        gesperrt = [n for n in charta.normen if n.geltung is KooperationsChartaGeltung.GESPERRT]
+        self.assertEqual(len(gesperrt), 1)
+        self.assertEqual(gesperrt[0].kooperations_charta_typ, KooperationsChartaTyp.SCHUTZ_KOOPERATION)
+        self.assertEqual(gesperrt[0].prozedur, KooperationsChartaProzedur.NOTPROZEDUR)
+
+    def test_kki_kooperations_charta_builds_kooperativ_ordnungs_norm(self) -> None:
+        charta = build_kooperations_charta(charta_id="charta-443-k")
+        kooperativ = [n for n in charta.normen if n.geltung is KooperationsChartaGeltung.KOOPERATIV]
+        self.assertEqual(len(kooperativ), 1)
+        self.assertEqual(kooperativ[0].kooperations_charta_typ, KooperationsChartaTyp.ORDNUNGS_KOOPERATION)
+        self.assertEqual(kooperativ[0].prozedur, KooperationsChartaProzedur.REGELPROTOKOLL)
+
+    def test_kki_kooperations_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_kooperations_charta(charta_id="charta-443-gs")
+        grundlegend = [n for n in charta.normen if n.geltung is KooperationsChartaGeltung.GRUNDLEGEND_KOOPERATIV]
+        self.assertEqual(len(grundlegend), 1)
+        self.assertEqual(grundlegend[0].kooperations_charta_typ, KooperationsChartaTyp.SOUVERAENITAETS_KOOPERATION)
+        self.assertTrue(grundlegend[0].canonical)
+
+    def test_kki_kooperations_charta_aggregates_charta_signal(self) -> None:
+        charta = build_kooperations_charta(charta_id="charta-443-sig")
+        self.assertEqual(charta.charta_signal.status, "charta-gesperrt")
+        self.assertEqual(charta.gesperrt_norm_ids, ("charta-443-sig-stability-lane",))
+        self.assertEqual(charta.kooperativ_norm_ids, ("charta-443-sig-governance-lane",))
+        self.assertEqual(charta.grundlegend_norm_ids, ("charta-443-sig-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #444 MechanismusKodex
+    # ------------------------------------------------------------------
+
+    def test_kki_mechanismus_kodex_builds_gesperrt_schutz_norm(self) -> None:
+        kodex = build_mechanismus_kodex(kodex_id="kodex-444-g")
+        gesperrt = [n for n in kodex.normen if n.geltung is MechanismusKodexGeltung.GESPERRT]
+        self.assertEqual(len(gesperrt), 1)
+        self.assertEqual(gesperrt[0].mechanismus_kodex_typ, MechanismusKodexTyp.SCHUTZ_MECHANISMUS)
+        self.assertEqual(gesperrt[0].prozedur, MechanismusKodexProzedur.NOTPROZEDUR)
+
+    def test_kki_mechanismus_kodex_builds_mechanistisch_ordnungs_norm(self) -> None:
+        kodex = build_mechanismus_kodex(kodex_id="kodex-444-m")
+        mechanistisch = [n for n in kodex.normen if n.geltung is MechanismusKodexGeltung.MECHANISTISCH]
+        self.assertEqual(len(mechanistisch), 1)
+        self.assertEqual(mechanistisch[0].mechanismus_kodex_typ, MechanismusKodexTyp.ORDNUNGS_MECHANISMUS)
+        self.assertEqual(mechanistisch[0].prozedur, MechanismusKodexProzedur.REGELPROTOKOLL)
+
+    def test_kki_mechanismus_kodex_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        kodex = build_mechanismus_kodex(kodex_id="kodex-444-gs")
+        grundlegend = [n for n in kodex.normen if n.geltung is MechanismusKodexGeltung.GRUNDLEGEND_MECHANISTISCH]
+        self.assertEqual(len(grundlegend), 1)
+        self.assertEqual(grundlegend[0].mechanismus_kodex_typ, MechanismusKodexTyp.SOUVERAENITAETS_MECHANISMUS)
+        self.assertTrue(grundlegend[0].canonical)
+
+    def test_kki_mechanismus_kodex_aggregates_kodex_signal(self) -> None:
+        kodex = build_mechanismus_kodex(kodex_id="kodex-444-sig")
+        self.assertEqual(kodex.kodex_signal.status, "kodex-gesperrt")
+        self.assertEqual(kodex.gesperrt_norm_ids, ("kodex-444-sig-stability-lane",))
+        self.assertEqual(kodex.mechanistisch_norm_ids, ("kodex-444-sig-governance-lane",))
+        self.assertEqual(kodex.grundlegend_norm_ids, ("kodex-444-sig-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #445 EntscheidungsPakt
+    # ------------------------------------------------------------------
+
+    def test_kki_entscheidungs_pakt_builds_gesperrt_schutz_norm(self) -> None:
+        pakt = build_entscheidungs_pakt(pakt_id="pakt-445-g")
+        gesperrt = [n for n in pakt.normen if n.geltung is EntscheidungsPaktGeltung.GESPERRT]
+        self.assertEqual(len(gesperrt), 1)
+        self.assertEqual(gesperrt[0].entscheidungs_pakt_typ, EntscheidungsPaktTyp.SCHUTZ_ENTSCHEIDUNG)
+        self.assertEqual(gesperrt[0].prozedur, EntscheidungsPaktProzedur.NOTPROZEDUR)
+
+    def test_kki_entscheidungs_pakt_builds_entscheidend_ordnungs_norm(self) -> None:
+        pakt = build_entscheidungs_pakt(pakt_id="pakt-445-e")
+        entscheidend = [n for n in pakt.normen if n.geltung is EntscheidungsPaktGeltung.ENTSCHEIDEND]
+        self.assertEqual(len(entscheidend), 1)
+        self.assertEqual(entscheidend[0].entscheidungs_pakt_typ, EntscheidungsPaktTyp.ORDNUNGS_ENTSCHEIDUNG)
+        self.assertEqual(entscheidend[0].prozedur, EntscheidungsPaktProzedur.REGELPROTOKOLL)
+
+    def test_kki_entscheidungs_pakt_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        pakt = build_entscheidungs_pakt(pakt_id="pakt-445-gs")
+        grundlegend = [n for n in pakt.normen if n.geltung is EntscheidungsPaktGeltung.GRUNDLEGEND_ENTSCHEIDEND]
+        self.assertEqual(len(grundlegend), 1)
+        self.assertEqual(grundlegend[0].entscheidungs_pakt_typ, EntscheidungsPaktTyp.SOUVERAENITAETS_ENTSCHEIDUNG)
+        self.assertTrue(grundlegend[0].canonical)
+
+    def test_kki_entscheidungs_pakt_aggregates_pakt_signal(self) -> None:
+        pakt = build_entscheidungs_pakt(pakt_id="pakt-445-sig")
+        self.assertEqual(pakt.pakt_signal.status, "pakt-gesperrt")
+        self.assertEqual(pakt.gesperrt_norm_ids, ("pakt-445-sig-stability-lane",))
+        self.assertEqual(pakt.entscheidend_norm_ids, ("pakt-445-sig-governance-lane",))
+        self.assertEqual(pakt.grundlegend_norm_ids, ("pakt-445-sig-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #446 RationalitaetsManifest
+    # ------------------------------------------------------------------
+
+    def test_kki_rationalitaets_manifest_builds_gesperrt_schutz_norm(self) -> None:
+        manifest = build_rationalitaets_manifest(manifest_id="manifest-446-g")
+        gesperrt = [n for n in manifest.normen if n.geltung is RationalitaetsManifestGeltung.GESPERRT]
+        self.assertEqual(len(gesperrt), 1)
+        self.assertEqual(gesperrt[0].rationalitaets_manifest_typ, RationalitaetsManifestTyp.SCHUTZ_RATIONALITAET)
+        self.assertEqual(gesperrt[0].prozedur, RationalitaetsManifestProzedur.NOTPROZEDUR)
+
+    def test_kki_rationalitaets_manifest_builds_rational_ordnungs_norm(self) -> None:
+        manifest = build_rationalitaets_manifest(manifest_id="manifest-446-r")
+        rational = [n for n in manifest.normen if n.geltung is RationalitaetsManifestGeltung.RATIONAL]
+        self.assertEqual(len(rational), 1)
+        self.assertEqual(rational[0].rationalitaets_manifest_typ, RationalitaetsManifestTyp.ORDNUNGS_RATIONALITAET)
+        self.assertEqual(rational[0].prozedur, RationalitaetsManifestProzedur.REGELPROTOKOLL)
+
+    def test_kki_rationalitaets_manifest_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        manifest = build_rationalitaets_manifest(manifest_id="manifest-446-gs")
+        grundlegend = [n for n in manifest.normen if n.geltung is RationalitaetsManifestGeltung.GRUNDLEGEND_RATIONAL]
+        self.assertEqual(len(grundlegend), 1)
+        self.assertEqual(grundlegend[0].rationalitaets_manifest_typ, RationalitaetsManifestTyp.SOUVERAENITAETS_RATIONALITAET)
+        self.assertTrue(grundlegend[0].canonical)
+
+    def test_kki_rationalitaets_manifest_aggregates_manifest_signal(self) -> None:
+        manifest = build_rationalitaets_manifest(manifest_id="manifest-446-sig")
+        self.assertEqual(manifest.manifest_signal.status, "manifest-gesperrt")
+        self.assertEqual(manifest.gesperrt_norm_ids, ("manifest-446-sig-stability-lane",))
+        self.assertEqual(manifest.rational_norm_ids, ("manifest-446-sig-governance-lane",))
+        self.assertEqual(manifest.grundlegend_norm_ids, ("manifest-446-sig-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #447 AuktionsSenat
+    # ------------------------------------------------------------------
+
+    def test_kki_auktions_senat_builds_gesperrt_schutz_norm(self) -> None:
+        senat = build_auktions_senat(senat_id="senat-447-g")
+        gesperrt = [n for n in senat.normen if n.geltung is AuktionsSenatGeltung.GESPERRT]
+        self.assertEqual(len(gesperrt), 1)
+        self.assertEqual(gesperrt[0].auktions_senat_typ, AuktionsSenatTyp.SCHUTZ_AUKTION)
+        self.assertEqual(gesperrt[0].prozedur, AuktionsSenatProzedur.NOTPROZEDUR)
+
+    def test_kki_auktions_senat_builds_auktional_ordnungs_norm(self) -> None:
+        senat = build_auktions_senat(senat_id="senat-447-a")
+        auktional = [n for n in senat.normen if n.geltung is AuktionsSenatGeltung.AUKTIONAL]
+        self.assertEqual(len(auktional), 1)
+        self.assertEqual(auktional[0].auktions_senat_typ, AuktionsSenatTyp.ORDNUNGS_AUKTION)
+        self.assertEqual(auktional[0].prozedur, AuktionsSenatProzedur.REGELPROTOKOLL)
+
+    def test_kki_auktions_senat_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        senat = build_auktions_senat(senat_id="senat-447-gs")
+        grundlegend = [n for n in senat.normen if n.geltung is AuktionsSenatGeltung.GRUNDLEGEND_AUKTIONAL]
+        self.assertEqual(len(grundlegend), 1)
+        self.assertEqual(grundlegend[0].auktions_senat_typ, AuktionsSenatTyp.SOUVERAENITAETS_AUKTION)
+        self.assertTrue(grundlegend[0].canonical)
+
+    def test_kki_auktions_senat_aggregates_senat_signal(self) -> None:
+        senat = build_auktions_senat(senat_id="senat-447-sig")
+        self.assertEqual(senat.senat_signal.status, "senat-gesperrt")
+        self.assertEqual(senat.gesperrt_norm_ids, ("senat-447-sig-stability-lane",))
+        self.assertEqual(senat.auktional_norm_ids, ("senat-447-sig-governance-lane",))
+        self.assertEqual(senat.grundlegend_norm_ids, ("senat-447-sig-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #448 SpieltheorieNorm (*_norm)
+    # ------------------------------------------------------------------
+
+    def test_kki_spieltheorie_norm_builds_gesperrt_schutz_eintrag(self) -> None:
+        satz = build_spieltheorie_norm(norm_id="norm-448-g")
+        gesperrt = [n for n in satz.normen if n.geltung is SpieltheorieNormGeltung.GESPERRT]
+        self.assertEqual(len(gesperrt), 1)
+        self.assertEqual(gesperrt[0].spieltheorie_norm_typ, SpieltheorieNormTyp.SCHUTZ_SPIELTHEORIE_NORM)
+        self.assertEqual(gesperrt[0].prozedur, SpieltheorieNormProzedur.NOTPROZEDUR)
+
+    def test_kki_spieltheorie_norm_builds_evolutionaer_stabil_ordnungs_eintrag(self) -> None:
+        satz = build_spieltheorie_norm(norm_id="norm-448-e")
+        evo = [n for n in satz.normen if n.geltung is SpieltheorieNormGeltung.EVOLUTIONAER_STABIL]
+        self.assertEqual(len(evo), 1)
+        self.assertEqual(evo[0].spieltheorie_norm_typ, SpieltheorieNormTyp.ORDNUNGS_SPIELTHEORIE_NORM)
+        self.assertEqual(evo[0].prozedur, SpieltheorieNormProzedur.REGELPROTOKOLL)
+
+    def test_kki_spieltheorie_norm_builds_grundlegend_souveraenitaets_eintrag(self) -> None:
+        satz = build_spieltheorie_norm(norm_id="norm-448-gs")
+        grundlegend = [n for n in satz.normen if n.geltung is SpieltheorieNormGeltung.GRUNDLEGEND_EVOLUTIONAER_STABIL]
+        self.assertEqual(len(grundlegend), 1)
+        self.assertEqual(grundlegend[0].spieltheorie_norm_typ, SpieltheorieNormTyp.SOUVERAENITAETS_SPIELTHEORIE_NORM)
+        self.assertTrue(grundlegend[0].canonical)
+
+    def test_kki_spieltheorie_norm_aggregates_norm_signal(self) -> None:
+        satz = build_spieltheorie_norm(norm_id="norm-448-sig")
+        self.assertEqual(satz.norm_signal.status, "norm-gesperrt")
+        self.assertEqual(satz.gesperrt_norm_ids, ("norm-448-sig-stability-lane",))
+        self.assertEqual(satz.evolutionaer_stabil_norm_ids, ("norm-448-sig-governance-lane",))
+        self.assertEqual(satz.grundlegend_norm_ids, ("norm-448-sig-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #449 GleichgewichtsCharta
+    # ------------------------------------------------------------------
+
+    def test_kki_gleichgewichts_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_gleichgewichts_charta(charta_id="charta-449-g")
+        gesperrt = [n for n in charta.normen if n.geltung is GleichgewichtsChartaGeltung.GESPERRT]
+        self.assertEqual(len(gesperrt), 1)
+        self.assertEqual(gesperrt[0].gleichgewichts_charta_typ, GleichgewichtsChartaTyp.SCHUTZ_GLEICHGEWICHT)
+        self.assertEqual(gesperrt[0].prozedur, GleichgewichtsChartaProzedur.NOTPROZEDUR)
+
+    def test_kki_gleichgewichts_charta_builds_gleichgewichtig_ordnungs_norm(self) -> None:
+        charta = build_gleichgewichts_charta(charta_id="charta-449-gl")
+        gleichgewichtig = [n for n in charta.normen if n.geltung is GleichgewichtsChartaGeltung.GLEICHGEWICHTIG]
+        self.assertEqual(len(gleichgewichtig), 1)
+        self.assertEqual(gleichgewichtig[0].gleichgewichts_charta_typ, GleichgewichtsChartaTyp.ORDNUNGS_GLEICHGEWICHT)
+        self.assertEqual(gleichgewichtig[0].prozedur, GleichgewichtsChartaProzedur.REGELPROTOKOLL)
+
+    def test_kki_gleichgewichts_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_gleichgewichts_charta(charta_id="charta-449-gs")
+        grundlegend = [n for n in charta.normen if n.geltung is GleichgewichtsChartaGeltung.GRUNDLEGEND_GLEICHGEWICHTIG]
+        self.assertEqual(len(grundlegend), 1)
+        self.assertEqual(grundlegend[0].gleichgewichts_charta_typ, GleichgewichtsChartaTyp.SOUVERAENITAETS_GLEICHGEWICHT)
+        self.assertTrue(grundlegend[0].canonical)
+
+    def test_kki_gleichgewichts_charta_aggregates_charta_signal(self) -> None:
+        charta = build_gleichgewichts_charta(charta_id="charta-449-sig")
+        self.assertEqual(charta.charta_signal.status, "charta-gesperrt")
+        self.assertEqual(charta.gesperrt_norm_ids, ("charta-449-sig-stability-lane",))
+        self.assertEqual(charta.gleichgewichtig_norm_ids, ("charta-449-sig-governance-lane",))
+        self.assertEqual(charta.grundlegend_norm_ids, ("charta-449-sig-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #450 EntscheidungstheorieVerfassung — Block-Krone
+    # ------------------------------------------------------------------
+
+    def test_kki_entscheidungstheorie_verfassung_builds_gesperrt_schutz_norm(self) -> None:
+        verfassung = build_entscheidungstheorie_verfassung(verfassung_id="verfassung-450-g")
+        gesperrt = [n for n in verfassung.normen if n.geltung is EntscheidungstheorieVerfassungsGeltung.GESPERRT]
+        self.assertEqual(len(gesperrt), 1)
+        self.assertEqual(gesperrt[0].entscheidungstheorie_typ, EntscheidungstheorieVerfassungsTyp.SCHUTZ_ENTSCHEIDUNGSTHEORIE)
+        self.assertEqual(gesperrt[0].prozedur, EntscheidungstheorieVerfassungsProzedur.NOTPROZEDUR)
+
+    def test_kki_entscheidungstheorie_verfassung_builds_entscheidungstheoretisch_ordnungs_norm(self) -> None:
+        verfassung = build_entscheidungstheorie_verfassung(verfassung_id="verfassung-450-e")
+        entscheidend = [n for n in verfassung.normen if n.geltung is EntscheidungstheorieVerfassungsGeltung.ENTSCHEIDUNGSTHEORETISCH]
+        self.assertEqual(len(entscheidend), 1)
+        self.assertEqual(entscheidend[0].entscheidungstheorie_typ, EntscheidungstheorieVerfassungsTyp.ORDNUNGS_ENTSCHEIDUNGSTHEORIE)
+        self.assertEqual(entscheidend[0].prozedur, EntscheidungstheorieVerfassungsProzedur.REGELPROTOKOLL)
+
+    def test_kki_entscheidungstheorie_verfassung_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        verfassung = build_entscheidungstheorie_verfassung(verfassung_id="verfassung-450-gs")
+        grundlegend = [n for n in verfassung.normen if n.geltung is EntscheidungstheorieVerfassungsGeltung.GRUNDLEGEND_ENTSCHEIDUNGSTHEORETISCH]
+        self.assertEqual(len(grundlegend), 1)
+        self.assertEqual(grundlegend[0].entscheidungstheorie_typ, EntscheidungstheorieVerfassungsTyp.SOUVERAENITAETS_ENTSCHEIDUNGSTHEORIE)
+        self.assertTrue(grundlegend[0].canonical)
+
+    def test_kki_entscheidungstheorie_verfassung_aggregates_verfassung_signal(self) -> None:
+        verfassung = build_entscheidungstheorie_verfassung(verfassung_id="verfassung-450-sig")
+        self.assertEqual(verfassung.verfassung_signal.status, "verfassung-gesperrt")
+        self.assertEqual(verfassung.gesperrt_norm_ids, ("verfassung-450-sig-stability-lane",))
+        self.assertEqual(verfassung.entscheidungstheoretisch_norm_ids, ("verfassung-450-sig-governance-lane",))
+        self.assertEqual(verfassung.grundlegend_norm_ids, ("verfassung-450-sig-expansion-lane",))
 
 
 if __name__ == "__main__":

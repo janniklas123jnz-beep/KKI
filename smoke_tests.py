@@ -1365,6 +1365,56 @@ from kki.entscheidungstheorie_verfassung import (
     EntscheidungstheorieVerfassungsNorm, EntscheidungstheorieVerfassungsTyp,
     EntscheidungstheorieVerfassungsProzedur, build_entscheidungstheorie_verfassung,
 )
+from kki.evolutions_feld import (
+    EvolutionsFeld, EvolutionsFeldGeltung,
+    EvolutionsFeldNorm, EvolutionsFeldTyp,
+    EvolutionsFeldProzedur, build_evolutions_feld,
+)
+from kki.genetik_register import (
+    GenetikRegister, GenetikRegisterGeltung,
+    GenetikRegisterNorm, GenetikRegisterTyp,
+    GenetikRegisterProzedur, build_genetik_register,
+)
+from kki.selektions_charta import (
+    SeletkionsCharta, SeletkionsChartaGeltung,
+    SeletkionsChartaNorm, SeletkionsChartaTyp,
+    SeletkionsChartaProzedur, build_selektions_charta,
+)
+from kki.mutations_kodex import (
+    MutationsKodex, MutationsKodexGeltung,
+    MutationsKodexNorm, MutationsKodexTyp,
+    MutationsKodexProzedur, build_mutations_kodex,
+)
+from kki.fitness_pakt import (
+    FitnessPakt, FitnessPaktGeltung,
+    FitnessPaktNorm, FitnessPaktTyp,
+    FitnessPaktProzedur, build_fitness_pakt,
+)
+from kki.adaptations_manifest import (
+    AdaptationsManifest, AdaptationsManifestGeltung,
+    AdaptationsManifestNorm, AdaptationsManifestTyp,
+    AdaptationsManifestProzedur, build_adaptations_manifest,
+)
+from kki.oekologie_senat import (
+    OekologieSenat, OekologieSenatGeltung,
+    OekologieSenatNorm, OekologieSenatTyp,
+    OekologieSenatProzedur, build_oekologie_senat,
+)
+from kki.evolutions_norm import (
+    EvolutionsNormSatz, EvolutionsNormGeltung,
+    EvolutionsNormEintrag, EvolutionsNormTyp,
+    EvolutionsNormProzedur, build_evolutions_norm,
+)
+from kki.phylogenetik_charta import (
+    PhylogenetikCharta, PhylogenetikChartaGeltung,
+    PhylogenetikChartaNorm, PhylogenetikChartaTyp,
+    PhylogenetikChartaProzedur, build_phylogenetik_charta,
+)
+from kki.evolutionsbiologie_verfassung import (
+    EvolutionsbiologieVerfassung, EvolutionsbiologieVerfassungsGeltung,
+    EvolutionsbiologieVerfassungsNorm, EvolutionsbiologieVerfassungsTyp,
+    EvolutionsbiologieVerfassungsProzedur, build_evolutionsbiologie_verfassung,
+)
 from kki import (
     KausalitaetsGeltung,
     KausalitaetsNorm,
@@ -17088,6 +17138,286 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(verfassung.gesperrt_norm_ids, ("verfassung-450-sig-stability-lane",))
         self.assertEqual(verfassung.entscheidungstheoretisch_norm_ids, ("verfassung-450-sig-governance-lane",))
         self.assertEqual(verfassung.grundlegend_norm_ids, ("verfassung-450-sig-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #451 EvolutionsFeld
+    # ------------------------------------------------------------------
+    def test_kki_evolutions_feld_builds_gesperrt_schutz_norm(self) -> None:
+        feld = build_evolutions_feld(feld_id="feld-451-g")
+        gesperrt = [n for n in feld.normen if n.geltung is EvolutionsFeldGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) >= 1)
+        self.assertEqual(gesperrt[0].evolutions_feld_typ, EvolutionsFeldTyp.SCHUTZ_EVOLUTION)
+
+    def test_kki_evolutions_feld_builds_evolutionaer_ordnungs_norm(self) -> None:
+        feld = build_evolutions_feld(feld_id="feld-451-e")
+        evolutionaer = [n for n in feld.normen if n.geltung is EvolutionsFeldGeltung.EVOLUTIONAER]
+        self.assertTrue(len(evolutionaer) >= 1)
+        self.assertEqual(evolutionaer[0].evolutions_feld_typ, EvolutionsFeldTyp.ORDNUNGS_EVOLUTION)
+
+    def test_kki_evolutions_feld_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        feld = build_evolutions_feld(feld_id="feld-451-gs")
+        grundlegend = [n for n in feld.normen if n.geltung is EvolutionsFeldGeltung.GRUNDLEGEND_EVOLUTIONAER]
+        self.assertTrue(len(grundlegend) >= 1)
+        self.assertEqual(grundlegend[0].evolutions_feld_typ, EvolutionsFeldTyp.SOUVERAENITAETS_EVOLUTION)
+
+    def test_kki_evolutions_feld_aggregates_feld_signal(self) -> None:
+        feld = build_evolutions_feld(feld_id="feld-451-sig")
+        self.assertEqual(feld.feld_signal.status, "feld-gesperrt")
+        self.assertEqual(feld.gesperrt_norm_ids, ("feld-451-sig-stability-lane",))
+        self.assertEqual(feld.evolutionaer_norm_ids, ("feld-451-sig-governance-lane",))
+        self.assertEqual(feld.grundlegend_norm_ids, ("feld-451-sig-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #452 GenetikRegister
+    # ------------------------------------------------------------------
+    def test_kki_genetik_register_builds_gesperrt_schutz_norm(self) -> None:
+        reg = build_genetik_register(register_id="reg-452-g")
+        gesperrt = [n for n in reg.normen if n.geltung is GenetikRegisterGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) >= 1)
+        self.assertEqual(gesperrt[0].genetik_register_typ, GenetikRegisterTyp.SCHUTZ_GENETIK)
+
+    def test_kki_genetik_register_builds_genetisch_ordnungs_norm(self) -> None:
+        reg = build_genetik_register(register_id="reg-452-ge")
+        genetisch = [n for n in reg.normen if n.geltung is GenetikRegisterGeltung.GENETISCH]
+        self.assertTrue(len(genetisch) >= 1)
+        self.assertEqual(genetisch[0].genetik_register_typ, GenetikRegisterTyp.ORDNUNGS_GENETIK)
+
+    def test_kki_genetik_register_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        reg = build_genetik_register(register_id="reg-452-gs")
+        grundlegend = [n for n in reg.normen if n.geltung is GenetikRegisterGeltung.GRUNDLEGEND_GENETISCH]
+        self.assertTrue(len(grundlegend) >= 1)
+        self.assertEqual(grundlegend[0].genetik_register_typ, GenetikRegisterTyp.SOUVERAENITAETS_GENETIK)
+
+    def test_kki_genetik_register_aggregates_register_signal(self) -> None:
+        reg = build_genetik_register(register_id="reg-452-sig")
+        self.assertEqual(reg.register_signal.status, "register-gesperrt")
+        self.assertEqual(reg.gesperrt_norm_ids, ("reg-452-sig-stability-lane",))
+        self.assertEqual(reg.genetisch_norm_ids, ("reg-452-sig-governance-lane",))
+        self.assertEqual(reg.grundlegend_norm_ids, ("reg-452-sig-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #453 SeletkionsCharta
+    # ------------------------------------------------------------------
+    def test_kki_selektions_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_selektions_charta(charta_id="charta-453-g")
+        gesperrt = [n for n in charta.normen if n.geltung is SeletkionsChartaGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) >= 1)
+        self.assertEqual(gesperrt[0].selektions_charta_typ, SeletkionsChartaTyp.SCHUTZ_SELEKTION)
+
+    def test_kki_selektions_charta_builds_selektiv_ordnungs_norm(self) -> None:
+        charta = build_selektions_charta(charta_id="charta-453-s")
+        selektiv = [n for n in charta.normen if n.geltung is SeletkionsChartaGeltung.SELEKTIV]
+        self.assertTrue(len(selektiv) >= 1)
+        self.assertEqual(selektiv[0].selektions_charta_typ, SeletkionsChartaTyp.ORDNUNGS_SELEKTION)
+
+    def test_kki_selektions_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_selektions_charta(charta_id="charta-453-gs")
+        grundlegend = [n for n in charta.normen if n.geltung is SeletkionsChartaGeltung.GRUNDLEGEND_SELEKTIV]
+        self.assertTrue(len(grundlegend) >= 1)
+        self.assertEqual(grundlegend[0].selektions_charta_typ, SeletkionsChartaTyp.SOUVERAENITAETS_SELEKTION)
+
+    def test_kki_selektions_charta_aggregates_charta_signal(self) -> None:
+        charta = build_selektions_charta(charta_id="charta-453-sig")
+        self.assertEqual(charta.charta_signal.status, "charta-gesperrt")
+        self.assertEqual(charta.gesperrt_norm_ids, ("charta-453-sig-stability-lane",))
+        self.assertEqual(charta.selektiv_norm_ids, ("charta-453-sig-governance-lane",))
+        self.assertEqual(charta.grundlegend_norm_ids, ("charta-453-sig-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #454 MutationsKodex
+    # ------------------------------------------------------------------
+    def test_kki_mutations_kodex_builds_gesperrt_schutz_norm(self) -> None:
+        kodex = build_mutations_kodex(kodex_id="kodex-454-g")
+        gesperrt = [n for n in kodex.normen if n.geltung is MutationsKodexGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) >= 1)
+        self.assertEqual(gesperrt[0].mutations_kodex_typ, MutationsKodexTyp.SCHUTZ_MUTATION)
+
+    def test_kki_mutations_kodex_builds_mutativ_ordnungs_norm(self) -> None:
+        kodex = build_mutations_kodex(kodex_id="kodex-454-m")
+        mutativ = [n for n in kodex.normen if n.geltung is MutationsKodexGeltung.MUTATIV]
+        self.assertTrue(len(mutativ) >= 1)
+        self.assertEqual(mutativ[0].mutations_kodex_typ, MutationsKodexTyp.ORDNUNGS_MUTATION)
+
+    def test_kki_mutations_kodex_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        kodex = build_mutations_kodex(kodex_id="kodex-454-gs")
+        grundlegend = [n for n in kodex.normen if n.geltung is MutationsKodexGeltung.GRUNDLEGEND_MUTATIV]
+        self.assertTrue(len(grundlegend) >= 1)
+        self.assertEqual(grundlegend[0].mutations_kodex_typ, MutationsKodexTyp.SOUVERAENITAETS_MUTATION)
+
+    def test_kki_mutations_kodex_aggregates_kodex_signal(self) -> None:
+        kodex = build_mutations_kodex(kodex_id="kodex-454-sig")
+        self.assertEqual(kodex.kodex_signal.status, "kodex-gesperrt")
+        self.assertEqual(kodex.gesperrt_norm_ids, ("kodex-454-sig-stability-lane",))
+        self.assertEqual(kodex.mutativ_norm_ids, ("kodex-454-sig-governance-lane",))
+        self.assertEqual(kodex.grundlegend_norm_ids, ("kodex-454-sig-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #455 FitnessPakt
+    # ------------------------------------------------------------------
+    def test_kki_fitness_pakt_builds_gesperrt_schutz_norm(self) -> None:
+        pakt = build_fitness_pakt(pakt_id="pakt-455-g")
+        gesperrt = [n for n in pakt.normen if n.geltung is FitnessPaktGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) >= 1)
+        self.assertEqual(gesperrt[0].fitness_pakt_typ, FitnessPaktTyp.SCHUTZ_FITNESS)
+
+    def test_kki_fitness_pakt_builds_fitnessorientiert_ordnungs_norm(self) -> None:
+        pakt = build_fitness_pakt(pakt_id="pakt-455-f")
+        fitn = [n for n in pakt.normen if n.geltung is FitnessPaktGeltung.FITNESSORIENTIERT]
+        self.assertTrue(len(fitn) >= 1)
+        self.assertEqual(fitn[0].fitness_pakt_typ, FitnessPaktTyp.ORDNUNGS_FITNESS)
+
+    def test_kki_fitness_pakt_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        pakt = build_fitness_pakt(pakt_id="pakt-455-gs")
+        grundlegend = [n for n in pakt.normen if n.geltung is FitnessPaktGeltung.GRUNDLEGEND_FITNESSORIENTIERT]
+        self.assertTrue(len(grundlegend) >= 1)
+        self.assertEqual(grundlegend[0].fitness_pakt_typ, FitnessPaktTyp.SOUVERAENITAETS_FITNESS)
+
+    def test_kki_fitness_pakt_aggregates_pakt_signal(self) -> None:
+        pakt = build_fitness_pakt(pakt_id="pakt-455-sig")
+        self.assertEqual(pakt.pakt_signal.status, "pakt-gesperrt")
+        self.assertEqual(pakt.gesperrt_norm_ids, ("pakt-455-sig-stability-lane",))
+        self.assertEqual(pakt.fitnessorientiert_norm_ids, ("pakt-455-sig-governance-lane",))
+        self.assertEqual(pakt.grundlegend_norm_ids, ("pakt-455-sig-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #456 AdaptationsManifest
+    # ------------------------------------------------------------------
+    def test_kki_adaptations_manifest_builds_gesperrt_schutz_norm(self) -> None:
+        manifest = build_adaptations_manifest(manifest_id="manifest-456-g")
+        gesperrt = [n for n in manifest.normen if n.geltung is AdaptationsManifestGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) >= 1)
+        self.assertEqual(gesperrt[0].adaptation_manifest_typ, AdaptationsManifestTyp.SCHUTZ_ADAPTATION)
+
+    def test_kki_adaptations_manifest_builds_adaptiv_ordnungs_norm(self) -> None:
+        manifest = build_adaptations_manifest(manifest_id="manifest-456-a")
+        adaptiv = [n for n in manifest.normen if n.geltung is AdaptationsManifestGeltung.ADAPTIV]
+        self.assertTrue(len(adaptiv) >= 1)
+        self.assertEqual(adaptiv[0].adaptation_manifest_typ, AdaptationsManifestTyp.ORDNUNGS_ADAPTATION)
+
+    def test_kki_adaptations_manifest_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        manifest = build_adaptations_manifest(manifest_id="manifest-456-gs")
+        grundlegend = [n for n in manifest.normen if n.geltung is AdaptationsManifestGeltung.GRUNDLEGEND_ADAPTIV]
+        self.assertTrue(len(grundlegend) >= 1)
+        self.assertEqual(grundlegend[0].adaptation_manifest_typ, AdaptationsManifestTyp.SOUVERAENITAETS_ADAPTATION)
+
+    def test_kki_adaptations_manifest_aggregates_manifest_signal(self) -> None:
+        manifest = build_adaptations_manifest(manifest_id="manifest-456-sig")
+        self.assertEqual(manifest.manifest_signal.status, "manifest-gesperrt")
+        self.assertEqual(manifest.gesperrt_norm_ids, ("manifest-456-sig-stability-lane",))
+        self.assertEqual(manifest.adaptiv_norm_ids, ("manifest-456-sig-governance-lane",))
+        self.assertEqual(manifest.grundlegend_norm_ids, ("manifest-456-sig-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #457 OekologieSenat
+    # ------------------------------------------------------------------
+    def test_kki_oekologie_senat_builds_gesperrt_schutz_norm(self) -> None:
+        senat = build_oekologie_senat(senat_id="senat-457-g")
+        gesperrt = [n for n in senat.normen if n.geltung is OekologieSenatGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) >= 1)
+        self.assertEqual(gesperrt[0].oekologie_senat_typ, OekologieSenatTyp.SCHUTZ_OEKOLOGIE)
+
+    def test_kki_oekologie_senat_builds_oekologisch_ordnungs_norm(self) -> None:
+        senat = build_oekologie_senat(senat_id="senat-457-o")
+        oekologisch = [n for n in senat.normen if n.geltung is OekologieSenatGeltung.OEKOLOGISCH]
+        self.assertTrue(len(oekologisch) >= 1)
+        self.assertEqual(oekologisch[0].oekologie_senat_typ, OekologieSenatTyp.ORDNUNGS_OEKOLOGIE)
+
+    def test_kki_oekologie_senat_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        senat = build_oekologie_senat(senat_id="senat-457-gs")
+        grundlegend = [n for n in senat.normen if n.geltung is OekologieSenatGeltung.GRUNDLEGEND_OEKOLOGISCH]
+        self.assertTrue(len(grundlegend) >= 1)
+        self.assertEqual(grundlegend[0].oekologie_senat_typ, OekologieSenatTyp.SOUVERAENITAETS_OEKOLOGIE)
+
+    def test_kki_oekologie_senat_aggregates_senat_signal(self) -> None:
+        senat = build_oekologie_senat(senat_id="senat-457-sig")
+        self.assertEqual(senat.senat_signal.status, "senat-gesperrt")
+        self.assertEqual(senat.gesperrt_norm_ids, ("senat-457-sig-stability-lane",))
+        self.assertEqual(senat.oekologisch_norm_ids, ("senat-457-sig-governance-lane",))
+        self.assertEqual(senat.grundlegend_norm_ids, ("senat-457-sig-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #458 EvolutionsNorm (*_norm pattern)
+    # ------------------------------------------------------------------
+    def test_kki_evolutions_norm_builds_gesperrt_eintrag(self) -> None:
+        normsatz = build_evolutions_norm(norm_id="enorm-458-g")
+        gesperrt = [n for n in normsatz.normen if n.geltung is EvolutionsNormGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) >= 1)
+        self.assertEqual(gesperrt[0].evolutions_norm_typ, EvolutionsNormTyp.SCHUTZ_EVOLUTIONS_NORM)
+
+    def test_kki_evolutions_norm_builds_artbildend_eintrag(self) -> None:
+        normsatz = build_evolutions_norm(norm_id="enorm-458-a")
+        artbildend = [n for n in normsatz.normen if n.geltung is EvolutionsNormGeltung.ARTBILDEND]
+        self.assertTrue(len(artbildend) >= 1)
+        self.assertEqual(artbildend[0].evolutions_norm_typ, EvolutionsNormTyp.ORDNUNGS_EVOLUTIONS_NORM)
+
+    def test_kki_evolutions_norm_builds_grundlegend_eintrag(self) -> None:
+        normsatz = build_evolutions_norm(norm_id="enorm-458-gs")
+        grundlegend = [n for n in normsatz.normen if n.geltung is EvolutionsNormGeltung.GRUNDLEGEND_ARTBILDEND]
+        self.assertTrue(len(grundlegend) >= 1)
+        self.assertEqual(grundlegend[0].evolutions_norm_typ, EvolutionsNormTyp.SOUVERAENITAETS_EVOLUTIONS_NORM)
+
+    def test_kki_evolutions_norm_aggregates_norm_signal(self) -> None:
+        normsatz = build_evolutions_norm(norm_id="enorm-458-sig")
+        self.assertEqual(normsatz.norm_signal.status, "norm-gesperrt")
+        self.assertEqual(normsatz.gesperrt_norm_ids, ("enorm-458-sig-stability-lane",))
+        self.assertEqual(normsatz.artbildend_norm_ids, ("enorm-458-sig-governance-lane",))
+        self.assertEqual(normsatz.grundlegend_norm_ids, ("enorm-458-sig-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #459 PhylogenetikCharta
+    # ------------------------------------------------------------------
+    def test_kki_phylogenetik_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_phylogenetik_charta(charta_id="charta-459-g")
+        gesperrt = [n for n in charta.normen if n.geltung is PhylogenetikChartaGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) >= 1)
+        self.assertEqual(gesperrt[0].phylogenetik_charta_typ, PhylogenetikChartaTyp.SCHUTZ_PHYLOGENETIK)
+
+    def test_kki_phylogenetik_charta_builds_phylogenetisch_ordnungs_norm(self) -> None:
+        charta = build_phylogenetik_charta(charta_id="charta-459-p")
+        phylogen = [n for n in charta.normen if n.geltung is PhylogenetikChartaGeltung.PHYLOGENETISCH]
+        self.assertTrue(len(phylogen) >= 1)
+        self.assertEqual(phylogen[0].phylogenetik_charta_typ, PhylogenetikChartaTyp.ORDNUNGS_PHYLOGENETIK)
+
+    def test_kki_phylogenetik_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_phylogenetik_charta(charta_id="charta-459-gs")
+        grundlegend = [n for n in charta.normen if n.geltung is PhylogenetikChartaGeltung.GRUNDLEGEND_PHYLOGENETISCH]
+        self.assertTrue(len(grundlegend) >= 1)
+        self.assertEqual(grundlegend[0].phylogenetik_charta_typ, PhylogenetikChartaTyp.SOUVERAENITAETS_PHYLOGENETIK)
+
+    def test_kki_phylogenetik_charta_aggregates_charta_signal(self) -> None:
+        charta = build_phylogenetik_charta(charta_id="charta-459-sig")
+        self.assertEqual(charta.charta_signal.status, "charta-gesperrt")
+        self.assertEqual(charta.gesperrt_norm_ids, ("charta-459-sig-stability-lane",))
+        self.assertEqual(charta.phylogenetisch_norm_ids, ("charta-459-sig-governance-lane",))
+        self.assertEqual(charta.grundlegend_norm_ids, ("charta-459-sig-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #460 EvolutionsbiologieVerfassung (Block-Krone)
+    # ------------------------------------------------------------------
+    def test_kki_evolutionsbiologie_verfassung_builds_gesperrt_schutz_norm(self) -> None:
+        verfassung = build_evolutionsbiologie_verfassung(verfassung_id="verfassung-460-g")
+        gesperrt = [n for n in verfassung.normen if n.geltung is EvolutionsbiologieVerfassungsGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) >= 1)
+        self.assertEqual(gesperrt[0].evolutionsbiologie_typ, EvolutionsbiologieVerfassungsTyp.SCHUTZ_EVOLUTIONSBIOLOGIE)
+
+    def test_kki_evolutionsbiologie_verfassung_builds_evolutionsbiologisch_ordnungs_norm(self) -> None:
+        verfassung = build_evolutionsbiologie_verfassung(verfassung_id="verfassung-460-e")
+        evobio = [n for n in verfassung.normen if n.geltung is EvolutionsbiologieVerfassungsGeltung.EVOLUTIONSBIOLOGISCH]
+        self.assertTrue(len(evobio) >= 1)
+        self.assertEqual(evobio[0].evolutionsbiologie_typ, EvolutionsbiologieVerfassungsTyp.ORDNUNGS_EVOLUTIONSBIOLOGIE)
+
+    def test_kki_evolutionsbiologie_verfassung_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        verfassung = build_evolutionsbiologie_verfassung(verfassung_id="verfassung-460-gs")
+        grundlegend = [n for n in verfassung.normen if n.geltung is EvolutionsbiologieVerfassungsGeltung.GRUNDLEGEND_EVOLUTIONSBIOLOGISCH]
+        self.assertTrue(len(grundlegend) >= 1)
+        self.assertEqual(grundlegend[0].evolutionsbiologie_typ, EvolutionsbiologieVerfassungsTyp.SOUVERAENITAETS_EVOLUTIONSBIOLOGIE)
+
+    def test_kki_evolutionsbiologie_verfassung_aggregates_verfassung_signal(self) -> None:
+        verfassung = build_evolutionsbiologie_verfassung(verfassung_id="verfassung-460-sig")
+        self.assertEqual(verfassung.verfassung_signal.status, "verfassung-gesperrt")
+        self.assertEqual(verfassung.gesperrt_norm_ids, ("verfassung-460-sig-stability-lane",))
+        self.assertEqual(verfassung.evolutionsbiologisch_norm_ids, ("verfassung-460-sig-governance-lane",))
+        self.assertEqual(verfassung.grundlegend_norm_ids, ("verfassung-460-sig-expansion-lane",))
 
 
 if __name__ == "__main__":

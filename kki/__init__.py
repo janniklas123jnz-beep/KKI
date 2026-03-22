@@ -1988,6 +1988,47 @@ from .informations_verfassung import (
     InformationsVerfassungsGeltung, InformationsVerfassungsNorm, InformationsVerfassungsProzedur,
     InformationsVerfassungsTyp, InformationsVerfassung, build_informations_verfassung,
 )
+from .neuronales_feld import (
+    NeuronalesFeldGeltung, NeuronalesFeldNorm, NeuronalesFeldProzedur,
+    NeuronalesFeldTyp, NeuronalesFeld, build_neuronales_feld,
+)
+from .synaptik_register import (
+    SynaptikRegisterGeltung, SynaptikRegisterNorm, SynaptikRegisterProzedur,
+    SynaptikRegisterTyp, SynaptikRegister, build_synaptik_register,
+)
+from .kortex_charta import (
+    KortexChartaGeltung, KortexChartaNorm, KortexChartaProzedur,
+    KortexChartaTyp, KortexCharta, build_kortex_charta,
+)
+from .gedaechtnis_kodex import (
+    GedaechnisKodexGeltung, GedaechnisKodexNorm, GedaechnisKodexProzedur,
+    GedaechnisKodexTyp, GedaechnisKodex, build_gedaechtnis_kodex,
+)
+from .bewusstseins_pakt import (
+    BewusstseinsPaktGeltung, BewusstseinsPaktNorm, BewusstseinsPaktProzedur,
+    BewusstseinsPaktTyp, BewusstseinsPakt, build_bewusstseins_pakt,
+)
+from .wahrnehmungs_manifest import (
+    WahrnehmungsManifestGeltung, WahrnehmungsManifestNorm, WahrnehmungsManifestProzedur,
+    WahrnehmungsManifestTyp, WahrnehmungsManifest, build_wahrnehmungs_manifest,
+)
+from .aufmerksamkeits_senat import (
+    AufmerksamkeitsSenatGeltung, AufmerksamkeitsSenatNorm, AufmerksamkeitsSenatProzedur,
+    AufmerksamkeitsSenatTyp, AufmerksamkeitsSenat, build_aufmerksamkeits_senat,
+)
+from .kognitions_norm import (
+    KognitionsNormGeltung, KognitionsNormEintrag, KognitionsNormProzedur,
+    KognitionsNormTyp, KognitionsNormSatz, build_kognitions_norm,
+)
+from .emotions_charta import (
+    EmotionsChartaGeltung, EmotionsChartaNorm, EmotionsChartaProzedur,
+    EmotionsChartaTyp, EmotionsCharta, build_emotions_charta,
+)
+from .neurowissenschafts_verfassung import (
+    NeurowissenschaftsVerfassungsGeltung, NeurowissenschaftsVerfassungsNorm,
+    NeurowissenschaftsVerfassungsProzedur, NeurowissenschaftsVerfassungsTyp,
+    NeurowissenschaftsVerfassung, build_neurowissenschafts_verfassung,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,

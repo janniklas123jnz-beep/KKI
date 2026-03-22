@@ -1274,6 +1274,47 @@ from kki.informations_verfassung import (
     InformationsVerfassung, InformationsVerfassungsGeltung, InformationsVerfassungsNorm,
     InformationsVerfassungsTyp, InformationsVerfassungsProzedur, build_informations_verfassung,
 )
+from kki.neuronales_feld import (
+    NeuronalesFeld, NeuronalesFeldGeltung, NeuronalesFeldNorm,
+    NeuronalesFeldTyp, NeuronalesFeldProzedur, build_neuronales_feld,
+)
+from kki.synaptik_register import (
+    SynaptikRegister, SynaptikRegisterGeltung, SynaptikRegisterNorm,
+    SynaptikRegisterTyp, SynaptikRegisterProzedur, build_synaptik_register,
+)
+from kki.kortex_charta import (
+    KortexCharta, KortexChartaGeltung, KortexChartaNorm,
+    KortexChartaTyp, KortexChartaProzedur, build_kortex_charta,
+)
+from kki.gedaechtnis_kodex import (
+    GedaechnisKodex, GedaechnisKodexGeltung, GedaechnisKodexNorm,
+    GedaechnisKodexTyp, GedaechnisKodexProzedur, build_gedaechtnis_kodex,
+)
+from kki.bewusstseins_pakt import (
+    BewusstseinsPakt, BewusstseinsPaktGeltung, BewusstseinsPaktNorm,
+    BewusstseinsPaktTyp, BewusstseinsPaktProzedur, build_bewusstseins_pakt,
+)
+from kki.wahrnehmungs_manifest import (
+    WahrnehmungsManifest, WahrnehmungsManifestGeltung, WahrnehmungsManifestNorm,
+    WahrnehmungsManifestTyp, WahrnehmungsManifestProzedur, build_wahrnehmungs_manifest,
+)
+from kki.aufmerksamkeits_senat import (
+    AufmerksamkeitsSenat, AufmerksamkeitsSenatGeltung, AufmerksamkeitsSenatNorm,
+    AufmerksamkeitsSenatTyp, AufmerksamkeitsSenatProzedur, build_aufmerksamkeits_senat,
+)
+from kki.kognitions_norm import (
+    KognitionsNormSatz, KognitionsNormGeltung, KognitionsNormEintrag,
+    KognitionsNormTyp, KognitionsNormProzedur, build_kognitions_norm,
+)
+from kki.emotions_charta import (
+    EmotionsCharta, EmotionsChartaGeltung, EmotionsChartaNorm,
+    EmotionsChartaTyp, EmotionsChartaProzedur, build_emotions_charta,
+)
+from kki.neurowissenschafts_verfassung import (
+    NeurowissenschaftsVerfassung, NeurowissenschaftsVerfassungsGeltung,
+    NeurowissenschaftsVerfassungsNorm, NeurowissenschaftsVerfassungsTyp,
+    NeurowissenschaftsVerfassungsProzedur, build_neurowissenschafts_verfassung,
+)
 from kki import (
     KausalitaetsGeltung,
     KausalitaetsNorm,
@@ -16357,6 +16398,326 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(verfassung.gesperrt_norm_ids, ("verfassung-430-signal-stability-lane",))
         self.assertEqual(verfassung.informationsverfasst_norm_ids, ("verfassung-430-signal-governance-lane",))
         self.assertEqual(verfassung.grundlegend_norm_ids, ("verfassung-430-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #431 NeuronalesFeld
+    # ------------------------------------------------------------------
+
+    def test_kki_neuronales_feld_builds_gesperrt_schutz_norm(self) -> None:
+        feld = build_neuronales_feld(feld_id="feld-431-stability")
+        norm = next(n for n in feld.normen if n.geltung is NeuronalesFeldGeltung.GESPERRT)
+        self.assertEqual(norm.neuronales_feld_typ, NeuronalesFeldTyp.SCHUTZ_NEURON)
+        self.assertEqual(norm.prozedur, NeuronalesFeldProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.neuronales_feld_tier, 1)
+
+    def test_kki_neuronales_feld_builds_neuronal_ordnungs_norm(self) -> None:
+        feld = build_neuronales_feld(feld_id="feld-431-governance")
+        norm = next(n for n in feld.normen if n.geltung is NeuronalesFeldGeltung.NEURONAL)
+        self.assertEqual(norm.neuronales_feld_typ, NeuronalesFeldTyp.ORDNUNGS_NEURON)
+        self.assertEqual(norm.prozedur, NeuronalesFeldProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.neuronales_feld_weight, 0.0)
+
+    def test_kki_neuronales_feld_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        feld = build_neuronales_feld(feld_id="feld-431-expansion")
+        norm = next(n for n in feld.normen if n.geltung is NeuronalesFeldGeltung.GRUNDLEGEND_NEURONAL)
+        self.assertEqual(norm.neuronales_feld_typ, NeuronalesFeldTyp.SOUVERAENITAETS_NEURON)
+        self.assertEqual(norm.prozedur, NeuronalesFeldProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.neuronales_feld_weight, 0.0)
+
+    def test_kki_neuronales_feld_aggregates_feld_signal(self) -> None:
+        feld = build_neuronales_feld(feld_id="feld-431-signal")
+        self.assertEqual(feld.feld_signal.status, "feld-gesperrt")
+        self.assertEqual(feld.gesperrt_norm_ids, ("feld-431-signal-stability-lane",))
+        self.assertEqual(feld.neuronal_norm_ids, ("feld-431-signal-governance-lane",))
+        self.assertEqual(feld.grundlegend_norm_ids, ("feld-431-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #432 SynaptikRegister
+    # ------------------------------------------------------------------
+
+    def test_kki_synaptik_register_builds_gesperrt_schutz_norm(self) -> None:
+        register = build_synaptik_register(register_id="register-432-stability")
+        norm = next(n for n in register.normen if n.geltung is SynaptikRegisterGeltung.GESPERRT)
+        self.assertEqual(norm.synaptik_typ, SynaptikRegisterTyp.SCHUTZ_SYNAPTIK)
+        self.assertEqual(norm.prozedur, SynaptikRegisterProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.synaptik_tier, 1)
+
+    def test_kki_synaptik_register_builds_synaptisch_ordnungs_norm(self) -> None:
+        register = build_synaptik_register(register_id="register-432-governance")
+        norm = next(n for n in register.normen if n.geltung is SynaptikRegisterGeltung.SYNAPTISCH)
+        self.assertEqual(norm.synaptik_typ, SynaptikRegisterTyp.ORDNUNGS_SYNAPTIK)
+        self.assertEqual(norm.prozedur, SynaptikRegisterProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.synaptik_weight, 0.0)
+
+    def test_kki_synaptik_register_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        register = build_synaptik_register(register_id="register-432-expansion")
+        norm = next(n for n in register.normen if n.geltung is SynaptikRegisterGeltung.GRUNDLEGEND_SYNAPTISCH)
+        self.assertEqual(norm.synaptik_typ, SynaptikRegisterTyp.SOUVERAENITAETS_SYNAPTIK)
+        self.assertEqual(norm.prozedur, SynaptikRegisterProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.synaptik_weight, 0.0)
+
+    def test_kki_synaptik_register_aggregates_register_signal(self) -> None:
+        register = build_synaptik_register(register_id="register-432-signal")
+        self.assertEqual(register.register_signal.status, "register-gesperrt")
+        self.assertEqual(register.gesperrt_norm_ids, ("register-432-signal-stability-lane",))
+        self.assertEqual(register.synaptisch_norm_ids, ("register-432-signal-governance-lane",))
+        self.assertEqual(register.grundlegend_norm_ids, ("register-432-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #433 KortexCharta
+    # ------------------------------------------------------------------
+
+    def test_kki_kortex_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_kortex_charta(charta_id="charta-433-stability")
+        norm = next(n for n in charta.normen if n.geltung is KortexChartaGeltung.GESPERRT)
+        self.assertEqual(norm.kortex_typ, KortexChartaTyp.SCHUTZ_KORTEX)
+        self.assertEqual(norm.prozedur, KortexChartaProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.kortex_tier, 1)
+
+    def test_kki_kortex_charta_builds_kortikal_ordnungs_norm(self) -> None:
+        charta = build_kortex_charta(charta_id="charta-433-governance")
+        norm = next(n for n in charta.normen if n.geltung is KortexChartaGeltung.KORTIKAL)
+        self.assertEqual(norm.kortex_typ, KortexChartaTyp.ORDNUNGS_KORTEX)
+        self.assertEqual(norm.prozedur, KortexChartaProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.kortex_weight, 0.0)
+
+    def test_kki_kortex_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_kortex_charta(charta_id="charta-433-expansion")
+        norm = next(n for n in charta.normen if n.geltung is KortexChartaGeltung.GRUNDLEGEND_KORTIKAL)
+        self.assertEqual(norm.kortex_typ, KortexChartaTyp.SOUVERAENITAETS_KORTEX)
+        self.assertEqual(norm.prozedur, KortexChartaProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.kortex_weight, 0.0)
+
+    def test_kki_kortex_charta_aggregates_charta_signal(self) -> None:
+        charta = build_kortex_charta(charta_id="charta-433-signal")
+        self.assertEqual(charta.charta_signal.status, "charta-gesperrt")
+        self.assertEqual(charta.gesperrt_norm_ids, ("charta-433-signal-stability-lane",))
+        self.assertEqual(charta.kortikal_norm_ids, ("charta-433-signal-governance-lane",))
+        self.assertEqual(charta.grundlegend_norm_ids, ("charta-433-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #434 GedaechnisKodex
+    # ------------------------------------------------------------------
+
+    def test_kki_gedaechtnis_kodex_builds_gesperrt_schutz_norm(self) -> None:
+        kodex = build_gedaechtnis_kodex(kodex_id="kodex-434-stability")
+        norm = next(n for n in kodex.normen if n.geltung is GedaechnisKodexGeltung.GESPERRT)
+        self.assertEqual(norm.gedaechtnis_typ, GedaechnisKodexTyp.SCHUTZ_GEDAECHTNIS)
+        self.assertEqual(norm.prozedur, GedaechnisKodexProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.gedaechtnis_tier, 1)
+
+    def test_kki_gedaechtnis_kodex_builds_gedaechnisreich_ordnungs_norm(self) -> None:
+        kodex = build_gedaechtnis_kodex(kodex_id="kodex-434-governance")
+        norm = next(n for n in kodex.normen if n.geltung is GedaechnisKodexGeltung.GEDAECHNISREICH)
+        self.assertEqual(norm.gedaechtnis_typ, GedaechnisKodexTyp.ORDNUNGS_GEDAECHTNIS)
+        self.assertEqual(norm.prozedur, GedaechnisKodexProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.gedaechtnis_weight, 0.0)
+
+    def test_kki_gedaechtnis_kodex_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        kodex = build_gedaechtnis_kodex(kodex_id="kodex-434-expansion")
+        norm = next(n for n in kodex.normen if n.geltung is GedaechnisKodexGeltung.GRUNDLEGEND_GEDAECHNISREICH)
+        self.assertEqual(norm.gedaechtnis_typ, GedaechnisKodexTyp.SOUVERAENITAETS_GEDAECHTNIS)
+        self.assertEqual(norm.prozedur, GedaechnisKodexProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.gedaechtnis_weight, 0.0)
+
+    def test_kki_gedaechtnis_kodex_aggregates_kodex_signal(self) -> None:
+        kodex = build_gedaechtnis_kodex(kodex_id="kodex-434-signal")
+        self.assertEqual(kodex.kodex_signal.status, "kodex-gesperrt")
+        self.assertEqual(kodex.gesperrt_norm_ids, ("kodex-434-signal-stability-lane",))
+        self.assertEqual(kodex.gedaechnisreich_norm_ids, ("kodex-434-signal-governance-lane",))
+        self.assertEqual(kodex.grundlegend_norm_ids, ("kodex-434-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #435 BewusstseinsPakt
+    # ------------------------------------------------------------------
+
+    def test_kki_bewusstseins_pakt_builds_gesperrt_schutz_norm(self) -> None:
+        pakt = build_bewusstseins_pakt(pakt_id="pakt-435-stability")
+        norm = next(n for n in pakt.normen if n.geltung is BewusstseinsPaktGeltung.GESPERRT)
+        self.assertEqual(norm.bewusstsein_typ, BewusstseinsPaktTyp.SCHUTZ_BEWUSSTSEIN)
+        self.assertEqual(norm.prozedur, BewusstseinsPaktProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.bewusstsein_tier, 1)
+
+    def test_kki_bewusstseins_pakt_builds_bewusst_ordnungs_norm(self) -> None:
+        pakt = build_bewusstseins_pakt(pakt_id="pakt-435-governance")
+        norm = next(n for n in pakt.normen if n.geltung is BewusstseinsPaktGeltung.BEWUSST)
+        self.assertEqual(norm.bewusstsein_typ, BewusstseinsPaktTyp.ORDNUNGS_BEWUSSTSEIN)
+        self.assertEqual(norm.prozedur, BewusstseinsPaktProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.bewusstsein_weight, 0.0)
+
+    def test_kki_bewusstseins_pakt_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        pakt = build_bewusstseins_pakt(pakt_id="pakt-435-expansion")
+        norm = next(n for n in pakt.normen if n.geltung is BewusstseinsPaktGeltung.GRUNDLEGEND_BEWUSST)
+        self.assertEqual(norm.bewusstsein_typ, BewusstseinsPaktTyp.SOUVERAENITAETS_BEWUSSTSEIN)
+        self.assertEqual(norm.prozedur, BewusstseinsPaktProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.bewusstsein_weight, 0.0)
+
+    def test_kki_bewusstseins_pakt_aggregates_pakt_signal(self) -> None:
+        pakt = build_bewusstseins_pakt(pakt_id="pakt-435-signal")
+        self.assertEqual(pakt.pakt_signal.status, "pakt-gesperrt")
+        self.assertEqual(pakt.gesperrt_norm_ids, ("pakt-435-signal-stability-lane",))
+        self.assertEqual(pakt.bewusst_norm_ids, ("pakt-435-signal-governance-lane",))
+        self.assertEqual(pakt.grundlegend_norm_ids, ("pakt-435-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #436 WahrnehmungsManifest
+    # ------------------------------------------------------------------
+
+    def test_kki_wahrnehmungs_manifest_builds_gesperrt_schutz_norm(self) -> None:
+        manifest = build_wahrnehmungs_manifest(manifest_id="manifest-436-stability")
+        norm = next(n for n in manifest.normen if n.geltung is WahrnehmungsManifestGeltung.GESPERRT)
+        self.assertEqual(norm.wahrnehmung_typ, WahrnehmungsManifestTyp.SCHUTZ_WAHRNEHMUNG)
+        self.assertEqual(norm.prozedur, WahrnehmungsManifestProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.wahrnehmung_tier, 1)
+
+    def test_kki_wahrnehmungs_manifest_builds_wahrnehmend_ordnungs_norm(self) -> None:
+        manifest = build_wahrnehmungs_manifest(manifest_id="manifest-436-governance")
+        norm = next(n for n in manifest.normen if n.geltung is WahrnehmungsManifestGeltung.WAHRNEHMEND)
+        self.assertEqual(norm.wahrnehmung_typ, WahrnehmungsManifestTyp.ORDNUNGS_WAHRNEHMUNG)
+        self.assertEqual(norm.prozedur, WahrnehmungsManifestProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.wahrnehmung_weight, 0.0)
+
+    def test_kki_wahrnehmungs_manifest_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        manifest = build_wahrnehmungs_manifest(manifest_id="manifest-436-expansion")
+        norm = next(n for n in manifest.normen if n.geltung is WahrnehmungsManifestGeltung.GRUNDLEGEND_WAHRNEHMEND)
+        self.assertEqual(norm.wahrnehmung_typ, WahrnehmungsManifestTyp.SOUVERAENITAETS_WAHRNEHMUNG)
+        self.assertEqual(norm.prozedur, WahrnehmungsManifestProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.wahrnehmung_weight, 0.0)
+
+    def test_kki_wahrnehmungs_manifest_aggregates_manifest_signal(self) -> None:
+        manifest = build_wahrnehmungs_manifest(manifest_id="manifest-436-signal")
+        self.assertEqual(manifest.manifest_signal.status, "manifest-gesperrt")
+        self.assertEqual(manifest.gesperrt_norm_ids, ("manifest-436-signal-stability-lane",))
+        self.assertEqual(manifest.wahrnehmend_norm_ids, ("manifest-436-signal-governance-lane",))
+        self.assertEqual(manifest.grundlegend_norm_ids, ("manifest-436-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #437 AufmerksamkeitsSenat
+    # ------------------------------------------------------------------
+
+    def test_kki_aufmerksamkeits_senat_builds_gesperrt_schutz_norm(self) -> None:
+        senat = build_aufmerksamkeits_senat(senat_id="senat-437-stability")
+        norm = next(n for n in senat.normen if n.geltung is AufmerksamkeitsSenatGeltung.GESPERRT)
+        self.assertEqual(norm.aufmerksamkeit_typ, AufmerksamkeitsSenatTyp.SCHUTZ_AUFMERKSAMKEIT)
+        self.assertEqual(norm.prozedur, AufmerksamkeitsSenatProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.aufmerksamkeit_tier, 1)
+
+    def test_kki_aufmerksamkeits_senat_builds_aufmerksam_ordnungs_norm(self) -> None:
+        senat = build_aufmerksamkeits_senat(senat_id="senat-437-governance")
+        norm = next(n for n in senat.normen if n.geltung is AufmerksamkeitsSenatGeltung.AUFMERKSAM)
+        self.assertEqual(norm.aufmerksamkeit_typ, AufmerksamkeitsSenatTyp.ORDNUNGS_AUFMERKSAMKEIT)
+        self.assertEqual(norm.prozedur, AufmerksamkeitsSenatProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.aufmerksamkeit_weight, 0.0)
+
+    def test_kki_aufmerksamkeits_senat_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        senat = build_aufmerksamkeits_senat(senat_id="senat-437-expansion")
+        norm = next(n for n in senat.normen if n.geltung is AufmerksamkeitsSenatGeltung.GRUNDLEGEND_AUFMERKSAM)
+        self.assertEqual(norm.aufmerksamkeit_typ, AufmerksamkeitsSenatTyp.SOUVERAENITAETS_AUFMERKSAMKEIT)
+        self.assertEqual(norm.prozedur, AufmerksamkeitsSenatProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.aufmerksamkeit_weight, 0.0)
+
+    def test_kki_aufmerksamkeits_senat_aggregates_senat_signal(self) -> None:
+        senat = build_aufmerksamkeits_senat(senat_id="senat-437-signal")
+        self.assertEqual(senat.senat_signal.status, "senat-gesperrt")
+        self.assertEqual(senat.gesperrt_norm_ids, ("senat-437-signal-stability-lane",))
+        self.assertEqual(senat.aufmerksam_norm_ids, ("senat-437-signal-governance-lane",))
+        self.assertEqual(senat.grundlegend_norm_ids, ("senat-437-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #438 KognitionsNorm
+    # ------------------------------------------------------------------
+
+    def test_kki_kognitions_norm_builds_gesperrt_schutz_eintrag(self) -> None:
+        satz = build_kognitions_norm(norm_id="norm-438-stability")
+        eintrag = next(n for n in satz.normen if n.geltung is KognitionsNormGeltung.GESPERRT)
+        self.assertEqual(eintrag.kognitions_norm_typ, KognitionsNormTyp.SCHUTZ_KOGNITION)
+        self.assertEqual(eintrag.prozedur, KognitionsNormProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(eintrag.kognitions_norm_tier, 1)
+
+    def test_kki_kognitions_norm_builds_kognitiv_ordnungs_eintrag(self) -> None:
+        satz = build_kognitions_norm(norm_id="norm-438-governance")
+        eintrag = next(n for n in satz.normen if n.geltung is KognitionsNormGeltung.KOGNITIV)
+        self.assertEqual(eintrag.kognitions_norm_typ, KognitionsNormTyp.ORDNUNGS_KOGNITION)
+        self.assertEqual(eintrag.prozedur, KognitionsNormProzedur.REGELPROTOKOLL)
+        self.assertGreater(eintrag.kognitions_norm_weight, 0.0)
+
+    def test_kki_kognitions_norm_builds_grundlegend_souveraenitaets_eintrag(self) -> None:
+        satz = build_kognitions_norm(norm_id="norm-438-expansion")
+        eintrag = next(n for n in satz.normen if n.geltung is KognitionsNormGeltung.GRUNDLEGEND_KOGNITIV)
+        self.assertEqual(eintrag.kognitions_norm_typ, KognitionsNormTyp.SOUVERAENITAETS_KOGNITION)
+        self.assertEqual(eintrag.prozedur, KognitionsNormProzedur.PLENARPROTOKOLL)
+        self.assertGreater(eintrag.kognitions_norm_weight, 0.0)
+
+    def test_kki_kognitions_norm_aggregates_norm_signal(self) -> None:
+        satz = build_kognitions_norm(norm_id="norm-438-signal")
+        self.assertEqual(satz.norm_signal.status, "norm-gesperrt")
+        self.assertEqual(satz.gesperrt_norm_ids, ("norm-438-signal-stability-lane",))
+        self.assertEqual(satz.kognitiv_norm_ids, ("norm-438-signal-governance-lane",))
+        self.assertEqual(satz.grundlegend_norm_ids, ("norm-438-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #439 EmotionsCharta
+    # ------------------------------------------------------------------
+
+    def test_kki_emotions_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_emotions_charta(charta_id="charta-439-stability")
+        norm = next(n for n in charta.normen if n.geltung is EmotionsChartaGeltung.GESPERRT)
+        self.assertEqual(norm.emotion_typ, EmotionsChartaTyp.SCHUTZ_EMOTION)
+        self.assertEqual(norm.prozedur, EmotionsChartaProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.emotion_tier, 1)
+
+    def test_kki_emotions_charta_builds_emotional_ordnungs_norm(self) -> None:
+        charta = build_emotions_charta(charta_id="charta-439-governance")
+        norm = next(n for n in charta.normen if n.geltung is EmotionsChartaGeltung.EMOTIONAL)
+        self.assertEqual(norm.emotion_typ, EmotionsChartaTyp.ORDNUNGS_EMOTION)
+        self.assertEqual(norm.prozedur, EmotionsChartaProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.emotion_weight, 0.0)
+
+    def test_kki_emotions_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_emotions_charta(charta_id="charta-439-expansion")
+        norm = next(n for n in charta.normen if n.geltung is EmotionsChartaGeltung.GRUNDLEGEND_EMOTIONAL)
+        self.assertEqual(norm.emotion_typ, EmotionsChartaTyp.SOUVERAENITAETS_EMOTION)
+        self.assertEqual(norm.prozedur, EmotionsChartaProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.emotion_weight, 0.0)
+
+    def test_kki_emotions_charta_aggregates_charta_signal(self) -> None:
+        charta = build_emotions_charta(charta_id="charta-439-signal")
+        self.assertEqual(charta.charta_signal.status, "charta-gesperrt")
+        self.assertEqual(charta.gesperrt_norm_ids, ("charta-439-signal-stability-lane",))
+        self.assertEqual(charta.emotional_norm_ids, ("charta-439-signal-governance-lane",))
+        self.assertEqual(charta.grundlegend_norm_ids, ("charta-439-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #440 NeurowissenschaftsVerfassung
+    # ------------------------------------------------------------------
+
+    def test_kki_neurowissenschafts_verfassung_builds_gesperrt_schutz_norm(self) -> None:
+        verfassung = build_neurowissenschafts_verfassung(verfassung_id="verfassung-440-stability")
+        norm = next(n for n in verfassung.normen if n.geltung is NeurowissenschaftsVerfassungsGeltung.GESPERRT)
+        self.assertEqual(norm.neurowissenschafts_typ, NeurowissenschaftsVerfassungsTyp.SCHUTZ_NEUROWISSENSCHAFT)
+        self.assertEqual(norm.prozedur, NeurowissenschaftsVerfassungsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.neurowissenschafts_tier, 1)
+
+    def test_kki_neurowissenschafts_verfassung_builds_neurowissenschaftlich_ordnungs_norm(self) -> None:
+        verfassung = build_neurowissenschafts_verfassung(verfassung_id="verfassung-440-governance")
+        norm = next(n for n in verfassung.normen if n.geltung is NeurowissenschaftsVerfassungsGeltung.NEUROWISSENSCHAFTLICH)
+        self.assertEqual(norm.neurowissenschafts_typ, NeurowissenschaftsVerfassungsTyp.ORDNUNGS_NEUROWISSENSCHAFT)
+        self.assertEqual(norm.prozedur, NeurowissenschaftsVerfassungsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.neurowissenschafts_weight, 0.0)
+
+    def test_kki_neurowissenschafts_verfassung_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        verfassung = build_neurowissenschafts_verfassung(verfassung_id="verfassung-440-expansion")
+        norm = next(n for n in verfassung.normen if n.geltung is NeurowissenschaftsVerfassungsGeltung.GRUNDLEGEND_NEUROWISSENSCHAFTLICH)
+        self.assertEqual(norm.neurowissenschafts_typ, NeurowissenschaftsVerfassungsTyp.SOUVERAENITAETS_NEUROWISSENSCHAFT)
+        self.assertEqual(norm.prozedur, NeurowissenschaftsVerfassungsProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.neurowissenschafts_weight, 0.0)
+
+    def test_kki_neurowissenschafts_verfassung_aggregates_verfassung_signal(self) -> None:
+        verfassung = build_neurowissenschafts_verfassung(verfassung_id="verfassung-440-signal")
+        self.assertEqual(verfassung.verfassung_signal.status, "verfassung-gesperrt")
+        self.assertEqual(verfassung.gesperrt_norm_ids, ("verfassung-440-signal-stability-lane",))
+        self.assertEqual(verfassung.neurowissenschaftlich_norm_ids, ("verfassung-440-signal-governance-lane",))
+        self.assertEqual(verfassung.grundlegend_norm_ids, ("verfassung-440-signal-expansion-lane",))
 
 
 if __name__ == "__main__":

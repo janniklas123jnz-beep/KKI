@@ -2129,6 +2129,56 @@ from .evolutionsbiologie_verfassung import (
     EvolutionsbiologieVerfassungsProzedur, EvolutionsbiologieVerfassungsTyp,
     EvolutionsbiologieVerfassung, build_evolutionsbiologie_verfassung,
 )
+from .sprach_feld import (
+    SprachFeldGeltung, SprachFeldNorm,
+    SprachFeldProzedur, SprachFeldTyp,
+    SprachFeld, build_sprach_feld,
+)
+from .phonologie_register import (
+    PhonologieRegisterGeltung, PhonologieRegisterNorm,
+    PhonologieRegisterProzedur, PhonologieRegisterTyp,
+    PhonologieRegister, build_phonologie_register,
+)
+from .syntax_charta import (
+    SyntaxChartaGeltung, SyntaxChartaNorm,
+    SyntaxChartaProzedur, SyntaxChartaTyp,
+    SyntaxCharta, build_syntax_charta,
+)
+from .semantik_kodex import (
+    SemantikKodexGeltung, SemantikKodexNorm,
+    SemantikKodexProzedur, SemantikKodexTyp,
+    SemantikKodex, build_semantik_kodex,
+)
+from .pragmatik_pakt import (
+    PragmatikPaktGeltung, PragmatikPaktNorm,
+    PragmatikPaktProzedur, PragmatikPaktTyp,
+    PragmatikPakt, build_pragmatik_pakt,
+)
+from .semiotik_manifest import (
+    SemiotikManifestGeltung, SemiotikManifestNorm,
+    SemiotikManifestProzedur, SemiotikManifestTyp,
+    SemiotikManifest, build_semiotik_manifest,
+)
+from .diskurs_senat import (
+    DiskursSenatGeltung, DiskursSenatNorm,
+    DiskursSenatProzedur, DiskursSenatTyp,
+    DiskursSenat, build_diskurs_senat,
+)
+from .sprach_norm import (
+    SprachNormGeltung, SprachNormEintrag,
+    SprachNormProzedur, SprachNormTyp,
+    SprachNormSatz, build_sprach_norm,
+)
+from .kommunikations_charta import (
+    KommunikationsChartaGeltung, KommunikationsChartaNorm,
+    KommunikationsChartaProzedur, KommunikationsChartaTyp,
+    KommunikationsCharta, build_kommunikations_charta,
+)
+from .linguistik_verfassung import (
+    LinguistikVerfassungsGeltung, LinguistikVerfassungsNorm,
+    LinguistikVerfassungsProzedur, LinguistikVerfassungsTyp,
+    LinguistikVerfassung, build_linguistik_verfassung,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,

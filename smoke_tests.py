@@ -1415,6 +1415,56 @@ from kki.evolutionsbiologie_verfassung import (
     EvolutionsbiologieVerfassungsNorm, EvolutionsbiologieVerfassungsTyp,
     EvolutionsbiologieVerfassungsProzedur, build_evolutionsbiologie_verfassung,
 )
+from kki.sprach_feld import (
+    SprachFeld, SprachFeldGeltung,
+    SprachFeldNorm, SprachFeldTyp,
+    SprachFeldProzedur, build_sprach_feld,
+)
+from kki.phonologie_register import (
+    PhonologieRegister, PhonologieRegisterGeltung,
+    PhonologieRegisterNorm, PhonologieRegisterTyp,
+    PhonologieRegisterProzedur, build_phonologie_register,
+)
+from kki.syntax_charta import (
+    SyntaxCharta, SyntaxChartaGeltung,
+    SyntaxChartaNorm, SyntaxChartaTyp,
+    SyntaxChartaProzedur, build_syntax_charta,
+)
+from kki.semantik_kodex import (
+    SemantikKodex, SemantikKodexGeltung,
+    SemantikKodexNorm, SemantikKodexTyp,
+    SemantikKodexProzedur, build_semantik_kodex,
+)
+from kki.pragmatik_pakt import (
+    PragmatikPakt, PragmatikPaktGeltung,
+    PragmatikPaktNorm, PragmatikPaktTyp,
+    PragmatikPaktProzedur, build_pragmatik_pakt,
+)
+from kki.semiotik_manifest import (
+    SemiotikManifest, SemiotikManifestGeltung,
+    SemiotikManifestNorm, SemiotikManifestTyp,
+    SemiotikManifestProzedur, build_semiotik_manifest,
+)
+from kki.diskurs_senat import (
+    DiskursSenat, DiskursSenatGeltung,
+    DiskursSenatNorm, DiskursSenatTyp,
+    DiskursSenatProzedur, build_diskurs_senat,
+)
+from kki.sprach_norm import (
+    SprachNormSatz, SprachNormGeltung,
+    SprachNormEintrag, SprachNormTyp,
+    SprachNormProzedur, build_sprach_norm,
+)
+from kki.kommunikations_charta import (
+    KommunikationsCharta, KommunikationsChartaGeltung,
+    KommunikationsChartaNorm, KommunikationsChartaTyp,
+    KommunikationsChartaProzedur, build_kommunikations_charta,
+)
+from kki.linguistik_verfassung import (
+    LinguistikVerfassung, LinguistikVerfassungsGeltung,
+    LinguistikVerfassungsNorm, LinguistikVerfassungsTyp,
+    LinguistikVerfassungsProzedur, build_linguistik_verfassung,
+)
 from kki import (
     KausalitaetsGeltung,
     KausalitaetsNorm,
@@ -17418,6 +17468,286 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(verfassung.gesperrt_norm_ids, ("verfassung-460-sig-stability-lane",))
         self.assertEqual(verfassung.evolutionsbiologisch_norm_ids, ("verfassung-460-sig-governance-lane",))
         self.assertEqual(verfassung.grundlegend_norm_ids, ("verfassung-460-sig-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #461 SprachFeld
+    # ------------------------------------------------------------------
+    def test_kki_sprach_feld_builds_gesperrt_schutz_norm(self) -> None:
+        feld = build_sprach_feld(feld_id="feld-461-g")
+        gesperrt = [n for n in feld.normen if n.geltung is SprachFeldGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) >= 1)
+        self.assertEqual(gesperrt[0].sprach_feld_typ, SprachFeldTyp.SCHUTZ_SPRACHE)
+
+    def test_kki_sprach_feld_builds_sprachlich_ordnungs_norm(self) -> None:
+        feld = build_sprach_feld(feld_id="feld-461-s")
+        sprachlich = [n for n in feld.normen if n.geltung is SprachFeldGeltung.SPRACHLICH]
+        self.assertTrue(len(sprachlich) >= 1)
+        self.assertEqual(sprachlich[0].sprach_feld_typ, SprachFeldTyp.ORDNUNGS_SPRACHE)
+
+    def test_kki_sprach_feld_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        feld = build_sprach_feld(feld_id="feld-461-gs")
+        grundlegend = [n for n in feld.normen if n.geltung is SprachFeldGeltung.GRUNDLEGEND_SPRACHLICH]
+        self.assertTrue(len(grundlegend) >= 1)
+        self.assertEqual(grundlegend[0].sprach_feld_typ, SprachFeldTyp.SOUVERAENITAETS_SPRACHE)
+
+    def test_kki_sprach_feld_aggregates_feld_signal(self) -> None:
+        feld = build_sprach_feld(feld_id="feld-461-sig")
+        self.assertEqual(feld.feld_signal.status, "feld-gesperrt")
+        self.assertEqual(feld.gesperrt_norm_ids, ("feld-461-sig-stability-lane",))
+        self.assertEqual(feld.sprachlich_norm_ids, ("feld-461-sig-governance-lane",))
+        self.assertEqual(feld.grundlegend_norm_ids, ("feld-461-sig-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #462 PhonologieRegister
+    # ------------------------------------------------------------------
+    def test_kki_phonologie_register_builds_gesperrt_schutz_norm(self) -> None:
+        reg = build_phonologie_register(register_id="reg-462-g")
+        gesperrt = [n for n in reg.normen if n.geltung is PhonologieRegisterGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) >= 1)
+        self.assertEqual(gesperrt[0].phonologie_register_typ, PhonologieRegisterTyp.SCHUTZ_PHONOLOGIE)
+
+    def test_kki_phonologie_register_builds_phonologisch_ordnungs_norm(self) -> None:
+        reg = build_phonologie_register(register_id="reg-462-p")
+        phonol = [n for n in reg.normen if n.geltung is PhonologieRegisterGeltung.PHONOLOGISCH]
+        self.assertTrue(len(phonol) >= 1)
+        self.assertEqual(phonol[0].phonologie_register_typ, PhonologieRegisterTyp.ORDNUNGS_PHONOLOGIE)
+
+    def test_kki_phonologie_register_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        reg = build_phonologie_register(register_id="reg-462-gs")
+        grundlegend = [n for n in reg.normen if n.geltung is PhonologieRegisterGeltung.GRUNDLEGEND_PHONOLOGISCH]
+        self.assertTrue(len(grundlegend) >= 1)
+        self.assertEqual(grundlegend[0].phonologie_register_typ, PhonologieRegisterTyp.SOUVERAENITAETS_PHONOLOGIE)
+
+    def test_kki_phonologie_register_aggregates_register_signal(self) -> None:
+        reg = build_phonologie_register(register_id="reg-462-sig")
+        self.assertEqual(reg.register_signal.status, "register-gesperrt")
+        self.assertEqual(reg.gesperrt_norm_ids, ("reg-462-sig-stability-lane",))
+        self.assertEqual(reg.phonologisch_norm_ids, ("reg-462-sig-governance-lane",))
+        self.assertEqual(reg.grundlegend_norm_ids, ("reg-462-sig-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #463 SyntaxCharta
+    # ------------------------------------------------------------------
+    def test_kki_syntax_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_syntax_charta(charta_id="charta-463-g")
+        gesperrt = [n for n in charta.normen if n.geltung is SyntaxChartaGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) >= 1)
+        self.assertEqual(gesperrt[0].syntax_charta_typ, SyntaxChartaTyp.SCHUTZ_SYNTAX)
+
+    def test_kki_syntax_charta_builds_syntaktisch_ordnungs_norm(self) -> None:
+        charta = build_syntax_charta(charta_id="charta-463-s")
+        syntak = [n for n in charta.normen if n.geltung is SyntaxChartaGeltung.SYNTAKTISCH]
+        self.assertTrue(len(syntak) >= 1)
+        self.assertEqual(syntak[0].syntax_charta_typ, SyntaxChartaTyp.ORDNUNGS_SYNTAX)
+
+    def test_kki_syntax_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_syntax_charta(charta_id="charta-463-gs")
+        grundlegend = [n for n in charta.normen if n.geltung is SyntaxChartaGeltung.GRUNDLEGEND_SYNTAKTISCH]
+        self.assertTrue(len(grundlegend) >= 1)
+        self.assertEqual(grundlegend[0].syntax_charta_typ, SyntaxChartaTyp.SOUVERAENITAETS_SYNTAX)
+
+    def test_kki_syntax_charta_aggregates_charta_signal(self) -> None:
+        charta = build_syntax_charta(charta_id="charta-463-sig")
+        self.assertEqual(charta.charta_signal.status, "charta-gesperrt")
+        self.assertEqual(charta.gesperrt_norm_ids, ("charta-463-sig-stability-lane",))
+        self.assertEqual(charta.syntaktisch_norm_ids, ("charta-463-sig-governance-lane",))
+        self.assertEqual(charta.grundlegend_norm_ids, ("charta-463-sig-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #464 SemantikKodex
+    # ------------------------------------------------------------------
+    def test_kki_semantik_kodex_builds_gesperrt_schutz_norm(self) -> None:
+        kodex = build_semantik_kodex(kodex_id="kodex-464-g")
+        gesperrt = [n for n in kodex.normen if n.geltung is SemantikKodexGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) >= 1)
+        self.assertEqual(gesperrt[0].semantik_kodex_typ, SemantikKodexTyp.SCHUTZ_SEMANTIK)
+
+    def test_kki_semantik_kodex_builds_semantisch_ordnungs_norm(self) -> None:
+        kodex = build_semantik_kodex(kodex_id="kodex-464-s")
+        semant = [n for n in kodex.normen if n.geltung is SemantikKodexGeltung.SEMANTISCH]
+        self.assertTrue(len(semant) >= 1)
+        self.assertEqual(semant[0].semantik_kodex_typ, SemantikKodexTyp.ORDNUNGS_SEMANTIK)
+
+    def test_kki_semantik_kodex_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        kodex = build_semantik_kodex(kodex_id="kodex-464-gs")
+        grundlegend = [n for n in kodex.normen if n.geltung is SemantikKodexGeltung.GRUNDLEGEND_SEMANTISCH]
+        self.assertTrue(len(grundlegend) >= 1)
+        self.assertEqual(grundlegend[0].semantik_kodex_typ, SemantikKodexTyp.SOUVERAENITAETS_SEMANTIK)
+
+    def test_kki_semantik_kodex_aggregates_kodex_signal(self) -> None:
+        kodex = build_semantik_kodex(kodex_id="kodex-464-sig")
+        self.assertEqual(kodex.kodex_signal.status, "kodex-gesperrt")
+        self.assertEqual(kodex.gesperrt_norm_ids, ("kodex-464-sig-stability-lane",))
+        self.assertEqual(kodex.semantisch_norm_ids, ("kodex-464-sig-governance-lane",))
+        self.assertEqual(kodex.grundlegend_norm_ids, ("kodex-464-sig-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #465 PragmatikPakt
+    # ------------------------------------------------------------------
+    def test_kki_pragmatik_pakt_builds_gesperrt_schutz_norm(self) -> None:
+        pakt = build_pragmatik_pakt(pakt_id="pakt-465-g")
+        gesperrt = [n for n in pakt.normen if n.geltung is PragmatikPaktGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) >= 1)
+        self.assertEqual(gesperrt[0].pragmatik_pakt_typ, PragmatikPaktTyp.SCHUTZ_PRAGMATIK)
+
+    def test_kki_pragmatik_pakt_builds_pragmatisch_ordnungs_norm(self) -> None:
+        pakt = build_pragmatik_pakt(pakt_id="pakt-465-p")
+        pragm = [n for n in pakt.normen if n.geltung is PragmatikPaktGeltung.PRAGMATISCH]
+        self.assertTrue(len(pragm) >= 1)
+        self.assertEqual(pragm[0].pragmatik_pakt_typ, PragmatikPaktTyp.ORDNUNGS_PRAGMATIK)
+
+    def test_kki_pragmatik_pakt_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        pakt = build_pragmatik_pakt(pakt_id="pakt-465-gs")
+        grundlegend = [n for n in pakt.normen if n.geltung is PragmatikPaktGeltung.GRUNDLEGEND_PRAGMATISCH]
+        self.assertTrue(len(grundlegend) >= 1)
+        self.assertEqual(grundlegend[0].pragmatik_pakt_typ, PragmatikPaktTyp.SOUVERAENITAETS_PRAGMATIK)
+
+    def test_kki_pragmatik_pakt_aggregates_pakt_signal(self) -> None:
+        pakt = build_pragmatik_pakt(pakt_id="pakt-465-sig")
+        self.assertEqual(pakt.pakt_signal.status, "pakt-gesperrt")
+        self.assertEqual(pakt.gesperrt_norm_ids, ("pakt-465-sig-stability-lane",))
+        self.assertEqual(pakt.pragmatisch_norm_ids, ("pakt-465-sig-governance-lane",))
+        self.assertEqual(pakt.grundlegend_norm_ids, ("pakt-465-sig-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #466 SemiotikManifest
+    # ------------------------------------------------------------------
+    def test_kki_semiotik_manifest_builds_gesperrt_schutz_norm(self) -> None:
+        manifest = build_semiotik_manifest(manifest_id="manifest-466-g")
+        gesperrt = [n for n in manifest.normen if n.geltung is SemiotikManifestGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) >= 1)
+        self.assertEqual(gesperrt[0].semiotik_manifest_typ, SemiotikManifestTyp.SCHUTZ_SEMIOTIK)
+
+    def test_kki_semiotik_manifest_builds_semiotisch_ordnungs_norm(self) -> None:
+        manifest = build_semiotik_manifest(manifest_id="manifest-466-s")
+        semiot = [n for n in manifest.normen if n.geltung is SemiotikManifestGeltung.SEMIOTISCH]
+        self.assertTrue(len(semiot) >= 1)
+        self.assertEqual(semiot[0].semiotik_manifest_typ, SemiotikManifestTyp.ORDNUNGS_SEMIOTIK)
+
+    def test_kki_semiotik_manifest_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        manifest = build_semiotik_manifest(manifest_id="manifest-466-gs")
+        grundlegend = [n for n in manifest.normen if n.geltung is SemiotikManifestGeltung.GRUNDLEGEND_SEMIOTISCH]
+        self.assertTrue(len(grundlegend) >= 1)
+        self.assertEqual(grundlegend[0].semiotik_manifest_typ, SemiotikManifestTyp.SOUVERAENITAETS_SEMIOTIK)
+
+    def test_kki_semiotik_manifest_aggregates_manifest_signal(self) -> None:
+        manifest = build_semiotik_manifest(manifest_id="manifest-466-sig")
+        self.assertEqual(manifest.manifest_signal.status, "manifest-gesperrt")
+        self.assertEqual(manifest.gesperrt_norm_ids, ("manifest-466-sig-stability-lane",))
+        self.assertEqual(manifest.semiotisch_norm_ids, ("manifest-466-sig-governance-lane",))
+        self.assertEqual(manifest.grundlegend_norm_ids, ("manifest-466-sig-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #467 DiskursSenat
+    # ------------------------------------------------------------------
+    def test_kki_diskurs_senat_builds_gesperrt_schutz_norm(self) -> None:
+        senat = build_diskurs_senat(senat_id="senat-467-g")
+        gesperrt = [n for n in senat.normen if n.geltung is DiskursSenatGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) >= 1)
+        self.assertEqual(gesperrt[0].diskurs_senat_typ, DiskursSenatTyp.SCHUTZ_DISKURS)
+
+    def test_kki_diskurs_senat_builds_diskursiv_ordnungs_norm(self) -> None:
+        senat = build_diskurs_senat(senat_id="senat-467-d")
+        diskursiv = [n for n in senat.normen if n.geltung is DiskursSenatGeltung.DISKURSIV]
+        self.assertTrue(len(diskursiv) >= 1)
+        self.assertEqual(diskursiv[0].diskurs_senat_typ, DiskursSenatTyp.ORDNUNGS_DISKURS)
+
+    def test_kki_diskurs_senat_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        senat = build_diskurs_senat(senat_id="senat-467-gs")
+        grundlegend = [n for n in senat.normen if n.geltung is DiskursSenatGeltung.GRUNDLEGEND_DISKURSIV]
+        self.assertTrue(len(grundlegend) >= 1)
+        self.assertEqual(grundlegend[0].diskurs_senat_typ, DiskursSenatTyp.SOUVERAENITAETS_DISKURS)
+
+    def test_kki_diskurs_senat_aggregates_senat_signal(self) -> None:
+        senat = build_diskurs_senat(senat_id="senat-467-sig")
+        self.assertEqual(senat.senat_signal.status, "senat-gesperrt")
+        self.assertEqual(senat.gesperrt_norm_ids, ("senat-467-sig-stability-lane",))
+        self.assertEqual(senat.diskursiv_norm_ids, ("senat-467-sig-governance-lane",))
+        self.assertEqual(senat.grundlegend_norm_ids, ("senat-467-sig-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #468 SprachNorm (*_norm pattern)
+    # ------------------------------------------------------------------
+    def test_kki_sprach_norm_builds_gesperrt_eintrag(self) -> None:
+        normsatz = build_sprach_norm(norm_id="snorm-468-g")
+        gesperrt = [n for n in normsatz.normen if n.geltung is SprachNormGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) >= 1)
+        self.assertEqual(gesperrt[0].sprach_norm_typ, SprachNormTyp.SCHUTZ_SPRACHNORM)
+
+    def test_kki_sprach_norm_builds_sprachnormativ_eintrag(self) -> None:
+        normsatz = build_sprach_norm(norm_id="snorm-468-s")
+        normativ = [n for n in normsatz.normen if n.geltung is SprachNormGeltung.SPRACHNORMATIV]
+        self.assertTrue(len(normativ) >= 1)
+        self.assertEqual(normativ[0].sprach_norm_typ, SprachNormTyp.ORDNUNGS_SPRACHNORM)
+
+    def test_kki_sprach_norm_builds_grundlegend_eintrag(self) -> None:
+        normsatz = build_sprach_norm(norm_id="snorm-468-gs")
+        grundlegend = [n for n in normsatz.normen if n.geltung is SprachNormGeltung.GRUNDLEGEND_SPRACHNORMATIV]
+        self.assertTrue(len(grundlegend) >= 1)
+        self.assertEqual(grundlegend[0].sprach_norm_typ, SprachNormTyp.SOUVERAENITAETS_SPRACHNORM)
+
+    def test_kki_sprach_norm_aggregates_norm_signal(self) -> None:
+        normsatz = build_sprach_norm(norm_id="snorm-468-sig")
+        self.assertEqual(normsatz.norm_signal.status, "norm-gesperrt")
+        self.assertEqual(normsatz.gesperrt_norm_ids, ("snorm-468-sig-stability-lane",))
+        self.assertEqual(normsatz.sprachnormativ_norm_ids, ("snorm-468-sig-governance-lane",))
+        self.assertEqual(normsatz.grundlegend_norm_ids, ("snorm-468-sig-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #469 KommunikationsCharta
+    # ------------------------------------------------------------------
+    def test_kki_kommunikations_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_kommunikations_charta(charta_id="charta-469-g")
+        gesperrt = [n for n in charta.normen if n.geltung is KommunikationsChartaGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) >= 1)
+        self.assertEqual(gesperrt[0].kommunikations_charta_typ, KommunikationsChartaTyp.SCHUTZ_KOMMUNIKATION)
+
+    def test_kki_kommunikations_charta_builds_kommunikativ_ordnungs_norm(self) -> None:
+        charta = build_kommunikations_charta(charta_id="charta-469-k")
+        komm = [n for n in charta.normen if n.geltung is KommunikationsChartaGeltung.KOMMUNIKATIV]
+        self.assertTrue(len(komm) >= 1)
+        self.assertEqual(komm[0].kommunikations_charta_typ, KommunikationsChartaTyp.ORDNUNGS_KOMMUNIKATION)
+
+    def test_kki_kommunikations_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_kommunikations_charta(charta_id="charta-469-gs")
+        grundlegend = [n for n in charta.normen if n.geltung is KommunikationsChartaGeltung.GRUNDLEGEND_KOMMUNIKATIV]
+        self.assertTrue(len(grundlegend) >= 1)
+        self.assertEqual(grundlegend[0].kommunikations_charta_typ, KommunikationsChartaTyp.SOUVERAENITAETS_KOMMUNIKATION)
+
+    def test_kki_kommunikations_charta_aggregates_charta_signal(self) -> None:
+        charta = build_kommunikations_charta(charta_id="charta-469-sig")
+        self.assertEqual(charta.charta_signal.status, "charta-gesperrt")
+        self.assertEqual(charta.gesperrt_norm_ids, ("charta-469-sig-stability-lane",))
+        self.assertEqual(charta.kommunikativ_norm_ids, ("charta-469-sig-governance-lane",))
+        self.assertEqual(charta.grundlegend_norm_ids, ("charta-469-sig-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #470 LinguistikVerfassung (Block-Krone)
+    # ------------------------------------------------------------------
+    def test_kki_linguistik_verfassung_builds_gesperrt_schutz_norm(self) -> None:
+        verfassung = build_linguistik_verfassung(verfassung_id="verfassung-470-g")
+        gesperrt = [n for n in verfassung.normen if n.geltung is LinguistikVerfassungsGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) >= 1)
+        self.assertEqual(gesperrt[0].linguistik_typ, LinguistikVerfassungsTyp.SCHUTZ_LINGUISTIK)
+
+    def test_kki_linguistik_verfassung_builds_linguistisch_ordnungs_norm(self) -> None:
+        verfassung = build_linguistik_verfassung(verfassung_id="verfassung-470-l")
+        linguist = [n for n in verfassung.normen if n.geltung is LinguistikVerfassungsGeltung.LINGUISTISCH]
+        self.assertTrue(len(linguist) >= 1)
+        self.assertEqual(linguist[0].linguistik_typ, LinguistikVerfassungsTyp.ORDNUNGS_LINGUISTIK)
+
+    def test_kki_linguistik_verfassung_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        verfassung = build_linguistik_verfassung(verfassung_id="verfassung-470-gs")
+        grundlegend = [n for n in verfassung.normen if n.geltung is LinguistikVerfassungsGeltung.GRUNDLEGEND_LINGUISTISCH]
+        self.assertTrue(len(grundlegend) >= 1)
+        self.assertEqual(grundlegend[0].linguistik_typ, LinguistikVerfassungsTyp.SOUVERAENITAETS_LINGUISTIK)
+
+    def test_kki_linguistik_verfassung_aggregates_verfassung_signal(self) -> None:
+        verfassung = build_linguistik_verfassung(verfassung_id="verfassung-470-sig")
+        self.assertEqual(verfassung.verfassung_signal.status, "verfassung-gesperrt")
+        self.assertEqual(verfassung.gesperrt_norm_ids, ("verfassung-470-sig-stability-lane",))
+        self.assertEqual(verfassung.linguistisch_norm_ids, ("verfassung-470-sig-governance-lane",))
+        self.assertEqual(verfassung.grundlegend_norm_ids, ("verfassung-470-sig-expansion-lane",))
 
 
 if __name__ == "__main__":

@@ -1003,7 +1003,7 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `#262` `DimensionsRegister` — erfasst die Hilbert-Raum-Dimensionen als referenzierbare Governance-Dimensionseintraege
 - `#263` `WellenCharta` — chartert de-Broglie-Materiewellen (λ = h/p) als Governance-Wellenprotokoll
 - `#264` `SuperpositionsKodex` — kodifiziert das Ueberlagerungsprinzip als Vielzustand-Governance-Norm
-- `#265` `VerschraenkunsPakt` — bindet EPR-Verschraenkung und Bell-Ungleichungen als nichtlokale Governance-Verpflichtung
+- `#265` `VerschraenkungsPakt` — bindet EPR-Verschraenkung und Bell-Ungleichungen als nichtlokale Governance-Verpflichtung
 - `#266` `KollapsManifest` — manifestiert Messproblem und Wellenfunktionskollaps als Selektionsereignis
 - `#267` `QuantenSenat` — erhebt Kopenhagener Deutung und Viele-Welten-Interpretation in einen Interpretations-Senat
 - `#268` `PlanckNorm` — normiert Plancksches Wirkungsquantum E = hν und ℏ als Quantisierungs-Norm
@@ -1111,7 +1111,7 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `#346` `QuantenHallManifest` — manifestiert Quanten-Hall-Effekt und topologischen Schutz als Topologie-Governance
 - `#347` `PhononSenat` — erhebt Phononen als kollektive Gitterschwingungen in einen Quasipartikel-Senat
 - `#348` `FermiNorm` — normiert Fermi-See und Fermi-Energie E\_F als Elektronengas-Governance-Norm
-- `#349` `BoseEinsteinCharta` — chartert Bose-Einstein-Kondensat und maximale Koh aerenz als Quanten-Phasen-Governance
+- `#349` `BoseEinsteinCharta` — chartert Bose-Einstein-Kondensat und maximale Kohaerenz als Quanten-Phasen-Governance
 - `#350` `FestkoerperVerfassung` — Block-Krone `#341`–`#350`; konstituiert den Festkoerperphysik-Block
 
 ### Block `#351`–`#360`: Plasmaphysik & Kernfusion
@@ -1248,7 +1248,7 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 
 - `#451` `EvolutionsFeld` — Governance-Wurzel; Darwin/Wallace 1859 und natuerliche Selektion als Evolutionsrahmen
 - `#452` `GenetikRegister` — registriert Watson/Crick 1953 DNA-Doppelhelix und genetischen Code als Erbgut-Governance
-- `#453` `SeletkionsCharta` — chartert Fisher 1930 sowie sexuelle und natuerliche Selektion als Selektions-Governance
+- `#453` `SelektionsCharta` — chartert Fisher 1930 sowie sexuelle und natuerliche Selektion als Selektions-Governance
 - `#454` `MutationsKodex` — kodifiziert Kimura 1968 neutrale Theorie und Mutationsraten als Mutations-Governance-Norm
 - `#455` `FitnessPakt` — bindet Wright-Fitnesslandschaften und Holland-Genetische-Algorithmen als Fitness-Governance
 - `#456` `AdaptationsManifest` — manifestiert Darwin-Adaptation und phaenotypische Plastizitaet als Anpassungs-Governance

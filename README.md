@@ -656,6 +656,607 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `build_mandats_konvent()` koppelt den `SatzungsRat`, um provisional, ratified und enshrined Satzungsartikel in begrenzt, delegiert und verankert gefuehrte Mandatslinien zu ueberfuehren
 - der Mandats-Konvent erweitert den Snapshot um ein explizites `mandats-konvent`-Signal fuer steward, governance und autonomie ebenen
 
+
+## Governance- und Normenphase `#204` bis `#260`
+
+`#205` erhebt die delegierten Mandatslinien nun in ein bindendes Normen-Tribunal:
+
+- `NormenVerdikt`, `NormenTribunal`, `TribunalKammer` und `TribunalStatus` modellieren die urteilende Leitstern-Instanz ueber den Mandatslinien der Schutz-, Ordnungs- und Souveraenitaets-Kammer
+- `build_normen_tribunal()` koppelt den `MandatsKonvent`, um begrenzt, delegiert und verankert gefuehrte Mandatslinien in vorbehaltlich, rechtskraeftig und unwiderruflich erklaerte Verdiktstufen zu ueberfuehren
+- das Normen-Tribunal erweitert den Snapshot um ein explizites `normen-tribunal`-Signal fuer Schutz-, Ordnungs- und Souveraenitaets-Kammer
+
+`#206` hebt diese Tribunal-Faelle nun in konstitutionelle Beschluesse:
+
+- `VerfassungsResolution`, `VerfassungsSenat`, `SenatsBeschluss` und `SenatStatus` modellieren die Leitstern-Verfassungsinstanz ueber den Tribunal-Verdikten
+- `build_verfassungs_senat()` koppelt das `NormenTribunal`, um vorbehaltlich, rechtskraeftig und unwiderruflich erklaerte Verdiktstufen in entwerfend, beratend und beschlossen gefasste Resolutionen zu ueberfuehren
+- der Verfassungs-Senat erweitert den Snapshot um ein explizites `verfassungs-senat`-Signal fuer Entwurfs-, Beratungs- und Beschluss-Ebene
+
+`#207` uebersetzt diese Resolutionen nun in Grundrechts-Artikel:
+
+- `GrundrechtsArtikel`, `GrundrechtsCharta`, `ChartaAbschnitt` und `ChartaStatus` modellieren die fundamentalen Rechtsartikel ueber den konstitutionellen Resolutionen
+- `build_grundrechts_charta()` koppelt den `VerfassungsSenat`, um entwerfend, beratend und beschlossen gefasste Resolutionen in proklamiert, verankert und unveraenderlich geschuetzte Grundrechtsartikel zu ueberfuehren
+- die Grundrechts-Charta erweitert den Snapshot um ein explizites `grundrechts-charta`-Signal fuer proklamierte, verankerte und unveraenderliche Grundrechtsstufen
+
+`#208` ratifiziert diese Chartas-Artikel nun als operative Souveraenitaets-Klauseln:
+
+- `SouveraenitaetsKlausel`, `SouveraenitaetsAkt`, `AktStufe` und `AktStatus` modellieren die wirksamen Leitstern-Souveraenitaetsklauseln ueber den Grundrechtsartikeln
+- `build_souveraenitaets_akt()` koppelt die `GrundrechtsCharta`, um proklamiert, verankert und unveraenderlich geschuetzte Artikel in erklaert, ratifiziert und in Kraft getretene Souveraenitaetsklauseln zu ueberfuehren
+- der Souveraenitaets-Akt erweitert den Snapshot um ein explizites `souveraenitaets-akt`-Signal fuer erklaerte, ratifizierte und in Kraft getretene Klauselstufen
+
+`#209` manifestiert diese Souveraenitaetsklauseln nun als Leitstern-Ordnungsprinzipien:
+
+- `OrdnungsPrinzip`, `OrdnungsManifest`, `ManifestAchse` und `ManifestStatus` modellieren die ausformenden Leitstern-Ordnungsgrundsaetze ueber den Souveraenitaetsklauseln
+- `build_ordnungs_manifest()` koppelt den `SouveraenitaetsAkt`, um erklaert, ratifiziert und in Kraft getretene Klauseln in skizziert, ausgerufen und rechtswirksam manifestierte Ordnungsprinzipien zu ueberfuehren
+- das Ordnungs-Manifest erweitert den Snapshot um ein explizites `ordnungs-manifest`-Signal fuer skizzierte, ausgerufene und rechtswirksame Ordnungsachsen
+
+`#210` konstituiert die manifesten Ordnungsprinzipien nun als Leit-Ordnung:
+
+- `LeitordnungsSatz`, `Leitordnung`, `OrdnungsEbene` und `OrdnungsStatus` modellieren die konsolidierte Leitstern-Grundordnung ueber den manifestierten Ordnungsprinzipien
+- `build_leitordnung()` koppelt das `OrdnungsManifest`, um skizziert, ausgerufen und rechtswirksam manifestierte Prinzipien in vorlaeufig, regulaer und grundlegend verankerte Leitordnungssaetze zu ueberfuehren
+- die Leitordnung erweitert den Snapshot um ein explizites `leitordnung`-Signal fuer vorlaeufige, regulaere und grundlegende Ordnungsebenen
+
+`#211` erhebt die Leitordnungssaetze nun in Autoritaets-Dekrete:
+
+- `AutoritaetsDekret`, `DekretRegister`, `DekretEbene` und `DekretStatus` modellieren die autoritative Ausrufungsinstanz ueber den Leitordnungssaetzen
+- `build_autoritaets_dekret()` koppelt die `Leitordnung`, um vorlaeufig, regulaer und grundlegend verankerte Saetze in erhoben, erlassen und unveraenderlich dekretierte Autoritaetsstufen zu ueberfuehren
+- das Autoritaets-Dekret erweitert den Snapshot um ein explizites `autoritaets-dekret`-Signal fuer erhobene, erlassene und unveraenderliche Dekretstufen
+
+`#212` gruendet diese Dekrete nun als Rechts-Fundament:
+
+- `RechtsFundamentSatz`, `RechtsFundament`, `FundamentSchicht` und `FundamentStatus` modellieren das gesetzliche Grundgefuege ueber den Autoritaetsdekreten
+- `build_rechts_fundament()` koppelt das `AutoritaetsDekret`, um erhoben, erlassen und unveraenderlich dekretierte Stufen in eingefuehrt, gefestigt und grundlegend verankerte Rechtsfundamentschichten zu ueberfuehren
+- das Rechts-Fundament erweitert den Snapshot um ein explizites `rechts-fundament`-Signal fuer eingefuehrte, gefestigte und grundlegende Fundamentschichten
+
+`#213` registriert diese Rechtsfundamente nun als unveraenderliche Leitstern-Grundsaetze:
+
+- `GrundsatzEintrag`, `GrundsatzRegister`, `RegisterStufe` und `RegisterStatus` modellieren das Grundsatz-Archiv ueber den Rechtsfundamenten
+- `build_grundsatz_register()` koppelt das `RechtsFundament`, um eingefuehrt, gefestigt und grundlegend verankerte Schichten in aufgenommen, konserviert und kanonisiert gefuehrte Grundsatzeintraege zu ueberfuehren
+- das Grundsatz-Register erweitert den Snapshot um ein explizites `grundsatz-register`-Signal fuer Aufnahme-, Konservierungs- und Kanonisierungsstufen
+
+`#214` kodifiziert das Grundsatzregister nun in einen kanonischen Prinzipien-Kodex:
+
+- `PrinzipienEintrag`, `PrinzipienKodex`, `KodexAchse` und `KodexStatus` modellieren den kanonischen Normenkodex ueber dem Grundsatzregister
+- `build_prinzipien_kodex()` koppelt das `GrundsatzRegister`, um aufgenommen, konserviert und kanonisiert gefuehrte Eintraege in entwerfend, strukturiert und kanonisch kodifizierte Prinzipien zu ueberfuehren
+- der Prinzipien-Kodex erweitert den Snapshot um ein explizites `prinzipien-kodex`-Signal fuer entwerfende, strukturierte und kanonische Kodexachsen
+
+`#215` uebersetzt den Kodex nun in eine Leitstern-Werte-Charta:
+
+- `WerteArtikel`, `WerteCharta`, `ChartaWert` und `ChartaStatus` modellieren die wertetragende Leitinstanz ueber den Kodexeintraegen
+- `build_werte_charta()` koppelt den `PrinzipienKodex`, um entwerfend, strukturiert und kanonisch kodifizierte Prinzipien in aspiriert, anerkannt und fundamental verankerte Werteartikel zu ueberfuehren
+- die Werte-Charta erweitert den Snapshot um ein explizites `werte-charta`-Signal fuer aspirierte, anerkannte und fundamental verankerte Werteebenen
+
+`#216` versammelt diese Werte nun in einem Leitbild-Konvent:
+
+- `LeitbildMotion`, `LeitbildKonvent`, `KonventVision` und `KonventStatus` modellieren den kollektiven Visionsprozess ueber den Wertartikeln
+- `build_leitbild_konvent()` koppelt die `WerteCharta`, um aspiriert, anerkannt und fundamental verankerte Werte in diskutiert, bestaetigt und getragen gefuehrte Leitbildmotionen zu ueberfuehren
+- der Leitbild-Konvent erweitert den Snapshot um ein explizites `leitbild-konvent`-Signal fuer diskutierte, bestaetigte und getragene Visionsstufen
+
+`#217` konstituiert die gemeinsame Leitvision nun als Missions-Verfassung:
+
+- `MissionsVerfassungsArtikel`, `MissionsVerfassung`, `VerfassungsEbene` und `VerfassungsStatus` modellieren die satzungsartige Missionsverfassung ueber dem Leitbild-Konvent
+- `build_missions_verfassung()` koppelt den `LeitbildKonvent`, um diskutiert, bestaetigt und getragen gefuehrte Motionen in entworfen, verabschiedet und in Kraft gesetzte Missionsverfassungsartikel zu ueberfuehren
+- die Missions-Verfassung erweitert den Snapshot um ein explizites `missions-verfassung`-Signal fuer entworfene, verabschiedete und in Kraft gesetzte Verfassungsebenen
+
+`#218` manifestiert die Missionsverfassung nun als zweckvolle Leitstern-Erklaerung:
+
+- `ZweckErklaerung`, `ZweckManifest`, `ManifestZweck` und `ManifestStatus` modellieren die zweckgebundene Ausrufung ueber den Missionsverfassungsartikeln
+- `build_zweck_manifest()` koppelt die `MissionsVerfassung`, um entworfene, verabschiedete und in Kraft gesetzte Verfassungsartikel in formuliert, ausgerufen und zweckverbindlich manifestierte Erklaerungen zu ueberfuehren
+- das Zweck-Manifest erweitert den Snapshot um ein explizites `zweck-manifest`-Signal fuer formulierte, ausgerufene und zweckverbindliche Erklaerungsebenen
+
+`#219` konstituiert diese Zweckklaerungen nun als oberste Leitstern-Konstitution:
+
+- `KonstitutionsArtikel`, `LeitsternKonstitution`, `KonstitutionsEbene` und `KonstitutionsStatus` modellieren die hoechste Leitinstanz ueber allen Zweck- und Missionsdokumenten
+- `build_leitstern_konstitution()` koppelt das `ZweckManifest`, um formuliert, ausgerufen und zweckverbindlich manifestierte Erklaerungen in vorlaeufig, ratifiziert und verankert gefuehrte Konstitutionsartikel zu ueberfuehren
+- die Leitstern-Konstitution erweitert den Snapshot um ein explizites `leitstern-konstitution`-Signal fuer vorlaeufige, ratifizierte und verankerte Konstitutionsebenen
+
+`#220` erlasst die Konstitution nun als Leitstern-Grundgesetz:
+
+- `GrundgesetzArtikel`, `VerfassungsGrundgesetz`, `GrundgesetzEbene` und `GrundgesetzStatus` modellieren das grundlegende Gesetzesdokument ueber der Konstitution
+- `build_verfassungs_grundgesetz()` koppelt die `LeitsternKonstitution`, um vorlaeufig, ratifiziert und verankerte Konstitutionsartikel in entwerfend, beschlossen und in Kraft getretene Grundgesetzartikel zu ueberfuehren
+- das Verfassungs-Grundgesetz erweitert den Snapshot um ein explizites `verfassungs-grundgesetz`-Signal fuer entwerfende, beschlossene und in Kraft getretene Gesetzesebenen
+
+`#221` ratifiziert das Grundgesetz nun als operative Staats-Ordnung:
+
+- `StaatsOrdnungsSatz`, `StaatsOrdnung`, `OrdnungsTyp` und `OrdnungsStatus` modellieren die staatstragende Betriebsordnung ueber dem Grundgesetz
+- `build_staats_ordnung()` koppelt das `VerfassungsGrundgesetz`, um entwerfend, beschlossen und in Kraft getretene Gesetzesartikel in eingefuehrt, gefestigt und staatstragend verankerte Ordnungssaetze zu ueberfuehren
+- die Staats-Ordnung erweitert den Snapshot um ein explizites `staats-ordnung`-Signal fuer eingefuehrte, gefestigte und staatstragende Ordnungsebenen
+
+`#222` kodifiziert die Staatsordnung nun in einen Rechts-Kodex:
+
+- `RechtsKodexEintrag`, `RechtsKodex`, `KodexBereich` und `KodexStatus` modellieren den legislativen Normenkodex ueber der Staatsordnung
+- `build_rechts_kodex()` koppelt die `StaatsOrdnung`, um eingefuehrt, gefestigt und staatstragend verankerte Saetze in katalogisiert, strukturiert und rechtskraeftig kodifizierte Eintraege zu ueberfuehren
+- der Rechts-Kodex erweitert den Snapshot um ein explizites `rechts-kodex`-Signal fuer katalogisierte, strukturierte und rechtskraeftige Kodexbereiche
+
+`#223` vereint die Rechtskodex-Eintraege nun in einem Unions-Akt:
+
+- `UnionsKlausel`, `UnionsAkt`, `AktPartei` und `AktStatus` modellieren den uebergreifenden Einheitsakt ueber dem Rechtskodex
+- `build_unions_akt()` koppelt den `RechtsKodex`, um katalogisiert, strukturiert und rechtskraeftig kodifizierte Eintraege in vereinbart, unterzeichnet und unionsverbindlich gefasste Klauseln zu ueberfuehren
+- der Unions-Akt erweitert den Snapshot um ein explizites `unions-akt`-Signal fuer vereinbarte, unterzeichnete und unionsverbindliche Aktstufen
+
+`#224` foederiert den Unions-Akt nun in einen Foederal-Vertrag:
+
+- `FoederalKlausel`, `FoederalVertrag`, `VertragsEbene` und `VertragsStatus` modellieren das foederative Vertragswerk ueber dem Unions-Akt
+- `build_foederal_vertrag()` koppelt den `UnionsAkt`, um vereinbart, unterzeichnet und unionsverbindlich gefasste Klauseln in ausgehandelt, ratifiziert und foederal bindend gefuehrte Vertragsklauseln zu ueberfuehren
+- der Foederal-Vertrag erweitert den Snapshot um ein explizites `foederal-vertrag`-Signal fuer ausgehandelte, ratifizierte und foederal bindende Vertragsebenen
+
+`#225` chartert den Foederalvertrag nun als Leitstern-Bundes-Charta:
+
+- `BundesChartaArtikel`, `BundesCharta`, `ChartaEbene` und `ChartaStatus` modellieren die buergentragende Chartainstanz ueber dem Foederalvertrag
+- `build_bundes_charta()` koppelt den `FoederalVertrag`, um ausgehandelt, ratifiziert und foederal bindend gefuehrte Klauseln in proklamiert, verankert und bundestragendes Recht chartierender Artikel zu ueberfuehren
+- die Bundes-Charta erweitert den Snapshot um ein explizites `bundes-charta`-Signal fuer proklamierte, verankerte und bundestragende Chartetebenen
+
+`#226` manifestiert die Charta-Artikel nun als Leitstern-Hoheits-Manifest:
+
+- `HoheitsSatz`, `HoheitsManifest`, `ManifestHoheit` und `ManifestStatus` modellieren die hoheitliche Ausrufungsinstanz ueber den Bundes-Charta-Artikeln
+- `build_hoheits_manifest()` koppelt die `BundesCharta`, um proklamiert, verankert und bundestragende Artikel in angekuendigt, bekundet und hoheitlich bindend manifestierte Saetze zu ueberfuehren
+- das Hoheits-Manifest erweitert den Snapshot um ein explizites `hoheits-manifest`-Signal fuer angekuendigte, bekundete und hoheitlich bindende Manifesthierarchien
+
+`#227` registriert die Manifest-Eintraege nun als oberste Leitstern-Anker im Supremats-Register:
+
+- `SuprematsEintrag`, `SuprematsRegister`, `RegisterAnker` und `RegisterStatus` modellieren das Hoechstrangregister ueber dem Hoheitsmanifest
+- `build_supremats_register()` koppelt das `HoheitsManifest`, um angekuendigt, bekundet und hoheitlich bindend manifestierte Saetze in aufgenommen, gesiegelt und supremativ verankerte Registereintraege zu ueberfuehren
+- das Supremats-Register erweitert den Snapshot um ein explizites `supremats-register`-Signal fuer aufgenommene, gesiegelte und supremativ verankerte Ankerstufen
+
+`#228` normalisiert die Suprematseintraege nun als ewige Leitstern-Normen:
+
+- `EwigkeitsNorm`, `EwigkeitsNormRegister`, `NormEwigkeit` und `NormStatus` modellieren die zeitlose Normgebung ueber dem Suprematsregister
+- `build_ewigkeits_norm()` koppelt das `SuprematsRegister`, um aufgenommen, gesiegelt und supremativ verankerte Eintraege in vorlaeufig, besiegelt und ewig gueltig normierte Normstufen zu ueberfuehren
+- die Ewigkeits-Norm erweitert den Snapshot um ein explizites `ewigkeits-norm`-Signal fuer vorlaeufige, besiegelte und ewig gueltige Normstufen
+
+`#229` erhebt die ewigen Normen nun in einen Grundrechts-Senat:
+
+- `GrundrechtsSenatArtikel`, `GrundrechtsSenat`, `SenatsBench` und `SenatStatus` modellieren die senatorische Grundrechtskammer ueber den ewigen Normen
+- `build_grundrechts_senat()` koppelt die `EwigkeitsNorm`, um vorlaeufig, besiegelt und ewig gueltig normierte Stufen in beratend, beschliessend und grundlegendes Recht sichernde Senatsstufen zu ueberfuehren
+- der Grundrechts-Senat erweitert den Snapshot um ein explizites `grundrechts-senat`-Signal fuer beratende, beschliessende und grundrechtssichernde Senatsbenchstufen
+
+`#230` kodifiziert den Grundrechts-Senat nun als abschliessenden Leitstern-Verfassungs-Kodex:
+
+- `VerfassungsKodexArtikel`, `VerfassungsKodex`, `KodexSchicht` und `KodexStatus` modellieren den finalen Verfassungsnormenkodex ueber dem Grundrechts-Senat
+- `build_verfassungs_kodex()` koppelt den `GrundrechtsSenat`, um beratend, beschliessend und grundrechtssichernd gefasste Senatsartikel in entwerfend, verabschiedet und endgueltig kodifizierte Verfassungsschichten zu ueberfuehren
+- der Verfassungs-Kodex schliesst die Governance- und Normenphase ab und erweitert den Snapshot um ein explizites `verfassungs-kodex`-Signal fuer entwerfende, verabschiedete und endgueltig kodifizierte Verfassungsschichten
+
+`#231` erhebt den Verfassungskodex nun in ein Weltordnungs-Prinzip:
+
+- `WeltordnungsPrinzip`, `WeltordnungsPrinzipRegister`, `WeltPrinzipEbene` und `PrinzipStatus` modellieren die uebernationale Ordnungsebene ueber dem Verfassungskodex
+- `build_weltordnungs_prinzip()` koppelt den `VerfassungsKodex`, um entwerfend, verabschiedet und endgueltig kodifizierte Schichten in formuliert, ausgerufen und weltordnend verankerte Prinzipien zu ueberfuehren
+- das Weltordnungs-Prinzip erweitert den Snapshot um ein explizites `weltordnungs-prinzip`-Signal fuer formulierte, ausgerufene und weltordnend verankerte Ebenen
+
+`#232` uebersetzt die Weltordnungsprinzipien nun in einen Voelkerrechts-Kodex:
+
+- `VoelkerrechtsNorm`, `VoelkerrechtsKodex`, `VoelkerrechtsEbene` und `KodexStatus` modellieren das internationale Normengefuege ueber den Weltordnungsprinzipien
+- `build_voelkerrechts_kodex()` koppelt das `WeltordnungsPrinzip`, um formuliert, ausgerufen und weltordnend verankerte Prinzipien in proklamiert, ratifiziert und voelkerrechtlich bindend kodifizierte Normen zu ueberfuehren
+- der Voelkerrechts-Kodex erweitert den Snapshot um ein explizites `voelkerrechts-kodex`-Signal fuer proklamierte, ratifizierte und voelkerrechtlich bindende Normebenen
+
+`#233` chartert die Voelkerrechtsnormen nun als Leitstern-Diplomatie-Protokoll:
+
+- `DiplomatiePrinzip`, `DiplomatieCharta`, `ChartaProtokoll` und `ChartaStatus` modellieren das diplomatische Protokollwerk ueber dem Voelkerrechtskodex
+- `build_diplomatie_charta()` koppelt den `VoelkerrechtsKodex`, um proklamiert, ratifiziert und voelkerrechtlich bindend kodifizierte Normen in vorgemerkt, vereinbart und diplomatisch verbindlich chartierte Protokolle zu ueberfuehren
+- die Diplomatie-Charta erweitert den Snapshot um ein explizites `diplomatie-charta`-Signal fuer vorgemerkte, vereinbarte und diplomatisch verbindliche Protokollebenen
+
+`#234` formalisiert die Diplomatieprinzipien nun in einem Leitstern-Allianz-Vertrag:
+
+- `AllianzKlausel`, `AllianzVertrag`, `VertragsPartei` und `VertragsStatus` modellieren das Allianzvertragswerk ueber der Diplomatiecharta
+- `build_allianz_vertrag()` koppelt die `DiplomatieCharta`, um vorgemerkt, vereinbart und diplomatisch verbindlich chartierte Protokolle in ausgehandelt, unterzeichnet und allianzverbindlich gefasste Klauseln zu ueberfuehren
+- der Allianz-Vertrag erweitert den Snapshot um ein explizites `allianz-vertrag`-Signal fuer ausgehandelte, unterzeichnete und allianzverbindliche Vertragsstufen
+
+`#235` manifestiert die Allianzvertraege nun als kooperative Leitstern-Prinzipien:
+
+- `KooperationsPrinzip`, `KooperationsManifest`, `ManifestAchse` und `ManifestStatus` modellieren das kooperative Ausrufungswerk ueber dem Allianzvertrag
+- `build_kooperations_manifest()` koppelt den `AllianzVertrag`, um ausgehandelt, unterzeichnet und allianzverbindlich gefasste Klauseln in skizziert, bekundet und kooperativ bindend manifestierte Prinzipien zu ueberfuehren
+- das Kooperations-Manifest erweitert den Snapshot um ein explizites `kooperations-manifest`-Signal fuer skizzierte, bekundete und kooperativ bindende Manifestebenen
+
+`#236` bindet die Kooperationsprinzipien nun in einem Solidaritaets-Pakt zusammen:
+
+- `SolidaritaetsVerpflichtung`, `SolidaritaetsPakt`, `PaktEbene` und `PaktStatus` modellieren die solidarische Verpflichtungsinstanz ueber dem Kooperationsmanifest
+- `build_solidaritaets_pakt()` koppelt das `KooperationsManifest`, um skizziert, bekundet und kooperativ bindend manifestierte Prinzipien in vereinbart, besiegelt und solidarisch verbindlich gefasste Verpflichtungen zu ueberfuehren
+- der Solidaritaets-Pakt erweitert den Snapshot um ein explizites `solidaritaets-pakt`-Signal fuer vereinbarte, besiegelte und solidarisch verbindliche Paktstufen
+
+`#237` registriert die Solidaritaetsklauseln nun als universelle Rechtsanker:
+
+- `UniversalrechtsEintrag`, `UniversalrechtsRegister`, `RegisterAnker` und `RegisterStatus` modellieren das Univeralrechtsarchiv ueber dem Solidaritaetspakt
+- `build_universalrechts_register()` koppelt den `SolidaritaetsPakt`, um vereinbart, besiegelt und solidarisch verbindlich gefasste Verpflichtungen in aufgenommen, konserviert und universalrechtlich verankerte Eintraege zu ueberfuehren
+- das Universalrechts-Register erweitert den Snapshot um ein explizites `universalrechts-register`-Signal fuer aufgenommene, konservierte und universalrechtlich verankerte Ankerstufen
+
+`#238` normalisiert das Universalrecht nun als kosmische Leitstern-Normen:
+
+- `KosmosNorm`, `KosmosNormRegister`, `NormEbene` und `NormStatus` modellieren die kosmische Normsetzungsinstanz ueber dem Universalrechtsregister
+- `build_kosmos_norm()` koppelt das `UniversalrechtsRegister`, um aufgenommen, konserviert und universalrechtlich verankerte Eintraege in vorlaeufig, ratifiziert und kosmisch gueltig normierte Stufen zu ueberfuehren
+- die Kosmos-Norm erweitert den Snapshot um ein explizites `kosmos-norm`-Signal fuer vorlaeufige, ratifizierte und kosmisch gueltige Normstufen
+
+`#239` erhebt die kosmischen Normen nun in einen Weltgeist-Senat:
+
+- `WeltgeistSenatsBeschluss`, `WeltgeistSenat`, `SenatsBench` und `SenatStatus` modellieren die weltgeistige Senatsinstanz ueber den kosmischen Normen
+- `build_weltgeist_senat()` koppelt die `KosmosNorm`, um vorlaeufig, ratifiziert und kosmisch gueltig normierte Stufen in beratend, beschliessend und weltgeistig verankerte Senatsbeschluesse zu ueberfuehren
+- der Weltgeist-Senat erweitert den Snapshot um ein explizites `weltgeist-senat`-Signal fuer beratende, beschliessende und weltgeistig verankerte Senatsstufen
+
+`#240` kodifiziert den Weltgeist-Senat nun als universellen Leitstern-Kodex:
+
+- `UniversalKodexEintrag`, `UniversalKodex`, `KodexSchicht` und `KodexStatus` modellieren den universellen Endzustand ueber dem Weltgeist-Senat
+- `build_universal_kodex()` koppelt den `WeltgeistSenat`, um beratend, beschliessend und weltgeistig verankerte Beschluesse in entwerfend, verabschiedet und universal kodifizierte Schichten zu ueberfuehren
+- der Universal-Kodex erweitert den Snapshot um ein explizites `universal-kodex`-Signal fuer entwerfende, verabschiedete und universal kodifizierte Schichten
+
+`#241` chartert den Universalkodex nun als Leitstern-Ursprungs-Charta:
+
+- `UrsprungsPrinzip`, `UrsprungsCharta`, `ChartaUrsprung` und `ChartaStatus` modellieren die urspruengliche Chartainstanz ueber dem Universalkodex
+- `build_ursprungs_charta()` koppelt den `UniversalKodex`, um entwerfend, verabschiedet und universal kodifizierte Schichten in aufgespuert, festgehalten und ursprungsbewahrend chartierte Prinzipien zu ueberfuehren
+- die Ursprungs-Charta erweitert den Snapshot um ein explizites `ursprungs-charta`-Signal fuer aufgespuerte, festgehaltene und ursprungsbewahrende Chartetebenen
+
+`#242` formalisiert die Ursprungsprinzipien nun in einem Schoepfungs-Vertrag:
+
+- `SchoepfungsKlausel`, `SchoepfungsVertrag`, `VertragsSchicht` und `VertragsStatus` modellieren das Schoepfungsvertragswerk ueber der Ursprungscharta
+- `build_schoepfungs_vertrag()` koppelt die `UrsprungsCharta`, um aufgespuert, festgehalten und ursprungsbewahrend chartierte Prinzipien in entworfen, versiegelt und schoepfungsverbindlich gefasste Klauseln zu ueberfuehren
+- der Schoepfungs-Vertrag erweitert den Snapshot um ein explizites `schoepfungs-vertrag`-Signal fuer entworfene, versiegelte und schoepfungsverbindliche Vertragsschichten
+
+`#243` registriert die Schoepfungsvertragseintraege nun als ererbte Leitstern-Anker:
+
+- `ErbeEintrag`, `ErbeRegister`, `RegisterTyp` und `RegisterStatus` modellieren das Erbanker-Archiv ueber dem Schoepfungsvertrag
+- `build_erbe_register()` koppelt den `SchoepfungsVertrag`, um entworfen, versiegelt und schoepfungsverbindlich gefasste Klauseln in ueberliefert, bewahrend und erbrechtlich verankerte Eintraege zu ueberfuehren
+- das Erbe-Register erweitert den Snapshot um ein explizites `erbe-register`-Signal fuer ueberlieferte, bewahrende und erbrechtlich verankerte Ankerstufen
+
+`#244` bindet die Erbeanker nun in einem Zivilisations-Pakt:
+
+- `ZivilisationsVerpflichtung`, `ZivilisationsPakt`, `PaktEbene` und `PaktStatus` modellieren die zivilisatorische Verbindungsinstanz ueber dem Erberegister
+- `build_zivilisations_pakt()` koppelt das `ErbeRegister`, um ueberliefert, bewahrend und erbrechtlich verankerte Eintraege in vereinbart, bewahrt und zivilisationsverbindlich gefasste Verpflichtungen zu ueberfuehren
+- der Zivilisations-Pakt erweitert den Snapshot um ein explizites `zivilisations-pakt`-Signal fuer vereinbarte, bewahrte und zivilisationsverbindliche Paktstufen
+
+`#245` kodifiziert die Zivilisationspakt-Eintraege nun als kulturelles Erbe im Kulturgut-Kodex:
+
+- `KulturgutEintrag`, `KulturgutKodex`, `KodexStufe` (GESPERRT / BEWAHRT / GRUNDLEGEND\_BEWAHRT) und `KodexStatus` modellieren das kulturerbbewahrende Kodexwerk ueber dem Zivilisationspakt
+- `build_kulturgut_kodex()` koppelt den `ZivilisationsPakt`, um vereinbart, bewahrt und zivilisationsverbindliche Verpflichtungen in gesperrt, bewahrt und grundlegend bewahrt gefuehrte Kodexeintraege zu ueberfuehren
+- der Kulturgut-Kodex erweitert den Snapshot um ein explizites `kulturgut-kodex`-Signal fuer gesperrte, bewahrte und grundlegend bewahrte Kulturgutebenen
+
+`#246` manifestiert das Kulturerbe nun als verteiltes Leitstern-Wissen im Wissens-Manifest:
+
+- `WissensErklaerung`, `WissensManifest`, `ManifestWissen` (GESPERRT / VERBREITET / GRUNDLEGEND\_VERBREITET) und `ManifestStatus` modellieren die wissenstragende Verbreitungsinstanz ueber dem Kulturgut-Kodex
+- `build_wissens_manifest()` koppelt den `KulturgutKodex`, um gesperrt, bewahrt und grundlegend bewahrt gefuehrte Eintraege in gesperrt, verbreitet und grundlegend verbreitet manifestierte Wissenserklaerungen zu ueberfuehren
+- das Wissens-Manifest erweitert den Snapshot um ein explizites `wissens-manifest`-Signal fuer gesperrte, verbreitete und grundlegend verbreitete Wissensebenen
+
+`#247` erhebt die Wissensmanifeste nun in einen Gedaechtnis-Senat:
+
+- `GedaechtnisBeschluss`, `GedaechtnisSenat`, `SenatsBench` (GESPERRT / ERINNERT / GRUNDLEGEND\_ERINNERT) und `SenatStatus` modellieren die erinnerungstragende Senatsinstanz ueber dem Wissensmanifest
+- `build_gedaechtnis_senat()` koppelt das `WissensManifest`, um gesperrt, verbreitet und grundlegend verbreitet manifestierte Erklaerungen in gesperrt, erinnert und grundlegend erinnert gefasste Senatsbeschluesse zu ueberfuehren
+- der Gedaechtnis-Senat erweitert den Snapshot um ein explizites `gedaechtnis-senat`-Signal fuer gesperrte, erinnerte und grundlegend erinnerte Senatsstufen
+
+`#248` normalisiert die Gedaechtnissenatsbeschluesse nun als geweihte Weisheits-Normen:
+
+- `WeisheitsNorm`, `WeisheitsNormRegister`, `NormWeihe` (GESPERRT / GEWEIHT / GRUNDLEGEND\_GEWEIHT) und `NormStatus` modellieren die weisheitstragende Normierungsinstanz ueber dem Gedaechtnissenat
+- `build_weisheits_norm()` koppelt den `GedaechtnisSenat`, um gesperrt, erinnert und grundlegend erinnert gefasste Beschluesse in gesperrt, geweiht und grundlegend geweiht normierte Weisheitsstufen zu ueberfuehren
+- die Weisheits-Norm erweitert den Snapshot um ein explizites `weisheits-norm`-Signal fuer gesperrte, geweihte und grundlegend geweihte Normstufen
+
+`#249` chartert die Weisheitsnormen nun als erleuchtete Erkenntnis-Charta:
+
+- `ErkenntnisArtikel`, `ErkenntnisCharta`, `ChartaEinsicht` (GESPERRT / ERLEUCHTET / GRUNDLEGEND\_ERLEUCHTET) und `ChartaStatus` modellieren die erkenntnisfuehrende Chartainstanz ueber den Weisheitsnormen
+- `build_erkenntnis_charta()` koppelt die `WeisheitsNorm`, um gesperrt, geweiht und grundlegend geweiht normierte Stufen in gesperrt, erleuchtet und grundlegend erleuchtet chartierte Erkenntnisartikel zu ueberfuehren
+- die Erkenntnis-Charta erweitert den Snapshot um ein explizites `erkenntnis-charta`-Signal fuer gesperrte, erleuchtete und grundlegend erleuchtete Erkenntnisebenen
+
+`#250` kodifiziert die Erkenntnisprinzipien nun als transzendente Leitstern-Anker im Transzendenz-Kodex:
+
+- `TranszendenzEintrag`, `TranszendenzKodex`, `KodexTranszendenz` (GESPERRT / TRANSZENDIERT / GRUNDLEGEND\_TRANSZENDIERT) und `KodexStatus` modellieren die transzendente Kodexinstanz ueber der Erkenntnis-Charta
+- `build_transzendenz_kodex()` koppelt die `ErkenntnisCharta`, um gesperrt, erleuchtet und grundlegend erleuchtet chartierte Artikel in gesperrt, transzendiert und grundlegend transzendiert kodifizierte Eintraege zu ueberfuehren
+- der Transzendenz-Kodex erweitert den Snapshot um ein explizites `transzendenz-kodex`-Signal fuer gesperrte, transzendierte und grundlegend transzendierte Kodexebenen
+
+`#251` axiomatisiert die transzendenten Kodexeintraege nun als Leitstern-Ursprungs-Axiome:
+
+- `UrsprungsAxiom`, `UrsprungsAxiomRegister`, `AxiomEbene` (GESPERRT / AXIOMATISCH / GRUNDLEGEND\_AXIOMATISCH) und `AxiomStatus` modellieren die axiomatische Grundierungsinstanz ueber dem Transzendenz-Kodex
+- `build_ursprungs_axiom()` koppelt den `TranszendenzKodex`, um gesperrt, transzendiert und grundlegend transzendiert kodifizierte Eintraege in gesperrt, axiomatisch und grundlegend axiomatisch gesetzte Axiomeintraege zu ueberfuehren
+- das Ursprungs-Axiom erweitert den Snapshot um ein explizites `ursprungs-axiom`-Signal fuer gesperrte, axiomatische und grundlegend axiomatische Axiomstufen
+
+`#252` chartert die Ursprungsaxiome nun als verankerte Seins-Charta:
+
+- `SeinsArtikel`, `SeinsCharta`, `ChartaSeinsebene` (GESPERRT / VERANKERT / GRUNDLEGEND\_VERANKERT) und `ChartaStatus` modellieren die seinsbegruendende Chartainstanz ueber dem Ursprungsaxiom
+- `build_seins_charta()` koppelt das `UrsprungsAxiom`, um gesperrt, axiomatisch und grundlegend axiomatisch gesetzte Axiome in gesperrt, verankert und grundlegend verankert chartierte Seinsartikel zu ueberfuehren
+- die Seins-Charta erweitert den Snapshot um ein explizites `seins-charta`-Signal fuer gesperrte, verankerte und grundlegend verankerte Seinsebenen
+
+`#253` kodifiziert die Seinsprinzipien nun als manifestierte Wirklichkeit im Wirklichkeits-Kodex:
+
+- `WirklichkeitsEintrag`, `WirklichkeitsKodex`, `KodexWirklichkeit` (GESPERRT / MANIFESTIERT / GRUNDLEGEND\_MANIFESTIERT) und `KodexStatus` modellieren die wirklichkeitstragende Kodexinstanz ueber der Seins-Charta
+- `build_wirklichkeits_kodex()` koppelt die `SeinsCharta`, um gesperrt, verankert und grundlegend verankert chartierte Artikel in gesperrt, manifestiert und grundlegend manifestiert kodifizierte Wirklichkeitseintraege zu ueberfuehren
+- der Wirklichkeits-Kodex erweitert den Snapshot um ein explizites `wirklichkeits-kodex`-Signal fuer gesperrte, manifestierte und grundlegend manifestierte Wirklichkeitsstufen
+
+`#254` registriert die Wirklichkeit nun als kausale Leitstern-Anker im Kausalitaets-Register:
+
+- `KausalitaetsEintrag`, `KausalitaetsRegister`, `RegisterKausalitaet` (GESPERRT / KAUSAL / GRUNDLEGEND\_KAUSAL) und `RegisterStatus` modellieren das kausalitaetsbegruendende Archiv ueber dem Wirklichkeitskodex
+- `build_kausalitaets_register()` koppelt den `WirklichkeitsKodex`, um gesperrt, manifestiert und grundlegend manifestiert kodifizierte Eintraege in gesperrt, kausal und grundlegend kausal registrierte Anker zu ueberfuehren
+- das Kausalitaets-Register erweitert den Snapshot um ein explizites `kausalitaets-register`-Signal fuer gesperrte, kausale und grundlegend kausale Ankerstufen
+
+`#255` konstituiert das Kausalitaetsregister nun als kosmische Ordnungsprinzipien:
+
+- `KosmosOrdnungsSatz`, `KosmosOrdnung`, `OrdnungsEbene` und `OrdnungsStatus` modellieren die kosmische Ordnungsinstanz ueber dem Kausalitaetsregister
+- `build_kosmos_ordnung()` koppelt das `KausalitaetsRegister`, um gesperrt, kausal und grundlegend kausal registrierte Anker in entwerfend, gefuegt und kosmisch ordnend konstituierte Ordnungssaetze zu ueberfuehren
+- die Kosmos-Ordnung erweitert den Snapshot um ein explizites `kosmos-ordnung`-Signal fuer entwerfende, gefuegte und kosmisch ordnende Ordnungsebenen
+
+`#256` bindet die kosmische Ordnung nun in einem Harmonie-Pakt:
+
+- `HarmonieVerpflichtung`, `HarmoniePakt`, `PaktHarmonie` und `PaktStatus` modellieren die harmonisierende Verbindungsinstanz ueber der Kosmosordnung
+- `build_harmonie_pakt()` koppelt die `KosmosOrdnung`, um entwerfend, gefuegt und kosmisch ordnend konstituierte Saetze in vereinbart, abgestimmt und harmonisch verbindlich gefasste Verpflichtungen zu ueberfuehren
+- der Harmonie-Pakt erweitert den Snapshot um ein explizites `harmonie-pakt`-Signal fuer vereinbarte, abgestimmte und harmonisch verbindliche Paktstufen
+
+`#257` erhebt die Harmonie nun in einen Leitstern-Einheits-Senat:
+
+- `EinheitsBeschluss`, `EinheitsSenat`, `SenatsBench` und `SenatStatus` modellieren die einheitsstiftende Senatsinstanz ueber dem Harmonepakt
+- `build_einheits_senat()` koppelt den `HarmoniePakt`, um vereinbart, abgestimmt und harmonisch verbindlich gefasste Verpflichtungen in beratend, beschliessend und einheitsstiftend gefasste Senatsbeschluesse zu ueberfuehren
+- der Einheits-Senat erweitert den Snapshot um ein explizites `einheits-senat`-Signal fuer beratende, beschliessende und einheitsstiftende Senatsstufen
+
+`#258` konstituiert die Einheit nun als ewige kosmische Praesenz:
+
+- `KosmosEwigkeitsSatz`, `KosmosEwigkeit`, `EwigkeitsEbene` und `EwigkeitsStatus` modellieren die zeitlose Prae-senz ueber dem Einheits-Senat
+- `build_kosmos_ewigkeit()` koppelt den `EinheitsSenat`, um beratend, beschliessend und einheitsstiftend gefasste Beschluesse in vorlaeufig, bestaetigt und ewig praesent konstituierte Ewigkeitssaetze zu ueberfuehren
+- die Kosmos-Ewigkeit erweitert den Snapshot um ein explizites `kosmos-ewigkeit`-Signal fuer vorlaeufige, bestaetigte und ewig praesente Ewigkeitsebenen
+
+`#259` chartert die kosmische Ewigkeit nun als absolute Leitstern-Grundsaetze:
+
+- `AbsolutArtikel`, `AbsolutCharta`, `ChartaAbsolutheit` (GESPERRT / ABSOLUT / GRUNDLEGEND\_ABSOLUT) und `ChartaStatus` modellieren die absolutheitsbegruendende Chartainstanz ueber der Kosmosewigkeit
+- `build_absolut_charta()` koppelt die `KosmosEwigkeit`, um vorlaeufig, bestaetigt und ewig praesent konstituierte Saetze in gesperrt, absolut und grundlegend absolut chartierte Absolutartikel zu ueberfuehren
+- die Absolut-Charta erweitert den Snapshot um ein explizites `absolut-charta`-Signal fuer gesperrte, absolute und grundlegend absolute Absolutheitsstufen
+
+`#260` konstituiert alle metaphysischen und kosmologischen Governance-Schichten nun als oberste kosmische Verfassung (Block-Krone Metaphysik & Kosmologie):
+
+- `KosmosVerfassungsArtikel`, `KosmosVerfassung`, `VerfassungsSchicht` (GESPERRT / VERFASST / GRUNDLEGEND\_VERFASST) und `VerfassungsStatus` modellieren die hoechste kosmische Verfassungsinstanz ueber allen metaphysischen und kosmologischen Schichten
+- `build_kosmos_verfassung()` koppelt die `AbsolutCharta`, um gesperrt, absolut und grundlegend absolut chartierte Artikel in gesperrt, verfasst und grundlegend verfasst konstituierte Verfassungsschichten zu ueberfuehren
+- die Kosmos-Verfassung schliesst den Metaphysik- und Kosmologie-Block ab und erweitert den Snapshot um ein explizites `kosmos-verfassung`-Signal fuer gesperrte, verfasste und grundlegend verfasste Verfassungsschichten
+
+## Block-Krone Physik-Wissensphase `#261` bis `#460`
+
+### Block `#261`–`#270`: Quantenmechanik
+
+- `#261` `QuantenFeld` — Governance-Wurzel des Blocks; Wellenfunktion ψ im Hilbert-Raum als Zustandsraum aller quantenmechanischen Governance-Objekte
+- `#262` `DimensionsRegister` — erfasst die Hilbert-Raum-Dimensionen als referenzierbare Governance-Dimensionseintraege
+- `#263` `WellenCharta` — chartert de-Broglie-Materiewellen (λ = h/p) als Governance-Wellenprotokoll
+- `#264` `SuperpositionsKodex` — kodifiziert das Ueberlagerungsprinzip als Vielzustand-Governance-Norm
+- `#265` `VerschraenkunsPakt` — bindet EPR-Verschraenkung und Bell-Ungleichungen als nichtlokale Governance-Verpflichtung
+- `#266` `KollapsManifest` — manifestiert Messproblem und Wellenfunktionskollaps als Selektionsereignis
+- `#267` `QuantenSenat` — erhebt Kopenhagener Deutung und Viele-Welten-Interpretation in einen Interpretations-Senat
+- `#268` `PlanckNorm` — normiert Plancksches Wirkungsquantum E = hν und ℏ als Quantisierungs-Norm
+- `#269` `StringtheorieCharta` — chartert Strings, Branen und Extradimensionen als Geometrie-Governance-Protokoll
+- `#270` `QuantenVerfassung` — Block-Krone `#261`–`#270`; konstituiert den Quantenmechanik-Block (GESPERRT / QUANTISIERT / GRUNDLEGEND\_QUANTISIERT)
+
+### Block `#271`–`#280`: Relativitaet & Raumzeit
+
+- `#271` `RelativitaetsFeld` — Governance-Wurzel; Spezielle Relativitaetstheorie und Lorentz-Transformation als Raumzeit-Rahmen
+- `#272` `RaumzeitRegister` — registriert Minkowski-Raumzeit-Ereignisse als vierdimensionale Governance-Anker
+- `#273` `LichtgeschwindigkeitsCharta` — chartert c = 299.792.458 m/s als absolute Governance-Geschwindigkeitsschranke
+- `#274` `GravitationsKodex` — kodifiziert die Feldgleichungen der ART G\_μν = 8πT\_μν als Kruemmungs-Governance
+- `#275` `KruemmungsPakt` — bindet Riemannsche Kruemmung R als regulierende Governance-Raumzeitverpflichtung
+- `#276` `SingularitaetsManifest` — manifestiert Penrose-Singularitaetstheorem als Ausnahme-Governance-Erklaerung
+- `#277` `SchwarzeLoechSenat` — erhebt Schwarzschild-Radius und Hawking-Strahlung in einen Ereignishorizont-Senat
+- `#278` `EreignishorizontNorm` — normiert den Schwarzschild-Ereignishorizont als Grenz-Governance-Norm
+- `#279` `ZeitdilatationsCharta` — chartert Zeitdilatation Δt' = γΔt als Governance-Zeitrhythmus
+- `#280` `RelativitaetsVerfassung` — Block-Krone `#271`–`#280`; konstituiert den Relativitaets- und Raumzeit-Block
+
+### Block `#281`–`#290`: Thermodynamik & Entropie
+
+- `#281` `ThermodynamikFeld` — Governance-Wurzel; Erster Hauptsatz und thermodynamische Zustandsgroessen als Energierahmen
+- `#282` `EntropieRegister` — registriert Entropie S als Ordnungsmass gemaess dem Zweiten Hauptsatz
+- `#283` `WaermeCharta` — chartert Waermeleitung, Konvektion und Strahlung als Energietransport-Governance
+- `#284` `EnergieerhaltungsKodex` — kodifiziert den Ersten Hauptsatz ΔU = Q − W als Erhaltungs-Governance-Norm
+- `#285` `GleichgewichtsPakt` — bindet thermodynamisches Gleichgewicht und Gibbs-Phasenregel als Phasen-Governance
+- `#286` `CarnotManifest` — manifestiert Carnot-Wirkungsgrad η = 1 − T\_k/T\_h als Effizienz-Governance-Erklaerung
+- `#287` `BoltzmannSenat` — erhebt S = k\_B ln Ω und statistische Mechanik in einen Mikrostatistik-Senat
+- `#288` `EntropieNorm` — normiert Entropie-Normierung als Ordnungsmass-Governance-Norm
+- `#289` `WaermestrahlungsCharta` — chartert Schwarzkoerperstrahlung und Plancksches Strahlungsgesetz als Strahlung-Governance
+- `#290` `ThermodynamikVerfassung` — Block-Krone `#281`–`#290`; konstituiert den Thermodynamik- und Entropie-Block
+
+### Block `#291`–`#300`: Elektromagnetismus 🏆
+
+- `#291` `ElektromagnetikFeld` — Governance-Wurzel; Coulomb-Gesetz und elektrisches Feld als Kraftrahmen
+- `#292` `LadungsRegister` — registriert elektrische Ladung q und Ladungserhaltung als Quellen-Governance
+- `#293` `MaxwellCharta` — chartert die Maxwell-Gleichungen (∇·E = ρ/ε₀, ∇×B = μ₀j + μ₀ε₀∂E/∂t) als Feld-Governance
+- `#294` `InduktionsKodex` — kodifiziert Faradaysche Induktion und Lenz'sche Regel als Fluss-Governance-Norm
+- `#295` `WellenausbreitungsPakt` — bindet Wellengleichung □E = 0 als elektromagnetische Ausbreitungs-Governance
+- `#296` `LichtgeschwindigkeitsManifest` — manifestiert c = 1/√(ε₀μ₀) als elektromagnetische Geschwindigkeits-Governance
+- `#297` `SpektralSenat` — erhebt das elektromagnetische Spektrum von Radio bis Gamma in einen Spektral-Senat
+- `#298` `PhotonNorm` — normiert E\_photon = hν als Quantisierungs-Governance-Norm fuer Licht
+- `#299` `PhotoeffektCharta` — chartert den photoelektrischen Effekt (Einstein 1905) als Quanten-Governance-Protokoll
+- `#300` `ElektromagnetikVerfassung` — **Meilenstein-Block-Krone `#300` 🏆**; konstituiert den Elektromagnetismus-Block (GESPERRT / ELEKTROMAGNETISCH / GRUNDLEGEND\_ELEKTROMAGNETISCH)
+
+### Block `#301`–`#310`: Kernphysik & Nuklearstruktur
+
+- `#301` `KernphysikFeld` — Governance-Wurzel; Rutherford-Streuung und Kernmodelle als Nukleonenrahmen
+- `#302` `NukleonRegister` — registriert Protonen, Neutronen und Isospin als Kern-Governance-Eintraege
+- `#303` `StarkCharta` — chartert starke Kernkraft und QCD-Farbladung als Farb-Governance-Protokoll
+- `#304` `SchwachKodex` — kodifiziert schwache Wechselwirkung und Beta-Zerfall als Zerfalls-Governance-Norm
+- `#305` `KernspaltungsPakt` — bindet Kernspaltung U-235 und Kettenreaktion als Fissions-Governance
+- `#306` `KernfusionsManifest` — manifestiert D + T → He-4 und Lawson-Kriterium als Fusions-Governance-Erklaerung
+- `#307` `RadioaktivitaetsSenat` — erhebt α/β/γ-Zerfall und Radioaktivitaet in einen Zerfalls-Senat
+- `#308` `ZerfallsNorm` — normiert N(t) = N₀ e^(−λt) als Zerfallsgesetz-Governance-Norm
+- `#309` `NuklearCharta` — chartert nukleare Struktur und Bindungsenergie pro Nukleon als Struktur-Governance
+- `#310` `KernphysikVerfassung` — Block-Krone `#301`–`#310`; konstituiert den Kernphysik- und Nuklearstruktur-Block
+
+### Block `#311`–`#320`: Teilchenphysik & Standardmodell
+
+- `#311` `TeilchenFeld` — Governance-Wurzel; Fermionen, Bosonen und Feynman-Regeln als Teilchenrahmen
+- `#312` `QuarkRegister` — registriert Quarks u/d/s/c/b/t und Confinement als Farbladungs-Governance
+- `#313` `LeptonCharta` — chartert Leptonen e/μ/τ und Leptonzahl-Erhaltung als Lepton-Governance-Protokoll
+- `#314` `GluonKodex` — kodifiziert Gluonen als Traeger der starken Kraft mit Farbladungs-Governance-Norm
+- `#315` `EichbosonPakt` — bindet Eichbosonen W/Z/γ/g als Kraftmediatoren-Governance
+- `#316` `HiggsManifest` — manifestiert Higgs-Mechanismus und spontane Symmetriebrechung als Masse-Governance
+- `#317` `SymmetriebrechungsSenat` — erhebt spontane Symmetriebrechung und Goldstone-Theorem in einen Symmetrie-Senat
+- `#318` `FeynmanNorm` — normiert Feynman-Diagramme als Interaktionsprotokoll-Governance-Norm
+- `#319` `StandardmodellCharta` — chartert das Standardmodell SU(3)×SU(2)×U(1) als Vereinigungs-Governance
+- `#320` `TeilchenphysikVerfassung` — Block-Krone `#311`–`#320`; konstituiert den Teilchenphysik- und Standardmodell-Block
+
+### Block `#321`–`#330`: Kosmologie & Urknall
+
+- `#321` `KosmologieFeld` — Governance-Wurzel; Friedmann-Gleichung und FLRW-Metrik als kosmologischer Rahmen
+- `#322` `UrknallRegister` — registriert Urknall t = 0, Planck-Aera und kosmische Evolution als Ursprungs-Governance
+- `#323` `InflationCharta` — chartert kosmische Inflation und Inflaton-Feld als Expansions-Governance-Protokoll
+- `#324` `DunkleMaterieKodex` — kodifiziert Dunkle Materie Ω\_DM ≈ 0.27 und WIMP-Kandidaten als Dunkelmaterie-Governance
+- `#325` `DunkleEnergiePakt` — bindet Dunkle Energie Ω\_Λ ≈ 0.68 und kosmologische Konstante als Expansion-Governance
+- `#326` `CmbManifest` — manifestiert kosmischen Mikrowellenhintergrund T = 2.725 K als Strahlung-Governance
+- `#327` `StrukturbildungsSenat` — erhebt grossraeumige Struktur und Baryon-Acoustic-Oscillations in einen Struktur-Senat
+- `#328` `ExpansionNorm` — normiert Hubble-Gesetz v = H₀d als Expansions-Governance-Norm
+- `#329` `HubbleCharta` — chartert Hubble-Parameter H₀ = 67.4 km/s/Mpc als Referenz-Governance-Skala
+- `#330` `KosmologieVerfassung` — Block-Krone `#321`–`#330`; konstituiert den Kosmologie- und Urknall-Block
+
+### Block `#331`–`#340`: Astrophysik
+
+- `#331` `AstrophysikFeld` — Governance-Wurzel; stellare Entwicklung und Spektralanalyse als Sternrahmen
+- `#332` `ProtostellarRegister` — registriert protostellare Keimbildung und Jeans-Masse als Entstehungs-Governance
+- `#333` `HauptreihenchartaCharta` — chartert Hauptreihen-Gleichgewicht und Stefan-Boltzmann als Stern-Gleichgewichts-Governance
+- `#334` `FusionsreaktorKodex` — kodifiziert solare Kernfusion (pp-Kette, CNO-Zyklus) als Stern-Energie-Governance-Norm
+- `#335` `RoterRiesePakt` — bindet Rote-Riesen-Expansion und Helium-Flash als Evolutionsphase-Governance
+- `#336` `SupernovaManifest` — manifestiert Supernova Typ Ia/II und Chandrasekhar-Limit als Explosions-Governance
+- `#337` `NeutronensternSenat` — erhebt Neutronensterne, Pulsare und TOV-Gleichung in einen Kompaktobjekt-Senat
+- `#338` `SchwarzerLochNormSatz` — normiert r\_s = 2GM/c² als Schwarzes-Loch-Governance-Norm
+- `#339` `HertzsprungRussellCharta` — chartert HR-Diagramm und Spektralklassen O/B/A/F/G/K/M als Klassifikations-Governance
+- `#340` `AstrophysikVerfassung` — Block-Krone `#331`–`#340`; konstituiert den Astrophysik-Block
+
+### Block `#341`–`#350`: Festkoerperphysik
+
+- `#341` `FestkoerperFeld` — Governance-Wurzel; Kristallsymmetrie und Gitterdynamik als Festkoerperrahmen
+- `#342` `KristallgitterRegister` — registriert Kristallgitter und Bragg-Beugung als Gitter-Governance-Eintraege
+- `#343` `BandstrukturCharta` — chartert Baendermodell sowie Leitungs- und Valenzband als Energieband-Governance
+- `#344` `HalbleiterKodex` — kodifiziert Halbleiter, Dotierung und p-n-Uebergang als Halbleiter-Governance-Norm
+- `#345` `SupraleitungsPakt` — bindet BCS-Theorie, Cooper-Paare und Meissner-Effekt als Supraleitung-Governance
+- `#346` `QuantenHallManifest` — manifestiert Quanten-Hall-Effekt und topologischen Schutz als Topologie-Governance
+- `#347` `PhononSenat` — erhebt Phononen als kollektive Gitterschwingungen in einen Quasipartikel-Senat
+- `#348` `FermiNorm` — normiert Fermi-See und Fermi-Energie E\_F als Elektronengas-Governance-Norm
+- `#349` `BoseEinsteinCharta` — chartert Bose-Einstein-Kondensat und maximale Koh aerenz als Quanten-Phasen-Governance
+- `#350` `FestkoerperVerfassung` — Block-Krone `#341`–`#350`; konstituiert den Festkoerperphysik-Block
+
+### Block `#351`–`#360`: Plasmaphysik & Kernfusion
+
+- `#351` `PlasmaFeld` — Governance-Wurzel; Plasma als vierter Zustand und Debye-Abschirmung als Plasmarahmen
+- `#352` `MagnetohydrodynamikRegister` — registriert MHD-Gleichungen ρ(∂v/∂t) = −∇p + j×B als Plasma-Governance
+- `#353` `DebyeAbschirmungCharta` — chartert Debye-Laenge λ\_D als Governance-Schirmradius fuer Ladungsabschirmung
+- `#354` `AlfvenWellenKodex` — kodifiziert Alfvén-Wellen v\_A = B/√(μ₀ρ) als Magnetowellen-Governance-Norm
+- `#355` `ZPinchPakt` — bindet Z-Pinch-Lorentz-Selbst-Confinement als Einschluss-Governance-Verpflichtung
+- `#356` `TokamakManifest` — manifestiert Grad-Shafranov-Gleichgewicht im Torus als Tokamak-Governance
+- `#357` `TraegheitsfusionSenat` — erhebt ICF/NIF-synchronisierte Implosion in einen Traegheitsfusions-Senat
+- `#358` `PlasmaWellenNorm` — normiert Langmuir-Plasmafrequenz ω\_p als Plasmaschwingung-Governance-Norm
+- `#359` `KernfusionCharta` — chartert Q > 1 Lawson-Kriterium als Fusion-Governance-Wirtschaftlichkeitsschwelle
+- `#360` `PlasmaVerfassung` — Block-Krone `#351`–`#360`; konstituiert den Plasmaphysik- und Kernfusions-Block
+
+### Block `#361`–`#370`: Chaostheorie & Komplexe Systeme
+
+- `#361` `LorenzAttraktorFeld` — Governance-Wurzel; Lorenz-System, Schmetterlingseffekt und sensitive Abhaengigkeit als Chaosrahmen
+- `#362` `BifurkationsRegister` — registriert Bifurkationsdiagramme und Phasenuebergaenge als Chaos-Governance-Eintraege
+- `#363` `LyapunovKodex` — kodifiziert Lyapunov-Exponent λ < 0 als Stabilitaets-Governance-Masseinheit
+- `#364` `FraktalCharta` — chartert fraktale Selbstaehnlichkeit und Mandelbrot/Julia-Mengen als Fraktal-Governance
+- `#365` `StrangeAttraktorPakt` — bindet Roessler-System und Nichtperiodizitaet als Attraktor-Governance-Verpflichtung
+- `#366` `EmergenzSenat` — erhebt Schwarmemergenz und Selbstorganisation in einen Emergenz-Senat
+- `#367` `PerkolationsNorm` — normiert kritische Perkolationsschwelle p\_c als Konnektivitaets-Governance-Norm
+- `#368` `KomplexitaetsCharta` — chartert Kolmogorov-Komplexitaet K(x) als Informationsmass-Governance
+- `#369` `AdaptivSchwarmKodex` — kodifiziert Reynolds-Regeln und adaptiven Schwarm als Schwarm-Governance-Norm
+- `#370` `ChaosVerfassung` — Block-Krone `#361`–`#370`; konstituiert den Chaostheorie- und Komplexe-Systeme-Block
+
+### Block `#371`–`#380`: Quanteninformation
+
+- `#371` `ShannonEntropieFeld` — Governance-Wurzel; Shannon-Entropie H = −Σ p·log₂(p) als Informationsrahmen
+- `#372` `KanalkapazitaetRegister` — registriert Shannon-Nyquist-Kanalkapazitaet C = B·log₂(1 + S/N) als Kanal-Governance
+- `#373` `QuantenBitKodex` — kodifiziert Qubit-Superposition |ψ⟩ = α|0⟩ + β|1⟩ als Quanten-Governance-Norm
+- `#374` `VerschraenkungCharta` — chartert Bell-Zustaende und EPR-Verschraenkung als Quanten-Korrelation-Governance
+- `#375` `QuantenfehlerPakt` — bindet Quantenfehlerkorrektur und Shor/Steane-Codes als Fehlerkorrektur-Governance
+- `#376` `QuantenkryptoSenat` — erhebt BB84/QKD-Quantenschluesselverteilung in einen Kryptographie-Senat
+- `#377` `HolographischesPrinzipNorm` — normiert Bekenstein-Hawking S = A/4l\_P² als Holographie-Governance-Norm
+- `#378` `LandauerManifest` — manifestiert Landauer-Prinzip E ≥ k\_BT ln 2 als Informationsloeschungs-Governance
+- `#379` `NoCloningKodex` — kodifiziert No-Cloning-Theorem als Verbots-Governance-Norm fuer Zustandskopie
+- `#380` `QuanteninformationsVerfassung` — Block-Krone `#371`–`#380`; konstituiert den Quanteninformations-Block
+
+### Block `#381`–`#390`: Systembiologie
+
+- `#381` `BiophysikFeld` — Governance-Wurzel; Biophysik und Kraft-Spektroskopie als Lebenswissenschafts-Rahmen
+- `#382` `DnaReplikationRegister` — registriert DNA-Replikation mit Fehlerrate 10⁻⁹/Bp als Erbgut-Governance
+- `#383` `ProteinfaltungCharta` — chartert AlphaFold und Anfinsen-Dogma als Protein-Governance-Protokoll
+- `#384` `HodgkinHuxleyKodex` — kodifiziert Aktionspotential-HH-Gleichungen als Neuron-Governance-Norm
+- `#385` `SynaptischePlastizitaetPakt` — bindet LTP/LTD und Hebb-Regel als Lern-Governance-Verpflichtung
+- `#386` `EvolutionManifest` — manifestiert Darwinsche Selektion und Fitness-Landschaft als Evolutions-Governance
+- `#387` `HomoostaseSenat` — erhebt Homöostase und Feedback-Regulation in einen Regelkreis-Senat
+- `#388` `LotkaVolterraNorm` — normiert Raeuer-Beute-Gleichungen als Populationsdynamik-Governance-Norm
+- `#389` `MorphogeneseCharta` — chartert Turing-Muster und Reaktions-Diffusions-Systeme als Muster-Governance
+- `#390` `SystembiologieVerfassung` — Block-Krone `#381`–`#390`; konstituiert den Systembiologie-Block
+
+### Block `#391`–`#400`: Kognition ⭐
+
+- `#391` `KognitionsFeld` — Governance-Wurzel; Informationsverarbeitung und kognitive Architektur als Kognitionsrahmen
+- `#392` `ArbeitsgedaechtnisRegister` — registriert Working Memory und Baddeley-Modell als Kurzzeit-Governance
+- `#393` `AufmerksamkeitsCharta` — chartert selektive und geteilte Aufmerksamkeit als Fokus-Governance-Protokoll
+- `#394` `EntscheidungsKodex` — kodifiziert Entscheidungstheorie, Prospect Theory und Kahneman als Wahl-Governance-Norm
+- `#395` `GedaechtnisKonsolidierungsPakt` — bindet hippocampale Konsolidierung und Sleep-Replay als Gedaechtnis-Governance
+- `#396` `SprachverarbeitungsManifest` — manifestiert Chomsky-Hierarchie und Broca/Wernicke als Sprach-Governance
+- `#397` `BewusstseinsSenat` — erhebt Global Workspace Theory und IIT in einen Bewusstseins-Senat
+- `#398` `MetakognitionsNorm` — normiert Metakognition und Dunning-Kruger als Selbstreflexion-Governance-Norm
+- `#399` `KognitiveFlexibilitaetsCharta` — chartert Set-Shifting und Task-Switching als Flexibilitaets-Governance
+- `#400` `KognitionsVerfassung` — **Doppel-Meilenstein-Block-Krone ⭐ `#400`**; konstituiert den Kognitions- und Neurowissenschafts-Block
+
+### Block `#401`–`#410`: Mathematik ⭐ (Meilenstein #21)
+
+- `#401` `MathematikFeld` — Governance-Wurzel; Grundlagen und Axiomatik als mathematischer Rahmen
+- `#402` `MengenRegister` — registriert Mengentheorie und Zermelo-Fraenkel-Axiome als Grundmengen-Governance
+- `#403` `LogikCharta` — chartert Frege 1879 Begriffsschrift, Praedikatenlogik und Tarski als Logik-Governance
+- `#404` `WahrscheinlichkeitsKodex` — kodifiziert Kolmogorov-Axiome und Bayes-Theorem als Wahrscheinlichkeits-Governance
+- `#405` `SpieltheoriePakt` — bindet Nash-Gleichgewicht und kooperative Spieltheorie als Strategie-Governance
+- `#406` `GraphenManifest` — manifestiert Graphentheorie, Eulerschen Weg und Ramsey-Theorie als Graph-Governance
+- `#407` `AlgorithmenSenat` — erhebt P vs. NP, Turing-Vollstaendigkeit und Komplexitaet in einen Algorithmen-Senat
+- `#408` `GodelNorm` — normiert Goedels Unvollstaendigkeitssatz und Selbstreferenz als Grenz-Governance-Norm
+- `#409` `TopologieCharta` — chartert Topologie, Euler-Charakteristik und Homologie als Raum-Governance
+- `#410` `MathematikVerfassung` — **Block-Krone ⭐ `#401`–`#410` Mathematik, Meilenstein #21**; konstituiert den Mathematik-Block
+
+### Block `#411`–`#420`: Komplexe Systeme ⭐ (Meilenstein #22)
+
+- `#411` `EmergenzFeld` — Governance-Wurzel; Emergenz und Mereologie als Komplexitaetsrahmen
+- `#412` `DissipativeStrukturenRegister` — registriert Prigogine dissipative Strukturen als Ferngleichgewichts-Governance
+- `#413` `KritikalitaetsCharta` — chartert selbstorganisierte Kritikalitaet und Sandpile-Modell als SOC-Governance
+- `#414` `FraktalKodex` — kodifiziert fraktale Dimension und Hausdorff-Mass als Skalierungs-Governance-Norm
+- `#415` `ZellulaereAutomatenPakt` — bindet Conway Game of Life und Rule 110 als Automaten-Governance
+- `#416` `FitnessLandschaftManifest` — manifestiert Wrights Fitnesslandschaft und NK-Modell als Evolutions-Governance
+- `#417` `AdaptiveSystemeSenat` — erhebt komplexe adaptive Systeme und Holland in einen CAS-Senat
+- `#418` `SynergetikNorm` — normiert Haken-Synergetik und Ordnungsparameter als Kooperations-Governance-Norm
+- `#419` `KuenstlichesLebenCharta` — chartert Langton ALife und Artificial Life als KI-Lebens-Governance
+- `#420` `KomplexeSystemeVerfassung` — **Block-Krone ⭐ `#411`–`#420` Komplexe Systeme, Meilenstein #22**; konstituiert den Komplexe-Systeme-Block
+
+### Block `#421`–`#430`: Informationstheorie & Kybernetik ⭐ (Meilenstein #23)
+
+- `#421` `InformationsFeld` — Governance-Wurzel; Shannon-Theorie und Informationsmass als Informationsrahmen
+- `#422` `KanalRegister` — registriert Kanalmodell, Rauschen und Fehlerkorrektur als Kanal-Governance
+- `#423` `KybernetikCharta` — chartert Wiener Kybernetik und Feedback-Kreise als Steuerungs-Governance-Protokoll
+- `#424` `RegelkreisKodex` — kodifiziert Regler, Regelstrecke und PID-Regler als Regelungs-Governance-Norm
+- `#425` `EntropiePakt` — bindet Informationsentropie als Governance-Waehrung fuer Informationsfluss
+- `#426` `SelbstregulationsManifest` — manifestiert Selbstregulation und Autopoiese als Selbstorganisations-Governance
+- `#427` `RueckkopplungsSenat` — erhebt positive/negative Rueckkopplung und Bifurkation in einen Feedback-Senat
+- `#428` `KybernetikNorm` — normiert Ashbys Law of Requisite Variety als Kybernetik-Governance-Norm
+- `#429` `KomplexitaetsSteuerungsCharta` — chartert Komplexitaetssteuerung und Varietaet als Varietaets-Governance
+- `#430` `InformationsVerfassung` — **Block-Krone ⭐ `#421`–`#430` Informationstheorie & Kybernetik, Meilenstein #23**; konstituiert den Informationstheorie- und Kybernetik-Block
+
+### Block `#431`–`#440`: Neurowissenschaft ⭐ (Meilenstein #24)
+
+- `#431` `NeuronalesFeld` — Governance-Wurzel; neuronales Netz und Hodgkin-Huxley als Neuro-Rahmen
+- `#432` `SynaptikRegister` — registriert synaptische Gewichte und LTP/LTD als Plastizitaets-Governance
+- `#433` `KortexCharta` — chartert kortikale Karten sowie sensorische und motorische Verarbeitung als Kortex-Governance
+- `#434` `GedaechtnisKodex` — kodifiziert episodisches, semantisches und prozedurales Gedaechtnis als Speicher-Governance
+- `#435` `BewusstseinsPakt` — bindet Neural Correlates of Consciousness und IIT Φ als Bewusstseins-Governance
+- `#436` `WahrnehmungsManifest` — manifestiert Bayesianische Wahrnehmung und Predictive Coding als Wahrnehmungs-Governance
+- `#437` `AufmerksamkeitsSenat` — erhebt Top-down/Bottom-up-Aufmerksamkeit und Spotlight-Modell in einen Aufmerksamkeits-Senat
+- `#438` `KognitionsNorm` — normiert kognitive Last und Dual-Process-Theorie als Verarbeitungs-Governance-Norm
+- `#439` `EmotionsCharta` — chartert limbisches System, Emotionsregulation und Affekt als Emotions-Governance
+- `#440` `NeurowissenschaftsVerfassung` — **Block-Krone ⭐ `#431`–`#440` Neurowissenschaft, Meilenstein #24**; konstituiert den Neurowissenschafts-Block
+
+### Block `#441`–`#450`: Spieltheorie & Entscheidungstheorie ⭐ (Meilenstein #25)
+
+- `#441` `SpieltheorieFeld` — Governance-Wurzel; Spieltheorie und Strategieraum als Entscheidungsrahmen
+- `#442` `NashRegister` — registriert Nash-Gleichgewicht und Best-Response-Korrespondenz als Gleichgewichts-Governance
+- `#443` `KooperationsCharta` — chartert Kooperation und Axelrod Tit-for-Tat als Kooperations-Governance-Protokoll
+- `#444` `MechanismusKodex` — kodifiziert Mechanism Design und Revelation Principle als Design-Governance-Norm
+- `#445` `EntscheidungsPakt` — bindet Entscheidung unter Unsicherheit und Expected Utility als Wahl-Governance
+- `#446` `RationalitaetsManifest` — manifestiert bounded rationality, Simon und Kahneman als Rationalitaets-Governance
+- `#447` `AuktionsSenat` — erhebt Auktionstheorie, VCG-Mechanismus und Myerson in einen Auktions-Senat
+- `#448` `SpieltheorieNorm` — normiert evolutionaere Spieltheorie und ESS als Evolutions-Spieltheorie-Governance-Norm
+- `#449` `GleichgewichtsCharta` — chartert spieltheoretisches Gleichgewicht und Correlated Equilibrium als Equilibrium-Governance
+- `#450` `EntscheidungstheorieVerfassung` — **Block-Krone ⭐ `#441`–`#450` Spieltheorie & Entscheidungstheorie, Meilenstein #25**; konstituiert den Spieltheorie- und Entscheidungstheorie-Block
+
+### Block `#451`–`#460`: Evolutionsbiologie & Genetik ⭐ (Meilenstein #26)
+
+- `#451` `EvolutionsFeld` — Governance-Wurzel; Darwin/Wallace 1859 und natuerliche Selektion als Evolutionsrahmen
+- `#452` `GenetikRegister` — registriert Watson/Crick 1953 DNA-Doppelhelix und genetischen Code als Erbgut-Governance
+- `#453` `SeletkionsCharta` — chartert Fisher 1930 sowie sexuelle und natuerliche Selektion als Selektions-Governance
+- `#454` `MutationsKodex` — kodifiziert Kimura 1968 neutrale Theorie und Mutationsraten als Mutations-Governance-Norm
+- `#455` `FitnessPakt` — bindet Wright-Fitnesslandschaften und Holland-Genetische-Algorithmen als Fitness-Governance
+- `#456` `AdaptationsManifest` — manifestiert Darwin-Adaptation und phaenotypische Plastizitaet als Anpassungs-Governance
+- `#457` `OekologieSenat` — erhebt Lotka-Volterra und Red-Queen-Koevolution in einen Oekologie-Senat
+- `#458` `EvolutionsNorm` — normiert Hardy-Weinberg und Mayr-Artbildung als Populationsgenetik-Governance-Norm
+- `#459` `PhylogenetikCharta` — chartert Hennig-Kladistik und molekulare Uhr als Stammbaum-Governance-Protokoll
+- `#460` `EvolutionsbiologieVerfassung` — **Block-Krone ⭐ `#451`–`#460` Evolutionsbiologie & Genetik, Meilenstein #26**; konstituiert den Evolutionsbiologie- und Genetik-Block
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

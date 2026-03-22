@@ -650,6 +650,12 @@ Darauf setzt `#122` nun die ersten echten Paketgrenzen:
 - `build_satzungs_rat()` koppelt das `KodexRegister`, um reserved, curated und canonized Registerstufen in provisional, ratified und enshrined Satzungsartikel zu ueberfuehren
 - der Satzungs-Rat erweitert den Snapshot um ein explizites `satzungs-rat`-Signal fuer steward, governance und autonomy benches
 
+`#203` spiegelt diese Satzung nun in einen Mandats-Konvent zurueck:
+
+- `MandatsLinie`, `MandatsKonvent`, `KonventMandat`, `KonventEbene` und `KonventStatus` modellieren delegierbare Mandatslinien zwischen den Leitstern-Ebenen
+- `build_mandats_konvent()` koppelt den `SatzungsRat`, um provisional, ratified und enshrined Satzungsartikel in begrenzt, delegiert und verankert gefuehrte Mandatslinien zu ueberfuehren
+- der Mandats-Konvent erweitert den Snapshot um ein explizites `mandats-konvent`-Signal fuer steward, governance und autonomie ebenen
+
 ## Features
 
 - iterierte Multi-Agenten-Simulationen in Python

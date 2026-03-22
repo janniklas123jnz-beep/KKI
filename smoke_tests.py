@@ -1234,6 +1234,46 @@ from kki.komplexe_systeme_verfassung import (
     KomplexeSystemeVerfassung, KomplexeSystemeVerfassungsGeltung, KomplexeSystemeVerfassungsNorm,
     KomplexeSystemeVerfassungsTyp, KomplexeSystemeVerfassungsProzedur, build_komplexe_systeme_verfassung,
 )
+from kki.informations_feld import (
+    InformationsFeld, InformationsFeldGeltung, InformationsFeldNorm,
+    InformationsFeldTyp, InformationsFeldProzedur, build_informations_feld,
+)
+from kki.kanal_register import (
+    KanalRegister, KanalRegisterGeltung, KanalRegisterNorm,
+    KanalRegisterTyp, KanalRegisterProzedur, build_kanal_register,
+)
+from kki.kybernetik_charta import (
+    KybernetikCharta, KybernetikChartaGeltung, KybernetikChartaNorm,
+    KybernetikChartaTyp, KybernetikChartaProzedur, build_kybernetik_charta,
+)
+from kki.regelkreis_kodex import (
+    RegelkreisKodex, RegelkreisKodexGeltung, RegelkreisKodexNorm,
+    RegelkreisKodexTyp, RegelkreisKodexProzedur, build_regelkreis_kodex,
+)
+from kki.entropie_pakt import (
+    EntropiePakt, EntropiePaktGeltung, EntropiePaktNorm,
+    EntropiePaktTyp, EntropiePaktProzedur, build_entropie_pakt,
+)
+from kki.selbstregulations_manifest import (
+    SelbstregulationsManifest, SelbstregulationsManifestGeltung, SelbstregulationsManifestNorm,
+    SelbstregulationsManifestTyp, SelbstregulationsManifestProzedur, build_selbstregulations_manifest,
+)
+from kki.rueckkopplungs_senat import (
+    RueckkopplungsSenat, RueckkopplungsSenatGeltung, RueckkopplungsSenatNorm,
+    RueckkopplungsSenatTyp, RueckkopplungsSenatProzedur, build_rueckkopplungs_senat,
+)
+from kki.kybernetik_norm import (
+    KybernetikNormSatz, KybernetikNormGeltung, KybernetikNormEintrag,
+    KybernetikNormTyp, KybernetikNormProzedur, build_kybernetik_norm,
+)
+from kki.komplexitaets_steuerungs_charta import (
+    KomplexitaetsSteuerungsCharta, KomplexitaetsSteuerungsChartaGeltung, KomplexitaetsSteuerungsChartaNorm,
+    KomplexitaetsSteuerungsChartaTyp, KomplexitaetsSteuerungsChartaProzedur, build_komplexitaets_steuerungs_charta,
+)
+from kki.informations_verfassung import (
+    InformationsVerfassung, InformationsVerfassungsGeltung, InformationsVerfassungsNorm,
+    InformationsVerfassungsTyp, InformationsVerfassungsProzedur, build_informations_verfassung,
+)
 from kki import (
     KausalitaetsGeltung,
     KausalitaetsNorm,
@@ -15997,6 +16037,326 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(verfassung.gesperrt_norm_ids, ("verfassung-420-signal-stability-lane",))
         self.assertEqual(verfassung.komplexsystemverfasst_norm_ids, ("verfassung-420-signal-governance-lane",))
         self.assertEqual(verfassung.grundlegend_norm_ids, ("verfassung-420-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #421 InformationsFeld
+    # ------------------------------------------------------------------
+
+    def test_kki_informations_feld_builds_gesperrt_schutz_norm(self) -> None:
+        feld = build_informations_feld(feld_id="feld-421-stability")
+        norm = next(n for n in feld.normen if n.geltung is InformationsFeldGeltung.GESPERRT)
+        self.assertEqual(norm.informations_typ, InformationsFeldTyp.SCHUTZ_INFORMATION)
+        self.assertEqual(norm.prozedur, InformationsFeldProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.informations_tier, 1)
+
+    def test_kki_informations_feld_builds_informationsreich_ordnungs_norm(self) -> None:
+        feld = build_informations_feld(feld_id="feld-421-governance")
+        norm = next(n for n in feld.normen if n.geltung is InformationsFeldGeltung.INFORMATIONSREICH)
+        self.assertEqual(norm.informations_typ, InformationsFeldTyp.ORDNUNGS_INFORMATION)
+        self.assertEqual(norm.prozedur, InformationsFeldProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.informations_weight, 0.0)
+
+    def test_kki_informations_feld_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        feld = build_informations_feld(feld_id="feld-421-expansion")
+        norm = next(n for n in feld.normen if n.geltung is InformationsFeldGeltung.GRUNDLEGEND_INFORMATIONSREICH)
+        self.assertEqual(norm.informations_typ, InformationsFeldTyp.SOUVERAENITAETS_INFORMATION)
+        self.assertEqual(norm.prozedur, InformationsFeldProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.informations_weight, 0.0)
+
+    def test_kki_informations_feld_aggregates_feld_signal(self) -> None:
+        feld = build_informations_feld(feld_id="feld-421-signal")
+        self.assertEqual(feld.feld_signal.status, "feld-gesperrt")
+        self.assertEqual(feld.gesperrt_norm_ids, ("feld-421-signal-stability-lane",))
+        self.assertEqual(feld.informationsreich_norm_ids, ("feld-421-signal-governance-lane",))
+        self.assertEqual(feld.grundlegend_norm_ids, ("feld-421-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #422 KanalRegister
+    # ------------------------------------------------------------------
+
+    def test_kki_kanal_register_builds_gesperrt_schutz_norm(self) -> None:
+        reg = build_kanal_register(register_id="register-422-stability")
+        norm = next(n for n in reg.normen if n.geltung is KanalRegisterGeltung.GESPERRT)
+        self.assertEqual(norm.kanal_typ, KanalRegisterTyp.SCHUTZ_KANAL)
+        self.assertEqual(norm.prozedur, KanalRegisterProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.kanal_tier, 1)
+
+    def test_kki_kanal_register_builds_kanalkodiert_ordnungs_norm(self) -> None:
+        reg = build_kanal_register(register_id="register-422-governance")
+        norm = next(n for n in reg.normen if n.geltung is KanalRegisterGeltung.KANALKODIERT)
+        self.assertEqual(norm.kanal_typ, KanalRegisterTyp.ORDNUNGS_KANAL)
+        self.assertEqual(norm.prozedur, KanalRegisterProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.kanal_weight, 0.0)
+
+    def test_kki_kanal_register_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        reg = build_kanal_register(register_id="register-422-expansion")
+        norm = next(n for n in reg.normen if n.geltung is KanalRegisterGeltung.GRUNDLEGEND_KANALKODIERT)
+        self.assertEqual(norm.kanal_typ, KanalRegisterTyp.SOUVERAENITAETS_KANAL)
+        self.assertEqual(norm.prozedur, KanalRegisterProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.kanal_weight, 0.0)
+
+    def test_kki_kanal_register_aggregates_register_signal(self) -> None:
+        reg = build_kanal_register(register_id="register-422-signal")
+        self.assertEqual(reg.register_signal.status, "register-gesperrt")
+        self.assertEqual(reg.gesperrt_norm_ids, ("register-422-signal-stability-lane",))
+        self.assertEqual(reg.kanalkodiert_norm_ids, ("register-422-signal-governance-lane",))
+        self.assertEqual(reg.grundlegend_norm_ids, ("register-422-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #423 KybernetikCharta
+    # ------------------------------------------------------------------
+
+    def test_kki_kybernetik_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_kybernetik_charta(charta_id="charta-423-stability")
+        norm = next(n for n in charta.normen if n.geltung is KybernetikChartaGeltung.GESPERRT)
+        self.assertEqual(norm.kybernetik_typ, KybernetikChartaTyp.SCHUTZ_KYBERNETIK)
+        self.assertEqual(norm.prozedur, KybernetikChartaProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.kybernetik_tier, 1)
+
+    def test_kki_kybernetik_charta_builds_kybernetisch_ordnungs_norm(self) -> None:
+        charta = build_kybernetik_charta(charta_id="charta-423-governance")
+        norm = next(n for n in charta.normen if n.geltung is KybernetikChartaGeltung.KYBERNETISCH)
+        self.assertEqual(norm.kybernetik_typ, KybernetikChartaTyp.ORDNUNGS_KYBERNETIK)
+        self.assertEqual(norm.prozedur, KybernetikChartaProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.kybernetik_weight, 0.0)
+
+    def test_kki_kybernetik_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_kybernetik_charta(charta_id="charta-423-expansion")
+        norm = next(n for n in charta.normen if n.geltung is KybernetikChartaGeltung.GRUNDLEGEND_KYBERNETISCH)
+        self.assertEqual(norm.kybernetik_typ, KybernetikChartaTyp.SOUVERAENITAETS_KYBERNETIK)
+        self.assertEqual(norm.prozedur, KybernetikChartaProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.kybernetik_weight, 0.0)
+
+    def test_kki_kybernetik_charta_aggregates_charta_signal(self) -> None:
+        charta = build_kybernetik_charta(charta_id="charta-423-signal")
+        self.assertEqual(charta.charta_signal.status, "charta-gesperrt")
+        self.assertEqual(charta.gesperrt_norm_ids, ("charta-423-signal-stability-lane",))
+        self.assertEqual(charta.kybernetisch_norm_ids, ("charta-423-signal-governance-lane",))
+        self.assertEqual(charta.grundlegend_norm_ids, ("charta-423-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #424 RegelkreisKodex
+    # ------------------------------------------------------------------
+
+    def test_kki_regelkreis_kodex_builds_gesperrt_schutz_norm(self) -> None:
+        kodex = build_regelkreis_kodex(kodex_id="kodex-424-stability")
+        norm = next(n for n in kodex.normen if n.geltung is RegelkreisKodexGeltung.GESPERRT)
+        self.assertEqual(norm.regelkreis_typ, RegelkreisKodexTyp.SCHUTZ_REGELKREIS)
+        self.assertEqual(norm.prozedur, RegelkreisKodexProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.regelkreis_tier, 1)
+
+    def test_kki_regelkreis_kodex_builds_geregelt_ordnungs_norm(self) -> None:
+        kodex = build_regelkreis_kodex(kodex_id="kodex-424-governance")
+        norm = next(n for n in kodex.normen if n.geltung is RegelkreisKodexGeltung.GEREGELT)
+        self.assertEqual(norm.regelkreis_typ, RegelkreisKodexTyp.ORDNUNGS_REGELKREIS)
+        self.assertEqual(norm.prozedur, RegelkreisKodexProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.regelkreis_weight, 0.0)
+
+    def test_kki_regelkreis_kodex_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        kodex = build_regelkreis_kodex(kodex_id="kodex-424-expansion")
+        norm = next(n for n in kodex.normen if n.geltung is RegelkreisKodexGeltung.GRUNDLEGEND_GEREGELT)
+        self.assertEqual(norm.regelkreis_typ, RegelkreisKodexTyp.SOUVERAENITAETS_REGELKREIS)
+        self.assertEqual(norm.prozedur, RegelkreisKodexProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.regelkreis_weight, 0.0)
+
+    def test_kki_regelkreis_kodex_aggregates_kodex_signal(self) -> None:
+        kodex = build_regelkreis_kodex(kodex_id="kodex-424-signal")
+        self.assertEqual(kodex.kodex_signal.status, "kodex-gesperrt")
+        self.assertEqual(kodex.gesperrt_norm_ids, ("kodex-424-signal-stability-lane",))
+        self.assertEqual(kodex.geregelt_norm_ids, ("kodex-424-signal-governance-lane",))
+        self.assertEqual(kodex.grundlegend_norm_ids, ("kodex-424-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #425 EntropiePakt
+    # ------------------------------------------------------------------
+
+    def test_kki_entropie_pakt_builds_gesperrt_schutz_norm(self) -> None:
+        pakt = build_entropie_pakt(pakt_id="pakt-425-stability")
+        norm = next(n for n in pakt.normen if n.geltung is EntropiePaktGeltung.GESPERRT)
+        self.assertEqual(norm.entropie_typ, EntropiePaktTyp.SCHUTZ_ENTROPIE)
+        self.assertEqual(norm.prozedur, EntropiePaktProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.entropie_tier, 1)
+
+    def test_kki_entropie_pakt_builds_entropisch_ordnungs_norm(self) -> None:
+        pakt = build_entropie_pakt(pakt_id="pakt-425-governance")
+        norm = next(n for n in pakt.normen if n.geltung is EntropiePaktGeltung.ENTROPISCH)
+        self.assertEqual(norm.entropie_typ, EntropiePaktTyp.ORDNUNGS_ENTROPIE)
+        self.assertEqual(norm.prozedur, EntropiePaktProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.entropie_weight, 0.0)
+
+    def test_kki_entropie_pakt_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        pakt = build_entropie_pakt(pakt_id="pakt-425-expansion")
+        norm = next(n for n in pakt.normen if n.geltung is EntropiePaktGeltung.GRUNDLEGEND_ENTROPISCH)
+        self.assertEqual(norm.entropie_typ, EntropiePaktTyp.SOUVERAENITAETS_ENTROPIE)
+        self.assertEqual(norm.prozedur, EntropiePaktProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.entropie_weight, 0.0)
+
+    def test_kki_entropie_pakt_aggregates_pakt_signal(self) -> None:
+        pakt = build_entropie_pakt(pakt_id="pakt-425-signal")
+        self.assertEqual(pakt.pakt_signal.status, "pakt-gesperrt")
+        self.assertEqual(pakt.gesperrt_norm_ids, ("pakt-425-signal-stability-lane",))
+        self.assertEqual(pakt.entropisch_norm_ids, ("pakt-425-signal-governance-lane",))
+        self.assertEqual(pakt.grundlegend_norm_ids, ("pakt-425-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #426 SelbstregulationsManifest
+    # ------------------------------------------------------------------
+
+    def test_kki_selbstregulations_manifest_builds_gesperrt_schutz_norm(self) -> None:
+        manifest = build_selbstregulations_manifest(manifest_id="manifest-426-stability")
+        norm = next(n for n in manifest.normen if n.geltung is SelbstregulationsManifestGeltung.GESPERRT)
+        self.assertEqual(norm.selbstregulation_typ, SelbstregulationsManifestTyp.SCHUTZ_SELBSTREGULATION)
+        self.assertEqual(norm.prozedur, SelbstregulationsManifestProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.selbstregulation_tier, 1)
+
+    def test_kki_selbstregulations_manifest_builds_selbstreguliert_ordnungs_norm(self) -> None:
+        manifest = build_selbstregulations_manifest(manifest_id="manifest-426-governance")
+        norm = next(n for n in manifest.normen if n.geltung is SelbstregulationsManifestGeltung.SELBSTREGULIERT)
+        self.assertEqual(norm.selbstregulation_typ, SelbstregulationsManifestTyp.ORDNUNGS_SELBSTREGULATION)
+        self.assertEqual(norm.prozedur, SelbstregulationsManifestProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.selbstregulation_weight, 0.0)
+
+    def test_kki_selbstregulations_manifest_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        manifest = build_selbstregulations_manifest(manifest_id="manifest-426-expansion")
+        norm = next(n for n in manifest.normen if n.geltung is SelbstregulationsManifestGeltung.GRUNDLEGEND_SELBSTREGULIERT)
+        self.assertEqual(norm.selbstregulation_typ, SelbstregulationsManifestTyp.SOUVERAENITAETS_SELBSTREGULATION)
+        self.assertEqual(norm.prozedur, SelbstregulationsManifestProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.selbstregulation_weight, 0.0)
+
+    def test_kki_selbstregulations_manifest_aggregates_manifest_signal(self) -> None:
+        manifest = build_selbstregulations_manifest(manifest_id="manifest-426-signal")
+        self.assertEqual(manifest.manifest_signal.status, "manifest-gesperrt")
+        self.assertEqual(manifest.gesperrt_norm_ids, ("manifest-426-signal-stability-lane",))
+        self.assertEqual(manifest.selbstreguliert_norm_ids, ("manifest-426-signal-governance-lane",))
+        self.assertEqual(manifest.grundlegend_norm_ids, ("manifest-426-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #427 RueckkopplungsSenat
+    # ------------------------------------------------------------------
+
+    def test_kki_rueckkopplungs_senat_builds_gesperrt_schutz_norm(self) -> None:
+        senat = build_rueckkopplungs_senat(senat_id="senat-427-stability")
+        norm = next(n for n in senat.normen if n.geltung is RueckkopplungsSenatGeltung.GESPERRT)
+        self.assertEqual(norm.rueckkopplung_typ, RueckkopplungsSenatTyp.SCHUTZ_RUECKKOPPLUNG)
+        self.assertEqual(norm.prozedur, RueckkopplungsSenatProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.rueckkopplung_tier, 1)
+
+    def test_kki_rueckkopplungs_senat_builds_rueckgekoppelt_ordnungs_norm(self) -> None:
+        senat = build_rueckkopplungs_senat(senat_id="senat-427-governance")
+        norm = next(n for n in senat.normen if n.geltung is RueckkopplungsSenatGeltung.RUECKGEKOPPELT)
+        self.assertEqual(norm.rueckkopplung_typ, RueckkopplungsSenatTyp.ORDNUNGS_RUECKKOPPLUNG)
+        self.assertEqual(norm.prozedur, RueckkopplungsSenatProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.rueckkopplung_weight, 0.0)
+
+    def test_kki_rueckkopplungs_senat_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        senat = build_rueckkopplungs_senat(senat_id="senat-427-expansion")
+        norm = next(n for n in senat.normen if n.geltung is RueckkopplungsSenatGeltung.GRUNDLEGEND_RUECKGEKOPPELT)
+        self.assertEqual(norm.rueckkopplung_typ, RueckkopplungsSenatTyp.SOUVERAENITAETS_RUECKKOPPLUNG)
+        self.assertEqual(norm.prozedur, RueckkopplungsSenatProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.rueckkopplung_weight, 0.0)
+
+    def test_kki_rueckkopplungs_senat_aggregates_senat_signal(self) -> None:
+        senat = build_rueckkopplungs_senat(senat_id="senat-427-signal")
+        self.assertEqual(senat.senat_signal.status, "senat-gesperrt")
+        self.assertEqual(senat.gesperrt_norm_ids, ("senat-427-signal-stability-lane",))
+        self.assertEqual(senat.rueckgekoppelt_norm_ids, ("senat-427-signal-governance-lane",))
+        self.assertEqual(senat.grundlegend_norm_ids, ("senat-427-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #428 KybernetikNorm (*_norm)
+    # ------------------------------------------------------------------
+
+    def test_kki_kybernetik_norm_builds_gesperrt_schutz_eintrag(self) -> None:
+        satz = build_kybernetik_norm(norm_id="norm-428-stability")
+        eintrag = next(n for n in satz.normen if n.geltung is KybernetikNormGeltung.GESPERRT)
+        self.assertEqual(eintrag.kybernetik_norm_typ, KybernetikNormTyp.SCHUTZ_KYBERNETIK_NORM)
+        self.assertEqual(eintrag.prozedur, KybernetikNormProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(eintrag.kybernetik_norm_tier, 1)
+
+    def test_kki_kybernetik_norm_builds_kybernetik2ordnung_ordnungs_eintrag(self) -> None:
+        satz = build_kybernetik_norm(norm_id="norm-428-governance")
+        eintrag = next(n for n in satz.normen if n.geltung is KybernetikNormGeltung.KYBERNETIK2ORDNUNG)
+        self.assertEqual(eintrag.kybernetik_norm_typ, KybernetikNormTyp.ORDNUNGS_KYBERNETIK_NORM)
+        self.assertEqual(eintrag.prozedur, KybernetikNormProzedur.REGELPROTOKOLL)
+        self.assertGreater(eintrag.kybernetik_norm_weight, 0.0)
+
+    def test_kki_kybernetik_norm_builds_grundlegend_souveraenitaets_eintrag(self) -> None:
+        satz = build_kybernetik_norm(norm_id="norm-428-expansion")
+        eintrag = next(n for n in satz.normen if n.geltung is KybernetikNormGeltung.GRUNDLEGEND_KYBERNETIK2ORDNUNG)
+        self.assertEqual(eintrag.kybernetik_norm_typ, KybernetikNormTyp.SOUVERAENITAETS_KYBERNETIK_NORM)
+        self.assertEqual(eintrag.prozedur, KybernetikNormProzedur.PLENARPROTOKOLL)
+        self.assertGreater(eintrag.kybernetik_norm_weight, 0.0)
+
+    def test_kki_kybernetik_norm_aggregates_norm_signal(self) -> None:
+        satz = build_kybernetik_norm(norm_id="norm-428-signal")
+        self.assertEqual(satz.norm_signal.status, "norm-gesperrt")
+        self.assertEqual(satz.gesperrt_norm_ids, ("norm-428-signal-stability-lane",))
+        self.assertEqual(satz.kybernetik2ordnung_norm_ids, ("norm-428-signal-governance-lane",))
+        self.assertEqual(satz.grundlegend_norm_ids, ("norm-428-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #429 KomplexitaetsSteuerungsCharta
+    # ------------------------------------------------------------------
+
+    def test_kki_komplexitaets_steuerungs_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_komplexitaets_steuerungs_charta(charta_id="charta-429-stability")
+        norm = next(n for n in charta.normen if n.geltung is KomplexitaetsSteuerungsChartaGeltung.GESPERRT)
+        self.assertEqual(norm.komplexitaets_steuerungs_typ, KomplexitaetsSteuerungsChartaTyp.SCHUTZ_KOMPLEXITAETSSTEUERUNG)
+        self.assertEqual(norm.prozedur, KomplexitaetsSteuerungsChartaProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.komplexitaets_steuerungs_tier, 1)
+
+    def test_kki_komplexitaets_steuerungs_charta_builds_viable_ordnungs_norm(self) -> None:
+        charta = build_komplexitaets_steuerungs_charta(charta_id="charta-429-governance")
+        norm = next(n for n in charta.normen if n.geltung is KomplexitaetsSteuerungsChartaGeltung.VIABLE)
+        self.assertEqual(norm.komplexitaets_steuerungs_typ, KomplexitaetsSteuerungsChartaTyp.ORDNUNGS_KOMPLEXITAETSSTEUERUNG)
+        self.assertEqual(norm.prozedur, KomplexitaetsSteuerungsChartaProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.komplexitaets_steuerungs_weight, 0.0)
+
+    def test_kki_komplexitaets_steuerungs_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_komplexitaets_steuerungs_charta(charta_id="charta-429-expansion")
+        norm = next(n for n in charta.normen if n.geltung is KomplexitaetsSteuerungsChartaGeltung.GRUNDLEGEND_VIABLE)
+        self.assertEqual(norm.komplexitaets_steuerungs_typ, KomplexitaetsSteuerungsChartaTyp.SOUVERAENITAETS_KOMPLEXITAETSSTEUERUNG)
+        self.assertEqual(norm.prozedur, KomplexitaetsSteuerungsChartaProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.komplexitaets_steuerungs_weight, 0.0)
+
+    def test_kki_komplexitaets_steuerungs_charta_aggregates_charta_signal(self) -> None:
+        charta = build_komplexitaets_steuerungs_charta(charta_id="charta-429-signal")
+        self.assertEqual(charta.charta_signal.status, "charta-gesperrt")
+        self.assertEqual(charta.gesperrt_norm_ids, ("charta-429-signal-stability-lane",))
+        self.assertEqual(charta.viable_norm_ids, ("charta-429-signal-governance-lane",))
+        self.assertEqual(charta.grundlegend_norm_ids, ("charta-429-signal-expansion-lane",))
+
+    # ------------------------------------------------------------------
+    # #430 InformationsVerfassung (Block-Krone ⭐)
+    # ------------------------------------------------------------------
+
+    def test_kki_informations_verfassung_builds_gesperrt_schutz_norm(self) -> None:
+        verfassung = build_informations_verfassung(verfassung_id="verfassung-430-stability")
+        norm = next(n for n in verfassung.normen if n.geltung is InformationsVerfassungsGeltung.GESPERRT)
+        self.assertEqual(norm.informations_verfassungs_typ, InformationsVerfassungsTyp.SCHUTZ_INFORMATIONSVERFASSUNG)
+        self.assertEqual(norm.prozedur, InformationsVerfassungsProzedur.NOTPROZEDUR)
+        self.assertGreaterEqual(norm.informations_verfassungs_tier, 1)
+
+    def test_kki_informations_verfassung_builds_informationsverfasst_ordnungs_norm(self) -> None:
+        verfassung = build_informations_verfassung(verfassung_id="verfassung-430-governance")
+        norm = next(n for n in verfassung.normen if n.geltung is InformationsVerfassungsGeltung.INFORMATIONSVERFASST)
+        self.assertEqual(norm.informations_verfassungs_typ, InformationsVerfassungsTyp.ORDNUNGS_INFORMATIONSVERFASSUNG)
+        self.assertEqual(norm.prozedur, InformationsVerfassungsProzedur.REGELPROTOKOLL)
+        self.assertGreater(norm.informations_verfassungs_weight, 0.0)
+
+    def test_kki_informations_verfassung_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        verfassung = build_informations_verfassung(verfassung_id="verfassung-430-expansion")
+        norm = next(n for n in verfassung.normen if n.geltung is InformationsVerfassungsGeltung.GRUNDLEGEND_INFORMATIONSVERFASST)
+        self.assertEqual(norm.informations_verfassungs_typ, InformationsVerfassungsTyp.SOUVERAENITAETS_INFORMATIONSVERFASSUNG)
+        self.assertEqual(norm.prozedur, InformationsVerfassungsProzedur.PLENARPROTOKOLL)
+        self.assertGreater(norm.informations_verfassungs_weight, 0.0)
+
+    def test_kki_informations_verfassung_aggregates_verfassung_signal(self) -> None:
+        verfassung = build_informations_verfassung(verfassung_id="verfassung-430-signal")
+        self.assertEqual(verfassung.verfassung_signal.status, "verfassung-gesperrt")
+        self.assertEqual(verfassung.gesperrt_norm_ids, ("verfassung-430-signal-stability-lane",))
+        self.assertEqual(verfassung.informationsverfasst_norm_ids, ("verfassung-430-signal-governance-lane",))
+        self.assertEqual(verfassung.grundlegend_norm_ids, ("verfassung-430-signal-expansion-lane",))
 
 
 if __name__ == "__main__":

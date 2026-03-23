@@ -1897,6 +1897,46 @@ from kki.medien_verfassung import (
     MedienVerfassung, MedienVerfassungsGeltung, MedienVerfassungsNorm,
     MedienVerfassungsTyp, MedienVerfassungsProzedur, build_medien_verfassung,
 )
+from kki.kunst_feld import (
+    KunstFeld, KunstFeldGeltung, KunstFeldNorm, KunstFeldTyp,
+    KunstFeldProzedur, build_kunst_feld,
+)
+from kki.aesthetik_register import (
+    AesthetikRegister, AesthetikRegisterGeltung, AesthetikRegisterNorm,
+    AesthetikRegisterTyp, AesthetikRegisterProzedur, build_aesthetik_register,
+)
+from kki.kunsttheorie_charta import (
+    KunsttheorieCharta, KunsttheorieChartaGeltung, KunsttheorieChartaNorm,
+    KunsttheorieChartaTyp, KunsttheorieChartaProzedur, build_kunsttheorie_charta,
+)
+from kki.stilkritik_kodex import (
+    StilkritikKodex, StilkritikKodexGeltung, StilkritikKodexNorm,
+    StilkritikKodexTyp, StilkritikKodexProzedur, build_stilkritik_kodex,
+)
+from kki.kunstgeschichte_manifest import (
+    KunstgeschichteManifest, KunstgeschichteManifestGeltung, KunstgeschichteManifestNorm,
+    KunstgeschichteManifestTyp, KunstgeschichteManifestProzedur, build_kunstgeschichte_manifest,
+)
+from kki.ikonographie_pakt import (
+    IkonographiePakt, IkonographiePaktGeltung, IkonographiePaktNorm,
+    IkonographiePaktTyp, IkonographiePaktProzedur, build_ikonographie_pakt,
+)
+from kki.kunstsoziologie_senat import (
+    KunstsoziologieSenat, KunstsoziologieSenatGeltung, KunstsoziologieSenatNorm,
+    KunstsoziologieSenatTyp, KunstsoziologieSenatProzedur, build_kunstsoziologie_senat,
+)
+from kki.kunst_norm import (
+    KunstNormSatz, KunstNormEintrag, KunstNormGeltung,
+    KunstNormTyp, KunstNormProzedur, build_kunst_norm,
+)
+from kki.aesthetische_urteils_charta import (
+    AesthetischeUrteilsCharta, AesthetischeUrteilsChartaGeltung, AesthetischeUrteilsChartaNorm,
+    AesthetischeUrteilsChartaTyp, AesthetischeUrteilsChartaProzedur, build_aesthetische_urteils_charta,
+)
+from kki.kunst_verfassung import (
+    KunstVerfassung, KunstVerfassungsGeltung, KunstVerfassungsNorm,
+    KunstVerfassungsTyp, KunstVerfassungsProzedur, build_kunst_verfassung,
+)
 from kki import (
     KausalitaetsGeltung,
     KausalitaetsNorm,
@@ -21124,3 +21164,375 @@ class SmokeTests(unittest.TestCase):
     def test_kki_medien_verfassung_norm_has_medien_tier(self) -> None:
         verfassung = build_medien_verfassung(verfassung_id="mv-570-t")
         self.assertTrue(all(isinstance(n.medien_tier, int) for n in verfassung.normen))
+
+    # ------------------------------------------------------------------ #
+    # Block #571–#580: Kunstwissenschaft & Ästhetik                       #
+    # ------------------------------------------------------------------ #
+
+    # --- #571 KunstFeld ---
+    def test_kki_kunst_feld_builds_gesperrt_schutz_norm(self) -> None:
+        feld = build_kunst_feld(feld_id="kf-571-g")
+        self.assertTrue(any(n.geltung is KunstFeldGeltung.GESPERRT for n in feld.normen))
+        self.assertTrue(any(n.kunst_typ is KunstFeldTyp.SCHUTZ_KUNSTFELD for n in feld.normen))
+
+    def test_kki_kunst_feld_builds_aesthetisch_souveraen_norm(self) -> None:
+        feld = build_kunst_feld(feld_id="kf-571-as")
+        self.assertTrue(any(n.geltung is KunstFeldGeltung.AESTHETISCH_SOUVERAEN for n in feld.normen))
+        self.assertTrue(any(n.kunst_typ is KunstFeldTyp.ORDNUNGS_KUNSTFELD for n in feld.normen))
+
+    def test_kki_kunst_feld_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        feld = build_kunst_feld(feld_id="kf-571-gs")
+        self.assertTrue(any(n.geltung is KunstFeldGeltung.GRUNDLEGEND_AESTHETISCH_SOUVERAEN for n in feld.normen))
+        self.assertTrue(any(n.kunst_typ is KunstFeldTyp.SOUVERAENITAETS_KUNSTFELD for n in feld.normen))
+
+    def test_kki_kunst_feld_aggregates_feld_signal(self) -> None:
+        feld = build_kunst_feld(feld_id="kf-571-sig")
+        sig = feld.feld_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(feld.gesperrt_norm_ids), 0)
+
+    def test_kki_kunst_feld_builds_aesthetisch_souveraen_norm_ids(self) -> None:
+        feld = build_kunst_feld(feld_id="kf-571-asi")
+        self.assertGreater(len(feld.aesthetisch_souveraen_norm_ids), 0)
+
+    def test_kki_kunst_feld_builds_grundlegend_norm_ids(self) -> None:
+        feld = build_kunst_feld(feld_id="kf-571-gni")
+        self.assertGreater(len(feld.grundlegend_norm_ids), 0)
+
+    def test_kki_kunst_feld_norm_has_kunst_weight(self) -> None:
+        feld = build_kunst_feld(feld_id="kf-571-w")
+        self.assertTrue(all(isinstance(n.kunst_weight, float) for n in feld.normen))
+
+    def test_kki_kunst_feld_norm_has_kunst_tier(self) -> None:
+        feld = build_kunst_feld(feld_id="kf-571-t")
+        self.assertTrue(all(isinstance(n.kunst_tier, int) for n in feld.normen))
+
+    # --- #572 AesthetikRegister ---
+    def test_kki_aesthetik_register_builds_gesperrt_schutz_norm(self) -> None:
+        reg = build_aesthetik_register(register_id="ar-572-g")
+        self.assertTrue(any(n.geltung is AesthetikRegisterGeltung.GESPERRT for n in reg.normen))
+        self.assertTrue(any(n.kunst_typ is AesthetikRegisterTyp.SCHUTZ_AESTHETIKREGISTER for n in reg.normen))
+
+    def test_kki_aesthetik_register_builds_aesthetisch_aktiv_norm(self) -> None:
+        reg = build_aesthetik_register(register_id="ar-572-aa")
+        self.assertTrue(any(n.geltung is AesthetikRegisterGeltung.AESTHETISCH_AKTIV for n in reg.normen))
+        self.assertTrue(any(n.kunst_typ is AesthetikRegisterTyp.ORDNUNGS_AESTHETIKREGISTER for n in reg.normen))
+
+    def test_kki_aesthetik_register_builds_grundlegend_norm(self) -> None:
+        reg = build_aesthetik_register(register_id="ar-572-gs")
+        self.assertTrue(any(n.geltung is AesthetikRegisterGeltung.GRUNDLEGEND_AESTHETISCH_AKTIV for n in reg.normen))
+
+    def test_kki_aesthetik_register_aggregates_register_signal(self) -> None:
+        reg = build_aesthetik_register(register_id="ar-572-sig")
+        sig = reg.register_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+
+    def test_kki_aesthetik_register_builds_grundlegend_norm_ids(self) -> None:
+        reg = build_aesthetik_register(register_id="ar-572-gni")
+        self.assertGreater(len(reg.grundlegend_norm_ids), 0)
+
+    def test_kki_aesthetik_register_norm_has_kunst_weight(self) -> None:
+        reg = build_aesthetik_register(register_id="ar-572-w")
+        self.assertTrue(all(isinstance(n.kunst_weight, float) for n in reg.normen))
+
+    def test_kki_aesthetik_register_norm_has_kunst_tier(self) -> None:
+        reg = build_aesthetik_register(register_id="ar-572-t")
+        self.assertTrue(all(isinstance(n.kunst_tier, int) for n in reg.normen))
+
+    def test_kki_aesthetik_register_norm_has_kunst_ids(self) -> None:
+        reg = build_aesthetik_register(register_id="ar-572-ids")
+        self.assertTrue(all(isinstance(n.kunst_ids, tuple) for n in reg.normen))
+
+    # --- #573 KunsttheorieCharta ---
+    def test_kki_kunsttheorie_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_kunsttheorie_charta(charta_id="ktc-573-g")
+        self.assertTrue(any(n.geltung is KunsttheorieChartaGeltung.GESPERRT for n in charta.normen))
+        self.assertTrue(any(n.kunst_typ is KunsttheorieChartaTyp.SCHUTZ_KUNSTTHEORIE for n in charta.normen))
+
+    def test_kki_kunsttheorie_charta_builds_kunsttheoretisch_norm(self) -> None:
+        charta = build_kunsttheorie_charta(charta_id="ktc-573-kt")
+        self.assertTrue(any(n.geltung is KunsttheorieChartaGeltung.KUNSTTHEORETISCH for n in charta.normen))
+
+    def test_kki_kunsttheorie_charta_builds_grundlegend_norm(self) -> None:
+        charta = build_kunsttheorie_charta(charta_id="ktc-573-gs")
+        self.assertTrue(any(n.geltung is KunsttheorieChartaGeltung.GRUNDLEGEND_KUNSTTHEORETISCH for n in charta.normen))
+
+    def test_kki_kunsttheorie_charta_aggregates_charta_signal(self) -> None:
+        charta = build_kunsttheorie_charta(charta_id="ktc-573-sig")
+        sig = charta.charta_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+
+    def test_kki_kunsttheorie_charta_norm_has_kunst_weight(self) -> None:
+        charta = build_kunsttheorie_charta(charta_id="ktc-573-w")
+        self.assertTrue(all(isinstance(n.kunst_weight, float) for n in charta.normen))
+
+    def test_kki_kunsttheorie_charta_norm_has_kunst_tier(self) -> None:
+        charta = build_kunsttheorie_charta(charta_id="ktc-573-t")
+        self.assertTrue(all(isinstance(n.kunst_tier, int) for n in charta.normen))
+
+    def test_kki_kunsttheorie_charta_norm_has_kunst_ids(self) -> None:
+        charta = build_kunsttheorie_charta(charta_id="ktc-573-ids")
+        self.assertTrue(all(isinstance(n.kunst_ids, tuple) for n in charta.normen))
+
+    def test_kki_kunsttheorie_charta_builds_grundlegend_norm_ids(self) -> None:
+        charta = build_kunsttheorie_charta(charta_id="ktc-573-gni")
+        self.assertGreater(len(charta.grundlegend_norm_ids), 0)
+
+    # --- #574 StilkritikKodex ---
+    def test_kki_stilkritik_kodex_builds_gesperrt_schutz_norm(self) -> None:
+        kodex = build_stilkritik_kodex(kodex_id="sk-574-g")
+        self.assertTrue(any(n.geltung is StilkritikKodexGeltung.GESPERRT for n in kodex.normen))
+        self.assertTrue(any(n.kunst_typ is StilkritikKodexTyp.SCHUTZ_STILKRITIK for n in kodex.normen))
+
+    def test_kki_stilkritik_kodex_builds_stilkritisch_norm(self) -> None:
+        kodex = build_stilkritik_kodex(kodex_id="sk-574-sk")
+        self.assertTrue(any(n.geltung is StilkritikKodexGeltung.STILKRITISCH for n in kodex.normen))
+
+    def test_kki_stilkritik_kodex_builds_grundlegend_norm(self) -> None:
+        kodex = build_stilkritik_kodex(kodex_id="sk-574-gs")
+        self.assertTrue(any(n.geltung is StilkritikKodexGeltung.GRUNDLEGEND_STILKRITISCH for n in kodex.normen))
+
+    def test_kki_stilkritik_kodex_aggregates_kodex_signal(self) -> None:
+        kodex = build_stilkritik_kodex(kodex_id="sk-574-sig")
+        sig = kodex.kodex_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+
+    def test_kki_stilkritik_kodex_builds_grundlegend_norm_ids(self) -> None:
+        kodex = build_stilkritik_kodex(kodex_id="sk-574-gni")
+        self.assertGreater(len(kodex.grundlegend_norm_ids), 0)
+
+    def test_kki_stilkritik_kodex_norm_has_kunst_weight(self) -> None:
+        kodex = build_stilkritik_kodex(kodex_id="sk-574-w")
+        self.assertTrue(all(isinstance(n.kunst_weight, float) for n in kodex.normen))
+
+    def test_kki_stilkritik_kodex_norm_has_kunst_tier(self) -> None:
+        kodex = build_stilkritik_kodex(kodex_id="sk-574-t")
+        self.assertTrue(all(isinstance(n.kunst_tier, int) for n in kodex.normen))
+
+    def test_kki_stilkritik_kodex_norm_has_kunst_ids(self) -> None:
+        kodex = build_stilkritik_kodex(kodex_id="sk-574-ids")
+        self.assertTrue(all(isinstance(n.kunst_ids, tuple) for n in kodex.normen))
+
+    # --- #575 KunstgeschichteManifest ---
+    def test_kki_kunstgeschichte_manifest_builds_gesperrt_schutz_norm(self) -> None:
+        manifest = build_kunstgeschichte_manifest(manifest_id="km-575-g")
+        self.assertTrue(any(n.geltung is KunstgeschichteManifestGeltung.GESPERRT for n in manifest.normen))
+        self.assertTrue(any(n.kunst_typ is KunstgeschichteManifestTyp.SCHUTZ_KUNSTGESCHICHTE for n in manifest.normen))
+
+    def test_kki_kunstgeschichte_manifest_builds_kunsthistorisch_norm(self) -> None:
+        manifest = build_kunstgeschichte_manifest(manifest_id="km-575-kh")
+        self.assertTrue(any(n.geltung is KunstgeschichteManifestGeltung.KUNSTHISTORISCH for n in manifest.normen))
+
+    def test_kki_kunstgeschichte_manifest_builds_grundlegend_norm(self) -> None:
+        manifest = build_kunstgeschichte_manifest(manifest_id="km-575-gs")
+        self.assertTrue(any(n.geltung is KunstgeschichteManifestGeltung.GRUNDLEGEND_KUNSTHISTORISCH for n in manifest.normen))
+
+    def test_kki_kunstgeschichte_manifest_aggregates_manifest_signal(self) -> None:
+        manifest = build_kunstgeschichte_manifest(manifest_id="km-575-sig")
+        sig = manifest.manifest_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+
+    def test_kki_kunstgeschichte_manifest_builds_grundlegend_norm_ids(self) -> None:
+        manifest = build_kunstgeschichte_manifest(manifest_id="km-575-gni")
+        self.assertGreater(len(manifest.grundlegend_norm_ids), 0)
+
+    def test_kki_kunstgeschichte_manifest_norm_has_kunst_weight(self) -> None:
+        manifest = build_kunstgeschichte_manifest(manifest_id="km-575-w")
+        self.assertTrue(all(isinstance(n.kunst_weight, float) for n in manifest.normen))
+
+    def test_kki_kunstgeschichte_manifest_norm_has_kunst_tier(self) -> None:
+        manifest = build_kunstgeschichte_manifest(manifest_id="km-575-t")
+        self.assertTrue(all(isinstance(n.kunst_tier, int) for n in manifest.normen))
+
+    def test_kki_kunstgeschichte_manifest_norm_has_kunst_ids(self) -> None:
+        manifest = build_kunstgeschichte_manifest(manifest_id="km-575-ids")
+        self.assertTrue(all(isinstance(n.kunst_ids, tuple) for n in manifest.normen))
+
+    # --- #576 IkonographiePakt ---
+    def test_kki_ikonographie_pakt_builds_gesperrt_schutz_norm(self) -> None:
+        pakt = build_ikonographie_pakt(pakt_id="ip-576-g")
+        self.assertTrue(any(n.geltung is IkonographiePaktGeltung.GESPERRT for n in pakt.normen))
+        self.assertTrue(any(n.kunst_typ is IkonographiePaktTyp.SCHUTZ_IKONOGRAPHIE for n in pakt.normen))
+
+    def test_kki_ikonographie_pakt_builds_ikonographisch_norm(self) -> None:
+        pakt = build_ikonographie_pakt(pakt_id="ip-576-ik")
+        self.assertTrue(any(n.geltung is IkonographiePaktGeltung.IKONOGRAPHISCH for n in pakt.normen))
+
+    def test_kki_ikonographie_pakt_builds_grundlegend_norm(self) -> None:
+        pakt = build_ikonographie_pakt(pakt_id="ip-576-gs")
+        self.assertTrue(any(n.geltung is IkonographiePaktGeltung.GRUNDLEGEND_IKONOGRAPHISCH for n in pakt.normen))
+
+    def test_kki_ikonographie_pakt_aggregates_pakt_signal(self) -> None:
+        pakt = build_ikonographie_pakt(pakt_id="ip-576-sig")
+        sig = pakt.pakt_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+
+    def test_kki_ikonographie_pakt_builds_grundlegend_norm_ids(self) -> None:
+        pakt = build_ikonographie_pakt(pakt_id="ip-576-gni")
+        self.assertGreater(len(pakt.grundlegend_norm_ids), 0)
+
+    def test_kki_ikonographie_pakt_norm_has_kunst_weight(self) -> None:
+        pakt = build_ikonographie_pakt(pakt_id="ip-576-w")
+        self.assertTrue(all(isinstance(n.kunst_weight, float) for n in pakt.normen))
+
+    def test_kki_ikonographie_pakt_norm_has_kunst_tier(self) -> None:
+        pakt = build_ikonographie_pakt(pakt_id="ip-576-t")
+        self.assertTrue(all(isinstance(n.kunst_tier, int) for n in pakt.normen))
+
+    def test_kki_ikonographie_pakt_norm_has_kunst_ids(self) -> None:
+        pakt = build_ikonographie_pakt(pakt_id="ip-576-ids")
+        self.assertTrue(all(isinstance(n.kunst_ids, tuple) for n in pakt.normen))
+
+    # --- #577 KunstsoziologieSenat ---
+    def test_kki_kunstsoziologie_senat_builds_gesperrt_schutz_norm(self) -> None:
+        senat = build_kunstsoziologie_senat(senat_id="ks-577-g")
+        self.assertTrue(any(n.geltung is KunstsoziologieSenatGeltung.GESPERRT for n in senat.normen))
+        self.assertTrue(any(n.kunst_typ is KunstsoziologieSenatTyp.SCHUTZ_KUNSTSOZIOLOGIE for n in senat.normen))
+
+    def test_kki_kunstsoziologie_senat_builds_kunstsoziologisch_norm(self) -> None:
+        senat = build_kunstsoziologie_senat(senat_id="ks-577-ks")
+        self.assertTrue(any(n.geltung is KunstsoziologieSenatGeltung.KUNSTSOZIOLOGISCH for n in senat.normen))
+
+    def test_kki_kunstsoziologie_senat_builds_grundlegend_norm(self) -> None:
+        senat = build_kunstsoziologie_senat(senat_id="ks-577-gs")
+        self.assertTrue(any(n.geltung is KunstsoziologieSenatGeltung.GRUNDLEGEND_KUNSTSOZIOLOGISCH for n in senat.normen))
+
+    def test_kki_kunstsoziologie_senat_aggregates_senat_signal(self) -> None:
+        senat = build_kunstsoziologie_senat(senat_id="ks-577-sig")
+        sig = senat.senat_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+
+    def test_kki_kunstsoziologie_senat_builds_grundlegend_norm_ids(self) -> None:
+        senat = build_kunstsoziologie_senat(senat_id="ks-577-gni")
+        self.assertGreater(len(senat.grundlegend_norm_ids), 0)
+
+    def test_kki_kunstsoziologie_senat_norm_has_kunst_weight(self) -> None:
+        senat = build_kunstsoziologie_senat(senat_id="ks-577-w")
+        self.assertTrue(all(isinstance(n.kunst_weight, float) for n in senat.normen))
+
+    def test_kki_kunstsoziologie_senat_norm_has_kunst_tier(self) -> None:
+        senat = build_kunstsoziologie_senat(senat_id="ks-577-t")
+        self.assertTrue(all(isinstance(n.kunst_tier, int) for n in senat.normen))
+
+    def test_kki_kunstsoziologie_senat_norm_has_kunst_ids(self) -> None:
+        senat = build_kunstsoziologie_senat(senat_id="ks-577-ids")
+        self.assertTrue(all(isinstance(n.kunst_ids, tuple) for n in senat.normen))
+
+    # --- #578 KunstNorm (*_norm pattern) ---
+    def test_kki_kunst_norm_builds_gesperrt_norm(self) -> None:
+        normsatz = build_kunst_norm(norm_id="kn-578-g")
+        self.assertTrue(any(n.geltung is KunstNormGeltung.GESPERRT for n in normsatz.normen))
+        self.assertTrue(any(n.kunst_norm_typ is KunstNormTyp.SCHUTZ_KUNSTNORM for n in normsatz.normen))
+
+    def test_kki_kunst_norm_builds_kunstnormativ_norm(self) -> None:
+        normsatz = build_kunst_norm(norm_id="kn-578-kn")
+        self.assertTrue(any(n.geltung is KunstNormGeltung.KUNSTNORMATIV for n in normsatz.normen))
+        self.assertTrue(any(n.kunst_norm_typ is KunstNormTyp.ORDNUNGS_KUNSTNORM for n in normsatz.normen))
+
+    def test_kki_kunst_norm_builds_grundlegend_norm(self) -> None:
+        normsatz = build_kunst_norm(norm_id="kn-578-gs")
+        self.assertTrue(any(n.geltung is KunstNormGeltung.GRUNDLEGEND_KUNSTNORMATIV for n in normsatz.normen))
+
+    def test_kki_kunst_norm_aggregates_norm_signal(self) -> None:
+        normsatz = build_kunst_norm(norm_id="kn-578-sig")
+        sig = normsatz.norm_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+
+    def test_kki_kunst_norm_builds_kunstnormativ_norm_ids(self) -> None:
+        normsatz = build_kunst_norm(norm_id="kn-578-kni")
+        self.assertGreater(len(normsatz.kunstnormativ_norm_ids), 0)
+
+    def test_kki_kunst_norm_builds_grundlegend_norm_ids(self) -> None:
+        normsatz = build_kunst_norm(norm_id="kn-578-gni")
+        self.assertGreater(len(normsatz.grundlegend_norm_ids), 0)
+
+    def test_kki_kunst_norm_norm_has_kunst_norm_weight(self) -> None:
+        normsatz = build_kunst_norm(norm_id="kn-578-w")
+        self.assertTrue(all(isinstance(n.kunst_norm_weight, float) for n in normsatz.normen))
+
+    def test_kki_kunst_norm_norm_has_kunst_norm_tier(self) -> None:
+        normsatz = build_kunst_norm(norm_id="kn-578-t")
+        self.assertTrue(all(isinstance(n.kunst_norm_tier, int) for n in normsatz.normen))
+
+    # --- #579 AesthetischeUrteilsCharta ---
+    def test_kki_aesthetische_urteils_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_aesthetische_urteils_charta(charta_id="auc-579-g")
+        self.assertTrue(any(n.geltung is AesthetischeUrteilsChartaGeltung.GESPERRT for n in charta.normen))
+        self.assertTrue(any(n.kunst_typ is AesthetischeUrteilsChartaTyp.SCHUTZ_AESTHETISCHE_URTEILS for n in charta.normen))
+
+    def test_kki_aesthetische_urteils_charta_builds_aesthetisch_urteilend_norm(self) -> None:
+        charta = build_aesthetische_urteils_charta(charta_id="auc-579-au")
+        self.assertTrue(any(n.geltung is AesthetischeUrteilsChartaGeltung.AESTHETISCH_URTEILEND for n in charta.normen))
+
+    def test_kki_aesthetische_urteils_charta_builds_grundlegend_norm(self) -> None:
+        charta = build_aesthetische_urteils_charta(charta_id="auc-579-gs")
+        self.assertTrue(any(n.geltung is AesthetischeUrteilsChartaGeltung.GRUNDLEGEND_AESTHETISCH_URTEILEND for n in charta.normen))
+
+    def test_kki_aesthetische_urteils_charta_aggregates_charta_signal(self) -> None:
+        charta = build_aesthetische_urteils_charta(charta_id="auc-579-sig")
+        sig = charta.charta_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+
+    def test_kki_aesthetische_urteils_charta_builds_grundlegend_norm_ids(self) -> None:
+        charta = build_aesthetische_urteils_charta(charta_id="auc-579-gni")
+        self.assertGreater(len(charta.grundlegend_norm_ids), 0)
+
+    def test_kki_aesthetische_urteils_charta_norm_has_kunst_weight(self) -> None:
+        charta = build_aesthetische_urteils_charta(charta_id="auc-579-w")
+        self.assertTrue(all(isinstance(n.kunst_weight, float) for n in charta.normen))
+
+    def test_kki_aesthetische_urteils_charta_norm_has_kunst_tier(self) -> None:
+        charta = build_aesthetische_urteils_charta(charta_id="auc-579-t")
+        self.assertTrue(all(isinstance(n.kunst_tier, int) for n in charta.normen))
+
+    def test_kki_aesthetische_urteils_charta_norm_has_kunst_ids(self) -> None:
+        charta = build_aesthetische_urteils_charta(charta_id="auc-579-ids")
+        self.assertTrue(all(isinstance(n.kunst_ids, tuple) for n in charta.normen))
+
+    # --- #580 KunstVerfassung (Block-Krone ⭐) ---
+    def test_kki_kunst_verfassung_builds_gesperrt_schutz_norm(self) -> None:
+        verfassung = build_kunst_verfassung(verfassung_id="kv-580-g")
+        self.assertTrue(any(n.geltung is KunstVerfassungsGeltung.GESPERRT for n in verfassung.normen))
+        self.assertTrue(any(n.kunst_typ is KunstVerfassungsTyp.SCHUTZ_KUNSTVERFASSUNG for n in verfassung.normen))
+
+    def test_kki_kunst_verfassung_builds_kunst_souveraen_norm(self) -> None:
+        verfassung = build_kunst_verfassung(verfassung_id="kv-580-ks")
+        self.assertTrue(any(n.geltung is KunstVerfassungsGeltung.KUNST_SOUVERAEN for n in verfassung.normen))
+        self.assertTrue(any(n.kunst_typ is KunstVerfassungsTyp.ORDNUNGS_KUNSTVERFASSUNG for n in verfassung.normen))
+
+    def test_kki_kunst_verfassung_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        verfassung = build_kunst_verfassung(verfassung_id="kv-580-gs")
+        self.assertTrue(any(n.geltung is KunstVerfassungsGeltung.GRUNDLEGEND_KUNST_SOUVERAEN for n in verfassung.normen))
+        self.assertTrue(any(n.kunst_typ is KunstVerfassungsTyp.SOUVERAENITAETS_KUNSTVERFASSUNG for n in verfassung.normen))
+
+    def test_kki_kunst_verfassung_aggregates_verfassung_signal(self) -> None:
+        verfassung = build_kunst_verfassung(verfassung_id="kv-580-sig")
+        sig = verfassung.verfassung_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(verfassung.gesperrt_norm_ids), 0)
+
+    def test_kki_kunst_verfassung_builds_kunst_souveraen_norm_ids(self) -> None:
+        verfassung = build_kunst_verfassung(verfassung_id="kv-580-ksi")
+        self.assertGreater(len(verfassung.kunst_souveraen_norm_ids), 0)
+
+    def test_kki_kunst_verfassung_builds_grundlegend_norm_ids(self) -> None:
+        verfassung = build_kunst_verfassung(verfassung_id="kv-580-gni")
+        self.assertGreater(len(verfassung.grundlegend_norm_ids), 0)
+
+    def test_kki_kunst_verfassung_norm_has_kunst_weight(self) -> None:
+        verfassung = build_kunst_verfassung(verfassung_id="kv-580-w")
+        self.assertTrue(all(isinstance(n.kunst_weight, float) for n in verfassung.normen))
+
+    def test_kki_kunst_verfassung_norm_has_kunst_tier(self) -> None:
+        verfassung = build_kunst_verfassung(verfassung_id="kv-580-t")
+        self.assertTrue(all(isinstance(n.kunst_tier, int) for n in verfassung.normen))

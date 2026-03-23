@@ -1515,6 +1515,56 @@ from kki.philosophie_verfassung import (
     PhilosophieVerfassungsNorm, PhilosophieVerfassungsTyp,
     PhilosophieVerfassungsProzedur, build_philosophie_verfassung,
 )
+from kki.kybernetik_feld import (
+    KybernetikFeld, KybernetikFeldGeltung,
+    KybernetikFeldNorm, KybernetikFeldTyp,
+    KybernetikFeldProzedur, build_kybernetik_feld,
+)
+from kki.systemtheorie_register import (
+    SystemtheorieRegister, SystemtheorieRegisterGeltung,
+    SystemtheorieRegisterNorm, SystemtheorieRegisterTyp,
+    SystemtheorieRegisterProzedur, build_systemtheorie_register,
+)
+from kki.autopoiesis_charta import (
+    AutopoiesisCharta, AutopoiesisChartaGeltung,
+    AutopoiesisChartaNorm, AutopoiesisChartaTyp,
+    AutopoiesisChartaProzedur, build_autopoiesis_charta,
+)
+from kki.homoeostase_kodex import (
+    HomoeostaseKodex, HomoeostaseKodexGeltung,
+    HomoeostaseKodexNorm, HomoeostaseKodexTyp,
+    HomoeostaseKodexProzedur, build_homoeostase_kodex,
+)
+from kki.rekursions_pakt import (
+    RekursionsPakt, RekursionsPaktGeltung,
+    RekursionsPaktNorm, RekursionsPaktTyp,
+    RekursionsPaktProzedur, build_rekursions_pakt,
+)
+from kki.viable_system_manifest import (
+    ViableSystemManifest, ViableSystemManifestGeltung,
+    ViableSystemManifestNorm, ViableSystemManifestTyp,
+    ViableSystemManifestProzedur, build_viable_system_manifest,
+)
+from kki.zweite_ordnung_senat import (
+    ZweiteOrdnungSenat, ZweiteOrdnungSenatGeltung,
+    ZweiteOrdnungSenatNorm, ZweiteOrdnungSenatTyp,
+    ZweiteOrdnungSenatProzedur, build_zweite_ordnung_senat,
+)
+from kki.system_norm import (
+    SystemNormSatz, SystemNormGeltung,
+    SystemNormEintrag, SystemNormTyp,
+    SystemNormProzedur, build_system_norm,
+)
+from kki.komplexitaets_adaptions_charta import (
+    KomplexitaetsAdaptionsCharta, KomplexitaetsAdaptionsChartaGeltung,
+    KomplexitaetsAdaptionsChartaNorm, KomplexitaetsAdaptionsChartaTyp,
+    KomplexitaetsAdaptionsChartaProzedur, build_komplexitaets_adaptions_charta,
+)
+from kki.kybernetik_verfassung import (
+    KybernetikVerfassung, KybernetikVerfassungsGeltung,
+    KybernetikVerfassungsNorm, KybernetikVerfassungsTyp,
+    KybernetikVerfassungsProzedur, build_kybernetik_verfassung,
+)
 from kki import (
     KausalitaetsGeltung,
     KausalitaetsNorm,
@@ -18058,6 +18108,266 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(verfassung.gesperrt_norm_ids, ("verfassung-480-sig-stability-lane",))
         self.assertEqual(verfassung.philosophisch_norm_ids, ("verfassung-480-sig-governance-lane",))
         self.assertEqual(verfassung.grundlegend_norm_ids, ("verfassung-480-sig-expansion-lane",))
+
+    # --- #481 KybernetikFeld ---
+    def test_kki_kybernetik_feld_builds_gesperrt_schutz_norm(self) -> None:
+        feld = build_kybernetik_feld(feld_id="feld-481-g")
+        gesperrt = [n for n in feld.normen if n.geltung is KybernetikFeldGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) >= 1)
+        self.assertEqual(gesperrt[0].kybernetik_typ, KybernetikFeldTyp.SCHUTZ_KYBERNETIK)
+
+    def test_kki_kybernetik_feld_builds_kybernetisch_norm(self) -> None:
+        feld = build_kybernetik_feld(feld_id="feld-481-k")
+        kybernetisch = [n for n in feld.normen if n.geltung is KybernetikFeldGeltung.KYBERNETISCH]
+        self.assertTrue(len(kybernetisch) >= 1)
+        self.assertEqual(kybernetisch[0].kybernetik_typ, KybernetikFeldTyp.ORDNUNGS_KYBERNETIK)
+
+    def test_kki_kybernetik_feld_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        feld = build_kybernetik_feld(feld_id="feld-481-gs")
+        grundlegend = [n for n in feld.normen if n.geltung is KybernetikFeldGeltung.GRUNDLEGEND_KYBERNETISCH]
+        self.assertTrue(len(grundlegend) >= 1)
+        self.assertEqual(grundlegend[0].kybernetik_typ, KybernetikFeldTyp.SOUVERAENITAETS_KYBERNETIK)
+
+    def test_kki_kybernetik_feld_aggregates_feld_signal(self) -> None:
+        feld = build_kybernetik_feld(feld_id="feld-481-sig")
+        self.assertEqual(feld.feld_signal.status, "feld-gesperrt")
+        self.assertEqual(feld.gesperrt_norm_ids, ("feld-481-sig-stability-lane",))
+        self.assertEqual(feld.kybernetisch_norm_ids, ("feld-481-sig-governance-lane",))
+        self.assertEqual(feld.grundlegend_norm_ids, ("feld-481-sig-expansion-lane",))
+
+    # --- #482 SystemtheorieRegister ---
+    def test_kki_systemtheorie_register_builds_gesperrt_schutz_norm(self) -> None:
+        reg = build_systemtheorie_register(register_id="reg-482-g")
+        gesperrt = [n for n in reg.normen if n.geltung is SystemtheorieRegisterGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) >= 1)
+        self.assertEqual(gesperrt[0].systemtheorie_typ, SystemtheorieRegisterTyp.SCHUTZ_SYSTEMTHEORIE)
+
+    def test_kki_systemtheorie_register_builds_systemtheoretisch_norm(self) -> None:
+        reg = build_systemtheorie_register(register_id="reg-482-s")
+        systemtheoretisch = [n for n in reg.normen if n.geltung is SystemtheorieRegisterGeltung.SYSTEMTHEORETISCH]
+        self.assertTrue(len(systemtheoretisch) >= 1)
+        self.assertEqual(systemtheoretisch[0].systemtheorie_typ, SystemtheorieRegisterTyp.ORDNUNGS_SYSTEMTHEORIE)
+
+    def test_kki_systemtheorie_register_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        reg = build_systemtheorie_register(register_id="reg-482-gs")
+        grundlegend = [n for n in reg.normen if n.geltung is SystemtheorieRegisterGeltung.GRUNDLEGEND_SYSTEMTHEORETISCH]
+        self.assertTrue(len(grundlegend) >= 1)
+        self.assertEqual(grundlegend[0].systemtheorie_typ, SystemtheorieRegisterTyp.SOUVERAENITAETS_SYSTEMTHEORIE)
+
+    def test_kki_systemtheorie_register_aggregates_register_signal(self) -> None:
+        reg = build_systemtheorie_register(register_id="reg-482-sig")
+        self.assertEqual(reg.register_signal.status, "register-gesperrt")
+        self.assertEqual(reg.gesperrt_norm_ids, ("reg-482-sig-stability-lane",))
+        self.assertEqual(reg.systemtheoretisch_norm_ids, ("reg-482-sig-governance-lane",))
+        self.assertEqual(reg.grundlegend_norm_ids, ("reg-482-sig-expansion-lane",))
+
+    # --- #483 AutopoiesisCharta ---
+    def test_kki_autopoiesis_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_autopoiesis_charta(charta_id="charta-483-g")
+        gesperrt = [n for n in charta.normen if n.geltung is AutopoiesisChartaGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) >= 1)
+        self.assertEqual(gesperrt[0].autopoiesis_typ, AutopoiesisChartaTyp.SCHUTZ_AUTOPOIESIS)
+
+    def test_kki_autopoiesis_charta_builds_autopoietisch_norm(self) -> None:
+        charta = build_autopoiesis_charta(charta_id="charta-483-a")
+        autopoietisch = [n for n in charta.normen if n.geltung is AutopoiesisChartaGeltung.AUTOPOIETISCH]
+        self.assertTrue(len(autopoietisch) >= 1)
+        self.assertEqual(autopoietisch[0].autopoiesis_typ, AutopoiesisChartaTyp.ORDNUNGS_AUTOPOIESIS)
+
+    def test_kki_autopoiesis_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_autopoiesis_charta(charta_id="charta-483-gs")
+        grundlegend = [n for n in charta.normen if n.geltung is AutopoiesisChartaGeltung.GRUNDLEGEND_AUTOPOIETISCH]
+        self.assertTrue(len(grundlegend) >= 1)
+        self.assertEqual(grundlegend[0].autopoiesis_typ, AutopoiesisChartaTyp.SOUVERAENITAETS_AUTOPOIESIS)
+
+    def test_kki_autopoiesis_charta_aggregates_charta_signal(self) -> None:
+        charta = build_autopoiesis_charta(charta_id="charta-483-sig")
+        self.assertEqual(charta.charta_signal.status, "charta-gesperrt")
+        self.assertEqual(charta.gesperrt_norm_ids, ("charta-483-sig-stability-lane",))
+        self.assertEqual(charta.autopoietisch_norm_ids, ("charta-483-sig-governance-lane",))
+        self.assertEqual(charta.grundlegend_norm_ids, ("charta-483-sig-expansion-lane",))
+
+    # --- #484 HomoeostaseKodex ---
+    def test_kki_homoeostase_kodex_builds_gesperrt_schutz_norm(self) -> None:
+        kodex = build_homoeostase_kodex(kodex_id="kodex-484-g")
+        gesperrt = [n for n in kodex.normen if n.geltung is HomoeostaseKodexGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) >= 1)
+        self.assertEqual(gesperrt[0].homoeostase_typ, HomoeostaseKodexTyp.SCHUTZ_HOMOEOSTASE)
+
+    def test_kki_homoeostase_kodex_builds_homoeostatisch_norm(self) -> None:
+        kodex = build_homoeostase_kodex(kodex_id="kodex-484-h")
+        homoeostatisch = [n for n in kodex.normen if n.geltung is HomoeostaseKodexGeltung.HOMOEOSTATISCH]
+        self.assertTrue(len(homoeostatisch) >= 1)
+        self.assertEqual(homoeostatisch[0].homoeostase_typ, HomoeostaseKodexTyp.ORDNUNGS_HOMOEOSTASE)
+
+    def test_kki_homoeostase_kodex_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        kodex = build_homoeostase_kodex(kodex_id="kodex-484-gs")
+        grundlegend = [n for n in kodex.normen if n.geltung is HomoeostaseKodexGeltung.GRUNDLEGEND_HOMOEOSTATISCH]
+        self.assertTrue(len(grundlegend) >= 1)
+        self.assertEqual(grundlegend[0].homoeostase_typ, HomoeostaseKodexTyp.SOUVERAENITAETS_HOMOEOSTASE)
+
+    def test_kki_homoeostase_kodex_aggregates_kodex_signal(self) -> None:
+        kodex = build_homoeostase_kodex(kodex_id="kodex-484-sig")
+        self.assertEqual(kodex.kodex_signal.status, "kodex-gesperrt")
+        self.assertEqual(kodex.gesperrt_norm_ids, ("kodex-484-sig-stability-lane",))
+        self.assertEqual(kodex.homoeostatisch_norm_ids, ("kodex-484-sig-governance-lane",))
+        self.assertEqual(kodex.grundlegend_norm_ids, ("kodex-484-sig-expansion-lane",))
+
+    # --- #485 RekursionsPakt ---
+    def test_kki_rekursions_pakt_builds_gesperrt_schutz_norm(self) -> None:
+        pakt = build_rekursions_pakt(pakt_id="pakt-485-g")
+        gesperrt = [n for n in pakt.normen if n.geltung is RekursionsPaktGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) >= 1)
+        self.assertEqual(gesperrt[0].rekursions_typ, RekursionsPaktTyp.SCHUTZ_REKURSION)
+
+    def test_kki_rekursions_pakt_builds_rekursiv_norm(self) -> None:
+        pakt = build_rekursions_pakt(pakt_id="pakt-485-r")
+        rekursiv = [n for n in pakt.normen if n.geltung is RekursionsPaktGeltung.REKURSIV]
+        self.assertTrue(len(rekursiv) >= 1)
+        self.assertEqual(rekursiv[0].rekursions_typ, RekursionsPaktTyp.ORDNUNGS_REKURSION)
+
+    def test_kki_rekursions_pakt_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        pakt = build_rekursions_pakt(pakt_id="pakt-485-gs")
+        grundlegend = [n for n in pakt.normen if n.geltung is RekursionsPaktGeltung.GRUNDLEGEND_REKURSIV]
+        self.assertTrue(len(grundlegend) >= 1)
+        self.assertEqual(grundlegend[0].rekursions_typ, RekursionsPaktTyp.SOUVERAENITAETS_REKURSION)
+
+    def test_kki_rekursions_pakt_aggregates_pakt_signal(self) -> None:
+        pakt = build_rekursions_pakt(pakt_id="pakt-485-sig")
+        self.assertEqual(pakt.pakt_signal.status, "pakt-gesperrt")
+        self.assertEqual(pakt.gesperrt_norm_ids, ("pakt-485-sig-stability-lane",))
+        self.assertEqual(pakt.rekursiv_norm_ids, ("pakt-485-sig-governance-lane",))
+        self.assertEqual(pakt.grundlegend_norm_ids, ("pakt-485-sig-expansion-lane",))
+
+    # --- #486 ViableSystemManifest ---
+    def test_kki_viable_system_manifest_builds_gesperrt_schutz_norm(self) -> None:
+        manifest = build_viable_system_manifest(manifest_id="manifest-486-g")
+        gesperrt = [n for n in manifest.normen if n.geltung is ViableSystemManifestGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) >= 1)
+        self.assertEqual(gesperrt[0].viable_system_typ, ViableSystemManifestTyp.SCHUTZ_VIABLE_SYSTEM)
+
+    def test_kki_viable_system_manifest_builds_viable_norm(self) -> None:
+        manifest = build_viable_system_manifest(manifest_id="manifest-486-v")
+        viable = [n for n in manifest.normen if n.geltung is ViableSystemManifestGeltung.VIABLE]
+        self.assertTrue(len(viable) >= 1)
+        self.assertEqual(viable[0].viable_system_typ, ViableSystemManifestTyp.ORDNUNGS_VIABLE_SYSTEM)
+
+    def test_kki_viable_system_manifest_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        manifest = build_viable_system_manifest(manifest_id="manifest-486-gs")
+        grundlegend = [n for n in manifest.normen if n.geltung is ViableSystemManifestGeltung.GRUNDLEGEND_VIABLE]
+        self.assertTrue(len(grundlegend) >= 1)
+        self.assertEqual(grundlegend[0].viable_system_typ, ViableSystemManifestTyp.SOUVERAENITAETS_VIABLE_SYSTEM)
+
+    def test_kki_viable_system_manifest_aggregates_manifest_signal(self) -> None:
+        manifest = build_viable_system_manifest(manifest_id="manifest-486-sig")
+        self.assertEqual(manifest.manifest_signal.status, "manifest-gesperrt")
+        self.assertEqual(manifest.gesperrt_norm_ids, ("manifest-486-sig-stability-lane",))
+        self.assertEqual(manifest.viable_norm_ids, ("manifest-486-sig-governance-lane",))
+        self.assertEqual(manifest.grundlegend_norm_ids, ("manifest-486-sig-expansion-lane",))
+
+    # --- #487 ZweiteOrdnungSenat ---
+    def test_kki_zweite_ordnung_senat_builds_gesperrt_schutz_norm(self) -> None:
+        senat = build_zweite_ordnung_senat(senat_id="senat-487-g")
+        gesperrt = [n for n in senat.normen if n.geltung is ZweiteOrdnungSenatGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) >= 1)
+        self.assertEqual(gesperrt[0].zweite_ordnung_typ, ZweiteOrdnungSenatTyp.SCHUTZ_ZWEITE_ORDNUNG)
+
+    def test_kki_zweite_ordnung_senat_builds_zweite_ordnung_norm(self) -> None:
+        senat = build_zweite_ordnung_senat(senat_id="senat-487-z")
+        zweite = [n for n in senat.normen if n.geltung is ZweiteOrdnungSenatGeltung.ZWEITE_ORDNUNG]
+        self.assertTrue(len(zweite) >= 1)
+        self.assertEqual(zweite[0].zweite_ordnung_typ, ZweiteOrdnungSenatTyp.ORDNUNGS_ZWEITE_ORDNUNG)
+
+    def test_kki_zweite_ordnung_senat_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        senat = build_zweite_ordnung_senat(senat_id="senat-487-gs")
+        grundlegend = [n for n in senat.normen if n.geltung is ZweiteOrdnungSenatGeltung.GRUNDLEGEND_ZWEITE_ORDNUNG]
+        self.assertTrue(len(grundlegend) >= 1)
+        self.assertEqual(grundlegend[0].zweite_ordnung_typ, ZweiteOrdnungSenatTyp.SOUVERAENITAETS_ZWEITE_ORDNUNG)
+
+    def test_kki_zweite_ordnung_senat_aggregates_senat_signal(self) -> None:
+        senat = build_zweite_ordnung_senat(senat_id="senat-487-sig")
+        self.assertEqual(senat.senat_signal.status, "senat-gesperrt")
+        self.assertEqual(senat.gesperrt_norm_ids, ("senat-487-sig-stability-lane",))
+        self.assertEqual(senat.zweite_ordnung_norm_ids, ("senat-487-sig-governance-lane",))
+        self.assertEqual(senat.grundlegend_norm_ids, ("senat-487-sig-expansion-lane",))
+
+    # --- #488 SystemNorm (*_norm) ---
+    def test_kki_system_norm_builds_gesperrt_schutz_norm(self) -> None:
+        normsatz = build_system_norm(norm_id="snorm-488-g")
+        gesperrt = [n for n in normsatz.normen if n.geltung is SystemNormGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) >= 1)
+        self.assertEqual(gesperrt[0].system_norm_typ, SystemNormTyp.SCHUTZ_SYSTEMNORM)
+
+    def test_kki_system_norm_builds_systemnormativ_norm(self) -> None:
+        normsatz = build_system_norm(norm_id="snorm-488-s")
+        systemnormativ = [n for n in normsatz.normen if n.geltung is SystemNormGeltung.SYSTEMNORMATIV]
+        self.assertTrue(len(systemnormativ) >= 1)
+        self.assertEqual(systemnormativ[0].system_norm_typ, SystemNormTyp.ORDNUNGS_SYSTEMNORM)
+
+    def test_kki_system_norm_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        normsatz = build_system_norm(norm_id="snorm-488-gs")
+        grundlegend = [n for n in normsatz.normen if n.geltung is SystemNormGeltung.GRUNDLEGEND_SYSTEMNORMATIV]
+        self.assertTrue(len(grundlegend) >= 1)
+        self.assertEqual(grundlegend[0].system_norm_typ, SystemNormTyp.SOUVERAENITAETS_SYSTEMNORM)
+
+    def test_kki_system_norm_aggregates_norm_signal(self) -> None:
+        normsatz = build_system_norm(norm_id="snorm-488-sig")
+        self.assertEqual(normsatz.norm_signal.status, "norm-gesperrt")
+        self.assertEqual(normsatz.gesperrt_norm_ids, ("snorm-488-sig-stability-lane",))
+        self.assertEqual(normsatz.systemnormativ_norm_ids, ("snorm-488-sig-governance-lane",))
+        self.assertEqual(normsatz.grundlegend_norm_ids, ("snorm-488-sig-expansion-lane",))
+
+    # --- #489 KomplexitaetsAdaptionsCharta ---
+    def test_kki_komplexitaets_adaptions_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_komplexitaets_adaptions_charta(charta_id="charta-489-g")
+        gesperrt = [n for n in charta.normen if n.geltung is KomplexitaetsAdaptionsChartaGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) >= 1)
+        self.assertEqual(gesperrt[0].komplexitaets_adaptions_typ, KomplexitaetsAdaptionsChartaTyp.SCHUTZ_KOMPLEXITAETSADAPTION)
+
+    def test_kki_komplexitaets_adaptions_charta_builds_komplexitaetsadaptiv_norm(self) -> None:
+        charta = build_komplexitaets_adaptions_charta(charta_id="charta-489-k")
+        komplex = [n for n in charta.normen if n.geltung is KomplexitaetsAdaptionsChartaGeltung.KOMPLEXITAETSADAPTIV]
+        self.assertTrue(len(komplex) >= 1)
+        self.assertEqual(komplex[0].komplexitaets_adaptions_typ, KomplexitaetsAdaptionsChartaTyp.ORDNUNGS_KOMPLEXITAETSADAPTION)
+
+    def test_kki_komplexitaets_adaptions_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_komplexitaets_adaptions_charta(charta_id="charta-489-gs")
+        grundlegend = [n for n in charta.normen if n.geltung is KomplexitaetsAdaptionsChartaGeltung.GRUNDLEGEND_KOMPLEXITAETSADAPTIV]
+        self.assertTrue(len(grundlegend) >= 1)
+        self.assertEqual(grundlegend[0].komplexitaets_adaptions_typ, KomplexitaetsAdaptionsChartaTyp.SOUVERAENITAETS_KOMPLEXITAETSADAPTION)
+
+    def test_kki_komplexitaets_adaptions_charta_aggregates_charta_signal(self) -> None:
+        charta = build_komplexitaets_adaptions_charta(charta_id="charta-489-sig")
+        self.assertEqual(charta.charta_signal.status, "charta-gesperrt")
+        self.assertEqual(charta.gesperrt_norm_ids, ("charta-489-sig-stability-lane",))
+        self.assertEqual(charta.komplexitaetsadaptiv_norm_ids, ("charta-489-sig-governance-lane",))
+        self.assertEqual(charta.grundlegend_norm_ids, ("charta-489-sig-expansion-lane",))
+
+    # --- #490 KybernetikVerfassung (Block-Krone) ---
+    def test_kki_kybernetik_verfassung_builds_gesperrt_schutz_norm(self) -> None:
+        verfassung = build_kybernetik_verfassung(verfassung_id="verfassung-490-g")
+        gesperrt = [n for n in verfassung.normen if n.geltung is KybernetikVerfassungsGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) >= 1)
+        self.assertEqual(gesperrt[0].kybernetik_typ, KybernetikVerfassungsTyp.SCHUTZ_KYBERNETIK)
+
+    def test_kki_kybernetik_verfassung_builds_kybernetisch_souveraen_norm(self) -> None:
+        verfassung = build_kybernetik_verfassung(verfassung_id="verfassung-490-k")
+        kyb = [n for n in verfassung.normen if n.geltung is KybernetikVerfassungsGeltung.KYBERNETISCH_SOUVERAEN]
+        self.assertTrue(len(kyb) >= 1)
+        self.assertEqual(kyb[0].kybernetik_typ, KybernetikVerfassungsTyp.ORDNUNGS_KYBERNETIK)
+
+    def test_kki_kybernetik_verfassung_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        verfassung = build_kybernetik_verfassung(verfassung_id="verfassung-490-gs")
+        grundlegend = [n for n in verfassung.normen if n.geltung is KybernetikVerfassungsGeltung.GRUNDLEGEND_KYBERNETISCH_SOUVERAEN]
+        self.assertTrue(len(grundlegend) >= 1)
+        self.assertEqual(grundlegend[0].kybernetik_typ, KybernetikVerfassungsTyp.SOUVERAENITAETS_KYBERNETIK)
+
+    def test_kki_kybernetik_verfassung_aggregates_verfassung_signal(self) -> None:
+        verfassung = build_kybernetik_verfassung(verfassung_id="verfassung-490-sig")
+        self.assertEqual(verfassung.verfassung_signal.status, "verfassung-gesperrt")
+        self.assertEqual(verfassung.gesperrt_norm_ids, ("verfassung-490-sig-stability-lane",))
+        self.assertEqual(verfassung.kybernetisch_souveraen_norm_ids, ("verfassung-490-sig-governance-lane",))
+        self.assertEqual(verfassung.grundlegend_norm_ids, ("verfassung-490-sig-expansion-lane",))
 
 
 if __name__ == "__main__":

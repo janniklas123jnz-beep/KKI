@@ -1811,6 +1811,48 @@ from kki.geschichts_verfassung import (
     GeschichtsVerfassung, GeschichtsVerfassungsGeltung, GeschichtsVerfassungsNorm,
     GeschichtsVerfassungsTyp, GeschichtsVerfassungsProzedur, build_geschichts_verfassung,
 )
+from kki.kultur_feld import (
+    KulturFeld, KulturFeldGeltung, KulturFeldNorm, KulturFeldTyp,
+    KulturFeldProzedur, build_kultur_feld,
+)
+from kki.kulturanthropologie_register import (
+    KulturanthropologieRegister, KulturanthropologieRegisterGeltung,
+    KulturanthropologieRegisterNorm, KulturanthropologieRegisterTyp,
+    KulturanthropologieRegisterProzedur, build_kulturanthropologie_register,
+)
+from kki.ethnographie_charta import (
+    EthnographieCharta, EthnographieChartaGeltung, EthnographieChartaNorm,
+    EthnographieChartaTyp, EthnographieChartaProzedur, build_ethnographie_charta,
+)
+from kki.ritual_kodex import (
+    RitualKodex, RitualKodexGeltung, RitualKodexNorm, RitualKodexTyp,
+    RitualKodexProzedur, build_ritual_kodex,
+)
+from kki.kultursysteme_manifest import (
+    KultursystemeManifest, KultursystemeManifestGeltung, KultursystemeManifestNorm,
+    KultursystemeManifestTyp, KultursystemeManifestProzedur, build_kultursysteme_manifest,
+)
+from kki.kulturgedaechtnis_pakt import (
+    KulturgedaechnisPakt, KulturgedaechnisPaktGeltung, KulturgedaechnisPaktNorm,
+    KulturgedaechnisPaktTyp, KulturgedaechnisPaktProzedur, build_kulturgedaechtnis_pakt,
+)
+from kki.kultursoziologie_senat import (
+    KultursoziologieSenat, KultursoziologieSenatGeltung, KultursoziologieSenatNorm,
+    KultursoziologieSenatTyp, KultursoziologieSenatProzedur, build_kultursoziologie_senat,
+)
+from kki.kultur_norm import (
+    KulturNormGeltung, KulturNormTyp, KulturNormProzedur,
+    KulturNormEintrag, KulturNormSatz, build_kultur_norm,
+)
+from kki.kulturelle_identitaets_charta import (
+    KulturelleIdentitaetsCharta, KulturelleIdentitaetsChartaGeltung,
+    KulturelleIdentitaetsChartaNorm, KulturelleIdentitaetsChartaTyp,
+    KulturelleIdentitaetsChartaProzedur, build_kulturelle_identitaets_charta,
+)
+from kki.kultur_verfassung import (
+    KulturVerfassung, KulturVerfassungsGeltung, KulturVerfassungsNorm,
+    KulturVerfassungsTyp, KulturVerfassungsProzedur, build_kultur_verfassung,
+)
 from kki import (
     KausalitaetsGeltung,
     KausalitaetsNorm,
@@ -20250,3 +20292,397 @@ class SmokeTests(unittest.TestCase):
     def test_kki_geschichts_verfassung_norm_has_geschichts_tier(self) -> None:
         verfassung = build_geschichts_verfassung(verfassung_id="gv-550-t")
         self.assertTrue(all(isinstance(n.geschichts_tier, int) for n in verfassung.normen))
+
+    # ═══════════════════════════════════════════════════════
+    # Block #551–#560 — Kulturwissenschaften & Kulturanthropologie
+    # ═══════════════════════════════════════════════════════
+
+    # --- #551 KulturFeld ---
+    def test_kki_kultur_feld_builds_gesperrt_schutz_norm(self) -> None:
+        feld = build_kultur_feld(feld_id="kf-551-g")
+        self.assertTrue(any(n.geltung is KulturFeldGeltung.GESPERRT for n in feld.normen))
+        self.assertTrue(any(n.kultur_typ is KulturFeldTyp.SCHUTZ_KULTUR for n in feld.normen))
+
+    def test_kki_kultur_feld_builds_kulturell_norm(self) -> None:
+        feld = build_kultur_feld(feld_id="kf-551-k")
+        self.assertTrue(any(n.geltung is KulturFeldGeltung.KULTURELL for n in feld.normen))
+        self.assertTrue(any(n.kultur_typ is KulturFeldTyp.ORDNUNGS_KULTUR for n in feld.normen))
+
+    def test_kki_kultur_feld_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        feld = build_kultur_feld(feld_id="kf-551-gs")
+        self.assertTrue(any(n.geltung is KulturFeldGeltung.GRUNDLEGEND_KULTURELL for n in feld.normen))
+        self.assertTrue(any(n.kultur_typ is KulturFeldTyp.SOUVERAENITAETS_KULTUR for n in feld.normen))
+
+    def test_kki_kultur_feld_aggregates_feld_signal(self) -> None:
+        feld = build_kultur_feld(feld_id="kf-551-sig")
+        sig = feld.feld_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(feld.gesperrt_norm_ids), 0)
+
+    def test_kki_kultur_feld_builds_kulturell_norm_ids(self) -> None:
+        feld = build_kultur_feld(feld_id="kf-551-ki")
+        self.assertGreater(len(feld.kulturell_norm_ids), 0)
+
+    def test_kki_kultur_feld_builds_grundlegend_norm_ids(self) -> None:
+        feld = build_kultur_feld(feld_id="kf-551-gni")
+        self.assertGreater(len(feld.grundlegend_norm_ids), 0)
+
+    def test_kki_kultur_feld_norm_has_kultur_weight(self) -> None:
+        feld = build_kultur_feld(feld_id="kf-551-w")
+        self.assertTrue(all(isinstance(n.kultur_weight, float) for n in feld.normen))
+
+    def test_kki_kultur_feld_norm_has_kultur_tier(self) -> None:
+        feld = build_kultur_feld(feld_id="kf-551-t")
+        self.assertTrue(all(isinstance(n.kultur_tier, int) for n in feld.normen))
+
+    # --- #552 KulturanthropologieRegister ---
+    def test_kki_kulturanthropologie_register_builds_gesperrt_schutz_norm(self) -> None:
+        reg = build_kulturanthropologie_register(register_id="kar-552-g")
+        self.assertTrue(any(n.geltung is KulturanthropologieRegisterGeltung.GESPERRT for n in reg.normen))
+        self.assertTrue(any(n.kultur_typ is KulturanthropologieRegisterTyp.SCHUTZ_ANTHROPOLOGIE for n in reg.normen))
+
+    def test_kki_kulturanthropologie_register_builds_anthropologisch_norm(self) -> None:
+        reg = build_kulturanthropologie_register(register_id="kar-552-a")
+        self.assertTrue(any(n.geltung is KulturanthropologieRegisterGeltung.ANTHROPOLOGISCH for n in reg.normen))
+        self.assertTrue(any(n.kultur_typ is KulturanthropologieRegisterTyp.ORDNUNGS_ANTHROPOLOGIE for n in reg.normen))
+
+    def test_kki_kulturanthropologie_register_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        reg = build_kulturanthropologie_register(register_id="kar-552-gs")
+        self.assertTrue(any(n.geltung is KulturanthropologieRegisterGeltung.GRUNDLEGEND_ANTHROPOLOGISCH for n in reg.normen))
+        self.assertTrue(any(n.kultur_typ is KulturanthropologieRegisterTyp.SOUVERAENITAETS_ANTHROPOLOGIE for n in reg.normen))
+
+    def test_kki_kulturanthropologie_register_aggregates_register_signal(self) -> None:
+        reg = build_kulturanthropologie_register(register_id="kar-552-sig")
+        sig = reg.register_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(reg.gesperrt_norm_ids), 0)
+
+    def test_kki_kulturanthropologie_register_builds_anthropologisch_norm_ids(self) -> None:
+        reg = build_kulturanthropologie_register(register_id="kar-552-ai")
+        self.assertGreater(len(reg.anthropologisch_norm_ids), 0)
+
+    def test_kki_kulturanthropologie_register_builds_grundlegend_norm_ids(self) -> None:
+        reg = build_kulturanthropologie_register(register_id="kar-552-gni")
+        self.assertGreater(len(reg.grundlegend_norm_ids), 0)
+
+    def test_kki_kulturanthropologie_register_norm_has_kultur_weight(self) -> None:
+        reg = build_kulturanthropologie_register(register_id="kar-552-w")
+        self.assertTrue(all(isinstance(n.kultur_weight, float) for n in reg.normen))
+
+    def test_kki_kulturanthropologie_register_norm_has_kultur_tier(self) -> None:
+        reg = build_kulturanthropologie_register(register_id="kar-552-t")
+        self.assertTrue(all(isinstance(n.kultur_tier, int) for n in reg.normen))
+
+    # --- #553 EthnographieCharta ---
+    def test_kki_ethnographie_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_ethnographie_charta(charta_id="ec-553-g")
+        self.assertTrue(any(n.geltung is EthnographieChartaGeltung.GESPERRT for n in charta.normen))
+        self.assertTrue(any(n.kultur_typ is EthnographieChartaTyp.SCHUTZ_ETHNOGRAPHIE for n in charta.normen))
+
+    def test_kki_ethnographie_charta_builds_ethnographisch_norm(self) -> None:
+        charta = build_ethnographie_charta(charta_id="ec-553-e")
+        self.assertTrue(any(n.geltung is EthnographieChartaGeltung.ETHNOGRAPHISCH for n in charta.normen))
+        self.assertTrue(any(n.kultur_typ is EthnographieChartaTyp.ORDNUNGS_ETHNOGRAPHIE for n in charta.normen))
+
+    def test_kki_ethnographie_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_ethnographie_charta(charta_id="ec-553-gs")
+        self.assertTrue(any(n.geltung is EthnographieChartaGeltung.GRUNDLEGEND_ETHNOGRAPHISCH for n in charta.normen))
+        self.assertTrue(any(n.kultur_typ is EthnographieChartaTyp.SOUVERAENITAETS_ETHNOGRAPHIE for n in charta.normen))
+
+    def test_kki_ethnographie_charta_aggregates_charta_signal(self) -> None:
+        charta = build_ethnographie_charta(charta_id="ec-553-sig")
+        sig = charta.charta_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(charta.gesperrt_norm_ids), 0)
+
+    def test_kki_ethnographie_charta_builds_ethnographisch_norm_ids(self) -> None:
+        charta = build_ethnographie_charta(charta_id="ec-553-ei")
+        self.assertGreater(len(charta.ethnographisch_norm_ids), 0)
+
+    def test_kki_ethnographie_charta_builds_grundlegend_norm_ids(self) -> None:
+        charta = build_ethnographie_charta(charta_id="ec-553-gni")
+        self.assertGreater(len(charta.grundlegend_norm_ids), 0)
+
+    def test_kki_ethnographie_charta_norm_has_kultur_weight(self) -> None:
+        charta = build_ethnographie_charta(charta_id="ec-553-w")
+        self.assertTrue(all(isinstance(n.kultur_weight, float) for n in charta.normen))
+
+    def test_kki_ethnographie_charta_norm_has_kultur_tier(self) -> None:
+        charta = build_ethnographie_charta(charta_id="ec-553-t")
+        self.assertTrue(all(isinstance(n.kultur_tier, int) for n in charta.normen))
+
+    # --- #554 RitualKodex ---
+    def test_kki_ritual_kodex_builds_gesperrt_schutz_norm(self) -> None:
+        kodex = build_ritual_kodex(kodex_id="rk-554-g")
+        self.assertTrue(any(n.geltung is RitualKodexGeltung.GESPERRT for n in kodex.normen))
+        self.assertTrue(any(n.kultur_typ is RitualKodexTyp.SCHUTZ_RITUAL for n in kodex.normen))
+
+    def test_kki_ritual_kodex_builds_rituell_norm(self) -> None:
+        kodex = build_ritual_kodex(kodex_id="rk-554-r")
+        self.assertTrue(any(n.geltung is RitualKodexGeltung.RITUELL for n in kodex.normen))
+        self.assertTrue(any(n.kultur_typ is RitualKodexTyp.ORDNUNGS_RITUAL for n in kodex.normen))
+
+    def test_kki_ritual_kodex_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        kodex = build_ritual_kodex(kodex_id="rk-554-gs")
+        self.assertTrue(any(n.geltung is RitualKodexGeltung.GRUNDLEGEND_RITUELL for n in kodex.normen))
+        self.assertTrue(any(n.kultur_typ is RitualKodexTyp.SOUVERAENITAETS_RITUAL for n in kodex.normen))
+
+    def test_kki_ritual_kodex_aggregates_kodex_signal(self) -> None:
+        kodex = build_ritual_kodex(kodex_id="rk-554-sig")
+        sig = kodex.kodex_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(kodex.gesperrt_norm_ids), 0)
+
+    def test_kki_ritual_kodex_builds_rituell_norm_ids(self) -> None:
+        kodex = build_ritual_kodex(kodex_id="rk-554-ri")
+        self.assertGreater(len(kodex.rituell_norm_ids), 0)
+
+    def test_kki_ritual_kodex_builds_grundlegend_norm_ids(self) -> None:
+        kodex = build_ritual_kodex(kodex_id="rk-554-gni")
+        self.assertGreater(len(kodex.grundlegend_norm_ids), 0)
+
+    def test_kki_ritual_kodex_norm_has_kultur_weight(self) -> None:
+        kodex = build_ritual_kodex(kodex_id="rk-554-w")
+        self.assertTrue(all(isinstance(n.kultur_weight, float) for n in kodex.normen))
+
+    def test_kki_ritual_kodex_norm_has_kultur_tier(self) -> None:
+        kodex = build_ritual_kodex(kodex_id="rk-554-t")
+        self.assertTrue(all(isinstance(n.kultur_tier, int) for n in kodex.normen))
+
+    # --- #555 KultursystemeManifest ---
+    def test_kki_kultursysteme_manifest_builds_gesperrt_schutz_norm(self) -> None:
+        manifest = build_kultursysteme_manifest(manifest_id="km-555-g")
+        self.assertTrue(any(n.geltung is KultursystemeManifestGeltung.GESPERRT for n in manifest.normen))
+        self.assertTrue(any(n.kultur_typ is KultursystemeManifestTyp.SCHUTZ_KULTURSYSTEM for n in manifest.normen))
+
+    def test_kki_kultursysteme_manifest_builds_kultursystemisch_norm(self) -> None:
+        manifest = build_kultursysteme_manifest(manifest_id="km-555-k")
+        self.assertTrue(any(n.geltung is KultursystemeManifestGeltung.KULTURSYSTEMISCH for n in manifest.normen))
+        self.assertTrue(any(n.kultur_typ is KultursystemeManifestTyp.ORDNUNGS_KULTURSYSTEM for n in manifest.normen))
+
+    def test_kki_kultursysteme_manifest_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        manifest = build_kultursysteme_manifest(manifest_id="km-555-gs")
+        self.assertTrue(any(n.geltung is KultursystemeManifestGeltung.GRUNDLEGEND_KULTURSYSTEMISCH for n in manifest.normen))
+        self.assertTrue(any(n.kultur_typ is KultursystemeManifestTyp.SOUVERAENITAETS_KULTURSYSTEM for n in manifest.normen))
+
+    def test_kki_kultursysteme_manifest_aggregates_manifest_signal(self) -> None:
+        manifest = build_kultursysteme_manifest(manifest_id="km-555-sig")
+        sig = manifest.manifest_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(manifest.gesperrt_norm_ids), 0)
+
+    def test_kki_kultursysteme_manifest_builds_kultursystemisch_norm_ids(self) -> None:
+        manifest = build_kultursysteme_manifest(manifest_id="km-555-ki")
+        self.assertGreater(len(manifest.kultursystemisch_norm_ids), 0)
+
+    def test_kki_kultursysteme_manifest_builds_grundlegend_norm_ids(self) -> None:
+        manifest = build_kultursysteme_manifest(manifest_id="km-555-gni")
+        self.assertGreater(len(manifest.grundlegend_norm_ids), 0)
+
+    def test_kki_kultursysteme_manifest_norm_has_kultur_weight(self) -> None:
+        manifest = build_kultursysteme_manifest(manifest_id="km-555-w")
+        self.assertTrue(all(isinstance(n.kultur_weight, float) for n in manifest.normen))
+
+    def test_kki_kultursysteme_manifest_norm_has_kultur_tier(self) -> None:
+        manifest = build_kultursysteme_manifest(manifest_id="km-555-t")
+        self.assertTrue(all(isinstance(n.kultur_tier, int) for n in manifest.normen))
+
+    # --- #556 KulturgedaechnisPakt ---
+    def test_kki_kulturgedaechnis_pakt_builds_gesperrt_schutz_norm(self) -> None:
+        pakt = build_kulturgedaechtnis_pakt(pakt_id="kgp-556-g")
+        self.assertTrue(any(n.geltung is KulturgedaechnisPaktGeltung.GESPERRT for n in pakt.normen))
+        self.assertTrue(any(n.kultur_typ is KulturgedaechnisPaktTyp.SCHUTZ_KULTURGEDAECHTNIS for n in pakt.normen))
+
+    def test_kki_kulturgedaechnis_pakt_builds_kulturgedaechtnishaft_norm(self) -> None:
+        pakt = build_kulturgedaechtnis_pakt(pakt_id="kgp-556-k")
+        self.assertTrue(any(n.geltung is KulturgedaechnisPaktGeltung.KULTURGEDAECHTNISHAFT for n in pakt.normen))
+        self.assertTrue(any(n.kultur_typ is KulturgedaechnisPaktTyp.ORDNUNGS_KULTURGEDAECHTNIS for n in pakt.normen))
+
+    def test_kki_kulturgedaechnis_pakt_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        pakt = build_kulturgedaechtnis_pakt(pakt_id="kgp-556-gs")
+        self.assertTrue(any(n.geltung is KulturgedaechnisPaktGeltung.GRUNDLEGEND_KULTURGEDAECHTNISHAFT for n in pakt.normen))
+        self.assertTrue(any(n.kultur_typ is KulturgedaechnisPaktTyp.SOUVERAENITAETS_KULTURGEDAECHTNIS for n in pakt.normen))
+
+    def test_kki_kulturgedaechnis_pakt_aggregates_pakt_signal(self) -> None:
+        pakt = build_kulturgedaechtnis_pakt(pakt_id="kgp-556-sig")
+        sig = pakt.pakt_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(pakt.gesperrt_norm_ids), 0)
+
+    def test_kki_kulturgedaechnis_pakt_builds_kulturgedaechtnishaft_norm_ids(self) -> None:
+        pakt = build_kulturgedaechtnis_pakt(pakt_id="kgp-556-ki")
+        self.assertGreater(len(pakt.kulturgedaechtnishaft_norm_ids), 0)
+
+    def test_kki_kulturgedaechnis_pakt_builds_grundlegend_norm_ids(self) -> None:
+        pakt = build_kulturgedaechtnis_pakt(pakt_id="kgp-556-gni")
+        self.assertGreater(len(pakt.grundlegend_norm_ids), 0)
+
+    def test_kki_kulturgedaechnis_pakt_norm_has_kultur_weight(self) -> None:
+        pakt = build_kulturgedaechtnis_pakt(pakt_id="kgp-556-w")
+        self.assertTrue(all(isinstance(n.kultur_weight, float) for n in pakt.normen))
+
+    def test_kki_kulturgedaechnis_pakt_norm_has_kultur_tier(self) -> None:
+        pakt = build_kulturgedaechtnis_pakt(pakt_id="kgp-556-t")
+        self.assertTrue(all(isinstance(n.kultur_tier, int) for n in pakt.normen))
+
+    # --- #557 KultursoziologieSenat ---
+    def test_kki_kultursoziologie_senat_builds_gesperrt_schutz_norm(self) -> None:
+        senat = build_kultursoziologie_senat(senat_id="ks-557-g")
+        self.assertTrue(any(n.geltung is KultursoziologieSenatGeltung.GESPERRT for n in senat.normen))
+        self.assertTrue(any(n.kultur_typ is KultursoziologieSenatTyp.SCHUTZ_KULTURSOZIOLOGIE for n in senat.normen))
+
+    def test_kki_kultursoziologie_senat_builds_kultursoziologisch_norm(self) -> None:
+        senat = build_kultursoziologie_senat(senat_id="ks-557-k")
+        self.assertTrue(any(n.geltung is KultursoziologieSenatGeltung.KULTURSOZIOLOGISCH for n in senat.normen))
+        self.assertTrue(any(n.kultur_typ is KultursoziologieSenatTyp.ORDNUNGS_KULTURSOZIOLOGIE for n in senat.normen))
+
+    def test_kki_kultursoziologie_senat_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        senat = build_kultursoziologie_senat(senat_id="ks-557-gs")
+        self.assertTrue(any(n.geltung is KultursoziologieSenatGeltung.GRUNDLEGEND_KULTURSOZIOLOGISCH for n in senat.normen))
+        self.assertTrue(any(n.kultur_typ is KultursoziologieSenatTyp.SOUVERAENITAETS_KULTURSOZIOLOGIE for n in senat.normen))
+
+    def test_kki_kultursoziologie_senat_aggregates_senat_signal(self) -> None:
+        senat = build_kultursoziologie_senat(senat_id="ks-557-sig")
+        sig = senat.senat_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(senat.gesperrt_norm_ids), 0)
+
+    def test_kki_kultursoziologie_senat_builds_kultursoziologisch_norm_ids(self) -> None:
+        senat = build_kultursoziologie_senat(senat_id="ks-557-ki")
+        self.assertGreater(len(senat.kultursoziologisch_norm_ids), 0)
+
+    def test_kki_kultursoziologie_senat_builds_grundlegend_norm_ids(self) -> None:
+        senat = build_kultursoziologie_senat(senat_id="ks-557-gni")
+        self.assertGreater(len(senat.grundlegend_norm_ids), 0)
+
+    def test_kki_kultursoziologie_senat_norm_has_kultur_weight(self) -> None:
+        senat = build_kultursoziologie_senat(senat_id="ks-557-w")
+        self.assertTrue(all(isinstance(n.kultur_weight, float) for n in senat.normen))
+
+    def test_kki_kultursoziologie_senat_norm_has_kultur_tier(self) -> None:
+        senat = build_kultursoziologie_senat(senat_id="ks-557-t")
+        self.assertTrue(all(isinstance(n.kultur_tier, int) for n in senat.normen))
+
+    # --- #558 KulturNorm ---
+    def test_kki_kultur_norm_builds_gesperrt_schutz_norm(self) -> None:
+        normsatz = build_kultur_norm(norm_id="kn-558-g")
+        self.assertTrue(any(n.geltung is KulturNormGeltung.GESPERRT for n in normsatz.normen))
+        self.assertTrue(any(n.kultur_norm_typ is KulturNormTyp.SCHUTZ_KULTURNORM for n in normsatz.normen))
+
+    def test_kki_kultur_norm_builds_kulturnormativ_norm(self) -> None:
+        normsatz = build_kultur_norm(norm_id="kn-558-k")
+        self.assertTrue(any(n.geltung is KulturNormGeltung.KULTURNORMATIV for n in normsatz.normen))
+        self.assertTrue(any(n.kultur_norm_typ is KulturNormTyp.ORDNUNGS_KULTURNORM for n in normsatz.normen))
+
+    def test_kki_kultur_norm_builds_grundlegend_kulturnormativ_norm(self) -> None:
+        normsatz = build_kultur_norm(norm_id="kn-558-gk")
+        self.assertTrue(any(n.geltung is KulturNormGeltung.GRUNDLEGEND_KULTURNORMATIV for n in normsatz.normen))
+        self.assertTrue(any(n.kultur_norm_typ is KulturNormTyp.SOUVERAENITAETS_KULTURNORM for n in normsatz.normen))
+
+    def test_kki_kultur_norm_aggregates_norm_signal(self) -> None:
+        normsatz = build_kultur_norm(norm_id="kn-558-sig")
+        sig = normsatz.norm_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(normsatz.gesperrt_norm_ids), 0)
+
+    def test_kki_kultur_norm_builds_kulturnormativ_norm_ids(self) -> None:
+        normsatz = build_kultur_norm(norm_id="kn-558-ki")
+        self.assertGreater(len(normsatz.kulturnormativ_norm_ids), 0)
+
+    def test_kki_kultur_norm_builds_grundlegend_norm_ids(self) -> None:
+        normsatz = build_kultur_norm(norm_id="kn-558-gni")
+        self.assertGreater(len(normsatz.grundlegend_norm_ids), 0)
+
+    def test_kki_kultur_norm_eintrag_has_kultur_norm_weight(self) -> None:
+        normsatz = build_kultur_norm(norm_id="kn-558-w")
+        self.assertTrue(all(isinstance(n.kultur_norm_weight, float) for n in normsatz.normen))
+
+    def test_kki_kultur_norm_eintrag_has_kultur_norm_tier(self) -> None:
+        normsatz = build_kultur_norm(norm_id="kn-558-t")
+        self.assertTrue(all(isinstance(n.kultur_norm_tier, int) for n in normsatz.normen))
+
+    # --- #559 KulturelleIdentitaetsCharta ---
+    def test_kki_kulturelle_identitaets_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_kulturelle_identitaets_charta(charta_id="kic-559-g")
+        self.assertTrue(any(n.geltung is KulturelleIdentitaetsChartaGeltung.GESPERRT for n in charta.normen))
+        self.assertTrue(any(n.kulturelle_identitaets_typ is KulturelleIdentitaetsChartaTyp.SCHUTZ_IDENTITAETSKULTUR for n in charta.normen))
+
+    def test_kki_kulturelle_identitaets_charta_builds_identitaetskulturell_norm(self) -> None:
+        charta = build_kulturelle_identitaets_charta(charta_id="kic-559-i")
+        self.assertTrue(any(n.geltung is KulturelleIdentitaetsChartaGeltung.IDENTITAETSKULTURELL for n in charta.normen))
+        self.assertTrue(any(n.kulturelle_identitaets_typ is KulturelleIdentitaetsChartaTyp.ORDNUNGS_IDENTITAETSKULTUR for n in charta.normen))
+
+    def test_kki_kulturelle_identitaets_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_kulturelle_identitaets_charta(charta_id="kic-559-gs")
+        self.assertTrue(any(n.geltung is KulturelleIdentitaetsChartaGeltung.GRUNDLEGEND_IDENTITAETSKULTURELL for n in charta.normen))
+        self.assertTrue(any(n.kulturelle_identitaets_typ is KulturelleIdentitaetsChartaTyp.SOUVERAENITAETS_IDENTITAETSKULTUR for n in charta.normen))
+
+    def test_kki_kulturelle_identitaets_charta_aggregates_charta_signal(self) -> None:
+        charta = build_kulturelle_identitaets_charta(charta_id="kic-559-sig")
+        sig = charta.charta_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(charta.gesperrt_norm_ids), 0)
+
+    def test_kki_kulturelle_identitaets_charta_builds_identitaetskulturell_norm_ids(self) -> None:
+        charta = build_kulturelle_identitaets_charta(charta_id="kic-559-ii")
+        self.assertGreater(len(charta.identitaetskulturell_norm_ids), 0)
+
+    def test_kki_kulturelle_identitaets_charta_builds_grundlegend_norm_ids(self) -> None:
+        charta = build_kulturelle_identitaets_charta(charta_id="kic-559-gni")
+        self.assertGreater(len(charta.grundlegend_norm_ids), 0)
+
+    def test_kki_kulturelle_identitaets_charta_norm_has_kultur_weight(self) -> None:
+        charta = build_kulturelle_identitaets_charta(charta_id="kic-559-w")
+        self.assertTrue(all(isinstance(n.kultur_weight, float) for n in charta.normen))
+
+    def test_kki_kulturelle_identitaets_charta_norm_has_kultur_tier(self) -> None:
+        charta = build_kulturelle_identitaets_charta(charta_id="kic-559-t")
+        self.assertTrue(all(isinstance(n.kultur_tier, int) for n in charta.normen))
+
+    # --- #560 KulturVerfassung (Block-Krone ⭐) ---
+    def test_kki_kultur_verfassung_builds_gesperrt_schutz_norm(self) -> None:
+        verfassung = build_kultur_verfassung(verfassung_id="kv-560-g")
+        self.assertTrue(any(n.geltung is KulturVerfassungsGeltung.GESPERRT for n in verfassung.normen))
+        self.assertTrue(any(n.kultur_typ is KulturVerfassungsTyp.SCHUTZ_KULTURVERFASSUNG for n in verfassung.normen))
+
+    def test_kki_kultur_verfassung_builds_kulturell_souveraen_norm(self) -> None:
+        verfassung = build_kultur_verfassung(verfassung_id="kv-560-ks")
+        self.assertTrue(any(n.geltung is KulturVerfassungsGeltung.KULTURELL_SOUVERAEN for n in verfassung.normen))
+        self.assertTrue(any(n.kultur_typ is KulturVerfassungsTyp.ORDNUNGS_KULTURVERFASSUNG for n in verfassung.normen))
+
+    def test_kki_kultur_verfassung_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        verfassung = build_kultur_verfassung(verfassung_id="kv-560-gs")
+        self.assertTrue(any(n.geltung is KulturVerfassungsGeltung.GRUNDLEGEND_KULTURELL_SOUVERAEN for n in verfassung.normen))
+        self.assertTrue(any(n.kultur_typ is KulturVerfassungsTyp.SOUVERAENITAETS_KULTURVERFASSUNG for n in verfassung.normen))
+
+    def test_kki_kultur_verfassung_aggregates_verfassung_signal(self) -> None:
+        verfassung = build_kultur_verfassung(verfassung_id="kv-560-sig")
+        sig = verfassung.verfassung_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(verfassung.gesperrt_norm_ids), 0)
+
+    def test_kki_kultur_verfassung_builds_kulturell_souveraen_norm_ids(self) -> None:
+        verfassung = build_kultur_verfassung(verfassung_id="kv-560-ksi")
+        self.assertGreater(len(verfassung.kulturell_souveraen_norm_ids), 0)
+
+    def test_kki_kultur_verfassung_builds_grundlegend_norm_ids(self) -> None:
+        verfassung = build_kultur_verfassung(verfassung_id="kv-560-gni")
+        self.assertGreater(len(verfassung.grundlegend_norm_ids), 0)
+
+    def test_kki_kultur_verfassung_norm_has_kultur_weight(self) -> None:
+        verfassung = build_kultur_verfassung(verfassung_id="kv-560-w")
+        self.assertTrue(all(isinstance(n.kultur_weight, float) for n in verfassung.normen))
+
+    def test_kki_kultur_verfassung_norm_has_kultur_tier(self) -> None:
+        verfassung = build_kultur_verfassung(verfassung_id="kv-560-t")
+        self.assertTrue(all(isinstance(n.kultur_tier, int) for n in verfassung.normen))

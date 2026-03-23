@@ -2329,6 +2329,56 @@ from .soziologie_verfassung import (
     SoziologieVerfassungsProzedur, SoziologieVerfassungsTyp,
     SoziologieVerfassung, build_soziologie_verfassung,
 )
+from .ethik_feld import (
+    EthikFeldGeltung, EthikFeldNorm,
+    EthikFeldProzedur, EthikFeldTyp,
+    EthikFeld, build_ethik_feld,
+)
+from .utilitarismus_register import (
+    UtilitarismusRegisterGeltung, UtilitarismusRegisterNorm,
+    UtilitarismusRegisterProzedur, UtilitarismusRegisterTyp,
+    UtilitarismusRegister, build_utilitarismus_register,
+)
+from .gerechtigkeits_charta import (
+    GerechtigkeitsChartaGeltung, GerechtigkeitsChartaNorm,
+    GerechtigkeitsChartaProzedur, GerechtigkeitsChartaTyp,
+    GerechtigkeitsCharta, build_gerechtigkeits_charta,
+)
+from .tugend_kodex import (
+    TugendKodexGeltung, TugendKodexNorm,
+    TugendKodexProzedur, TugendKodexTyp,
+    TugendKodex, build_tugend_kodex,
+)
+from .diskurs_manifest import (
+    DiskursManifestGeltung, DiskursManifestNorm,
+    DiskursManifestProzedur, DiskursManifestTyp,
+    DiskursManifest, build_diskurs_manifest,
+)
+from .fuersorge_ethik_pakt import (
+    FuersorgeEthikPaktGeltung, FuersorgeEthikPaktNorm,
+    FuersorgeEthikPaktProzedur, FuersorgeEthikPaktTyp,
+    FuersorgeEthikPakt, build_fuersorge_ethik_pakt,
+)
+from .meta_ethik_senat import (
+    MetaEthikSenatGeltung, MetaEthikSenatNorm,
+    MetaEthikSenatProzedur, MetaEthikSenatTyp,
+    MetaEthikSenat, build_meta_ethik_senat,
+)
+from .ethik_norm import (
+    EthikNormGeltung, EthikNormEintrag,
+    EthikNormProzedur, EthikNormTyp,
+    EthikNormSatz, build_ethik_norm,
+)
+from .angewandte_ethik_charta import (
+    AngewandteEthikChartaGeltung, AngewandteEthikChartaNorm,
+    AngewandteEthikChartaProzedur, AngewandteEthikChartaTyp,
+    AngewandteEthikCharta, build_angewandte_ethik_charta,
+)
+from .ethik_verfassung import (
+    EthikVerfassungsGeltung, EthikVerfassungsNorm,
+    EthikVerfassungsProzedur, EthikVerfassungsTyp,
+    EthikVerfassung, build_ethik_verfassung,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -3908,4 +3958,25 @@ __all__ = [
     "NetzwerkgesellschaftsCharta", "build_netzwerkgesellschafts_charta",
     "SoziologieVerfassungsGeltung", "SoziologieVerfassungsNorm", "SoziologieVerfassungsProzedur", "SoziologieVerfassungsTyp",
     "SoziologieVerfassung", "build_soziologie_verfassung",
+    # Block #501–#510: Ethik & Moralphilosophie
+    "EthikFeldGeltung", "EthikFeldNorm", "EthikFeldProzedur", "EthikFeldTyp",
+    "EthikFeld", "build_ethik_feld",
+    "UtilitarismusRegisterGeltung", "UtilitarismusRegisterNorm", "UtilitarismusRegisterProzedur", "UtilitarismusRegisterTyp",
+    "UtilitarismusRegister", "build_utilitarismus_register",
+    "GerechtigkeitsChartaGeltung", "GerechtigkeitsChartaNorm", "GerechtigkeitsChartaProzedur", "GerechtigkeitsChartaTyp",
+    "GerechtigkeitsCharta", "build_gerechtigkeits_charta",
+    "TugendKodexGeltung", "TugendKodexNorm", "TugendKodexProzedur", "TugendKodexTyp",
+    "TugendKodex", "build_tugend_kodex",
+    "DiskursManifestGeltung", "DiskursManifestNorm", "DiskursManifestProzedur", "DiskursManifestTyp",
+    "DiskursManifest", "build_diskurs_manifest",
+    "FuersorgeEthikPaktGeltung", "FuersorgeEthikPaktNorm", "FuersorgeEthikPaktProzedur", "FuersorgeEthikPaktTyp",
+    "FuersorgeEthikPakt", "build_fuersorge_ethik_pakt",
+    "MetaEthikSenatGeltung", "MetaEthikSenatNorm", "MetaEthikSenatProzedur", "MetaEthikSenatTyp",
+    "MetaEthikSenat", "build_meta_ethik_senat",
+    "EthikNormGeltung", "EthikNormEintrag", "EthikNormProzedur", "EthikNormTyp",
+    "EthikNormSatz", "build_ethik_norm",
+    "AngewandteEthikChartaGeltung", "AngewandteEthikChartaNorm", "AngewandteEthikChartaProzedur", "AngewandteEthikChartaTyp",
+    "AngewandteEthikCharta", "build_angewandte_ethik_charta",
+    "EthikVerfassungsGeltung", "EthikVerfassungsNorm", "EthikVerfassungsProzedur", "EthikVerfassungsTyp",
+    "EthikVerfassung", "build_ethik_verfassung",
 ]

@@ -1615,6 +1615,46 @@ from kki.soziologie_verfassung import (
     SoziologieVerfassungsNorm, SoziologieVerfassungsTyp,
     SoziologieVerfassungsProzedur, build_soziologie_verfassung,
 )
+from kki.ethik_feld import (
+    EthikFeld, EthikFeldGeltung, EthikFeldNorm,
+    EthikFeldTyp, EthikFeldProzedur, build_ethik_feld,
+)
+from kki.utilitarismus_register import (
+    UtilitarismusRegister, UtilitarismusRegisterGeltung, UtilitarismusRegisterNorm,
+    UtilitarismusRegisterTyp, UtilitarismusRegisterProzedur, build_utilitarismus_register,
+)
+from kki.gerechtigkeits_charta import (
+    GerechtigkeitsCharta, GerechtigkeitsChartaGeltung, GerechtigkeitsChartaNorm,
+    GerechtigkeitsChartaTyp, GerechtigkeitsChartaProzedur, build_gerechtigkeits_charta,
+)
+from kki.tugend_kodex import (
+    TugendKodex, TugendKodexGeltung, TugendKodexNorm,
+    TugendKodexTyp, TugendKodexProzedur, build_tugend_kodex,
+)
+from kki.diskurs_manifest import (
+    DiskursManifest, DiskursManifestGeltung, DiskursManifestNorm,
+    DiskursManifestTyp, DiskursManifestProzedur, build_diskurs_manifest,
+)
+from kki.fuersorge_ethik_pakt import (
+    FuersorgeEthikPakt, FuersorgeEthikPaktGeltung, FuersorgeEthikPaktNorm,
+    FuersorgeEthikPaktTyp, FuersorgeEthikPaktProzedur, build_fuersorge_ethik_pakt,
+)
+from kki.meta_ethik_senat import (
+    MetaEthikSenat, MetaEthikSenatGeltung, MetaEthikSenatNorm,
+    MetaEthikSenatTyp, MetaEthikSenatProzedur, build_meta_ethik_senat,
+)
+from kki.ethik_norm import (
+    EthikNormSatz, EthikNormGeltung, EthikNormEintrag,
+    EthikNormTyp, EthikNormProzedur, build_ethik_norm,
+)
+from kki.angewandte_ethik_charta import (
+    AngewandteEthikCharta, AngewandteEthikChartaGeltung, AngewandteEthikChartaNorm,
+    AngewandteEthikChartaTyp, AngewandteEthikChartaProzedur, build_angewandte_ethik_charta,
+)
+from kki.ethik_verfassung import (
+    EthikVerfassung, EthikVerfassungsGeltung, EthikVerfassungsNorm,
+    EthikVerfassungsTyp, EthikVerfassungsProzedur, build_ethik_verfassung,
+)
 from kki import (
     KausalitaetsGeltung,
     KausalitaetsNorm,
@@ -18666,6 +18706,258 @@ class SmokeTests(unittest.TestCase):
 
     def test_kki_soziologie_verfassung_aggregates_verfassung_signal(self) -> None:
         verfassung = build_soziologie_verfassung(verfassung_id="sverfassung-500-sig")
+        sig = verfassung.verfassung_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(verfassung.gesperrt_norm_ids), 0)
+
+    # ── Block #501–#510: Ethik & Moralphilosophie ────────────────────────────────
+
+    def test_kki_ethik_feld_builds_gesperrt_schutz_norm(self) -> None:
+        feld = build_ethik_feld(feld_id="efeld-501-g")
+        gesperrt = [n for n in feld.normen if n.geltung is EthikFeldGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) > 0)
+        self.assertEqual(gesperrt[0].ethik_typ, EthikFeldTyp.SCHUTZ_ETHIK)
+
+    def test_kki_ethik_feld_builds_ethisch_norm(self) -> None:
+        feld = build_ethik_feld(feld_id="efeld-501-e")
+        ethisch = [n for n in feld.normen if n.geltung is EthikFeldGeltung.ETHISCH]
+        self.assertTrue(len(ethisch) > 0)
+        self.assertEqual(ethisch[0].ethik_typ, EthikFeldTyp.ORDNUNGS_ETHIK)
+
+    def test_kki_ethik_feld_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        feld = build_ethik_feld(feld_id="efeld-501-gs")
+        grundlegend = [n for n in feld.normen if n.geltung is EthikFeldGeltung.GRUNDLEGEND_ETHISCH]
+        self.assertTrue(len(grundlegend) > 0)
+        self.assertEqual(grundlegend[0].ethik_typ, EthikFeldTyp.SOUVERAENITAETS_ETHIK)
+
+    def test_kki_ethik_feld_aggregates_feld_signal(self) -> None:
+        feld = build_ethik_feld(feld_id="efeld-501-sig")
+        sig = feld.feld_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(feld.gesperrt_norm_ids), 0)
+
+    def test_kki_utilitarismus_register_builds_gesperrt_schutz_norm(self) -> None:
+        reg = build_utilitarismus_register(register_id="ureg-502-g")
+        gesperrt = [n for n in reg.normen if n.geltung is UtilitarismusRegisterGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) > 0)
+        self.assertEqual(gesperrt[0].utilitarismus_typ, UtilitarismusRegisterTyp.SCHUTZ_UTILITARISMUS)
+
+    def test_kki_utilitarismus_register_builds_utilitaristisch_norm(self) -> None:
+        reg = build_utilitarismus_register(register_id="ureg-502-u")
+        util = [n for n in reg.normen if n.geltung is UtilitarismusRegisterGeltung.UTILITARISTISCH]
+        self.assertTrue(len(util) > 0)
+        self.assertEqual(util[0].utilitarismus_typ, UtilitarismusRegisterTyp.ORDNUNGS_UTILITARISMUS)
+
+    def test_kki_utilitarismus_register_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        reg = build_utilitarismus_register(register_id="ureg-502-gs")
+        grundlegend = [n for n in reg.normen if n.geltung is UtilitarismusRegisterGeltung.GRUNDLEGEND_UTILITARISTISCH]
+        self.assertTrue(len(grundlegend) > 0)
+        self.assertEqual(grundlegend[0].utilitarismus_typ, UtilitarismusRegisterTyp.SOUVERAENITAETS_UTILITARISMUS)
+
+    def test_kki_utilitarismus_register_aggregates_register_signal(self) -> None:
+        reg = build_utilitarismus_register(register_id="ureg-502-sig")
+        sig = reg.register_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(reg.gesperrt_norm_ids), 0)
+
+    def test_kki_gerechtigkeits_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_gerechtigkeits_charta(charta_id="gcharta-503-g")
+        gesperrt = [n for n in charta.normen if n.geltung is GerechtigkeitsChartaGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) > 0)
+        self.assertEqual(gesperrt[0].gerechtigkeits_typ, GerechtigkeitsChartaTyp.SCHUTZ_GERECHTIGKEIT)
+
+    def test_kki_gerechtigkeits_charta_builds_gerechtigkeitlich_norm(self) -> None:
+        charta = build_gerechtigkeits_charta(charta_id="gcharta-503-g2")
+        gerecht = [n for n in charta.normen if n.geltung is GerechtigkeitsChartaGeltung.GERECHTIGKEITLICH]
+        self.assertTrue(len(gerecht) > 0)
+        self.assertEqual(gerecht[0].gerechtigkeits_typ, GerechtigkeitsChartaTyp.ORDNUNGS_GERECHTIGKEIT)
+
+    def test_kki_gerechtigkeits_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_gerechtigkeits_charta(charta_id="gcharta-503-gs")
+        grundlegend = [n for n in charta.normen if n.geltung is GerechtigkeitsChartaGeltung.GRUNDLEGEND_GERECHTIGKEITLICH]
+        self.assertTrue(len(grundlegend) > 0)
+        self.assertEqual(grundlegend[0].gerechtigkeits_typ, GerechtigkeitsChartaTyp.SOUVERAENITAETS_GERECHTIGKEIT)
+
+    def test_kki_gerechtigkeits_charta_aggregates_charta_signal(self) -> None:
+        charta = build_gerechtigkeits_charta(charta_id="gcharta-503-sig")
+        sig = charta.charta_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(charta.gesperrt_norm_ids), 0)
+
+    def test_kki_tugend_kodex_builds_gesperrt_schutz_norm(self) -> None:
+        kodex = build_tugend_kodex(kodex_id="tkodex-504-g")
+        gesperrt = [n for n in kodex.normen if n.geltung is TugendKodexGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) > 0)
+        self.assertEqual(gesperrt[0].tugend_typ, TugendKodexTyp.SCHUTZ_TUGEND)
+
+    def test_kki_tugend_kodex_builds_tugendhaft_norm(self) -> None:
+        kodex = build_tugend_kodex(kodex_id="tkodex-504-t")
+        tugendhaft = [n for n in kodex.normen if n.geltung is TugendKodexGeltung.TUGENDHAFT]
+        self.assertTrue(len(tugendhaft) > 0)
+        self.assertEqual(tugendhaft[0].tugend_typ, TugendKodexTyp.ORDNUNGS_TUGEND)
+
+    def test_kki_tugend_kodex_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        kodex = build_tugend_kodex(kodex_id="tkodex-504-gs")
+        grundlegend = [n for n in kodex.normen if n.geltung is TugendKodexGeltung.GRUNDLEGEND_TUGENDHAFT]
+        self.assertTrue(len(grundlegend) > 0)
+        self.assertEqual(grundlegend[0].tugend_typ, TugendKodexTyp.SOUVERAENITAETS_TUGEND)
+
+    def test_kki_tugend_kodex_aggregates_kodex_signal(self) -> None:
+        kodex = build_tugend_kodex(kodex_id="tkodex-504-sig")
+        sig = kodex.kodex_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(kodex.gesperrt_norm_ids), 0)
+
+    def test_kki_diskurs_manifest_builds_gesperrt_schutz_norm(self) -> None:
+        manifest = build_diskurs_manifest(manifest_id="dmanifest-505-g")
+        gesperrt = [n for n in manifest.normen if n.geltung is DiskursManifestGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) > 0)
+        self.assertEqual(gesperrt[0].diskurs_typ, DiskursManifestTyp.SCHUTZ_DISKURS)
+
+    def test_kki_diskurs_manifest_builds_diskursiv_norm(self) -> None:
+        manifest = build_diskurs_manifest(manifest_id="dmanifest-505-d")
+        diskursiv = [n for n in manifest.normen if n.geltung is DiskursManifestGeltung.DISKURSIV]
+        self.assertTrue(len(diskursiv) > 0)
+        self.assertEqual(diskursiv[0].diskurs_typ, DiskursManifestTyp.ORDNUNGS_DISKURS)
+
+    def test_kki_diskurs_manifest_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        manifest = build_diskurs_manifest(manifest_id="dmanifest-505-gs")
+        grundlegend = [n for n in manifest.normen if n.geltung is DiskursManifestGeltung.GRUNDLEGEND_DISKURSIV]
+        self.assertTrue(len(grundlegend) > 0)
+        self.assertEqual(grundlegend[0].diskurs_typ, DiskursManifestTyp.SOUVERAENITAETS_DISKURS)
+
+    def test_kki_diskurs_manifest_aggregates_manifest_signal(self) -> None:
+        manifest = build_diskurs_manifest(manifest_id="dmanifest-505-sig")
+        sig = manifest.manifest_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(manifest.gesperrt_norm_ids), 0)
+
+    def test_kki_fuersorge_ethik_pakt_builds_gesperrt_schutz_norm(self) -> None:
+        pakt = build_fuersorge_ethik_pakt(pakt_id="fepakt-506-g")
+        gesperrt = [n for n in pakt.normen if n.geltung is FuersorgeEthikPaktGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) > 0)
+        self.assertEqual(gesperrt[0].fuersorge_ethik_typ, FuersorgeEthikPaktTyp.SCHUTZ_FUERSORGE)
+
+    def test_kki_fuersorge_ethik_pakt_builds_fuersorgend_norm(self) -> None:
+        pakt = build_fuersorge_ethik_pakt(pakt_id="fepakt-506-f")
+        fuersorgend = [n for n in pakt.normen if n.geltung is FuersorgeEthikPaktGeltung.FUERSORGEND]
+        self.assertTrue(len(fuersorgend) > 0)
+        self.assertEqual(fuersorgend[0].fuersorge_ethik_typ, FuersorgeEthikPaktTyp.ORDNUNGS_FUERSORGE)
+
+    def test_kki_fuersorge_ethik_pakt_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        pakt = build_fuersorge_ethik_pakt(pakt_id="fepakt-506-gs")
+        grundlegend = [n for n in pakt.normen if n.geltung is FuersorgeEthikPaktGeltung.GRUNDLEGEND_FUERSORGEND]
+        self.assertTrue(len(grundlegend) > 0)
+        self.assertEqual(grundlegend[0].fuersorge_ethik_typ, FuersorgeEthikPaktTyp.SOUVERAENITAETS_FUERSORGE)
+
+    def test_kki_fuersorge_ethik_pakt_aggregates_pakt_signal(self) -> None:
+        pakt = build_fuersorge_ethik_pakt(pakt_id="fepakt-506-sig")
+        sig = pakt.pakt_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(pakt.gesperrt_norm_ids), 0)
+
+    def test_kki_meta_ethik_senat_builds_gesperrt_schutz_norm(self) -> None:
+        senat = build_meta_ethik_senat(senat_id="mesenat-507-g")
+        gesperrt = [n for n in senat.normen if n.geltung is MetaEthikSenatGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) > 0)
+        self.assertEqual(gesperrt[0].meta_ethik_typ, MetaEthikSenatTyp.SCHUTZ_METAETHIK)
+
+    def test_kki_meta_ethik_senat_builds_metaethisch_norm(self) -> None:
+        senat = build_meta_ethik_senat(senat_id="mesenat-507-m")
+        meta = [n for n in senat.normen if n.geltung is MetaEthikSenatGeltung.METAETHISCH]
+        self.assertTrue(len(meta) > 0)
+        self.assertEqual(meta[0].meta_ethik_typ, MetaEthikSenatTyp.ORDNUNGS_METAETHIK)
+
+    def test_kki_meta_ethik_senat_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        senat = build_meta_ethik_senat(senat_id="mesenat-507-gs")
+        grundlegend = [n for n in senat.normen if n.geltung is MetaEthikSenatGeltung.GRUNDLEGEND_METAETHISCH]
+        self.assertTrue(len(grundlegend) > 0)
+        self.assertEqual(grundlegend[0].meta_ethik_typ, MetaEthikSenatTyp.SOUVERAENITAETS_METAETHIK)
+
+    def test_kki_meta_ethik_senat_aggregates_senat_signal(self) -> None:
+        senat = build_meta_ethik_senat(senat_id="mesenat-507-sig")
+        sig = senat.senat_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(senat.gesperrt_norm_ids), 0)
+
+    def test_kki_ethik_norm_builds_gesperrt_schutz_norm(self) -> None:
+        normsatz = build_ethik_norm(norm_id="enorm-508-g")
+        gesperrt = [n for n in normsatz.normen if n.geltung is EthikNormGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) > 0)
+        self.assertEqual(gesperrt[0].ethik_norm_typ, EthikNormTyp.SCHUTZ_ETHIKNORM)
+
+    def test_kki_ethik_norm_builds_ethiknormativ_norm(self) -> None:
+        normsatz = build_ethik_norm(norm_id="enorm-508-e")
+        ethiknorm = [n for n in normsatz.normen if n.geltung is EthikNormGeltung.ETHIKNORMATIV]
+        self.assertTrue(len(ethiknorm) > 0)
+        self.assertEqual(ethiknorm[0].ethik_norm_typ, EthikNormTyp.ORDNUNGS_ETHIKNORM)
+
+    def test_kki_ethik_norm_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        normsatz = build_ethik_norm(norm_id="enorm-508-gs")
+        grundlegend = [n for n in normsatz.normen if n.geltung is EthikNormGeltung.GRUNDLEGEND_ETHIKNORMATIV]
+        self.assertTrue(len(grundlegend) > 0)
+        self.assertEqual(grundlegend[0].ethik_norm_typ, EthikNormTyp.SOUVERAENITAETS_ETHIKNORM)
+
+    def test_kki_ethik_norm_aggregates_norm_signal(self) -> None:
+        normsatz = build_ethik_norm(norm_id="enorm-508-sig")
+        sig = normsatz.norm_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(normsatz.gesperrt_norm_ids), 0)
+
+    def test_kki_angewandte_ethik_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_angewandte_ethik_charta(charta_id="aecharta-509-g")
+        gesperrt = [n for n in charta.normen if n.geltung is AngewandteEthikChartaGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) > 0)
+        self.assertEqual(gesperrt[0].angewandte_ethik_typ, AngewandteEthikChartaTyp.SCHUTZ_ANGEWANDTE_ETHIK)
+
+    def test_kki_angewandte_ethik_charta_builds_angewandt_ethisch_norm(self) -> None:
+        charta = build_angewandte_ethik_charta(charta_id="aecharta-509-a")
+        angewandt = [n for n in charta.normen if n.geltung is AngewandteEthikChartaGeltung.ANGEWANDT_ETHISCH]
+        self.assertTrue(len(angewandt) > 0)
+        self.assertEqual(angewandt[0].angewandte_ethik_typ, AngewandteEthikChartaTyp.ORDNUNGS_ANGEWANDTE_ETHIK)
+
+    def test_kki_angewandte_ethik_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_angewandte_ethik_charta(charta_id="aecharta-509-gs")
+        grundlegend = [n for n in charta.normen if n.geltung is AngewandteEthikChartaGeltung.GRUNDLEGEND_ANGEWANDT_ETHISCH]
+        self.assertTrue(len(grundlegend) > 0)
+        self.assertEqual(grundlegend[0].angewandte_ethik_typ, AngewandteEthikChartaTyp.SOUVERAENITAETS_ANGEWANDTE_ETHIK)
+
+    def test_kki_angewandte_ethik_charta_aggregates_charta_signal(self) -> None:
+        charta = build_angewandte_ethik_charta(charta_id="aecharta-509-sig")
+        sig = charta.charta_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(charta.gesperrt_norm_ids), 0)
+
+    def test_kki_ethik_verfassung_builds_gesperrt_schutz_norm(self) -> None:
+        verfassung = build_ethik_verfassung(verfassung_id="everfassung-510-g")
+        gesperrt = [n for n in verfassung.normen if n.geltung is EthikVerfassungsGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) > 0)
+        self.assertEqual(gesperrt[0].ethik_typ, EthikVerfassungsTyp.SCHUTZ_ETHIKVERFASSUNG)
+
+    def test_kki_ethik_verfassung_builds_ethisch_souveraen_norm(self) -> None:
+        verfassung = build_ethik_verfassung(verfassung_id="everfassung-510-e")
+        souveraen = [n for n in verfassung.normen if n.geltung is EthikVerfassungsGeltung.ETHISCH_SOUVERAEN]
+        self.assertTrue(len(souveraen) > 0)
+        self.assertEqual(souveraen[0].ethik_typ, EthikVerfassungsTyp.ORDNUNGS_ETHIKVERFASSUNG)
+
+    def test_kki_ethik_verfassung_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        verfassung = build_ethik_verfassung(verfassung_id="everfassung-510-gs")
+        grundlegend = [n for n in verfassung.normen if n.geltung is EthikVerfassungsGeltung.GRUNDLEGEND_ETHISCH_SOUVERAEN]
+        self.assertTrue(len(grundlegend) > 0)
+        self.assertEqual(grundlegend[0].ethik_typ, EthikVerfassungsTyp.SOUVERAENITAETS_ETHIKVERFASSUNG)
+
+    def test_kki_ethik_verfassung_aggregates_verfassung_signal(self) -> None:
+        verfassung = build_ethik_verfassung(verfassung_id="everfassung-510-sig")
         sig = verfassung.verfassung_signal
         self.assertIsNotNone(sig)
         self.assertIn("gesperrt", sig.status)

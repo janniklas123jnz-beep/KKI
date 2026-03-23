@@ -4,7 +4,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from enum import Enum
 
-from .voelkerrechts_kodex import (
+from .voelkerrechts_kodex_kosmopolitik import (
     VoelkerrechtsGeltung,
     VoelkerrechtsKlasse,
     VoelkerrechtsKodex,

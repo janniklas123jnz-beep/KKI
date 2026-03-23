@@ -1735,6 +1735,42 @@ from kki.wirtschafts_verfassung import (
     WirtschaftsVerfassung, WirtschaftsVerfassungsGeltung, WirtschaftsVerfassungsNorm,
     WirtschaftsVerfassungsTyp, WirtschaftsVerfassungsProzedur, build_wirtschafts_verfassung,
 )
+from kki.rechts_feld import (
+    RechtsFeld, RechtsFeldGeltung, RechtsFeldNorm,
+    RechtsFeldTyp, RechtsFeldProzedur, build_rechts_feld,
+)
+from kki.rechts_system_register import (
+    RechtssystemRegister, RechtssystemRegisterGeltung, RechtssystemRegisterNorm,
+    RechtssystemRegisterTyp, RechtssystemRegisterProzedur, build_rechts_system_register,
+)
+from kki.verfassungsrechts_charta import (
+    VerfassungsrechtsCharta, VerfassungsrechtsChartaGeltung, VerfassungsrechtsChartaNorm,
+    VerfassungsrechtsChartaTyp, VerfassungsrechtsChartaProzedur, build_verfassungsrechts_charta,
+)
+from kki.rechtsphilosophie_manifest import (
+    RechtsphilosophieManifest, RechtsphilosophieManifestGeltung, RechtsphilosophieManifestNorm,
+    RechtsphilosophieManifestTyp, RechtsphilosophieManifestProzedur, build_rechtsphilosophie_manifest,
+)
+from kki.rechtssoziologie_pakt import (
+    RechtssoziologiePakt, RechtssoziologiePaktGeltung, RechtssoziologiePaktNorm,
+    RechtssoziologiePaktTyp, RechtssoziologiePaktProzedur, build_rechtssoziologie_pakt,
+)
+from kki.strafrechts_senat import (
+    StrafrechtsSenat, StrafrechtsSenatGeltung, StrafrechtsSenatNorm,
+    StrafrechtsSenatTyp, StrafrechtsSenatProzedur, build_strafrechts_senat,
+)
+from kki.rechts_norm import (
+    RechtsNormSatz, RechtsNormGeltung, RechtsNormEintrag,
+    RechtsNormTyp, RechtsNormProzedur, build_rechts_norm,
+)
+from kki.zivilrechts_charta import (
+    ZivilrechtsCharta, ZivilrechtsChartaGeltung, ZivilrechtsChartaNorm,
+    ZivilrechtsChartaTyp, ZivilrechtsChartaProzedur, build_zivilrechts_charta,
+)
+from kki.rechts_verfassung import (
+    RechtsVerfassung, RechtsVerfassungsGeltung, RechtsVerfassungsNorm,
+    RechtsVerfassungsTyp, RechtsVerfassungsProzedur, build_rechts_verfassung,
+)
 from kki import (
     KausalitaetsGeltung,
     KausalitaetsNorm,
@@ -2198,6 +2234,14 @@ from kki import (
     transfer_message,
     transfer_envelope_for_state,
     work_unit_for_state,
+)
+from kki.voelkerrechts_kodex import (
+    VoelkerrechtsKodex as VoelkerrechtsKodex534,
+    VoelkerrechtsKodexGeltung,
+    VoelkerrechtsKodexNorm,
+    VoelkerrechtsKodexTyp,
+    VoelkerrechtsKodexProzedur,
+    build_voelkerrechts_kodex as build_voelkerrechts_kodex534,
 )
 
 REPO_ROOT = Path(__file__).resolve().parent
@@ -10879,7 +10923,7 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(charta.grundlegend_norm_ids, ("charta-233-signal-expansion-lane",))
 
     def test_kki_voelkerrechts_kodex_builds_gesperrt_schutz_norm(self) -> None:
-        kodex = build_voelkerrechts_kodex(kodex_id="kodex-232-stability")
+        kodex = build_voelkerrechts_kodex534(kodex_id="kodex-232-stability")
         norm = next(n for n in kodex.normen if n.geltung is VoelkerrechtsGeltung.GESPERRT)
 
         self.assertIsInstance(kodex, VoelkerrechtsKodex)
@@ -10889,7 +10933,7 @@ class SmokeTests(unittest.TestCase):
         self.assertGreaterEqual(norm.voelkerrechts_tier, 1)
 
     def test_kki_voelkerrechts_kodex_builds_kodifiziert_ordnungs_norm(self) -> None:
-        kodex = build_voelkerrechts_kodex(kodex_id="kodex-232-governance")
+        kodex = build_voelkerrechts_kodex534(kodex_id="kodex-232-governance")
         norm = next(n for n in kodex.normen if n.geltung is VoelkerrechtsGeltung.KODIFIZIERT)
 
         self.assertEqual(norm.voelkerrechts_klasse, VoelkerrechtsKlasse.ORDNUNGS_KLASSE)
@@ -10897,7 +10941,7 @@ class SmokeTests(unittest.TestCase):
         self.assertGreater(norm.voelkerrechts_weight, 0.45)
 
     def test_kki_voelkerrechts_kodex_builds_grundlegend_souveraenitaets_norm(self) -> None:
-        kodex = build_voelkerrechts_kodex(kodex_id="kodex-232-expansion")
+        kodex = build_voelkerrechts_kodex534(kodex_id="kodex-232-expansion")
         norm = next(n for n in kodex.normen if n.geltung is VoelkerrechtsGeltung.GRUNDLEGEND_KODIFIZIERT)
 
         self.assertEqual(norm.voelkerrechts_klasse, VoelkerrechtsKlasse.SOUVERAENITAETS_KLASSE)
@@ -10905,7 +10949,7 @@ class SmokeTests(unittest.TestCase):
         self.assertTrue(norm.canonical)
 
     def test_kki_voelkerrechts_kodex_aggregates_kodex_signal(self) -> None:
-        kodex = build_voelkerrechts_kodex(kodex_id="kodex-232-signal")
+        kodex = build_voelkerrechts_kodex534(kodex_id="kodex-232-signal")
 
         self.assertEqual(kodex.kodex_signal.status, "kodex-gesperrt")
         self.assertEqual(kodex.gesperrt_norm_ids, ("kodex-232-signal-stability-lane",))
@@ -19542,6 +19586,236 @@ class SmokeTests(unittest.TestCase):
 
     def test_kki_wirtschafts_verfassung_aggregates_verfassung_signal(self) -> None:
         verfassung = build_wirtschafts_verfassung(verfassung_id="wverfassung-530-sig")
+        sig = verfassung.verfassung_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(verfassung.gesperrt_norm_ids), 0)
+
+    # --- #531 RechtsFeld ---
+    def test_kki_rechts_feld_builds_gesperrt_schutz_norm(self) -> None:
+        feld = build_rechts_feld(feld_id="rf-531-g")
+        self.assertTrue(any(n.geltung is RechtsFeldGeltung.GESPERRT for n in feld.normen))
+        self.assertTrue(any(n.rechts_typ is RechtsFeldTyp.SCHUTZ_RECHT for n in feld.normen))
+
+    def test_kki_rechts_feld_builds_rechtlich_norm(self) -> None:
+        feld = build_rechts_feld(feld_id="rf-531-r")
+        self.assertTrue(any(n.geltung is RechtsFeldGeltung.RECHTLICH for n in feld.normen))
+        self.assertTrue(any(n.rechts_typ is RechtsFeldTyp.ORDNUNGS_RECHT for n in feld.normen))
+
+    def test_kki_rechts_feld_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        feld = build_rechts_feld(feld_id="rf-531-gs")
+        self.assertTrue(any(n.geltung is RechtsFeldGeltung.GRUNDLEGEND_RECHTLICH for n in feld.normen))
+        self.assertTrue(any(n.rechts_typ is RechtsFeldTyp.SOUVERAENITAETS_RECHT for n in feld.normen))
+
+    def test_kki_rechts_feld_aggregates_feld_signal(self) -> None:
+        feld = build_rechts_feld(feld_id="rf-531-sig")
+        sig = feld.feld_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(feld.gesperrt_norm_ids), 0)
+
+    # --- #532 RechtssystemRegister ---
+    def test_kki_rechts_system_register_builds_gesperrt_schutz_norm(self) -> None:
+        reg = build_rechts_system_register(register_id="rsr-532-g")
+        self.assertTrue(any(n.geltung is RechtssystemRegisterGeltung.GESPERRT for n in reg.normen))
+        self.assertTrue(any(n.rechts_system_typ is RechtssystemRegisterTyp.SCHUTZ_RECHTSSYSTEM for n in reg.normen))
+
+    def test_kki_rechts_system_register_builds_rechtssystemisch_norm(self) -> None:
+        reg = build_rechts_system_register(register_id="rsr-532-r")
+        self.assertTrue(any(n.geltung is RechtssystemRegisterGeltung.RECHTSSYSTEMISCH for n in reg.normen))
+        self.assertTrue(any(n.rechts_system_typ is RechtssystemRegisterTyp.ORDNUNGS_RECHTSSYSTEM for n in reg.normen))
+
+    def test_kki_rechts_system_register_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        reg = build_rechts_system_register(register_id="rsr-532-gs")
+        self.assertTrue(any(n.geltung is RechtssystemRegisterGeltung.GRUNDLEGEND_RECHTSSYSTEMISCH for n in reg.normen))
+        self.assertTrue(any(n.rechts_system_typ is RechtssystemRegisterTyp.SOUVERAENITAETS_RECHTSSYSTEM for n in reg.normen))
+
+    def test_kki_rechts_system_register_aggregates_register_signal(self) -> None:
+        reg = build_rechts_system_register(register_id="rsr-532-sig")
+        sig = reg.register_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(reg.gesperrt_norm_ids), 0)
+
+    # --- #533 VerfassungsrechtsCharta ---
+    def test_kki_verfassungsrechts_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_verfassungsrechts_charta(charta_id="vrc-533-g")
+        self.assertTrue(any(n.geltung is VerfassungsrechtsChartaGeltung.GESPERRT for n in charta.normen))
+        self.assertTrue(any(n.verfassungsrechts_typ is VerfassungsrechtsChartaTyp.SCHUTZ_VERFASSUNGSRECHT for n in charta.normen))
+
+    def test_kki_verfassungsrechts_charta_builds_verfassungsrechtlich_norm(self) -> None:
+        charta = build_verfassungsrechts_charta(charta_id="vrc-533-v")
+        self.assertTrue(any(n.geltung is VerfassungsrechtsChartaGeltung.VERFASSUNGSRECHTLICH for n in charta.normen))
+        self.assertTrue(any(n.verfassungsrechts_typ is VerfassungsrechtsChartaTyp.ORDNUNGS_VERFASSUNGSRECHT for n in charta.normen))
+
+    def test_kki_verfassungsrechts_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_verfassungsrechts_charta(charta_id="vrc-533-gs")
+        self.assertTrue(any(n.geltung is VerfassungsrechtsChartaGeltung.GRUNDLEGEND_VERFASSUNGSRECHTLICH for n in charta.normen))
+        self.assertTrue(any(n.verfassungsrechts_typ is VerfassungsrechtsChartaTyp.SOUVERAENITAETS_VERFASSUNGSRECHT for n in charta.normen))
+
+    def test_kki_verfassungsrechts_charta_aggregates_charta_signal(self) -> None:
+        charta = build_verfassungsrechts_charta(charta_id="vrc-533-sig")
+        sig = charta.charta_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(charta.gesperrt_norm_ids), 0)
+
+    # --- #534 VoelkerrechtsKodex ---
+    def test_kki_voelkerrechts_kodex_builds_gesperrt_schutz_norm(self) -> None:
+        kodex = build_voelkerrechts_kodex534(kodex_id="vrk-534-g")
+        self.assertTrue(any(n.geltung is VoelkerrechtsKodexGeltung.GESPERRT for n in kodex.normen))
+        self.assertTrue(any(n.voelkerrechts_typ is VoelkerrechtsKodexTyp.SCHUTZ_VOELKERRECHT for n in kodex.normen))
+
+    def test_kki_voelkerrechts_kodex_builds_voelkerrechtlich_norm(self) -> None:
+        kodex = build_voelkerrechts_kodex534(kodex_id="vrk-534-v")
+        self.assertTrue(any(n.geltung is VoelkerrechtsKodexGeltung.VOELKERRECHTLICH for n in kodex.normen))
+        self.assertTrue(any(n.voelkerrechts_typ is VoelkerrechtsKodexTyp.ORDNUNGS_VOELKERRECHT for n in kodex.normen))
+
+    def test_kki_voelkerrechts_kodex_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        kodex = build_voelkerrechts_kodex534(kodex_id="vrk-534-gs")
+        self.assertTrue(any(n.geltung is VoelkerrechtsKodexGeltung.GRUNDLEGEND_VOELKERRECHTLICH for n in kodex.normen))
+        self.assertTrue(any(n.voelkerrechts_typ is VoelkerrechtsKodexTyp.SOUVERAENITAETS_VOELKERRECHT for n in kodex.normen))
+
+    def test_kki_voelkerrechts_kodex_aggregates_kodex_signal(self) -> None:
+        kodex = build_voelkerrechts_kodex534(kodex_id="vrk-534-sig")
+        sig = kodex.kodex_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(kodex.gesperrt_norm_ids), 0)
+
+    # --- #535 RechtsphilosophieManifest ---
+    def test_kki_rechtsphilosophie_manifest_builds_gesperrt_schutz_norm(self) -> None:
+        manifest = build_rechtsphilosophie_manifest(manifest_id="rpm-535-g")
+        self.assertTrue(any(n.geltung is RechtsphilosophieManifestGeltung.GESPERRT for n in manifest.normen))
+        self.assertTrue(any(n.rechtsphilosophie_typ is RechtsphilosophieManifestTyp.SCHUTZ_RECHTSPHILOSOPHIE for n in manifest.normen))
+
+    def test_kki_rechtsphilosophie_manifest_builds_rechtsphilosophisch_norm(self) -> None:
+        manifest = build_rechtsphilosophie_manifest(manifest_id="rpm-535-r")
+        self.assertTrue(any(n.geltung is RechtsphilosophieManifestGeltung.RECHTSPHILOSOPHISCH for n in manifest.normen))
+        self.assertTrue(any(n.rechtsphilosophie_typ is RechtsphilosophieManifestTyp.ORDNUNGS_RECHTSPHILOSOPHIE for n in manifest.normen))
+
+    def test_kki_rechtsphilosophie_manifest_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        manifest = build_rechtsphilosophie_manifest(manifest_id="rpm-535-gs")
+        self.assertTrue(any(n.geltung is RechtsphilosophieManifestGeltung.GRUNDLEGEND_RECHTSPHILOSOPHISCH for n in manifest.normen))
+        self.assertTrue(any(n.rechtsphilosophie_typ is RechtsphilosophieManifestTyp.SOUVERAENITAETS_RECHTSPHILOSOPHIE for n in manifest.normen))
+
+    def test_kki_rechtsphilosophie_manifest_aggregates_manifest_signal(self) -> None:
+        manifest = build_rechtsphilosophie_manifest(manifest_id="rpm-535-sig")
+        sig = manifest.manifest_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(manifest.gesperrt_norm_ids), 0)
+
+    # --- #536 RechtssoziologiePakt ---
+    def test_kki_rechtssoziologie_pakt_builds_gesperrt_schutz_norm(self) -> None:
+        pakt = build_rechtssoziologie_pakt(pakt_id="rsp-536-g")
+        self.assertTrue(any(n.geltung is RechtssoziologiePaktGeltung.GESPERRT for n in pakt.normen))
+        self.assertTrue(any(n.rechtssoziologie_typ is RechtssoziologiePaktTyp.SCHUTZ_RECHTSSOZIOLOGIE for n in pakt.normen))
+
+    def test_kki_rechtssoziologie_pakt_builds_rechtssoziologisch_norm(self) -> None:
+        pakt = build_rechtssoziologie_pakt(pakt_id="rsp-536-r")
+        self.assertTrue(any(n.geltung is RechtssoziologiePaktGeltung.RECHTSSOZIOLOGISCH for n in pakt.normen))
+        self.assertTrue(any(n.rechtssoziologie_typ is RechtssoziologiePaktTyp.ORDNUNGS_RECHTSSOZIOLOGIE for n in pakt.normen))
+
+    def test_kki_rechtssoziologie_pakt_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        pakt = build_rechtssoziologie_pakt(pakt_id="rsp-536-gs")
+        self.assertTrue(any(n.geltung is RechtssoziologiePaktGeltung.GRUNDLEGEND_RECHTSSOZIOLOGISCH for n in pakt.normen))
+        self.assertTrue(any(n.rechtssoziologie_typ is RechtssoziologiePaktTyp.SOUVERAENITAETS_RECHTSSOZIOLOGIE for n in pakt.normen))
+
+    def test_kki_rechtssoziologie_pakt_aggregates_pakt_signal(self) -> None:
+        pakt = build_rechtssoziologie_pakt(pakt_id="rsp-536-sig")
+        sig = pakt.pakt_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(pakt.gesperrt_norm_ids), 0)
+
+    # --- #537 StrafrechtsSenat ---
+    def test_kki_strafrechts_senat_builds_gesperrt_schutz_norm(self) -> None:
+        senat = build_strafrechts_senat(senat_id="ss-537-g")
+        self.assertTrue(any(n.geltung is StrafrechtsSenatGeltung.GESPERRT for n in senat.normen))
+        self.assertTrue(any(n.strafrechts_typ is StrafrechtsSenatTyp.SCHUTZ_STRAFRECHT for n in senat.normen))
+
+    def test_kki_strafrechts_senat_builds_strafrechtlich_norm(self) -> None:
+        senat = build_strafrechts_senat(senat_id="ss-537-s")
+        self.assertTrue(any(n.geltung is StrafrechtsSenatGeltung.STRAFRECHTLICH for n in senat.normen))
+        self.assertTrue(any(n.strafrechts_typ is StrafrechtsSenatTyp.ORDNUNGS_STRAFRECHT for n in senat.normen))
+
+    def test_kki_strafrechts_senat_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        senat = build_strafrechts_senat(senat_id="ss-537-gs")
+        self.assertTrue(any(n.geltung is StrafrechtsSenatGeltung.GRUNDLEGEND_STRAFRECHTLICH for n in senat.normen))
+        self.assertTrue(any(n.strafrechts_typ is StrafrechtsSenatTyp.SOUVERAENITAETS_STRAFRECHT for n in senat.normen))
+
+    def test_kki_strafrechts_senat_aggregates_senat_signal(self) -> None:
+        senat = build_strafrechts_senat(senat_id="ss-537-sig")
+        sig = senat.senat_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(senat.gesperrt_norm_ids), 0)
+
+    # --- #538 RechtsNorm ---
+    def test_kki_rechts_norm_builds_gesperrt_schutz_norm(self) -> None:
+        norm = build_rechts_norm(norm_id="rn-538-g")
+        self.assertTrue(any(n.geltung is RechtsNormGeltung.GESPERRT for n in norm.normen))
+        self.assertTrue(any(n.rechts_norm_typ is RechtsNormTyp.SCHUTZ_RECHTSNORM for n in norm.normen))
+
+    def test_kki_rechts_norm_builds_rechtsnormativ_norm(self) -> None:
+        norm = build_rechts_norm(norm_id="rn-538-r")
+        self.assertTrue(any(n.geltung is RechtsNormGeltung.RECHTSNORMATIV for n in norm.normen))
+        self.assertTrue(any(n.rechts_norm_typ is RechtsNormTyp.ORDNUNGS_RECHTSNORM for n in norm.normen))
+
+    def test_kki_rechts_norm_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        norm = build_rechts_norm(norm_id="rn-538-gs")
+        self.assertTrue(any(n.geltung is RechtsNormGeltung.GRUNDLEGEND_RECHTSNORMATIV for n in norm.normen))
+        self.assertTrue(any(n.rechts_norm_typ is RechtsNormTyp.SOUVERAENITAETS_RECHTSNORM for n in norm.normen))
+
+    def test_kki_rechts_norm_aggregates_norm_signal(self) -> None:
+        norm = build_rechts_norm(norm_id="rn-538-sig")
+        sig = norm.norm_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(norm.gesperrt_norm_ids), 0)
+
+    # --- #539 ZivilrechtsCharta ---
+    def test_kki_zivilrechts_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_zivilrechts_charta(charta_id="zc-539-g")
+        self.assertTrue(any(n.geltung is ZivilrechtsChartaGeltung.GESPERRT for n in charta.normen))
+        self.assertTrue(any(n.zivilrechts_typ is ZivilrechtsChartaTyp.SCHUTZ_ZIVILRECHT for n in charta.normen))
+
+    def test_kki_zivilrechts_charta_builds_zivilrechtlich_norm(self) -> None:
+        charta = build_zivilrechts_charta(charta_id="zc-539-z")
+        self.assertTrue(any(n.geltung is ZivilrechtsChartaGeltung.ZIVILRECHTLICH for n in charta.normen))
+        self.assertTrue(any(n.zivilrechts_typ is ZivilrechtsChartaTyp.ORDNUNGS_ZIVILRECHT for n in charta.normen))
+
+    def test_kki_zivilrechts_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_zivilrechts_charta(charta_id="zc-539-gs")
+        self.assertTrue(any(n.geltung is ZivilrechtsChartaGeltung.GRUNDLEGEND_ZIVILRECHTLICH for n in charta.normen))
+        self.assertTrue(any(n.zivilrechts_typ is ZivilrechtsChartaTyp.SOUVERAENITAETS_ZIVILRECHT for n in charta.normen))
+
+    def test_kki_zivilrechts_charta_aggregates_charta_signal(self) -> None:
+        charta = build_zivilrechts_charta(charta_id="zc-539-sig")
+        sig = charta.charta_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(charta.gesperrt_norm_ids), 0)
+
+    # --- #540 RechtsVerfassung ---
+    def test_kki_rechts_verfassung_builds_gesperrt_schutz_norm(self) -> None:
+        verfassung = build_rechts_verfassung(verfassung_id="rv-540-g")
+        self.assertTrue(any(n.geltung is RechtsVerfassungsGeltung.GESPERRT for n in verfassung.normen))
+        self.assertTrue(any(n.rechts_typ is RechtsVerfassungsTyp.SCHUTZ_RECHTSVERFASSUNG for n in verfassung.normen))
+
+    def test_kki_rechts_verfassung_builds_rechtlich_souveraen_norm(self) -> None:
+        verfassung = build_rechts_verfassung(verfassung_id="rv-540-rs")
+        self.assertTrue(any(n.geltung is RechtsVerfassungsGeltung.RECHTLICH_SOUVERAEN for n in verfassung.normen))
+        self.assertTrue(any(n.rechts_typ is RechtsVerfassungsTyp.ORDNUNGS_RECHTSVERFASSUNG for n in verfassung.normen))
+
+    def test_kki_rechts_verfassung_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        verfassung = build_rechts_verfassung(verfassung_id="rv-540-gs")
+        self.assertTrue(any(n.geltung is RechtsVerfassungsGeltung.GRUNDLEGEND_RECHTLICH_SOUVERAEN for n in verfassung.normen))
+        self.assertTrue(any(n.rechts_typ is RechtsVerfassungsTyp.SOUVERAENITAETS_RECHTSVERFASSUNG for n in verfassung.normen))
+
+    def test_kki_rechts_verfassung_aggregates_verfassung_signal(self) -> None:
+        verfassung = build_rechts_verfassung(verfassung_id="rv-540-sig")
         sig = verfassung.verfassung_signal
         self.assertIsNotNone(sig)
         self.assertIn("gesperrt", sig.status)

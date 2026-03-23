@@ -427,7 +427,7 @@ from .weltordnungs_prinzip import (
     WeltordnungsProzedur,
     build_weltordnungs_prinzip,
 )
-from .voelkerrechts_kodex import (
+from .voelkerrechts_kodex_kosmopolitik import (
     VoelkerrechtsGeltung,
     VoelkerrechtsKlasse,
     VoelkerrechtsKodex,
@@ -2479,6 +2479,55 @@ from .wirtschafts_verfassung import (
     WirtschaftsVerfassungsProzedur, WirtschaftsVerfassungsTyp,
     WirtschaftsVerfassung, build_wirtschafts_verfassung,
 )
+from .rechts_feld import (
+    RechtsFeldGeltung, RechtsFeldNorm, RechtsFeldProzedur, RechtsFeldTyp,
+    RechtsFeld, build_rechts_feld,
+)
+from .rechts_system_register import (
+    RechtssystemRegisterGeltung, RechtssystemRegisterNorm,
+    RechtssystemRegisterProzedur, RechtssystemRegisterTyp,
+    RechtssystemRegister, build_rechts_system_register,
+)
+from .verfassungsrechts_charta import (
+    VerfassungsrechtsChartaGeltung, VerfassungsrechtsChartaNorm,
+    VerfassungsrechtsChartaProzedur, VerfassungsrechtsChartaTyp,
+    VerfassungsrechtsCharta, build_verfassungsrechts_charta,
+)
+from .voelkerrechts_kodex import (
+    VoelkerrechtsKodexGeltung, VoelkerrechtsKodexNorm,
+    VoelkerrechtsKodexProzedur, VoelkerrechtsKodexTyp,
+    VoelkerrechtsKodex as VoelkerrechtsKodexJurisprudenz,
+    build_voelkerrechts_kodex as build_voelkerrechts_kodex_jurisprudenz,
+)
+from .rechtsphilosophie_manifest import (
+    RechtsphilosophieManifestGeltung, RechtsphilosophieManifestNorm,
+    RechtsphilosophieManifestProzedur, RechtsphilosophieManifestTyp,
+    RechtsphilosophieManifest, build_rechtsphilosophie_manifest,
+)
+from .rechtssoziologie_pakt import (
+    RechtssoziologiePaktGeltung, RechtssoziologiePaktNorm,
+    RechtssoziologiePaktProzedur, RechtssoziologiePaktTyp,
+    RechtssoziologiePakt, build_rechtssoziologie_pakt,
+)
+from .strafrechts_senat import (
+    StrafrechtsSenatGeltung, StrafrechtsSenatNorm,
+    StrafrechtsSenatProzedur, StrafrechtsSenatTyp,
+    StrafrechtsSenat, build_strafrechts_senat,
+)
+from .rechts_norm import (
+    RechtsNormGeltung, RechtsNormEintrag, RechtsNormProzedur, RechtsNormTyp,
+    RechtsNormSatz, build_rechts_norm,
+)
+from .zivilrechts_charta import (
+    ZivilrechtsChartaGeltung, ZivilrechtsChartaNorm,
+    ZivilrechtsChartaProzedur, ZivilrechtsChartaTyp,
+    ZivilrechtsCharta, build_zivilrechts_charta,
+)
+from .rechts_verfassung import (
+    RechtsVerfassungsGeltung, RechtsVerfassungsNorm,
+    RechtsVerfassungsProzedur, RechtsVerfassungsTyp,
+    RechtsVerfassung, build_rechts_verfassung,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -4119,4 +4168,24 @@ __all__ = [
     "InstitutionenCharta", "build_institutionen_charta",
     "WirtschaftsVerfassungsGeltung", "WirtschaftsVerfassungsNorm", "WirtschaftsVerfassungsProzedur", "WirtschaftsVerfassungsTyp",
     "WirtschaftsVerfassung", "build_wirtschafts_verfassung",
+    "RechtsFeldGeltung", "RechtsFeldNorm", "RechtsFeldProzedur", "RechtsFeldTyp",
+    "RechtsFeld", "build_rechts_feld",
+    "RechtssystemRegisterGeltung", "RechtssystemRegisterNorm", "RechtssystemRegisterProzedur", "RechtssystemRegisterTyp",
+    "RechtssystemRegister", "build_rechts_system_register",
+    "VerfassungsrechtsChartaGeltung", "VerfassungsrechtsChartaNorm", "VerfassungsrechtsChartaProzedur", "VerfassungsrechtsChartaTyp",
+    "VerfassungsrechtsCharta", "build_verfassungsrechts_charta",
+    "VoelkerrechtsKodexGeltung", "VoelkerrechtsKodexNorm", "VoelkerrechtsKodexProzedur", "VoelkerrechtsKodexTyp",
+    "VoelkerrechtsKodexJurisprudenz", "build_voelkerrechts_kodex_jurisprudenz",
+    "RechtsphilosophieManifestGeltung", "RechtsphilosophieManifestNorm", "RechtsphilosophieManifestProzedur", "RechtsphilosophieManifestTyp",
+    "RechtsphilosophieManifest", "build_rechtsphilosophie_manifest",
+    "RechtssoziologiePaktGeltung", "RechtssoziologiePaktNorm", "RechtssoziologiePaktProzedur", "RechtssoziologiePaktTyp",
+    "RechtssoziologiePakt", "build_rechtssoziologie_pakt",
+    "StrafrechtsSenatGeltung", "StrafrechtsSenatNorm", "StrafrechtsSenatProzedur", "StrafrechtsSenatTyp",
+    "StrafrechtsSenat", "build_strafrechts_senat",
+    "RechtsNormGeltung", "RechtsNormEintrag", "RechtsNormProzedur", "RechtsNormTyp",
+    "RechtsNormSatz", "build_rechts_norm",
+    "ZivilrechtsChartaGeltung", "ZivilrechtsChartaNorm", "ZivilrechtsChartaProzedur", "ZivilrechtsChartaTyp",
+    "ZivilrechtsCharta", "build_zivilrechts_charta",
+    "RechtsVerfassungsGeltung", "RechtsVerfassungsNorm", "RechtsVerfassungsProzedur", "RechtsVerfassungsTyp",
+    "RechtsVerfassung", "build_rechts_verfassung",
 ]

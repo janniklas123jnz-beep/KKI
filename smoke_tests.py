@@ -1695,6 +1695,46 @@ from kki.politik_verfassung import (
     PolitikVerfassung, PolitikVerfassungsGeltung, PolitikVerfassungsNorm,
     PolitikVerfassungsTyp, PolitikVerfassungsProzedur, build_politik_verfassung,
 )
+from kki.wirtschafts_feld import (
+    WirtschaftsFeld, WirtschaftsFeldGeltung, WirtschaftsFeldNorm,
+    WirtschaftsFeldTyp, WirtschaftsFeldProzedur, build_wirtschafts_feld,
+)
+from kki.markt_register import (
+    MarktRegister, MarktRegisterGeltung, MarktRegisterNorm,
+    MarktRegisterTyp, MarktRegisterProzedur, build_markt_register,
+)
+from kki.kapital_charta import (
+    KapitalCharta, KapitalChartaGeltung, KapitalChartaNorm,
+    KapitalChartaTyp, KapitalChartaProzedur, build_kapital_charta,
+)
+from kki.konjunktur_kodex import (
+    KonjunkturKodex, KonjunkturKodexGeltung, KonjunkturKodexNorm,
+    KonjunkturKodexTyp, KonjunkturKodexProzedur, build_konjunktur_kodex,
+)
+from kki.wirtschafts_ordnungs_manifest import (
+    WirtschaftsOrdnungsManifest, WirtschaftsOrdnungsManifestGeltung, WirtschaftsOrdnungsManifestNorm,
+    WirtschaftsOrdnungsManifestTyp, WirtschaftsOrdnungsManifestProzedur, build_ordnungs_manifest,
+)
+from kki.innovations_pakt import (
+    InnovationsPakt, InnovationsPaktGeltung, InnovationsPaktNorm,
+    InnovationsPaktTyp, InnovationsPaktProzedur, build_innovations_pakt,
+)
+from kki.wohlfahrts_senat import (
+    WohlfahrtsSenat, WohlfahrtsSenatGeltung, WohlfahrtsSenatNorm,
+    WohlfahrtsSenatTyp, WohlfahrtsSenatProzedur, build_wohlfahrts_senat,
+)
+from kki.wirtschafts_norm import (
+    WirtschaftsNormSatz, WirtschaftsNormGeltung, WirtschaftsNormEintrag,
+    WirtschaftsNormTyp, WirtschaftsNormProzedur, build_wirtschafts_norm,
+)
+from kki.institutionen_charta import (
+    InstitutionenCharta, InstitutionenChartaGeltung, InstitutionenChartaNorm,
+    InstitutionenChartaTyp, InstitutionenChartaProzedur, build_institutionen_charta,
+)
+from kki.wirtschafts_verfassung import (
+    WirtschaftsVerfassung, WirtschaftsVerfassungsGeltung, WirtschaftsVerfassungsNorm,
+    WirtschaftsVerfassungsTyp, WirtschaftsVerfassungsProzedur, build_wirtschafts_verfassung,
+)
 from kki import (
     KausalitaetsGeltung,
     KausalitaetsNorm,
@@ -19250,6 +19290,258 @@ class SmokeTests(unittest.TestCase):
 
     def test_kki_politik_verfassung_aggregates_verfassung_signal(self) -> None:
         verfassung = build_politik_verfassung(verfassung_id="pverfassung-520-sig")
+        sig = verfassung.verfassung_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(verfassung.gesperrt_norm_ids), 0)
+
+    # ── Block #521–#530: Wirtschaftstheorie & Ökonomie ───────────────────────────
+
+    def test_kki_wirtschafts_feld_builds_gesperrt_schutz_norm(self) -> None:
+        feld = build_wirtschafts_feld(feld_id="wfeld-521-g")
+        gesperrt = [n for n in feld.normen if n.geltung is WirtschaftsFeldGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) > 0)
+        self.assertEqual(gesperrt[0].wirtschafts_typ, WirtschaftsFeldTyp.SCHUTZ_WIRTSCHAFT)
+
+    def test_kki_wirtschafts_feld_builds_wirtschaftlich_norm(self) -> None:
+        feld = build_wirtschafts_feld(feld_id="wfeld-521-w")
+        wirtschaftlich = [n for n in feld.normen if n.geltung is WirtschaftsFeldGeltung.WIRTSCHAFTLICH]
+        self.assertTrue(len(wirtschaftlich) > 0)
+        self.assertEqual(wirtschaftlich[0].wirtschafts_typ, WirtschaftsFeldTyp.ORDNUNGS_WIRTSCHAFT)
+
+    def test_kki_wirtschafts_feld_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        feld = build_wirtschafts_feld(feld_id="wfeld-521-gs")
+        grundlegend = [n for n in feld.normen if n.geltung is WirtschaftsFeldGeltung.GRUNDLEGEND_WIRTSCHAFTLICH]
+        self.assertTrue(len(grundlegend) > 0)
+        self.assertEqual(grundlegend[0].wirtschafts_typ, WirtschaftsFeldTyp.SOUVERAENITAETS_WIRTSCHAFT)
+
+    def test_kki_wirtschafts_feld_aggregates_feld_signal(self) -> None:
+        feld = build_wirtschafts_feld(feld_id="wfeld-521-sig")
+        sig = feld.feld_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(feld.gesperrt_norm_ids), 0)
+
+    def test_kki_markt_register_builds_gesperrt_schutz_norm(self) -> None:
+        reg = build_markt_register(register_id="mreg-522-g")
+        gesperrt = [n for n in reg.normen if n.geltung is MarktRegisterGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) > 0)
+        self.assertEqual(gesperrt[0].markt_typ, MarktRegisterTyp.SCHUTZ_MARKT)
+
+    def test_kki_markt_register_builds_marktlich_norm(self) -> None:
+        reg = build_markt_register(register_id="mreg-522-m")
+        marktlich = [n for n in reg.normen if n.geltung is MarktRegisterGeltung.MARKTLICH]
+        self.assertTrue(len(marktlich) > 0)
+        self.assertEqual(marktlich[0].markt_typ, MarktRegisterTyp.ORDNUNGS_MARKT)
+
+    def test_kki_markt_register_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        reg = build_markt_register(register_id="mreg-522-gs")
+        grundlegend = [n for n in reg.normen if n.geltung is MarktRegisterGeltung.GRUNDLEGEND_MARKTLICH]
+        self.assertTrue(len(grundlegend) > 0)
+        self.assertEqual(grundlegend[0].markt_typ, MarktRegisterTyp.SOUVERAENITAETS_MARKT)
+
+    def test_kki_markt_register_aggregates_register_signal(self) -> None:
+        reg = build_markt_register(register_id="mreg-522-sig")
+        sig = reg.register_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(reg.gesperrt_norm_ids), 0)
+
+    def test_kki_kapital_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_kapital_charta(charta_id="kcharta-523-g")
+        gesperrt = [n for n in charta.normen if n.geltung is KapitalChartaGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) > 0)
+        self.assertEqual(gesperrt[0].kapital_typ, KapitalChartaTyp.SCHUTZ_KAPITAL)
+
+    def test_kki_kapital_charta_builds_kapitalistisch_norm(self) -> None:
+        charta = build_kapital_charta(charta_id="kcharta-523-k")
+        kapitalistisch = [n for n in charta.normen if n.geltung is KapitalChartaGeltung.KAPITALISTISCH]
+        self.assertTrue(len(kapitalistisch) > 0)
+        self.assertEqual(kapitalistisch[0].kapital_typ, KapitalChartaTyp.ORDNUNGS_KAPITAL)
+
+    def test_kki_kapital_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_kapital_charta(charta_id="kcharta-523-gs")
+        grundlegend = [n for n in charta.normen if n.geltung is KapitalChartaGeltung.GRUNDLEGEND_KAPITALISTISCH]
+        self.assertTrue(len(grundlegend) > 0)
+        self.assertEqual(grundlegend[0].kapital_typ, KapitalChartaTyp.SOUVERAENITAETS_KAPITAL)
+
+    def test_kki_kapital_charta_aggregates_charta_signal(self) -> None:
+        charta = build_kapital_charta(charta_id="kcharta-523-sig")
+        sig = charta.charta_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(charta.gesperrt_norm_ids), 0)
+
+    def test_kki_konjunktur_kodex_builds_gesperrt_schutz_norm(self) -> None:
+        kodex = build_konjunktur_kodex(kodex_id="kkodex-524-g")
+        gesperrt = [n for n in kodex.normen if n.geltung is KonjunkturKodexGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) > 0)
+        self.assertEqual(gesperrt[0].konjunktur_typ, KonjunkturKodexTyp.SCHUTZ_KONJUNKTUR)
+
+    def test_kki_konjunktur_kodex_builds_konjunkturell_norm(self) -> None:
+        kodex = build_konjunktur_kodex(kodex_id="kkodex-524-k")
+        konjunkturell = [n for n in kodex.normen if n.geltung is KonjunkturKodexGeltung.KONJUNKTURELL]
+        self.assertTrue(len(konjunkturell) > 0)
+        self.assertEqual(konjunkturell[0].konjunktur_typ, KonjunkturKodexTyp.ORDNUNGS_KONJUNKTUR)
+
+    def test_kki_konjunktur_kodex_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        kodex = build_konjunktur_kodex(kodex_id="kkodex-524-gs")
+        grundlegend = [n for n in kodex.normen if n.geltung is KonjunkturKodexGeltung.GRUNDLEGEND_KONJUNKTURELL]
+        self.assertTrue(len(grundlegend) > 0)
+        self.assertEqual(grundlegend[0].konjunktur_typ, KonjunkturKodexTyp.SOUVERAENITAETS_KONJUNKTUR)
+
+    def test_kki_konjunktur_kodex_aggregates_kodex_signal(self) -> None:
+        kodex = build_konjunktur_kodex(kodex_id="kkodex-524-sig")
+        sig = kodex.kodex_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(kodex.gesperrt_norm_ids), 0)
+
+    def test_kki_wirtschafts_ordnungs_manifest_builds_gesperrt_schutz_norm(self) -> None:
+        manifest = build_ordnungs_manifest(manifest_id="womanifest-525-g")
+        gesperrt = [n for n in manifest.normen if n.geltung is WirtschaftsOrdnungsManifestGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) > 0)
+        self.assertEqual(gesperrt[0].ordnungs_typ, WirtschaftsOrdnungsManifestTyp.SCHUTZ_ORDNUNG)
+
+    def test_kki_wirtschafts_ordnungs_manifest_builds_ordnungsoekonomisch_norm(self) -> None:
+        manifest = build_ordnungs_manifest(manifest_id="womanifest-525-o")
+        ordnung = [n for n in manifest.normen if n.geltung is WirtschaftsOrdnungsManifestGeltung.ORDNUNGSOEKONOMISCH]
+        self.assertTrue(len(ordnung) > 0)
+        self.assertEqual(ordnung[0].ordnungs_typ, WirtschaftsOrdnungsManifestTyp.ORDNUNGS_ORDNUNG)
+
+    def test_kki_wirtschafts_ordnungs_manifest_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        manifest = build_ordnungs_manifest(manifest_id="womanifest-525-gs")
+        grundlegend = [n for n in manifest.normen if n.geltung is WirtschaftsOrdnungsManifestGeltung.GRUNDLEGEND_ORDNUNGSOEKONOMISCH]
+        self.assertTrue(len(grundlegend) > 0)
+        self.assertEqual(grundlegend[0].ordnungs_typ, WirtschaftsOrdnungsManifestTyp.SOUVERAENITAETS_ORDNUNG)
+
+    def test_kki_wirtschafts_ordnungs_manifest_aggregates_manifest_signal(self) -> None:
+        manifest = build_ordnungs_manifest(manifest_id="womanifest-525-sig")
+        sig = manifest.manifest_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(manifest.gesperrt_norm_ids), 0)
+
+    def test_kki_innovations_pakt_builds_gesperrt_schutz_norm(self) -> None:
+        pakt = build_innovations_pakt(pakt_id="ipakt-526-g")
+        gesperrt = [n for n in pakt.normen if n.geltung is InnovationsPaktGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) > 0)
+        self.assertEqual(gesperrt[0].innovations_typ, InnovationsPaktTyp.SCHUTZ_INNOVATION)
+
+    def test_kki_innovations_pakt_builds_innovativ_norm(self) -> None:
+        pakt = build_innovations_pakt(pakt_id="ipakt-526-i")
+        innovativ = [n for n in pakt.normen if n.geltung is InnovationsPaktGeltung.INNOVATIV]
+        self.assertTrue(len(innovativ) > 0)
+        self.assertEqual(innovativ[0].innovations_typ, InnovationsPaktTyp.ORDNUNGS_INNOVATION)
+
+    def test_kki_innovations_pakt_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        pakt = build_innovations_pakt(pakt_id="ipakt-526-gs")
+        grundlegend = [n for n in pakt.normen if n.geltung is InnovationsPaktGeltung.GRUNDLEGEND_INNOVATIV]
+        self.assertTrue(len(grundlegend) > 0)
+        self.assertEqual(grundlegend[0].innovations_typ, InnovationsPaktTyp.SOUVERAENITAETS_INNOVATION)
+
+    def test_kki_innovations_pakt_aggregates_pakt_signal(self) -> None:
+        pakt = build_innovations_pakt(pakt_id="ipakt-526-sig")
+        sig = pakt.pakt_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(pakt.gesperrt_norm_ids), 0)
+
+    def test_kki_wohlfahrts_senat_builds_gesperrt_schutz_norm(self) -> None:
+        senat = build_wohlfahrts_senat(senat_id="wsenat-527-g")
+        gesperrt = [n for n in senat.normen if n.geltung is WohlfahrtsSenatGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) > 0)
+        self.assertEqual(gesperrt[0].wohlfahrts_typ, WohlfahrtsSenatTyp.SCHUTZ_WOHLFAHRT)
+
+    def test_kki_wohlfahrts_senat_builds_wohlfahrtlich_norm(self) -> None:
+        senat = build_wohlfahrts_senat(senat_id="wsenat-527-w")
+        wohlfahrt = [n for n in senat.normen if n.geltung is WohlfahrtsSenatGeltung.WOHLFAHRTLICH]
+        self.assertTrue(len(wohlfahrt) > 0)
+        self.assertEqual(wohlfahrt[0].wohlfahrts_typ, WohlfahrtsSenatTyp.ORDNUNGS_WOHLFAHRT)
+
+    def test_kki_wohlfahrts_senat_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        senat = build_wohlfahrts_senat(senat_id="wsenat-527-gs")
+        grundlegend = [n for n in senat.normen if n.geltung is WohlfahrtsSenatGeltung.GRUNDLEGEND_WOHLFAHRTLICH]
+        self.assertTrue(len(grundlegend) > 0)
+        self.assertEqual(grundlegend[0].wohlfahrts_typ, WohlfahrtsSenatTyp.SOUVERAENITAETS_WOHLFAHRT)
+
+    def test_kki_wohlfahrts_senat_aggregates_senat_signal(self) -> None:
+        senat = build_wohlfahrts_senat(senat_id="wsenat-527-sig")
+        sig = senat.senat_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(senat.gesperrt_norm_ids), 0)
+
+    def test_kki_wirtschafts_norm_builds_gesperrt_schutz_norm(self) -> None:
+        normsatz = build_wirtschafts_norm(norm_id="wnorm-528-g")
+        gesperrt = [n for n in normsatz.normen if n.geltung is WirtschaftsNormGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) > 0)
+        self.assertEqual(gesperrt[0].wirtschafts_norm_typ, WirtschaftsNormTyp.SCHUTZ_WIRTSCHAFTSNORM)
+
+    def test_kki_wirtschafts_norm_builds_wirtschaftsnormativ_norm(self) -> None:
+        normsatz = build_wirtschafts_norm(norm_id="wnorm-528-w")
+        wirtschaftsnorm = [n for n in normsatz.normen if n.geltung is WirtschaftsNormGeltung.WIRTSCHAFTSNORMATIV]
+        self.assertTrue(len(wirtschaftsnorm) > 0)
+        self.assertEqual(wirtschaftsnorm[0].wirtschafts_norm_typ, WirtschaftsNormTyp.ORDNUNGS_WIRTSCHAFTSNORM)
+
+    def test_kki_wirtschafts_norm_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        normsatz = build_wirtschafts_norm(norm_id="wnorm-528-gs")
+        grundlegend = [n for n in normsatz.normen if n.geltung is WirtschaftsNormGeltung.GRUNDLEGEND_WIRTSCHAFTSNORMATIV]
+        self.assertTrue(len(grundlegend) > 0)
+        self.assertEqual(grundlegend[0].wirtschafts_norm_typ, WirtschaftsNormTyp.SOUVERAENITAETS_WIRTSCHAFTSNORM)
+
+    def test_kki_wirtschafts_norm_aggregates_norm_signal(self) -> None:
+        normsatz = build_wirtschafts_norm(norm_id="wnorm-528-sig")
+        sig = normsatz.norm_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(normsatz.gesperrt_norm_ids), 0)
+
+    def test_kki_institutionen_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_institutionen_charta(charta_id="icharta-529-g")
+        gesperrt = [n for n in charta.normen if n.geltung is InstitutionenChartaGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) > 0)
+        self.assertEqual(gesperrt[0].institutionen_typ, InstitutionenChartaTyp.SCHUTZ_INSTITUTION)
+
+    def test_kki_institutionen_charta_builds_institutionell_norm(self) -> None:
+        charta = build_institutionen_charta(charta_id="icharta-529-i")
+        institutionell = [n for n in charta.normen if n.geltung is InstitutionenChartaGeltung.INSTITUTIONELL]
+        self.assertTrue(len(institutionell) > 0)
+        self.assertEqual(institutionell[0].institutionen_typ, InstitutionenChartaTyp.ORDNUNGS_INSTITUTION)
+
+    def test_kki_institutionen_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_institutionen_charta(charta_id="icharta-529-gs")
+        grundlegend = [n for n in charta.normen if n.geltung is InstitutionenChartaGeltung.GRUNDLEGEND_INSTITUTIONELL]
+        self.assertTrue(len(grundlegend) > 0)
+        self.assertEqual(grundlegend[0].institutionen_typ, InstitutionenChartaTyp.SOUVERAENITAETS_INSTITUTION)
+
+    def test_kki_institutionen_charta_aggregates_charta_signal(self) -> None:
+        charta = build_institutionen_charta(charta_id="icharta-529-sig")
+        sig = charta.charta_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(charta.gesperrt_norm_ids), 0)
+
+    def test_kki_wirtschafts_verfassung_builds_gesperrt_schutz_norm(self) -> None:
+        verfassung = build_wirtschafts_verfassung(verfassung_id="wverfassung-530-g")
+        gesperrt = [n for n in verfassung.normen if n.geltung is WirtschaftsVerfassungsGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) > 0)
+        self.assertEqual(gesperrt[0].wirtschafts_typ, WirtschaftsVerfassungsTyp.SCHUTZ_WIRTSCHAFTSVERFASSUNG)
+
+    def test_kki_wirtschafts_verfassung_builds_wirtschaftlich_souveraen_norm(self) -> None:
+        verfassung = build_wirtschafts_verfassung(verfassung_id="wverfassung-530-w")
+        souveraen = [n for n in verfassung.normen if n.geltung is WirtschaftsVerfassungsGeltung.WIRTSCHAFTLICH_SOUVERAEN]
+        self.assertTrue(len(souveraen) > 0)
+        self.assertEqual(souveraen[0].wirtschafts_typ, WirtschaftsVerfassungsTyp.ORDNUNGS_WIRTSCHAFTSVERFASSUNG)
+
+    def test_kki_wirtschafts_verfassung_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        verfassung = build_wirtschafts_verfassung(verfassung_id="wverfassung-530-gs")
+        grundlegend = [n for n in verfassung.normen if n.geltung is WirtschaftsVerfassungsGeltung.GRUNDLEGEND_WIRTSCHAFTLICH_SOUVERAEN]
+        self.assertTrue(len(grundlegend) > 0)
+        self.assertEqual(grundlegend[0].wirtschafts_typ, WirtschaftsVerfassungsTyp.SOUVERAENITAETS_WIRTSCHAFTSVERFASSUNG)
+
+    def test_kki_wirtschafts_verfassung_aggregates_verfassung_signal(self) -> None:
+        verfassung = build_wirtschafts_verfassung(verfassung_id="wverfassung-530-sig")
         sig = verfassung.verfassung_signal
         self.assertIsNotNone(sig)
         self.assertIn("gesperrt", sig.status)

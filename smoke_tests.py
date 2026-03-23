@@ -1565,6 +1565,56 @@ from kki.kybernetik_verfassung import (
     KybernetikVerfassungsNorm, KybernetikVerfassungsTyp,
     KybernetikVerfassungsProzedur, build_kybernetik_verfassung,
 )
+from kki.soziologie_feld import (
+    SoziologieFeld, SoziologieFeldGeltung,
+    SoziologieFeldNorm, SoziologieFeldTyp,
+    SoziologieFeldProzedur, build_soziologie_feld,
+)
+from kki.gesellschafts_register import (
+    GesellschaftsRegister, GesellschaftsRegisterGeltung,
+    GesellschaftsRegisterNorm, GesellschaftsRegisterTyp,
+    GesellschaftsRegisterProzedur, build_gesellschafts_register,
+)
+from kki.klassen_charta import (
+    KlassenCharta, KlassenChartaGeltung,
+    KlassenChartaNorm, KlassenChartaTyp,
+    KlassenChartaProzedur, build_klassen_charta,
+)
+from kki.struktur_kodex import (
+    StrukturKodex, StrukturKodexGeltung,
+    StrukturKodexNorm, StrukturKodexTyp,
+    StrukturKodexProzedur, build_struktur_kodex,
+)
+from kki.habitus_manifest import (
+    HabitusManifest, HabitusManifestGeltung,
+    HabitusManifestNorm, HabitusManifestTyp,
+    HabitusManifestProzedur, build_habitus_manifest,
+)
+from kki.strukturierungs_pakt import (
+    StrukturierungsPakt, StrukturierungsPaktGeltung,
+    StrukturierungsPaktNorm, StrukturierungsPaktTyp,
+    StrukturierungsPaktProzedur, build_strukturierungs_pakt,
+)
+from kki.kommunikations_senat import (
+    KommunikationsSenat, KommunikationsSenatGeltung,
+    KommunikationsSenatNorm, KommunikationsSenatTyp,
+    KommunikationsSenatProzedur, build_kommunikations_senat,
+)
+from kki.soziologie_norm import (
+    SoziologieNormSatz, SoziologieNormGeltung,
+    SoziologieNormEintrag, SoziologieNormTyp,
+    SoziologieNormProzedur, build_soziologie_norm,
+)
+from kki.netzwerkgesellschafts_charta import (
+    NetzwerkgesellschaftsCharta, NetzwerkgesellschaftsChartaGeltung,
+    NetzwerkgesellschaftsChartaNorm, NetzwerkgesellschaftsChartaTyp,
+    NetzwerkgesellschaftsChartaProzedur, build_netzwerkgesellschafts_charta,
+)
+from kki.soziologie_verfassung import (
+    SoziologieVerfassung, SoziologieVerfassungsGeltung,
+    SoziologieVerfassungsNorm, SoziologieVerfassungsTyp,
+    SoziologieVerfassungsProzedur, build_soziologie_verfassung,
+)
 from kki import (
     KausalitaetsGeltung,
     KausalitaetsNorm,
@@ -18368,6 +18418,258 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(verfassung.gesperrt_norm_ids, ("verfassung-490-sig-stability-lane",))
         self.assertEqual(verfassung.kybernetisch_souveraen_norm_ids, ("verfassung-490-sig-governance-lane",))
         self.assertEqual(verfassung.grundlegend_norm_ids, ("verfassung-490-sig-expansion-lane",))
+
+    # ── Block #491–#500: Soziologie & Gesellschaftstheorie ──────────────────────
+
+    def test_kki_soziologie_feld_builds_gesperrt_schutz_norm(self) -> None:
+        feld = build_soziologie_feld(feld_id="sfeld-491-g")
+        gesperrt = [n for n in feld.normen if n.geltung is SoziologieFeldGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) > 0)
+        self.assertEqual(gesperrt[0].soziologie_typ, SoziologieFeldTyp.SCHUTZ_SOZIOLOGIE)
+
+    def test_kki_soziologie_feld_builds_soziologisch_norm(self) -> None:
+        feld = build_soziologie_feld(feld_id="sfeld-491-s")
+        sozio = [n for n in feld.normen if n.geltung is SoziologieFeldGeltung.SOZIOLOGISCH]
+        self.assertTrue(len(sozio) > 0)
+        self.assertEqual(sozio[0].soziologie_typ, SoziologieFeldTyp.ORDNUNGS_SOZIOLOGIE)
+
+    def test_kki_soziologie_feld_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        feld = build_soziologie_feld(feld_id="sfeld-491-gs")
+        grundlegend = [n for n in feld.normen if n.geltung is SoziologieFeldGeltung.GRUNDLEGEND_SOZIOLOGISCH]
+        self.assertTrue(len(grundlegend) > 0)
+        self.assertEqual(grundlegend[0].soziologie_typ, SoziologieFeldTyp.SOUVERAENITAETS_SOZIOLOGIE)
+
+    def test_kki_soziologie_feld_aggregates_feld_signal(self) -> None:
+        feld = build_soziologie_feld(feld_id="sfeld-491-sig")
+        sig = feld.feld_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(feld.gesperrt_norm_ids), 0)
+
+    def test_kki_gesellschafts_register_builds_gesperrt_schutz_norm(self) -> None:
+        reg = build_gesellschafts_register(register_id="greg-492-g")
+        gesperrt = [n for n in reg.normen if n.geltung is GesellschaftsRegisterGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) > 0)
+        self.assertEqual(gesperrt[0].gesellschafts_typ, GesellschaftsRegisterTyp.SCHUTZ_GESELLSCHAFT)
+
+    def test_kki_gesellschafts_register_builds_gesellschaftlich_norm(self) -> None:
+        reg = build_gesellschafts_register(register_id="greg-492-g2")
+        gesell = [n for n in reg.normen if n.geltung is GesellschaftsRegisterGeltung.GESELLSCHAFTLICH]
+        self.assertTrue(len(gesell) > 0)
+        self.assertEqual(gesell[0].gesellschafts_typ, GesellschaftsRegisterTyp.ORDNUNGS_GESELLSCHAFT)
+
+    def test_kki_gesellschafts_register_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        reg = build_gesellschafts_register(register_id="greg-492-gs")
+        grundlegend = [n for n in reg.normen if n.geltung is GesellschaftsRegisterGeltung.GRUNDLEGEND_GESELLSCHAFTLICH]
+        self.assertTrue(len(grundlegend) > 0)
+        self.assertEqual(grundlegend[0].gesellschafts_typ, GesellschaftsRegisterTyp.SOUVERAENITAETS_GESELLSCHAFT)
+
+    def test_kki_gesellschafts_register_aggregates_register_signal(self) -> None:
+        reg = build_gesellschafts_register(register_id="greg-492-sig")
+        sig = reg.register_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(reg.gesperrt_norm_ids), 0)
+
+    def test_kki_klassen_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_klassen_charta(charta_id="kcharta-493-g")
+        gesperrt = [n for n in charta.normen if n.geltung is KlassenChartaGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) > 0)
+        self.assertEqual(gesperrt[0].klassen_typ, KlassenChartaTyp.SCHUTZ_KLASSE)
+
+    def test_kki_klassen_charta_builds_klassenstrukturell_norm(self) -> None:
+        charta = build_klassen_charta(charta_id="kcharta-493-k")
+        klassen = [n for n in charta.normen if n.geltung is KlassenChartaGeltung.KLASSENSTRUKTURELL]
+        self.assertTrue(len(klassen) > 0)
+        self.assertEqual(klassen[0].klassen_typ, KlassenChartaTyp.ORDNUNGS_KLASSE)
+
+    def test_kki_klassen_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_klassen_charta(charta_id="kcharta-493-gs")
+        grundlegend = [n for n in charta.normen if n.geltung is KlassenChartaGeltung.GRUNDLEGEND_KLASSENSTRUKTURELL]
+        self.assertTrue(len(grundlegend) > 0)
+        self.assertEqual(grundlegend[0].klassen_typ, KlassenChartaTyp.SOUVERAENITAETS_KLASSE)
+
+    def test_kki_klassen_charta_aggregates_charta_signal(self) -> None:
+        charta = build_klassen_charta(charta_id="kcharta-493-sig")
+        sig = charta.charta_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(charta.gesperrt_norm_ids), 0)
+
+    def test_kki_struktur_kodex_builds_gesperrt_schutz_norm(self) -> None:
+        kodex = build_struktur_kodex(kodex_id="skodex-494-g")
+        gesperrt = [n for n in kodex.normen if n.geltung is StrukturKodexGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) > 0)
+        self.assertEqual(gesperrt[0].struktur_typ, StrukturKodexTyp.SCHUTZ_STRUKTUR)
+
+    def test_kki_struktur_kodex_builds_strukturfunktional_norm(self) -> None:
+        kodex = build_struktur_kodex(kodex_id="skodex-494-s")
+        strukt = [n for n in kodex.normen if n.geltung is StrukturKodexGeltung.STRUKTURFUNKTIONAL]
+        self.assertTrue(len(strukt) > 0)
+        self.assertEqual(strukt[0].struktur_typ, StrukturKodexTyp.ORDNUNGS_STRUKTUR)
+
+    def test_kki_struktur_kodex_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        kodex = build_struktur_kodex(kodex_id="skodex-494-gs")
+        grundlegend = [n for n in kodex.normen if n.geltung is StrukturKodexGeltung.GRUNDLEGEND_STRUKTURFUNKTIONAL]
+        self.assertTrue(len(grundlegend) > 0)
+        self.assertEqual(grundlegend[0].struktur_typ, StrukturKodexTyp.SOUVERAENITAETS_STRUKTUR)
+
+    def test_kki_struktur_kodex_aggregates_kodex_signal(self) -> None:
+        kodex = build_struktur_kodex(kodex_id="skodex-494-sig")
+        sig = kodex.kodex_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(kodex.gesperrt_norm_ids), 0)
+
+    def test_kki_habitus_manifest_builds_gesperrt_schutz_norm(self) -> None:
+        manifest = build_habitus_manifest(manifest_id="hmanifest-495-g")
+        gesperrt = [n for n in manifest.normen if n.geltung is HabitusManifestGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) > 0)
+        self.assertEqual(gesperrt[0].habitus_typ, HabitusManifestTyp.SCHUTZ_HABITUS)
+
+    def test_kki_habitus_manifest_builds_habituell_norm(self) -> None:
+        manifest = build_habitus_manifest(manifest_id="hmanifest-495-h")
+        habituell = [n for n in manifest.normen if n.geltung is HabitusManifestGeltung.HABITUELL]
+        self.assertTrue(len(habituell) > 0)
+        self.assertEqual(habituell[0].habitus_typ, HabitusManifestTyp.ORDNUNGS_HABITUS)
+
+    def test_kki_habitus_manifest_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        manifest = build_habitus_manifest(manifest_id="hmanifest-495-gs")
+        grundlegend = [n for n in manifest.normen if n.geltung is HabitusManifestGeltung.GRUNDLEGEND_HABITUELL]
+        self.assertTrue(len(grundlegend) > 0)
+        self.assertEqual(grundlegend[0].habitus_typ, HabitusManifestTyp.SOUVERAENITAETS_HABITUS)
+
+    def test_kki_habitus_manifest_aggregates_manifest_signal(self) -> None:
+        manifest = build_habitus_manifest(manifest_id="hmanifest-495-sig")
+        sig = manifest.manifest_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(manifest.gesperrt_norm_ids), 0)
+
+    def test_kki_strukturierungs_pakt_builds_gesperrt_schutz_norm(self) -> None:
+        pakt = build_strukturierungs_pakt(pakt_id="spakt-496-g")
+        gesperrt = [n for n in pakt.normen if n.geltung is StrukturierungsPaktGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) > 0)
+        self.assertEqual(gesperrt[0].strukturierungs_typ, StrukturierungsPaktTyp.SCHUTZ_STRUKTURIERUNG)
+
+    def test_kki_strukturierungs_pakt_builds_strukturierend_norm(self) -> None:
+        pakt = build_strukturierungs_pakt(pakt_id="spakt-496-s")
+        strukt = [n for n in pakt.normen if n.geltung is StrukturierungsPaktGeltung.STRUKTURIEREND]
+        self.assertTrue(len(strukt) > 0)
+        self.assertEqual(strukt[0].strukturierungs_typ, StrukturierungsPaktTyp.ORDNUNGS_STRUKTURIERUNG)
+
+    def test_kki_strukturierungs_pakt_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        pakt = build_strukturierungs_pakt(pakt_id="spakt-496-gs")
+        grundlegend = [n for n in pakt.normen if n.geltung is StrukturierungsPaktGeltung.GRUNDLEGEND_STRUKTURIEREND]
+        self.assertTrue(len(grundlegend) > 0)
+        self.assertEqual(grundlegend[0].strukturierungs_typ, StrukturierungsPaktTyp.SOUVERAENITAETS_STRUKTURIERUNG)
+
+    def test_kki_strukturierungs_pakt_aggregates_pakt_signal(self) -> None:
+        pakt = build_strukturierungs_pakt(pakt_id="spakt-496-sig")
+        sig = pakt.pakt_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(pakt.gesperrt_norm_ids), 0)
+
+    def test_kki_kommunikations_senat_builds_gesperrt_schutz_norm(self) -> None:
+        senat = build_kommunikations_senat(senat_id="ksenat-497-g")
+        gesperrt = [n for n in senat.normen if n.geltung is KommunikationsSenatGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) > 0)
+        self.assertEqual(gesperrt[0].kommunikations_typ, KommunikationsSenatTyp.SCHUTZ_KOMMUNIKATION)
+
+    def test_kki_kommunikations_senat_builds_kommunikativ_norm(self) -> None:
+        senat = build_kommunikations_senat(senat_id="ksenat-497-k")
+        komm = [n for n in senat.normen if n.geltung is KommunikationsSenatGeltung.KOMMUNIKATIV]
+        self.assertTrue(len(komm) > 0)
+        self.assertEqual(komm[0].kommunikations_typ, KommunikationsSenatTyp.ORDNUNGS_KOMMUNIKATION)
+
+    def test_kki_kommunikations_senat_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        senat = build_kommunikations_senat(senat_id="ksenat-497-gs")
+        grundlegend = [n for n in senat.normen if n.geltung is KommunikationsSenatGeltung.GRUNDLEGEND_KOMMUNIKATIV]
+        self.assertTrue(len(grundlegend) > 0)
+        self.assertEqual(grundlegend[0].kommunikations_typ, KommunikationsSenatTyp.SOUVERAENITAETS_KOMMUNIKATION)
+
+    def test_kki_kommunikations_senat_aggregates_senat_signal(self) -> None:
+        senat = build_kommunikations_senat(senat_id="ksenat-497-sig")
+        sig = senat.senat_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(senat.gesperrt_norm_ids), 0)
+
+    def test_kki_soziologie_norm_builds_gesperrt_schutz_norm(self) -> None:
+        normsatz = build_soziologie_norm(norm_id="snorm-498-g")
+        gesperrt = [n for n in normsatz.normen if n.geltung is SoziologieNormGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) > 0)
+        self.assertEqual(gesperrt[0].soziologie_norm_typ, SoziologieNormTyp.SCHUTZ_SOZIOLOGIENORM)
+
+    def test_kki_soziologie_norm_builds_sozialnormativ_norm(self) -> None:
+        normsatz = build_soziologie_norm(norm_id="snorm-498-s")
+        sozial = [n for n in normsatz.normen if n.geltung is SoziologieNormGeltung.SOZIALNORMATIV]
+        self.assertTrue(len(sozial) > 0)
+        self.assertEqual(sozial[0].soziologie_norm_typ, SoziologieNormTyp.ORDNUNGS_SOZIOLOGIENORM)
+
+    def test_kki_soziologie_norm_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        normsatz = build_soziologie_norm(norm_id="snorm-498-gs")
+        grundlegend = [n for n in normsatz.normen if n.geltung is SoziologieNormGeltung.GRUNDLEGEND_SOZIALNORMATIV]
+        self.assertTrue(len(grundlegend) > 0)
+        self.assertEqual(grundlegend[0].soziologie_norm_typ, SoziologieNormTyp.SOUVERAENITAETS_SOZIOLOGIENORM)
+
+    def test_kki_soziologie_norm_aggregates_norm_signal(self) -> None:
+        normsatz = build_soziologie_norm(norm_id="snorm-498-sig")
+        sig = normsatz.norm_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(normsatz.gesperrt_norm_ids), 0)
+
+    def test_kki_netzwerkgesellschafts_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_netzwerkgesellschafts_charta(charta_id="ngcharta-499-g")
+        gesperrt = [n for n in charta.normen if n.geltung is NetzwerkgesellschaftsChartaGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) > 0)
+        self.assertEqual(gesperrt[0].netzwerkgesellschafts_typ, NetzwerkgesellschaftsChartaTyp.SCHUTZ_NETZWERKGESELLSCHAFT)
+
+    def test_kki_netzwerkgesellschafts_charta_builds_netzwerkgesellschaftlich_norm(self) -> None:
+        charta = build_netzwerkgesellschafts_charta(charta_id="ngcharta-499-n")
+        netz = [n for n in charta.normen if n.geltung is NetzwerkgesellschaftsChartaGeltung.NETZWERKGESELLSCHAFTLICH]
+        self.assertTrue(len(netz) > 0)
+        self.assertEqual(netz[0].netzwerkgesellschafts_typ, NetzwerkgesellschaftsChartaTyp.ORDNUNGS_NETZWERKGESELLSCHAFT)
+
+    def test_kki_netzwerkgesellschafts_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_netzwerkgesellschafts_charta(charta_id="ngcharta-499-gs")
+        grundlegend = [n for n in charta.normen if n.geltung is NetzwerkgesellschaftsChartaGeltung.GRUNDLEGEND_NETZWERKGESELLSCHAFTLICH]
+        self.assertTrue(len(grundlegend) > 0)
+        self.assertEqual(grundlegend[0].netzwerkgesellschafts_typ, NetzwerkgesellschaftsChartaTyp.SOUVERAENITAETS_NETZWERKGESELLSCHAFT)
+
+    def test_kki_netzwerkgesellschafts_charta_aggregates_charta_signal(self) -> None:
+        charta = build_netzwerkgesellschafts_charta(charta_id="ngcharta-499-sig")
+        sig = charta.charta_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(charta.gesperrt_norm_ids), 0)
+
+    def test_kki_soziologie_verfassung_builds_gesperrt_schutz_norm(self) -> None:
+        verfassung = build_soziologie_verfassung(verfassung_id="sverfassung-500-g")
+        gesperrt = [n for n in verfassung.normen if n.geltung is SoziologieVerfassungsGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) > 0)
+        self.assertEqual(gesperrt[0].soziologie_typ, SoziologieVerfassungsTyp.SCHUTZ_SOZIOLOGIEVERFASSUNG)
+
+    def test_kki_soziologie_verfassung_builds_soziologisch_souveraen_norm(self) -> None:
+        verfassung = build_soziologie_verfassung(verfassung_id="sverfassung-500-s")
+        souveraen = [n for n in verfassung.normen if n.geltung is SoziologieVerfassungsGeltung.SOZIOLOGISCH_SOUVERAEN]
+        self.assertTrue(len(souveraen) > 0)
+        self.assertEqual(souveraen[0].soziologie_typ, SoziologieVerfassungsTyp.ORDNUNGS_SOZIOLOGIEVERFASSUNG)
+
+    def test_kki_soziologie_verfassung_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        verfassung = build_soziologie_verfassung(verfassung_id="sverfassung-500-gs")
+        grundlegend = [n for n in verfassung.normen if n.geltung is SoziologieVerfassungsGeltung.GRUNDLEGEND_SOZIOLOGISCH_SOUVERAEN]
+        self.assertTrue(len(grundlegend) > 0)
+        self.assertEqual(grundlegend[0].soziologie_typ, SoziologieVerfassungsTyp.SOUVERAENITAETS_SOZIOLOGIEVERFASSUNG)
+
+    def test_kki_soziologie_verfassung_aggregates_verfassung_signal(self) -> None:
+        verfassung = build_soziologie_verfassung(verfassung_id="sverfassung-500-sig")
+        sig = verfassung.verfassung_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(verfassung.gesperrt_norm_ids), 0)
 
 
 if __name__ == "__main__":

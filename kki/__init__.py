@@ -2279,6 +2279,56 @@ from .kybernetik_verfassung import (
     KybernetikVerfassungsProzedur, KybernetikVerfassungsTyp,
     KybernetikVerfassung, build_kybernetik_verfassung,
 )
+from .soziologie_feld import (
+    SoziologieFeldGeltung, SoziologieFeldNorm,
+    SoziologieFeldProzedur, SoziologieFeldTyp,
+    SoziologieFeld, build_soziologie_feld,
+)
+from .gesellschafts_register import (
+    GesellschaftsRegisterGeltung, GesellschaftsRegisterNorm,
+    GesellschaftsRegisterProzedur, GesellschaftsRegisterTyp,
+    GesellschaftsRegister, build_gesellschafts_register,
+)
+from .klassen_charta import (
+    KlassenChartaGeltung, KlassenChartaNorm,
+    KlassenChartaProzedur, KlassenChartaTyp,
+    KlassenCharta, build_klassen_charta,
+)
+from .struktur_kodex import (
+    StrukturKodexGeltung, StrukturKodexNorm,
+    StrukturKodexProzedur, StrukturKodexTyp,
+    StrukturKodex, build_struktur_kodex,
+)
+from .habitus_manifest import (
+    HabitusManifestGeltung, HabitusManifestNorm,
+    HabitusManifestProzedur, HabitusManifestTyp,
+    HabitusManifest, build_habitus_manifest,
+)
+from .strukturierungs_pakt import (
+    StrukturierungsPaktGeltung, StrukturierungsPaktNorm,
+    StrukturierungsPaktProzedur, StrukturierungsPaktTyp,
+    StrukturierungsPakt, build_strukturierungs_pakt,
+)
+from .kommunikations_senat import (
+    KommunikationsSenatGeltung, KommunikationsSenatNorm,
+    KommunikationsSenatProzedur, KommunikationsSenatTyp,
+    KommunikationsSenat, build_kommunikations_senat,
+)
+from .soziologie_norm import (
+    SoziologieNormGeltung, SoziologieNormEintrag,
+    SoziologieNormProzedur, SoziologieNormTyp,
+    SoziologieNormSatz, build_soziologie_norm,
+)
+from .netzwerkgesellschafts_charta import (
+    NetzwerkgesellschaftsChartaGeltung, NetzwerkgesellschaftsChartaNorm,
+    NetzwerkgesellschaftsChartaProzedur, NetzwerkgesellschaftsChartaTyp,
+    NetzwerkgesellschaftsCharta, build_netzwerkgesellschafts_charta,
+)
+from .soziologie_verfassung import (
+    SoziologieVerfassungsGeltung, SoziologieVerfassungsNorm,
+    SoziologieVerfassungsProzedur, SoziologieVerfassungsTyp,
+    SoziologieVerfassung, build_soziologie_verfassung,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -3837,4 +3887,25 @@ __all__ = [
     "work_unit_for_state",
     "run_integrated_operations",
     "run_operations_wave",
+    # Block #491–#500: Soziologie & Gesellschaftstheorie
+    "SoziologieFeldGeltung", "SoziologieFeldNorm", "SoziologieFeldProzedur", "SoziologieFeldTyp",
+    "SoziologieFeld", "build_soziologie_feld",
+    "GesellschaftsRegisterGeltung", "GesellschaftsRegisterNorm", "GesellschaftsRegisterProzedur", "GesellschaftsRegisterTyp",
+    "GesellschaftsRegister", "build_gesellschafts_register",
+    "KlassenChartaGeltung", "KlassenChartaNorm", "KlassenChartaProzedur", "KlassenChartaTyp",
+    "KlassenCharta", "build_klassen_charta",
+    "StrukturKodexGeltung", "StrukturKodexNorm", "StrukturKodexProzedur", "StrukturKodexTyp",
+    "StrukturKodex", "build_struktur_kodex",
+    "HabitusManifestGeltung", "HabitusManifestNorm", "HabitusManifestProzedur", "HabitusManifestTyp",
+    "HabitusManifest", "build_habitus_manifest",
+    "StrukturierungsPaktGeltung", "StrukturierungsPaktNorm", "StrukturierungsPaktProzedur", "StrukturierungsPaktTyp",
+    "StrukturierungsPakt", "build_strukturierungs_pakt",
+    "KommunikationsSenatGeltung", "KommunikationsSenatNorm", "KommunikationsSenatProzedur", "KommunikationsSenatTyp",
+    "KommunikationsSenat", "build_kommunikations_senat",
+    "SoziologieNormGeltung", "SoziologieNormEintrag", "SoziologieNormProzedur", "SoziologieNormTyp",
+    "SoziologieNormSatz", "build_soziologie_norm",
+    "NetzwerkgesellschaftsChartaGeltung", "NetzwerkgesellschaftsChartaNorm", "NetzwerkgesellschaftsChartaProzedur", "NetzwerkgesellschaftsChartaTyp",
+    "NetzwerkgesellschaftsCharta", "build_netzwerkgesellschafts_charta",
+    "SoziologieVerfassungsGeltung", "SoziologieVerfassungsNorm", "SoziologieVerfassungsProzedur", "SoziologieVerfassungsTyp",
+    "SoziologieVerfassung", "build_soziologie_verfassung",
 ]

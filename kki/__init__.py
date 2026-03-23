@@ -2626,6 +2626,56 @@ from .kultur_verfassung import (
     KulturVerfassungsProzedur, KulturVerfassungsTyp,
     KulturVerfassung, build_kultur_verfassung,
 )
+from .medien_feld import (
+    MedienFeldGeltung, MedienFeldNorm, MedienFeldProzedur, MedienFeldTyp,
+    MedienFeld, build_medien_feld,
+)
+from .kommunikations_register import (
+    KommunikationsRegisterGeltung, KommunikationsRegisterNorm,
+    KommunikationsRegisterProzedur, KommunikationsRegisterTyp,
+    KommunikationsRegister, build_kommunikations_register,
+)
+from .medientheorie_charta import (
+    MedientheorieChartaGeltung, MedientheorieChartaNorm,
+    MedientheorieChartaProzedur, MedientheorieChartaTyp,
+    MedientheorieCharta, build_medientheorie_charta,
+)
+from .informations_kodex import (
+    InformationsKodexGeltung, InformationsKodexNorm,
+    InformationsKodexProzedur, InformationsKodexTyp,
+    InformationsKodex, build_informations_kodex,
+)
+from .medien_diskurs_manifest import (
+    DiskursManifestGeltung as MedienDiskursManifestGeltung,
+    DiskursManifestNorm as MedienDiskursManifestNorm,
+    DiskursManifestProzedur as MedienDiskursManifestProzedur,
+    DiskursManifestTyp as MedienDiskursManifestTyp,
+    DiskursManifest as MedienDiskursManifest,
+    build_diskurs_manifest as build_medien_diskurs_manifest,
+)
+from .oeffentlichkeits_pakt import (
+    OeffentlichkeitsPaktGeltung, OeffentlichkeitsPaktNorm,
+    OeffentlichkeitsPaktProzedur, OeffentlichkeitsPaktTyp,
+    OeffentlichkeitsPakt, build_oeffentlichkeits_pakt,
+)
+from .medien_senat import (
+    MedienSenatGeltung, MedienSenatNorm, MedienSenatProzedur, MedienSenatTyp,
+    MedienSenat, build_medien_senat,
+)
+from .medien_norm import (
+    MedienNormTyp, MedienNormProzedur, MedienNormGeltung,
+    MedienNormEintrag, MedienNormSatz, build_medien_norm,
+)
+from .kommunikative_handlungs_charta import (
+    KommunikativeHandlungsChartaGeltung, KommunikativeHandlungsChartaNorm,
+    KommunikativeHandlungsChartaProzedur, KommunikativeHandlungsChartaTyp,
+    KommunikativeHandlungsCharta, build_kommunikative_handlungs_charta,
+)
+from .medien_verfassung import (
+    MedienVerfassungsGeltung, MedienVerfassungsNorm,
+    MedienVerfassungsProzedur, MedienVerfassungsTyp,
+    MedienVerfassung, build_medien_verfassung,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -4326,4 +4376,23 @@ __all__ = [
     "KulturelleIdentitaetsCharta", "build_kulturelle_identitaets_charta",
     "KulturVerfassungsGeltung", "KulturVerfassungsNorm", "KulturVerfassungsProzedur", "KulturVerfassungsTyp",
     "KulturVerfassung", "build_kultur_verfassung",
+    "MedienFeldGeltung", "MedienFeldNorm", "MedienFeldProzedur", "MedienFeldTyp",
+    "MedienFeld", "build_medien_feld",
+    "KommunikationsRegisterGeltung", "KommunikationsRegisterNorm", "KommunikationsRegisterProzedur", "KommunikationsRegisterTyp",
+    "KommunikationsRegister", "build_kommunikations_register",
+    "MedientheorieChartaGeltung", "MedientheorieChartaNorm", "MedientheorieChartaProzedur", "MedientheorieChartaTyp",
+    "MedientheorieCharta", "build_medientheorie_charta",
+    "InformationsKodexGeltung", "InformationsKodexNorm", "InformationsKodexProzedur", "InformationsKodexTyp",
+    "InformationsKodex", "build_informations_kodex",
+    "MedienDiskursManifestGeltung", "MedienDiskursManifestNorm", "MedienDiskursManifestProzedur", "MedienDiskursManifestTyp",
+    "MedienDiskursManifest", "build_medien_diskurs_manifest",
+    "OeffentlichkeitsPaktGeltung", "OeffentlichkeitsPaktNorm", "OeffentlichkeitsPaktProzedur", "OeffentlichkeitsPaktTyp",
+    "OeffentlichkeitsPakt", "build_oeffentlichkeits_pakt",
+    "MedienSenatGeltung", "MedienSenatNorm", "MedienSenatProzedur", "MedienSenatTyp",
+    "MedienSenat", "build_medien_senat",
+    "MedienNormTyp", "MedienNormProzedur", "MedienNormGeltung", "MedienNormEintrag", "MedienNormSatz", "build_medien_norm",
+    "KommunikativeHandlungsChartaGeltung", "KommunikativeHandlungsChartaNorm", "KommunikativeHandlungsChartaProzedur", "KommunikativeHandlungsChartaTyp",
+    "KommunikativeHandlungsCharta", "build_kommunikative_handlungs_charta",
+    "MedienVerfassungsGeltung", "MedienVerfassungsNorm", "MedienVerfassungsProzedur", "MedienVerfassungsTyp",
+    "MedienVerfassung", "build_medien_verfassung",
 ]

@@ -1853,6 +1853,50 @@ from kki.kultur_verfassung import (
     KulturVerfassung, KulturVerfassungsGeltung, KulturVerfassungsNorm,
     KulturVerfassungsTyp, KulturVerfassungsProzedur, build_kultur_verfassung,
 )
+from kki.medien_feld import (
+    MedienFeld, MedienFeldGeltung, MedienFeldNorm, MedienFeldTyp,
+    MedienFeldProzedur, build_medien_feld,
+)
+from kki.kommunikations_register import (
+    KommunikationsRegister, KommunikationsRegisterGeltung, KommunikationsRegisterNorm,
+    KommunikationsRegisterTyp, KommunikationsRegisterProzedur, build_kommunikations_register,
+)
+from kki.medientheorie_charta import (
+    MedientheorieCharta, MedientheorieChartaGeltung, MedientheorieChartaNorm,
+    MedientheorieChartaTyp, MedientheorieChartaProzedur, build_medientheorie_charta,
+)
+from kki.informations_kodex import (
+    InformationsKodex, InformationsKodexGeltung, InformationsKodexNorm,
+    InformationsKodexTyp, InformationsKodexProzedur, build_informations_kodex,
+)
+from kki.medien_diskurs_manifest import (
+    DiskursManifest as MedienDiskursManifest,
+    DiskursManifestGeltung as MedienDiskursManifestGeltung,
+    DiskursManifestNorm as MedienDiskursManifestNorm,
+    DiskursManifestTyp as MedienDiskursManifestTyp,
+    build_diskurs_manifest as build_medien_diskurs_manifest,
+)
+from kki.oeffentlichkeits_pakt import (
+    OeffentlichkeitsPakt, OeffentlichkeitsPaktGeltung, OeffentlichkeitsPaktNorm,
+    OeffentlichkeitsPaktTyp, OeffentlichkeitsPaktProzedur, build_oeffentlichkeits_pakt,
+)
+from kki.medien_senat import (
+    MedienSenat, MedienSenatGeltung, MedienSenatNorm, MedienSenatTyp,
+    MedienSenatProzedur, build_medien_senat,
+)
+from kki.medien_norm import (
+    MedienNormGeltung, MedienNormTyp, MedienNormProzedur,
+    MedienNormEintrag, MedienNormSatz, build_medien_norm,
+)
+from kki.kommunikative_handlungs_charta import (
+    KommunikativeHandlungsCharta, KommunikativeHandlungsChartaGeltung,
+    KommunikativeHandlungsChartaNorm, KommunikativeHandlungsChartaTyp,
+    KommunikativeHandlungsChartaProzedur, build_kommunikative_handlungs_charta,
+)
+from kki.medien_verfassung import (
+    MedienVerfassung, MedienVerfassungsGeltung, MedienVerfassungsNorm,
+    MedienVerfassungsTyp, MedienVerfassungsProzedur, build_medien_verfassung,
+)
 from kki import (
     KausalitaetsGeltung,
     KausalitaetsNorm,
@@ -20686,3 +20730,397 @@ class SmokeTests(unittest.TestCase):
     def test_kki_kultur_verfassung_norm_has_kultur_tier(self) -> None:
         verfassung = build_kultur_verfassung(verfassung_id="kv-560-t")
         self.assertTrue(all(isinstance(n.kultur_tier, int) for n in verfassung.normen))
+
+    # ═══════════════════════════════════════════════════════
+    # Block #561–#570 — Medienwissenschaft & Kommunikationstheorie
+    # ═══════════════════════════════════════════════════════
+
+    # --- #561 MedienFeld ---
+    def test_kki_medien_feld_builds_gesperrt_schutz_norm(self) -> None:
+        feld = build_medien_feld(feld_id="mf-561-g")
+        self.assertTrue(any(n.geltung is MedienFeldGeltung.GESPERRT for n in feld.normen))
+        self.assertTrue(any(n.medien_typ is MedienFeldTyp.SCHUTZ_MEDIEN for n in feld.normen))
+
+    def test_kki_medien_feld_builds_medienkulturell_norm(self) -> None:
+        feld = build_medien_feld(feld_id="mf-561-m")
+        self.assertTrue(any(n.geltung is MedienFeldGeltung.MEDIENKULTURELL for n in feld.normen))
+        self.assertTrue(any(n.medien_typ is MedienFeldTyp.ORDNUNGS_MEDIEN for n in feld.normen))
+
+    def test_kki_medien_feld_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        feld = build_medien_feld(feld_id="mf-561-gs")
+        self.assertTrue(any(n.geltung is MedienFeldGeltung.GRUNDLEGEND_MEDIENKULTURELL for n in feld.normen))
+        self.assertTrue(any(n.medien_typ is MedienFeldTyp.SOUVERAENITAETS_MEDIEN for n in feld.normen))
+
+    def test_kki_medien_feld_aggregates_feld_signal(self) -> None:
+        feld = build_medien_feld(feld_id="mf-561-sig")
+        sig = feld.feld_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(feld.gesperrt_norm_ids), 0)
+
+    def test_kki_medien_feld_builds_medienkulturell_norm_ids(self) -> None:
+        feld = build_medien_feld(feld_id="mf-561-mi")
+        self.assertGreater(len(feld.medienkulturell_norm_ids), 0)
+
+    def test_kki_medien_feld_builds_grundlegend_norm_ids(self) -> None:
+        feld = build_medien_feld(feld_id="mf-561-gni")
+        self.assertGreater(len(feld.grundlegend_norm_ids), 0)
+
+    def test_kki_medien_feld_norm_has_medien_weight(self) -> None:
+        feld = build_medien_feld(feld_id="mf-561-w")
+        self.assertTrue(all(isinstance(n.medien_weight, float) for n in feld.normen))
+
+    def test_kki_medien_feld_norm_has_medien_tier(self) -> None:
+        feld = build_medien_feld(feld_id="mf-561-t")
+        self.assertTrue(all(isinstance(n.medien_tier, int) for n in feld.normen))
+
+    # --- #562 KommunikationsRegister ---
+    def test_kki_kommunikations_register_builds_gesperrt_schutz_norm(self) -> None:
+        reg = build_kommunikations_register(register_id="kr-562-g")
+        self.assertTrue(any(n.geltung is KommunikationsRegisterGeltung.GESPERRT for n in reg.normen))
+        self.assertTrue(any(n.medien_typ is KommunikationsRegisterTyp.SCHUTZ_KOMMUNIKATION for n in reg.normen))
+
+    def test_kki_kommunikations_register_builds_kommunikativ_norm(self) -> None:
+        reg = build_kommunikations_register(register_id="kr-562-k")
+        self.assertTrue(any(n.geltung is KommunikationsRegisterGeltung.KOMMUNIKATIV for n in reg.normen))
+        self.assertTrue(any(n.medien_typ is KommunikationsRegisterTyp.ORDNUNGS_KOMMUNIKATION for n in reg.normen))
+
+    def test_kki_kommunikations_register_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        reg = build_kommunikations_register(register_id="kr-562-gs")
+        self.assertTrue(any(n.geltung is KommunikationsRegisterGeltung.GRUNDLEGEND_KOMMUNIKATIV for n in reg.normen))
+        self.assertTrue(any(n.medien_typ is KommunikationsRegisterTyp.SOUVERAENITAETS_KOMMUNIKATION for n in reg.normen))
+
+    def test_kki_kommunikations_register_aggregates_register_signal(self) -> None:
+        reg = build_kommunikations_register(register_id="kr-562-sig")
+        sig = reg.register_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(reg.gesperrt_norm_ids), 0)
+
+    def test_kki_kommunikations_register_builds_kommunikativ_norm_ids(self) -> None:
+        reg = build_kommunikations_register(register_id="kr-562-ki")
+        self.assertGreater(len(reg.kommunikativ_norm_ids), 0)
+
+    def test_kki_kommunikations_register_builds_grundlegend_norm_ids(self) -> None:
+        reg = build_kommunikations_register(register_id="kr-562-gni")
+        self.assertGreater(len(reg.grundlegend_norm_ids), 0)
+
+    def test_kki_kommunikations_register_norm_has_medien_weight(self) -> None:
+        reg = build_kommunikations_register(register_id="kr-562-w")
+        self.assertTrue(all(isinstance(n.medien_weight, float) for n in reg.normen))
+
+    def test_kki_kommunikations_register_norm_has_medien_tier(self) -> None:
+        reg = build_kommunikations_register(register_id="kr-562-t")
+        self.assertTrue(all(isinstance(n.medien_tier, int) for n in reg.normen))
+
+    # --- #563 MedientheorieCharta ---
+    def test_kki_medientheorie_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_medientheorie_charta(charta_id="mtc-563-g")
+        self.assertTrue(any(n.geltung is MedientheorieChartaGeltung.GESPERRT for n in charta.normen))
+        self.assertTrue(any(n.medien_typ is MedientheorieChartaTyp.SCHUTZ_MEDIENTHEORIE for n in charta.normen))
+
+    def test_kki_medientheorie_charta_builds_medientheoretisch_norm(self) -> None:
+        charta = build_medientheorie_charta(charta_id="mtc-563-m")
+        self.assertTrue(any(n.geltung is MedientheorieChartaGeltung.MEDIENTHEORETISCH for n in charta.normen))
+        self.assertTrue(any(n.medien_typ is MedientheorieChartaTyp.ORDNUNGS_MEDIENTHEORIE for n in charta.normen))
+
+    def test_kki_medientheorie_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_medientheorie_charta(charta_id="mtc-563-gs")
+        self.assertTrue(any(n.geltung is MedientheorieChartaGeltung.GRUNDLEGEND_MEDIENTHEORETISCH for n in charta.normen))
+        self.assertTrue(any(n.medien_typ is MedientheorieChartaTyp.SOUVERAENITAETS_MEDIENTHEORIE for n in charta.normen))
+
+    def test_kki_medientheorie_charta_aggregates_charta_signal(self) -> None:
+        charta = build_medientheorie_charta(charta_id="mtc-563-sig")
+        sig = charta.charta_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(charta.gesperrt_norm_ids), 0)
+
+    def test_kki_medientheorie_charta_builds_medientheoretisch_norm_ids(self) -> None:
+        charta = build_medientheorie_charta(charta_id="mtc-563-mi")
+        self.assertGreater(len(charta.medientheoretisch_norm_ids), 0)
+
+    def test_kki_medientheorie_charta_builds_grundlegend_norm_ids(self) -> None:
+        charta = build_medientheorie_charta(charta_id="mtc-563-gni")
+        self.assertGreater(len(charta.grundlegend_norm_ids), 0)
+
+    def test_kki_medientheorie_charta_norm_has_medien_weight(self) -> None:
+        charta = build_medientheorie_charta(charta_id="mtc-563-w")
+        self.assertTrue(all(isinstance(n.medien_weight, float) for n in charta.normen))
+
+    def test_kki_medientheorie_charta_norm_has_medien_tier(self) -> None:
+        charta = build_medientheorie_charta(charta_id="mtc-563-t")
+        self.assertTrue(all(isinstance(n.medien_tier, int) for n in charta.normen))
+
+    # --- #564 InformationsKodex ---
+    def test_kki_informations_kodex_builds_gesperrt_schutz_norm(self) -> None:
+        kodex = build_informations_kodex(kodex_id="ik-564-g")
+        self.assertTrue(any(n.geltung is InformationsKodexGeltung.GESPERRT for n in kodex.normen))
+        self.assertTrue(any(n.medien_typ is InformationsKodexTyp.SCHUTZ_INFORMATION for n in kodex.normen))
+
+    def test_kki_informations_kodex_builds_informationell_norm(self) -> None:
+        kodex = build_informations_kodex(kodex_id="ik-564-i")
+        self.assertTrue(any(n.geltung is InformationsKodexGeltung.INFORMATIONELL for n in kodex.normen))
+        self.assertTrue(any(n.medien_typ is InformationsKodexTyp.ORDNUNGS_INFORMATION for n in kodex.normen))
+
+    def test_kki_informations_kodex_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        kodex = build_informations_kodex(kodex_id="ik-564-gs")
+        self.assertTrue(any(n.geltung is InformationsKodexGeltung.GRUNDLEGEND_INFORMATIONELL for n in kodex.normen))
+        self.assertTrue(any(n.medien_typ is InformationsKodexTyp.SOUVERAENITAETS_INFORMATION for n in kodex.normen))
+
+    def test_kki_informations_kodex_aggregates_kodex_signal(self) -> None:
+        kodex = build_informations_kodex(kodex_id="ik-564-sig")
+        sig = kodex.kodex_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(kodex.gesperrt_norm_ids), 0)
+
+    def test_kki_informations_kodex_builds_informationell_norm_ids(self) -> None:
+        kodex = build_informations_kodex(kodex_id="ik-564-ii")
+        self.assertGreater(len(kodex.informationell_norm_ids), 0)
+
+    def test_kki_informations_kodex_builds_grundlegend_norm_ids(self) -> None:
+        kodex = build_informations_kodex(kodex_id="ik-564-gni")
+        self.assertGreater(len(kodex.grundlegend_norm_ids), 0)
+
+    def test_kki_informations_kodex_norm_has_medien_weight(self) -> None:
+        kodex = build_informations_kodex(kodex_id="ik-564-w")
+        self.assertTrue(all(isinstance(n.medien_weight, float) for n in kodex.normen))
+
+    def test_kki_informations_kodex_norm_has_medien_tier(self) -> None:
+        kodex = build_informations_kodex(kodex_id="ik-564-t")
+        self.assertTrue(all(isinstance(n.medien_tier, int) for n in kodex.normen))
+
+    # --- #565 MedienDiskursManifest ---
+    def test_kki_medien_diskurs_manifest_builds_gesperrt_schutz_norm(self) -> None:
+        manifest = build_medien_diskurs_manifest(manifest_id="mdm-565-g")
+        self.assertTrue(any(n.geltung is MedienDiskursManifestGeltung.GESPERRT for n in manifest.normen))
+        self.assertTrue(any(n.medien_typ is MedienDiskursManifestTyp.SCHUTZ_DISKURS for n in manifest.normen))
+
+    def test_kki_medien_diskurs_manifest_builds_diskursiv_norm(self) -> None:
+        manifest = build_medien_diskurs_manifest(manifest_id="mdm-565-d")
+        self.assertTrue(any(n.geltung is MedienDiskursManifestGeltung.DISKURSIV for n in manifest.normen))
+        self.assertTrue(any(n.medien_typ is MedienDiskursManifestTyp.ORDNUNGS_DISKURS for n in manifest.normen))
+
+    def test_kki_medien_diskurs_manifest_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        manifest = build_medien_diskurs_manifest(manifest_id="mdm-565-gs")
+        self.assertTrue(any(n.geltung is MedienDiskursManifestGeltung.GRUNDLEGEND_DISKURSIV for n in manifest.normen))
+        self.assertTrue(any(n.medien_typ is MedienDiskursManifestTyp.SOUVERAENITAETS_DISKURS for n in manifest.normen))
+
+    def test_kki_medien_diskurs_manifest_aggregates_manifest_signal(self) -> None:
+        manifest = build_medien_diskurs_manifest(manifest_id="mdm-565-sig")
+        sig = manifest.manifest_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(manifest.gesperrt_norm_ids), 0)
+
+    def test_kki_medien_diskurs_manifest_builds_diskursiv_norm_ids(self) -> None:
+        manifest = build_medien_diskurs_manifest(manifest_id="mdm-565-di")
+        self.assertGreater(len(manifest.diskursiv_norm_ids), 0)
+
+    def test_kki_medien_diskurs_manifest_builds_grundlegend_norm_ids(self) -> None:
+        manifest = build_medien_diskurs_manifest(manifest_id="mdm-565-gni")
+        self.assertGreater(len(manifest.grundlegend_norm_ids), 0)
+
+    def test_kki_medien_diskurs_manifest_norm_has_medien_weight(self) -> None:
+        manifest = build_medien_diskurs_manifest(manifest_id="mdm-565-w")
+        self.assertTrue(all(isinstance(n.medien_weight, float) for n in manifest.normen))
+
+    def test_kki_medien_diskurs_manifest_norm_has_medien_tier(self) -> None:
+        manifest = build_medien_diskurs_manifest(manifest_id="mdm-565-t")
+        self.assertTrue(all(isinstance(n.medien_tier, int) for n in manifest.normen))
+
+    # --- #566 OeffentlichkeitsPakt ---
+    def test_kki_oeffentlichkeits_pakt_builds_gesperrt_schutz_norm(self) -> None:
+        pakt = build_oeffentlichkeits_pakt(pakt_id="op-566-g")
+        self.assertTrue(any(n.geltung is OeffentlichkeitsPaktGeltung.GESPERRT for n in pakt.normen))
+        self.assertTrue(any(n.medien_typ is OeffentlichkeitsPaktTyp.SCHUTZ_OEFFENTLICHKEIT for n in pakt.normen))
+
+    def test_kki_oeffentlichkeits_pakt_builds_oeffentlich_norm(self) -> None:
+        pakt = build_oeffentlichkeits_pakt(pakt_id="op-566-o")
+        self.assertTrue(any(n.geltung is OeffentlichkeitsPaktGeltung.OEFFENTLICH for n in pakt.normen))
+        self.assertTrue(any(n.medien_typ is OeffentlichkeitsPaktTyp.ORDNUNGS_OEFFENTLICHKEIT for n in pakt.normen))
+
+    def test_kki_oeffentlichkeits_pakt_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        pakt = build_oeffentlichkeits_pakt(pakt_id="op-566-gs")
+        self.assertTrue(any(n.geltung is OeffentlichkeitsPaktGeltung.GRUNDLEGEND_OEFFENTLICH for n in pakt.normen))
+        self.assertTrue(any(n.medien_typ is OeffentlichkeitsPaktTyp.SOUVERAENITAETS_OEFFENTLICHKEIT for n in pakt.normen))
+
+    def test_kki_oeffentlichkeits_pakt_aggregates_pakt_signal(self) -> None:
+        pakt = build_oeffentlichkeits_pakt(pakt_id="op-566-sig")
+        sig = pakt.pakt_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(pakt.gesperrt_norm_ids), 0)
+
+    def test_kki_oeffentlichkeits_pakt_builds_oeffentlich_norm_ids(self) -> None:
+        pakt = build_oeffentlichkeits_pakt(pakt_id="op-566-oi")
+        self.assertGreater(len(pakt.oeffentlich_norm_ids), 0)
+
+    def test_kki_oeffentlichkeits_pakt_builds_grundlegend_norm_ids(self) -> None:
+        pakt = build_oeffentlichkeits_pakt(pakt_id="op-566-gni")
+        self.assertGreater(len(pakt.grundlegend_norm_ids), 0)
+
+    def test_kki_oeffentlichkeits_pakt_norm_has_medien_weight(self) -> None:
+        pakt = build_oeffentlichkeits_pakt(pakt_id="op-566-w")
+        self.assertTrue(all(isinstance(n.medien_weight, float) for n in pakt.normen))
+
+    def test_kki_oeffentlichkeits_pakt_norm_has_medien_tier(self) -> None:
+        pakt = build_oeffentlichkeits_pakt(pakt_id="op-566-t")
+        self.assertTrue(all(isinstance(n.medien_tier, int) for n in pakt.normen))
+
+    # --- #567 MedienSenat ---
+    def test_kki_medien_senat_builds_gesperrt_schutz_norm(self) -> None:
+        senat = build_medien_senat(senat_id="ms-567-g")
+        self.assertTrue(any(n.geltung is MedienSenatGeltung.GESPERRT for n in senat.normen))
+        self.assertTrue(any(n.medien_typ is MedienSenatTyp.SCHUTZ_MEDIENSOZIOLOGIE for n in senat.normen))
+
+    def test_kki_medien_senat_builds_mediensoziologisch_norm(self) -> None:
+        senat = build_medien_senat(senat_id="ms-567-m")
+        self.assertTrue(any(n.geltung is MedienSenatGeltung.MEDIENSOZIOLOGISCH for n in senat.normen))
+        self.assertTrue(any(n.medien_typ is MedienSenatTyp.ORDNUNGS_MEDIENSOZIOLOGIE for n in senat.normen))
+
+    def test_kki_medien_senat_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        senat = build_medien_senat(senat_id="ms-567-gs")
+        self.assertTrue(any(n.geltung is MedienSenatGeltung.GRUNDLEGEND_MEDIENSOZIOLOGISCH for n in senat.normen))
+        self.assertTrue(any(n.medien_typ is MedienSenatTyp.SOUVERAENITAETS_MEDIENSOZIOLOGIE for n in senat.normen))
+
+    def test_kki_medien_senat_aggregates_senat_signal(self) -> None:
+        senat = build_medien_senat(senat_id="ms-567-sig")
+        sig = senat.senat_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(senat.gesperrt_norm_ids), 0)
+
+    def test_kki_medien_senat_builds_mediensoziologisch_norm_ids(self) -> None:
+        senat = build_medien_senat(senat_id="ms-567-mi")
+        self.assertGreater(len(senat.mediensoziologisch_norm_ids), 0)
+
+    def test_kki_medien_senat_builds_grundlegend_norm_ids(self) -> None:
+        senat = build_medien_senat(senat_id="ms-567-gni")
+        self.assertGreater(len(senat.grundlegend_norm_ids), 0)
+
+    def test_kki_medien_senat_norm_has_medien_weight(self) -> None:
+        senat = build_medien_senat(senat_id="ms-567-w")
+        self.assertTrue(all(isinstance(n.medien_weight, float) for n in senat.normen))
+
+    def test_kki_medien_senat_norm_has_medien_tier(self) -> None:
+        senat = build_medien_senat(senat_id="ms-567-t")
+        self.assertTrue(all(isinstance(n.medien_tier, int) for n in senat.normen))
+
+    # --- #568 MedienNorm ---
+    def test_kki_medien_norm_builds_gesperrt_schutz_norm(self) -> None:
+        normsatz = build_medien_norm(norm_id="mn-568-g")
+        self.assertTrue(any(n.geltung is MedienNormGeltung.GESPERRT for n in normsatz.normen))
+        self.assertTrue(any(n.medien_norm_typ is MedienNormTyp.SCHUTZ_MEDIENNORM for n in normsatz.normen))
+
+    def test_kki_medien_norm_builds_mediennormativ_norm(self) -> None:
+        normsatz = build_medien_norm(norm_id="mn-568-m")
+        self.assertTrue(any(n.geltung is MedienNormGeltung.MEDIENNORMATIV for n in normsatz.normen))
+        self.assertTrue(any(n.medien_norm_typ is MedienNormTyp.ORDNUNGS_MEDIENNORM for n in normsatz.normen))
+
+    def test_kki_medien_norm_builds_grundlegend_mediennormativ_norm(self) -> None:
+        normsatz = build_medien_norm(norm_id="mn-568-gm")
+        self.assertTrue(any(n.geltung is MedienNormGeltung.GRUNDLEGEND_MEDIENNORMATIV for n in normsatz.normen))
+        self.assertTrue(any(n.medien_norm_typ is MedienNormTyp.SOUVERAENITAETS_MEDIENNORM for n in normsatz.normen))
+
+    def test_kki_medien_norm_aggregates_norm_signal(self) -> None:
+        normsatz = build_medien_norm(norm_id="mn-568-sig")
+        sig = normsatz.norm_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(normsatz.gesperrt_norm_ids), 0)
+
+    def test_kki_medien_norm_builds_mediennormativ_norm_ids(self) -> None:
+        normsatz = build_medien_norm(norm_id="mn-568-mi")
+        self.assertGreater(len(normsatz.mediennormativ_norm_ids), 0)
+
+    def test_kki_medien_norm_builds_grundlegend_norm_ids(self) -> None:
+        normsatz = build_medien_norm(norm_id="mn-568-gni")
+        self.assertGreater(len(normsatz.grundlegend_norm_ids), 0)
+
+    def test_kki_medien_norm_eintrag_has_medien_norm_weight(self) -> None:
+        normsatz = build_medien_norm(norm_id="mn-568-w")
+        self.assertTrue(all(isinstance(n.medien_norm_weight, float) for n in normsatz.normen))
+
+    def test_kki_medien_norm_eintrag_has_medien_norm_tier(self) -> None:
+        normsatz = build_medien_norm(norm_id="mn-568-t")
+        self.assertTrue(all(isinstance(n.medien_norm_tier, int) for n in normsatz.normen))
+
+    # --- #569 KommunikativeHandlungsCharta ---
+    def test_kki_kommunikative_handlungs_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_kommunikative_handlungs_charta(charta_id="khc-569-g")
+        self.assertTrue(any(n.geltung is KommunikativeHandlungsChartaGeltung.GESPERRT for n in charta.normen))
+        self.assertTrue(any(n.kommunikative_handlungs_typ is KommunikativeHandlungsChartaTyp.SCHUTZ_KOMMUNIKATIVE_HANDLUNG for n in charta.normen))
+
+    def test_kki_kommunikative_handlungs_charta_builds_kommunikativ_handelnd_norm(self) -> None:
+        charta = build_kommunikative_handlungs_charta(charta_id="khc-569-k")
+        self.assertTrue(any(n.geltung is KommunikativeHandlungsChartaGeltung.KOMMUNIKATIV_HANDELND for n in charta.normen))
+        self.assertTrue(any(n.kommunikative_handlungs_typ is KommunikativeHandlungsChartaTyp.ORDNUNGS_KOMMUNIKATIVE_HANDLUNG for n in charta.normen))
+
+    def test_kki_kommunikative_handlungs_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_kommunikative_handlungs_charta(charta_id="khc-569-gs")
+        self.assertTrue(any(n.geltung is KommunikativeHandlungsChartaGeltung.GRUNDLEGEND_KOMMUNIKATIV_HANDELND for n in charta.normen))
+        self.assertTrue(any(n.kommunikative_handlungs_typ is KommunikativeHandlungsChartaTyp.SOUVERAENITAETS_KOMMUNIKATIVE_HANDLUNG for n in charta.normen))
+
+    def test_kki_kommunikative_handlungs_charta_aggregates_charta_signal(self) -> None:
+        charta = build_kommunikative_handlungs_charta(charta_id="khc-569-sig")
+        sig = charta.charta_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(charta.gesperrt_norm_ids), 0)
+
+    def test_kki_kommunikative_handlungs_charta_builds_kommunikativ_handelnd_norm_ids(self) -> None:
+        charta = build_kommunikative_handlungs_charta(charta_id="khc-569-ki")
+        self.assertGreater(len(charta.kommunikativ_handelnd_norm_ids), 0)
+
+    def test_kki_kommunikative_handlungs_charta_builds_grundlegend_norm_ids(self) -> None:
+        charta = build_kommunikative_handlungs_charta(charta_id="khc-569-gni")
+        self.assertGreater(len(charta.grundlegend_norm_ids), 0)
+
+    def test_kki_kommunikative_handlungs_charta_norm_has_medien_weight(self) -> None:
+        charta = build_kommunikative_handlungs_charta(charta_id="khc-569-w")
+        self.assertTrue(all(isinstance(n.medien_weight, float) for n in charta.normen))
+
+    def test_kki_kommunikative_handlungs_charta_norm_has_medien_tier(self) -> None:
+        charta = build_kommunikative_handlungs_charta(charta_id="khc-569-t")
+        self.assertTrue(all(isinstance(n.medien_tier, int) for n in charta.normen))
+
+    # --- #570 MedienVerfassung (Block-Krone ⭐) ---
+    def test_kki_medien_verfassung_builds_gesperrt_schutz_norm(self) -> None:
+        verfassung = build_medien_verfassung(verfassung_id="mv-570-g")
+        self.assertTrue(any(n.geltung is MedienVerfassungsGeltung.GESPERRT for n in verfassung.normen))
+        self.assertTrue(any(n.medien_typ is MedienVerfassungsTyp.SCHUTZ_MEDIENVERFASSUNG for n in verfassung.normen))
+
+    def test_kki_medien_verfassung_builds_medien_souveraen_norm(self) -> None:
+        verfassung = build_medien_verfassung(verfassung_id="mv-570-ms")
+        self.assertTrue(any(n.geltung is MedienVerfassungsGeltung.MEDIEN_SOUVERAEN for n in verfassung.normen))
+        self.assertTrue(any(n.medien_typ is MedienVerfassungsTyp.ORDNUNGS_MEDIENVERFASSUNG for n in verfassung.normen))
+
+    def test_kki_medien_verfassung_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        verfassung = build_medien_verfassung(verfassung_id="mv-570-gs")
+        self.assertTrue(any(n.geltung is MedienVerfassungsGeltung.GRUNDLEGEND_MEDIEN_SOUVERAEN for n in verfassung.normen))
+        self.assertTrue(any(n.medien_typ is MedienVerfassungsTyp.SOUVERAENITAETS_MEDIENVERFASSUNG for n in verfassung.normen))
+
+    def test_kki_medien_verfassung_aggregates_verfassung_signal(self) -> None:
+        verfassung = build_medien_verfassung(verfassung_id="mv-570-sig")
+        sig = verfassung.verfassung_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(verfassung.gesperrt_norm_ids), 0)
+
+    def test_kki_medien_verfassung_builds_medien_souveraen_norm_ids(self) -> None:
+        verfassung = build_medien_verfassung(verfassung_id="mv-570-msi")
+        self.assertGreater(len(verfassung.medien_souveraen_norm_ids), 0)
+
+    def test_kki_medien_verfassung_builds_grundlegend_norm_ids(self) -> None:
+        verfassung = build_medien_verfassung(verfassung_id="mv-570-gni")
+        self.assertGreater(len(verfassung.grundlegend_norm_ids), 0)
+
+    def test_kki_medien_verfassung_norm_has_medien_weight(self) -> None:
+        verfassung = build_medien_verfassung(verfassung_id="mv-570-w")
+        self.assertTrue(all(isinstance(n.medien_weight, float) for n in verfassung.normen))
+
+    def test_kki_medien_verfassung_norm_has_medien_tier(self) -> None:
+        verfassung = build_medien_verfassung(verfassung_id="mv-570-t")
+        self.assertTrue(all(isinstance(n.medien_tier, int) for n in verfassung.normen))

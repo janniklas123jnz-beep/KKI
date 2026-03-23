@@ -2179,6 +2179,56 @@ from .linguistik_verfassung import (
     LinguistikVerfassungsProzedur, LinguistikVerfassungsTyp,
     LinguistikVerfassung, build_linguistik_verfassung,
 )
+from .erkenntnis_feld import (
+    ErkenntnisFeldGeltung, ErkenntnisFeldNorm,
+    ErkenntnisFeldProzedur, ErkenntnisFeldTyp,
+    ErkenntnisFeld, build_erkenntnis_feld,
+)
+from .ontologie_register import (
+    OntologieRegisterGeltung, OntologieRegisterNorm,
+    OntologieRegisterProzedur, OntologieRegisterTyp,
+    OntologieRegister, build_ontologie_register,
+)
+from .epistemologie_charta import (
+    EpistemologieChartaGeltung, EpistemologieChartaNorm,
+    EpistemologieChartaProzedur, EpistemologieChartaTyp,
+    EpistemologieCharta, build_epistemologie_charta,
+)
+from .rationalismus_kodex import (
+    RationalismusKodexGeltung, RationalismusKodexNorm,
+    RationalismusKodexProzedur, RationalismusKodexTyp,
+    RationalismusKodex, build_rationalismus_kodex,
+)
+from .wissenschafts_pakt import (
+    WissenschaftsPaktGeltung, WissenschaftsPaktNorm,
+    WissenschaftsPaktProzedur, WissenschaftsPaktTyp,
+    WissenschaftsPakt, build_wissenschafts_pakt,
+)
+from .paradigmen_manifest import (
+    ParadigmenManifestGeltung, ParadigmenManifestNorm,
+    ParadigmenManifestProzedur, ParadigmenManifestTyp,
+    ParadigmenManifest, build_paradigmen_manifest,
+)
+from .logik_senat import (
+    LogikSenatGeltung, LogikSenatNorm,
+    LogikSenatProzedur, LogikSenatTyp,
+    LogikSenat, build_logik_senat,
+)
+from .erkenntnis_norm import (
+    ErkenntnisNormGeltung, ErkenntnisNormEintrag,
+    ErkenntnisNormProzedur, ErkenntnisNormTyp,
+    ErkenntnisNormSatz, build_erkenntnis_norm,
+)
+from .meta_kognitions_charta import (
+    MetaKognitionsChartaGeltung, MetaKognitionsChartaNorm,
+    MetaKognitionsChartaProzedur, MetaKognitionsChartaTyp,
+    MetaKognitionsCharta, build_meta_kognitions_charta,
+)
+from .philosophie_verfassung import (
+    PhilosophieVerfassungsGeltung, PhilosophieVerfassungsNorm,
+    PhilosophieVerfassungsProzedur, PhilosophieVerfassungsTyp,
+    PhilosophieVerfassung, build_philosophie_verfassung,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,

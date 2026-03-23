@@ -1465,6 +1465,56 @@ from kki.linguistik_verfassung import (
     LinguistikVerfassungsNorm, LinguistikVerfassungsTyp,
     LinguistikVerfassungsProzedur, build_linguistik_verfassung,
 )
+from kki.erkenntnis_feld import (
+    ErkenntnisFeld, ErkenntnisFeldGeltung,
+    ErkenntnisFeldNorm, ErkenntnisFeldTyp,
+    ErkenntnisFeldProzedur, build_erkenntnis_feld,
+)
+from kki.ontologie_register import (
+    OntologieRegister, OntologieRegisterGeltung,
+    OntologieRegisterNorm, OntologieRegisterTyp,
+    OntologieRegisterProzedur, build_ontologie_register,
+)
+from kki.epistemologie_charta import (
+    EpistemologieCharta, EpistemologieChartaGeltung,
+    EpistemologieChartaNorm, EpistemologieChartaTyp,
+    EpistemologieChartaProzedur, build_epistemologie_charta,
+)
+from kki.rationalismus_kodex import (
+    RationalismusKodex, RationalismusKodexGeltung,
+    RationalismusKodexNorm, RationalismusKodexTyp,
+    RationalismusKodexProzedur, build_rationalismus_kodex,
+)
+from kki.wissenschafts_pakt import (
+    WissenschaftsPakt, WissenschaftsPaktGeltung,
+    WissenschaftsPaktNorm, WissenschaftsPaktTyp,
+    WissenschaftsPaktProzedur, build_wissenschafts_pakt,
+)
+from kki.paradigmen_manifest import (
+    ParadigmenManifest, ParadigmenManifestGeltung,
+    ParadigmenManifestNorm, ParadigmenManifestTyp,
+    ParadigmenManifestProzedur, build_paradigmen_manifest,
+)
+from kki.logik_senat import (
+    LogikSenat, LogikSenatGeltung,
+    LogikSenatNorm, LogikSenatTyp,
+    LogikSenatProzedur, build_logik_senat,
+)
+from kki.erkenntnis_norm import (
+    ErkenntnisNormSatz, ErkenntnisNormGeltung,
+    ErkenntnisNormEintrag, ErkenntnisNormTyp,
+    ErkenntnisNormProzedur, build_erkenntnis_norm,
+)
+from kki.meta_kognitions_charta import (
+    MetaKognitionsCharta, MetaKognitionsChartaGeltung,
+    MetaKognitionsChartaNorm, MetaKognitionsChartaTyp,
+    MetaKognitionsChartaProzedur, build_meta_kognitions_charta,
+)
+from kki.philosophie_verfassung import (
+    PhilosophieVerfassung, PhilosophieVerfassungsGeltung,
+    PhilosophieVerfassungsNorm, PhilosophieVerfassungsTyp,
+    PhilosophieVerfassungsProzedur, build_philosophie_verfassung,
+)
 from kki import (
     KausalitaetsGeltung,
     KausalitaetsNorm,
@@ -17748,6 +17798,266 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(verfassung.gesperrt_norm_ids, ("verfassung-470-sig-stability-lane",))
         self.assertEqual(verfassung.linguistisch_norm_ids, ("verfassung-470-sig-governance-lane",))
         self.assertEqual(verfassung.grundlegend_norm_ids, ("verfassung-470-sig-expansion-lane",))
+
+    # --- #471 ErkenntnisFeld ---
+    def test_kki_erkenntnis_feld_builds_gesperrt_schutz_norm(self) -> None:
+        feld = build_erkenntnis_feld(feld_id="feld-471-g")
+        gesperrt = [n for n in feld.normen if n.geltung is ErkenntnisFeldGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) >= 1)
+        self.assertEqual(gesperrt[0].erkenntnis_typ, ErkenntnisFeldTyp.SCHUTZ_ERKENNTNIS)
+
+    def test_kki_erkenntnis_feld_builds_erkenntnistheoretisch_norm(self) -> None:
+        feld = build_erkenntnis_feld(feld_id="feld-471-e")
+        erkenntnistheoretisch = [n for n in feld.normen if n.geltung is ErkenntnisFeldGeltung.ERKENNTNISTHEORETISCH]
+        self.assertTrue(len(erkenntnistheoretisch) >= 1)
+        self.assertEqual(erkenntnistheoretisch[0].erkenntnis_typ, ErkenntnisFeldTyp.ORDNUNGS_ERKENNTNIS)
+
+    def test_kki_erkenntnis_feld_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        feld = build_erkenntnis_feld(feld_id="feld-471-gs")
+        grundlegend = [n for n in feld.normen if n.geltung is ErkenntnisFeldGeltung.GRUNDLEGEND_ERKENNTNISTHEORETISCH]
+        self.assertTrue(len(grundlegend) >= 1)
+        self.assertEqual(grundlegend[0].erkenntnis_typ, ErkenntnisFeldTyp.SOUVERAENITAETS_ERKENNTNIS)
+
+    def test_kki_erkenntnis_feld_aggregates_feld_signal(self) -> None:
+        feld = build_erkenntnis_feld(feld_id="feld-471-sig")
+        self.assertEqual(feld.feld_signal.status, "feld-gesperrt")
+        self.assertEqual(feld.gesperrt_norm_ids, ("feld-471-sig-stability-lane",))
+        self.assertEqual(feld.erkenntnistheoretisch_norm_ids, ("feld-471-sig-governance-lane",))
+        self.assertEqual(feld.grundlegend_norm_ids, ("feld-471-sig-expansion-lane",))
+
+    # --- #472 OntologieRegister ---
+    def test_kki_ontologie_register_builds_gesperrt_schutz_norm(self) -> None:
+        reg = build_ontologie_register(register_id="reg-472-g")
+        gesperrt = [n for n in reg.normen if n.geltung is OntologieRegisterGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) >= 1)
+        self.assertEqual(gesperrt[0].ontologie_typ, OntologieRegisterTyp.SCHUTZ_ONTOLOGIE)
+
+    def test_kki_ontologie_register_builds_ontologisch_norm(self) -> None:
+        reg = build_ontologie_register(register_id="reg-472-o")
+        ontologisch = [n for n in reg.normen if n.geltung is OntologieRegisterGeltung.ONTOLOGISCH]
+        self.assertTrue(len(ontologisch) >= 1)
+        self.assertEqual(ontologisch[0].ontologie_typ, OntologieRegisterTyp.ORDNUNGS_ONTOLOGIE)
+
+    def test_kki_ontologie_register_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        reg = build_ontologie_register(register_id="reg-472-gs")
+        grundlegend = [n for n in reg.normen if n.geltung is OntologieRegisterGeltung.GRUNDLEGEND_ONTOLOGISCH]
+        self.assertTrue(len(grundlegend) >= 1)
+        self.assertEqual(grundlegend[0].ontologie_typ, OntologieRegisterTyp.SOUVERAENITAETS_ONTOLOGIE)
+
+    def test_kki_ontologie_register_aggregates_register_signal(self) -> None:
+        reg = build_ontologie_register(register_id="reg-472-sig")
+        self.assertEqual(reg.register_signal.status, "register-gesperrt")
+        self.assertEqual(reg.gesperrt_norm_ids, ("reg-472-sig-stability-lane",))
+        self.assertEqual(reg.ontologisch_norm_ids, ("reg-472-sig-governance-lane",))
+        self.assertEqual(reg.grundlegend_norm_ids, ("reg-472-sig-expansion-lane",))
+
+    # --- #473 EpistemologieCharta ---
+    def test_kki_epistemologie_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_epistemologie_charta(charta_id="charta-473-g")
+        gesperrt = [n for n in charta.normen if n.geltung is EpistemologieChartaGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) >= 1)
+        self.assertEqual(gesperrt[0].epistemologie_typ, EpistemologieChartaTyp.SCHUTZ_EPISTEMOLOGIE)
+
+    def test_kki_epistemologie_charta_builds_epistemisch_norm(self) -> None:
+        charta = build_epistemologie_charta(charta_id="charta-473-e")
+        epistemisch = [n for n in charta.normen if n.geltung is EpistemologieChartaGeltung.EPISTEMISCH]
+        self.assertTrue(len(epistemisch) >= 1)
+        self.assertEqual(epistemisch[0].epistemologie_typ, EpistemologieChartaTyp.ORDNUNGS_EPISTEMOLOGIE)
+
+    def test_kki_epistemologie_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_epistemologie_charta(charta_id="charta-473-gs")
+        grundlegend = [n for n in charta.normen if n.geltung is EpistemologieChartaGeltung.GRUNDLEGEND_EPISTEMISCH]
+        self.assertTrue(len(grundlegend) >= 1)
+        self.assertEqual(grundlegend[0].epistemologie_typ, EpistemologieChartaTyp.SOUVERAENITAETS_EPISTEMOLOGIE)
+
+    def test_kki_epistemologie_charta_aggregates_charta_signal(self) -> None:
+        charta = build_epistemologie_charta(charta_id="charta-473-sig")
+        self.assertEqual(charta.charta_signal.status, "charta-gesperrt")
+        self.assertEqual(charta.gesperrt_norm_ids, ("charta-473-sig-stability-lane",))
+        self.assertEqual(charta.epistemisch_norm_ids, ("charta-473-sig-governance-lane",))
+        self.assertEqual(charta.grundlegend_norm_ids, ("charta-473-sig-expansion-lane",))
+
+    # --- #474 RationalismusKodex ---
+    def test_kki_rationalismus_kodex_builds_gesperrt_schutz_norm(self) -> None:
+        kodex = build_rationalismus_kodex(kodex_id="kodex-474-g")
+        gesperrt = [n for n in kodex.normen if n.geltung is RationalismusKodexGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) >= 1)
+        self.assertEqual(gesperrt[0].rationalismus_typ, RationalismusKodexTyp.SCHUTZ_RATIONALISMUS)
+
+    def test_kki_rationalismus_kodex_builds_rationalistisch_norm(self) -> None:
+        kodex = build_rationalismus_kodex(kodex_id="kodex-474-r")
+        rationalistisch = [n for n in kodex.normen if n.geltung is RationalismusKodexGeltung.RATIONALISTISCH]
+        self.assertTrue(len(rationalistisch) >= 1)
+        self.assertEqual(rationalistisch[0].rationalismus_typ, RationalismusKodexTyp.ORDNUNGS_RATIONALISMUS)
+
+    def test_kki_rationalismus_kodex_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        kodex = build_rationalismus_kodex(kodex_id="kodex-474-gs")
+        grundlegend = [n for n in kodex.normen if n.geltung is RationalismusKodexGeltung.GRUNDLEGEND_RATIONALISTISCH]
+        self.assertTrue(len(grundlegend) >= 1)
+        self.assertEqual(grundlegend[0].rationalismus_typ, RationalismusKodexTyp.SOUVERAENITAETS_RATIONALISMUS)
+
+    def test_kki_rationalismus_kodex_aggregates_kodex_signal(self) -> None:
+        kodex = build_rationalismus_kodex(kodex_id="kodex-474-sig")
+        self.assertEqual(kodex.kodex_signal.status, "kodex-gesperrt")
+        self.assertEqual(kodex.gesperrt_norm_ids, ("kodex-474-sig-stability-lane",))
+        self.assertEqual(kodex.rationalistisch_norm_ids, ("kodex-474-sig-governance-lane",))
+        self.assertEqual(kodex.grundlegend_norm_ids, ("kodex-474-sig-expansion-lane",))
+
+    # --- #475 WissenschaftsPakt ---
+    def test_kki_wissenschafts_pakt_builds_gesperrt_schutz_norm(self) -> None:
+        pakt = build_wissenschafts_pakt(pakt_id="pakt-475-g")
+        gesperrt = [n for n in pakt.normen if n.geltung is WissenschaftsPaktGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) >= 1)
+        self.assertEqual(gesperrt[0].wissenschafts_typ, WissenschaftsPaktTyp.SCHUTZ_WISSENSCHAFT)
+
+    def test_kki_wissenschafts_pakt_builds_wissenschaftlich_norm(self) -> None:
+        pakt = build_wissenschafts_pakt(pakt_id="pakt-475-w")
+        wissenschaftlich = [n for n in pakt.normen if n.geltung is WissenschaftsPaktGeltung.WISSENSCHAFTLICH]
+        self.assertTrue(len(wissenschaftlich) >= 1)
+        self.assertEqual(wissenschaftlich[0].wissenschafts_typ, WissenschaftsPaktTyp.ORDNUNGS_WISSENSCHAFT)
+
+    def test_kki_wissenschafts_pakt_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        pakt = build_wissenschafts_pakt(pakt_id="pakt-475-gs")
+        grundlegend = [n for n in pakt.normen if n.geltung is WissenschaftsPaktGeltung.GRUNDLEGEND_WISSENSCHAFTLICH]
+        self.assertTrue(len(grundlegend) >= 1)
+        self.assertEqual(grundlegend[0].wissenschafts_typ, WissenschaftsPaktTyp.SOUVERAENITAETS_WISSENSCHAFT)
+
+    def test_kki_wissenschafts_pakt_aggregates_pakt_signal(self) -> None:
+        pakt = build_wissenschafts_pakt(pakt_id="pakt-475-sig")
+        self.assertEqual(pakt.pakt_signal.status, "pakt-gesperrt")
+        self.assertEqual(pakt.gesperrt_norm_ids, ("pakt-475-sig-stability-lane",))
+        self.assertEqual(pakt.wissenschaftlich_norm_ids, ("pakt-475-sig-governance-lane",))
+        self.assertEqual(pakt.grundlegend_norm_ids, ("pakt-475-sig-expansion-lane",))
+
+    # --- #476 ParadigmenManifest ---
+    def test_kki_paradigmen_manifest_builds_gesperrt_schutz_norm(self) -> None:
+        manifest = build_paradigmen_manifest(manifest_id="manifest-476-g")
+        gesperrt = [n for n in manifest.normen if n.geltung is ParadigmenManifestGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) >= 1)
+        self.assertEqual(gesperrt[0].paradigmen_typ, ParadigmenManifestTyp.SCHUTZ_PARADIGMA)
+
+    def test_kki_paradigmen_manifest_builds_paradigmatisch_norm(self) -> None:
+        manifest = build_paradigmen_manifest(manifest_id="manifest-476-p")
+        paradigmatisch = [n for n in manifest.normen if n.geltung is ParadigmenManifestGeltung.PARADIGMATISCH]
+        self.assertTrue(len(paradigmatisch) >= 1)
+        self.assertEqual(paradigmatisch[0].paradigmen_typ, ParadigmenManifestTyp.ORDNUNGS_PARADIGMA)
+
+    def test_kki_paradigmen_manifest_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        manifest = build_paradigmen_manifest(manifest_id="manifest-476-gs")
+        grundlegend = [n for n in manifest.normen if n.geltung is ParadigmenManifestGeltung.GRUNDLEGEND_PARADIGMATISCH]
+        self.assertTrue(len(grundlegend) >= 1)
+        self.assertEqual(grundlegend[0].paradigmen_typ, ParadigmenManifestTyp.SOUVERAENITAETS_PARADIGMA)
+
+    def test_kki_paradigmen_manifest_aggregates_manifest_signal(self) -> None:
+        manifest = build_paradigmen_manifest(manifest_id="manifest-476-sig")
+        self.assertEqual(manifest.manifest_signal.status, "manifest-gesperrt")
+        self.assertEqual(manifest.gesperrt_norm_ids, ("manifest-476-sig-stability-lane",))
+        self.assertEqual(manifest.paradigmatisch_norm_ids, ("manifest-476-sig-governance-lane",))
+        self.assertEqual(manifest.grundlegend_norm_ids, ("manifest-476-sig-expansion-lane",))
+
+    # --- #477 LogikSenat ---
+    def test_kki_logik_senat_builds_gesperrt_schutz_norm(self) -> None:
+        senat = build_logik_senat(senat_id="senat-477-g")
+        gesperrt = [n for n in senat.normen if n.geltung is LogikSenatGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) >= 1)
+        self.assertEqual(gesperrt[0].logik_typ, LogikSenatTyp.SCHUTZ_LOGIK)
+
+    def test_kki_logik_senat_builds_logisch_norm(self) -> None:
+        senat = build_logik_senat(senat_id="senat-477-l")
+        logisch = [n for n in senat.normen if n.geltung is LogikSenatGeltung.LOGISCH]
+        self.assertTrue(len(logisch) >= 1)
+        self.assertEqual(logisch[0].logik_typ, LogikSenatTyp.ORDNUNGS_LOGIK)
+
+    def test_kki_logik_senat_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        senat = build_logik_senat(senat_id="senat-477-gs")
+        grundlegend = [n for n in senat.normen if n.geltung is LogikSenatGeltung.GRUNDLEGEND_LOGISCH]
+        self.assertTrue(len(grundlegend) >= 1)
+        self.assertEqual(grundlegend[0].logik_typ, LogikSenatTyp.SOUVERAENITAETS_LOGIK)
+
+    def test_kki_logik_senat_aggregates_senat_signal(self) -> None:
+        senat = build_logik_senat(senat_id="senat-477-sig")
+        self.assertEqual(senat.senat_signal.status, "senat-gesperrt")
+        self.assertEqual(senat.gesperrt_norm_ids, ("senat-477-sig-stability-lane",))
+        self.assertEqual(senat.logisch_norm_ids, ("senat-477-sig-governance-lane",))
+        self.assertEqual(senat.grundlegend_norm_ids, ("senat-477-sig-expansion-lane",))
+
+    # --- #478 ErkenntnisNorm (*_norm) ---
+    def test_kki_erkenntnis_norm_builds_gesperrt_schutz_norm(self) -> None:
+        normsatz = build_erkenntnis_norm(norm_id="enorm-478-g")
+        gesperrt = [n for n in normsatz.normen if n.geltung is ErkenntnisNormGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) >= 1)
+        self.assertEqual(gesperrt[0].erkenntnis_norm_typ, ErkenntnisNormTyp.SCHUTZ_ERKENNTNISNORM)
+
+    def test_kki_erkenntnis_norm_builds_erkenntnisnormativ_norm(self) -> None:
+        normsatz = build_erkenntnis_norm(norm_id="enorm-478-e")
+        erkenntnisnormativ = [n for n in normsatz.normen if n.geltung is ErkenntnisNormGeltung.ERKENNTNISNORMATIV]
+        self.assertTrue(len(erkenntnisnormativ) >= 1)
+        self.assertEqual(erkenntnisnormativ[0].erkenntnis_norm_typ, ErkenntnisNormTyp.ORDNUNGS_ERKENNTNISNORM)
+
+    def test_kki_erkenntnis_norm_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        normsatz = build_erkenntnis_norm(norm_id="enorm-478-gs")
+        grundlegend = [n for n in normsatz.normen if n.geltung is ErkenntnisNormGeltung.GRUNDLEGEND_ERKENNTNISNORMATIV]
+        self.assertTrue(len(grundlegend) >= 1)
+        self.assertEqual(grundlegend[0].erkenntnis_norm_typ, ErkenntnisNormTyp.SOUVERAENITAETS_ERKENNTNISNORM)
+
+    def test_kki_erkenntnis_norm_aggregates_norm_signal(self) -> None:
+        normsatz = build_erkenntnis_norm(norm_id="enorm-478-sig")
+        self.assertEqual(normsatz.norm_signal.status, "norm-gesperrt")
+        self.assertEqual(normsatz.gesperrt_norm_ids, ("enorm-478-sig-stability-lane",))
+        self.assertEqual(normsatz.erkenntnisnormativ_norm_ids, ("enorm-478-sig-governance-lane",))
+        self.assertEqual(normsatz.grundlegend_norm_ids, ("enorm-478-sig-expansion-lane",))
+
+    # --- #479 MetaKognitionsCharta ---
+    def test_kki_meta_kognitions_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_meta_kognitions_charta(charta_id="charta-479-g")
+        gesperrt = [n for n in charta.normen if n.geltung is MetaKognitionsChartaGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) >= 1)
+        self.assertEqual(gesperrt[0].meta_kognitions_typ, MetaKognitionsChartaTyp.SCHUTZ_META_KOGNITION)
+
+    def test_kki_meta_kognitions_charta_builds_metakognitiv_norm(self) -> None:
+        charta = build_meta_kognitions_charta(charta_id="charta-479-m")
+        metakognitiv = [n for n in charta.normen if n.geltung is MetaKognitionsChartaGeltung.METAKOGNITIV]
+        self.assertTrue(len(metakognitiv) >= 1)
+        self.assertEqual(metakognitiv[0].meta_kognitions_typ, MetaKognitionsChartaTyp.ORDNUNGS_META_KOGNITION)
+
+    def test_kki_meta_kognitions_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_meta_kognitions_charta(charta_id="charta-479-gs")
+        grundlegend = [n for n in charta.normen if n.geltung is MetaKognitionsChartaGeltung.GRUNDLEGEND_METAKOGNITIV]
+        self.assertTrue(len(grundlegend) >= 1)
+        self.assertEqual(grundlegend[0].meta_kognitions_typ, MetaKognitionsChartaTyp.SOUVERAENITAETS_META_KOGNITION)
+
+    def test_kki_meta_kognitions_charta_aggregates_charta_signal(self) -> None:
+        charta = build_meta_kognitions_charta(charta_id="charta-479-sig")
+        self.assertEqual(charta.charta_signal.status, "charta-gesperrt")
+        self.assertEqual(charta.gesperrt_norm_ids, ("charta-479-sig-stability-lane",))
+        self.assertEqual(charta.metakognitiv_norm_ids, ("charta-479-sig-governance-lane",))
+        self.assertEqual(charta.grundlegend_norm_ids, ("charta-479-sig-expansion-lane",))
+
+    # --- #480 PhilosophieVerfassung (Block-Krone) ---
+    def test_kki_philosophie_verfassung_builds_gesperrt_schutz_norm(self) -> None:
+        verfassung = build_philosophie_verfassung(verfassung_id="verfassung-480-g")
+        gesperrt = [n for n in verfassung.normen if n.geltung is PhilosophieVerfassungsGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) >= 1)
+        self.assertEqual(gesperrt[0].philosophie_typ, PhilosophieVerfassungsTyp.SCHUTZ_PHILOSOPHIE)
+
+    def test_kki_philosophie_verfassung_builds_philosophisch_norm(self) -> None:
+        verfassung = build_philosophie_verfassung(verfassung_id="verfassung-480-p")
+        philosophisch = [n for n in verfassung.normen if n.geltung is PhilosophieVerfassungsGeltung.PHILOSOPHISCH]
+        self.assertTrue(len(philosophisch) >= 1)
+        self.assertEqual(philosophisch[0].philosophie_typ, PhilosophieVerfassungsTyp.ORDNUNGS_PHILOSOPHIE)
+
+    def test_kki_philosophie_verfassung_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        verfassung = build_philosophie_verfassung(verfassung_id="verfassung-480-gs")
+        grundlegend = [n for n in verfassung.normen if n.geltung is PhilosophieVerfassungsGeltung.GRUNDLEGEND_PHILOSOPHISCH]
+        self.assertTrue(len(grundlegend) >= 1)
+        self.assertEqual(grundlegend[0].philosophie_typ, PhilosophieVerfassungsTyp.SOUVERAENITAETS_PHILOSOPHIE)
+
+    def test_kki_philosophie_verfassung_aggregates_verfassung_signal(self) -> None:
+        verfassung = build_philosophie_verfassung(verfassung_id="verfassung-480-sig")
+        self.assertEqual(verfassung.verfassung_signal.status, "verfassung-gesperrt")
+        self.assertEqual(verfassung.gesperrt_norm_ids, ("verfassung-480-sig-stability-lane",))
+        self.assertEqual(verfassung.philosophisch_norm_ids, ("verfassung-480-sig-governance-lane",))
+        self.assertEqual(verfassung.grundlegend_norm_ids, ("verfassung-480-sig-expansion-lane",))
 
 
 if __name__ == "__main__":

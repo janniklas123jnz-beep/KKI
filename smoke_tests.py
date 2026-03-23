@@ -1655,6 +1655,46 @@ from kki.ethik_verfassung import (
     EthikVerfassung, EthikVerfassungsGeltung, EthikVerfassungsNorm,
     EthikVerfassungsTyp, EthikVerfassungsProzedur, build_ethik_verfassung,
 )
+from kki.politik_feld import (
+    PolitikFeld, PolitikFeldGeltung, PolitikFeldNorm,
+    PolitikFeldTyp, PolitikFeldProzedur, build_politik_feld,
+)
+from kki.staatstheorie_register import (
+    StaatstheorieRegister, StaatstheorieRegisterGeltung, StaatstheorieRegisterNorm,
+    StaatstheorieRegisterTyp, StaatstheorieRegisterProzedur, build_staatstheorie_register,
+)
+from kki.demokratie_charta import (
+    DemokratieCharta, DemokratieChartaGeltung, DemokratieChartaNorm,
+    DemokratieChartaTyp, DemokratieChartaProzedur, build_demokratie_charta,
+)
+from kki.macht_kodex import (
+    MachtKodex, MachtKodexGeltung, MachtKodexNorm,
+    MachtKodexTyp, MachtKodexProzedur, build_macht_kodex,
+)
+from kki.gewaltenteilungs_manifest import (
+    GewaltenteilungsManifest, GewaltenteilungsManifestGeltung, GewaltenteilungsManifestNorm,
+    GewaltenteilungsManifestTyp, GewaltenteilungsManifestProzedur, build_gewaltenteilungs_manifest,
+)
+from kki.legitimitaets_pakt import (
+    LegitimitaetsPakt, LegitimitaetsPaktGeltung, LegitimitaetsPaktNorm,
+    LegitimitaetsPaktTyp, LegitimitaetsPaktProzedur, build_legitimitaets_pakt,
+)
+from kki.globalpolitik_senat import (
+    GlobalpolitikSenat, GlobalpolitikSenatGeltung, GlobalpolitikSenatNorm,
+    GlobalpolitikSenatTyp, GlobalpolitikSenatProzedur, build_globalpolitik_senat,
+)
+from kki.politik_norm import (
+    PolitikNormSatz, PolitikNormGeltung, PolitikNormEintrag,
+    PolitikNormTyp, PolitikNormProzedur, build_politik_norm,
+)
+from kki.zivilgesellschafts_charta import (
+    ZivilgesellschaftsCharta, ZivilgesellschaftsChartaGeltung, ZivilgesellschaftsChartaNorm,
+    ZivilgesellschaftsChartaTyp, ZivilgesellschaftsChartaProzedur, build_zivilgesellschafts_charta,
+)
+from kki.politik_verfassung import (
+    PolitikVerfassung, PolitikVerfassungsGeltung, PolitikVerfassungsNorm,
+    PolitikVerfassungsTyp, PolitikVerfassungsProzedur, build_politik_verfassung,
+)
 from kki import (
     KausalitaetsGeltung,
     KausalitaetsNorm,
@@ -18958,6 +18998,258 @@ class SmokeTests(unittest.TestCase):
 
     def test_kki_ethik_verfassung_aggregates_verfassung_signal(self) -> None:
         verfassung = build_ethik_verfassung(verfassung_id="everfassung-510-sig")
+        sig = verfassung.verfassung_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(verfassung.gesperrt_norm_ids), 0)
+
+    # ── Block #511–#520: Politikwissenschaft & Demokratietheorie ─────────────────
+
+    def test_kki_politik_feld_builds_gesperrt_schutz_norm(self) -> None:
+        feld = build_politik_feld(feld_id="pfeld-511-g")
+        gesperrt = [n for n in feld.normen if n.geltung is PolitikFeldGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) > 0)
+        self.assertEqual(gesperrt[0].politik_typ, PolitikFeldTyp.SCHUTZ_POLITIK)
+
+    def test_kki_politik_feld_builds_politisch_norm(self) -> None:
+        feld = build_politik_feld(feld_id="pfeld-511-p")
+        politisch = [n for n in feld.normen if n.geltung is PolitikFeldGeltung.POLITISCH]
+        self.assertTrue(len(politisch) > 0)
+        self.assertEqual(politisch[0].politik_typ, PolitikFeldTyp.ORDNUNGS_POLITIK)
+
+    def test_kki_politik_feld_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        feld = build_politik_feld(feld_id="pfeld-511-gs")
+        grundlegend = [n for n in feld.normen if n.geltung is PolitikFeldGeltung.GRUNDLEGEND_POLITISCH]
+        self.assertTrue(len(grundlegend) > 0)
+        self.assertEqual(grundlegend[0].politik_typ, PolitikFeldTyp.SOUVERAENITAETS_POLITIK)
+
+    def test_kki_politik_feld_aggregates_feld_signal(self) -> None:
+        feld = build_politik_feld(feld_id="pfeld-511-sig")
+        sig = feld.feld_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(feld.gesperrt_norm_ids), 0)
+
+    def test_kki_staatstheorie_register_builds_gesperrt_schutz_norm(self) -> None:
+        reg = build_staatstheorie_register(register_id="streg-512-g")
+        gesperrt = [n for n in reg.normen if n.geltung is StaatstheorieRegisterGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) > 0)
+        self.assertEqual(gesperrt[0].staatstheorie_typ, StaatstheorieRegisterTyp.SCHUTZ_STAATSTHEORIE)
+
+    def test_kki_staatstheorie_register_builds_staatstheoretisch_norm(self) -> None:
+        reg = build_staatstheorie_register(register_id="streg-512-s")
+        staatst = [n for n in reg.normen if n.geltung is StaatstheorieRegisterGeltung.STAATSTHEORETISCH]
+        self.assertTrue(len(staatst) > 0)
+        self.assertEqual(staatst[0].staatstheorie_typ, StaatstheorieRegisterTyp.ORDNUNGS_STAATSTHEORIE)
+
+    def test_kki_staatstheorie_register_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        reg = build_staatstheorie_register(register_id="streg-512-gs")
+        grundlegend = [n for n in reg.normen if n.geltung is StaatstheorieRegisterGeltung.GRUNDLEGEND_STAATSTHEORETISCH]
+        self.assertTrue(len(grundlegend) > 0)
+        self.assertEqual(grundlegend[0].staatstheorie_typ, StaatstheorieRegisterTyp.SOUVERAENITAETS_STAATSTHEORIE)
+
+    def test_kki_staatstheorie_register_aggregates_register_signal(self) -> None:
+        reg = build_staatstheorie_register(register_id="streg-512-sig")
+        sig = reg.register_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(reg.gesperrt_norm_ids), 0)
+
+    def test_kki_demokratie_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_demokratie_charta(charta_id="dcharta-513-g")
+        gesperrt = [n for n in charta.normen if n.geltung is DemokratieChartaGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) > 0)
+        self.assertEqual(gesperrt[0].demokratie_typ, DemokratieChartaTyp.SCHUTZ_DEMOKRATIE)
+
+    def test_kki_demokratie_charta_builds_demokratisch_norm(self) -> None:
+        charta = build_demokratie_charta(charta_id="dcharta-513-d")
+        demo = [n for n in charta.normen if n.geltung is DemokratieChartaGeltung.DEMOKRATISCH]
+        self.assertTrue(len(demo) > 0)
+        self.assertEqual(demo[0].demokratie_typ, DemokratieChartaTyp.ORDNUNGS_DEMOKRATIE)
+
+    def test_kki_demokratie_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_demokratie_charta(charta_id="dcharta-513-gs")
+        grundlegend = [n for n in charta.normen if n.geltung is DemokratieChartaGeltung.GRUNDLEGEND_DEMOKRATISCH]
+        self.assertTrue(len(grundlegend) > 0)
+        self.assertEqual(grundlegend[0].demokratie_typ, DemokratieChartaTyp.SOUVERAENITAETS_DEMOKRATIE)
+
+    def test_kki_demokratie_charta_aggregates_charta_signal(self) -> None:
+        charta = build_demokratie_charta(charta_id="dcharta-513-sig")
+        sig = charta.charta_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(charta.gesperrt_norm_ids), 0)
+
+    def test_kki_macht_kodex_builds_gesperrt_schutz_norm(self) -> None:
+        kodex = build_macht_kodex(kodex_id="mkodex-514-g")
+        gesperrt = [n for n in kodex.normen if n.geltung is MachtKodexGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) > 0)
+        self.assertEqual(gesperrt[0].macht_typ, MachtKodexTyp.SCHUTZ_MACHT)
+
+    def test_kki_macht_kodex_builds_machtpolitisch_norm(self) -> None:
+        kodex = build_macht_kodex(kodex_id="mkodex-514-m")
+        macht = [n for n in kodex.normen if n.geltung is MachtKodexGeltung.MACHTPOLITISCH]
+        self.assertTrue(len(macht) > 0)
+        self.assertEqual(macht[0].macht_typ, MachtKodexTyp.ORDNUNGS_MACHT)
+
+    def test_kki_macht_kodex_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        kodex = build_macht_kodex(kodex_id="mkodex-514-gs")
+        grundlegend = [n for n in kodex.normen if n.geltung is MachtKodexGeltung.GRUNDLEGEND_MACHTPOLITISCH]
+        self.assertTrue(len(grundlegend) > 0)
+        self.assertEqual(grundlegend[0].macht_typ, MachtKodexTyp.SOUVERAENITAETS_MACHT)
+
+    def test_kki_macht_kodex_aggregates_kodex_signal(self) -> None:
+        kodex = build_macht_kodex(kodex_id="mkodex-514-sig")
+        sig = kodex.kodex_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(kodex.gesperrt_norm_ids), 0)
+
+    def test_kki_gewaltenteilungs_manifest_builds_gesperrt_schutz_norm(self) -> None:
+        manifest = build_gewaltenteilungs_manifest(manifest_id="gwmanifest-515-g")
+        gesperrt = [n for n in manifest.normen if n.geltung is GewaltenteilungsManifestGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) > 0)
+        self.assertEqual(gesperrt[0].gewaltenteilungs_typ, GewaltenteilungsManifestTyp.SCHUTZ_GEWALTENTEILUNG)
+
+    def test_kki_gewaltenteilungs_manifest_builds_gewaltenteilig_norm(self) -> None:
+        manifest = build_gewaltenteilungs_manifest(manifest_id="gwmanifest-515-g2")
+        gewalt = [n for n in manifest.normen if n.geltung is GewaltenteilungsManifestGeltung.GEWALTENTEILIG]
+        self.assertTrue(len(gewalt) > 0)
+        self.assertEqual(gewalt[0].gewaltenteilungs_typ, GewaltenteilungsManifestTyp.ORDNUNGS_GEWALTENTEILUNG)
+
+    def test_kki_gewaltenteilungs_manifest_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        manifest = build_gewaltenteilungs_manifest(manifest_id="gwmanifest-515-gs")
+        grundlegend = [n for n in manifest.normen if n.geltung is GewaltenteilungsManifestGeltung.GRUNDLEGEND_GEWALTENTEILIG]
+        self.assertTrue(len(grundlegend) > 0)
+        self.assertEqual(grundlegend[0].gewaltenteilungs_typ, GewaltenteilungsManifestTyp.SOUVERAENITAETS_GEWALTENTEILUNG)
+
+    def test_kki_gewaltenteilungs_manifest_aggregates_manifest_signal(self) -> None:
+        manifest = build_gewaltenteilungs_manifest(manifest_id="gwmanifest-515-sig")
+        sig = manifest.manifest_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(manifest.gesperrt_norm_ids), 0)
+
+    def test_kki_legitimitaets_pakt_builds_gesperrt_schutz_norm(self) -> None:
+        pakt = build_legitimitaets_pakt(pakt_id="lpakt-516-g")
+        gesperrt = [n for n in pakt.normen if n.geltung is LegitimitaetsPaktGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) > 0)
+        self.assertEqual(gesperrt[0].legitimitaets_typ, LegitimitaetsPaktTyp.SCHUTZ_LEGITIMITAET)
+
+    def test_kki_legitimitaets_pakt_builds_legitimitaetlich_norm(self) -> None:
+        pakt = build_legitimitaets_pakt(pakt_id="lpakt-516-l")
+        legitim = [n for n in pakt.normen if n.geltung is LegitimitaetsPaktGeltung.LEGITIMITAETLICH]
+        self.assertTrue(len(legitim) > 0)
+        self.assertEqual(legitim[0].legitimitaets_typ, LegitimitaetsPaktTyp.ORDNUNGS_LEGITIMITAET)
+
+    def test_kki_legitimitaets_pakt_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        pakt = build_legitimitaets_pakt(pakt_id="lpakt-516-gs")
+        grundlegend = [n for n in pakt.normen if n.geltung is LegitimitaetsPaktGeltung.GRUNDLEGEND_LEGITIMITAETLICH]
+        self.assertTrue(len(grundlegend) > 0)
+        self.assertEqual(grundlegend[0].legitimitaets_typ, LegitimitaetsPaktTyp.SOUVERAENITAETS_LEGITIMITAET)
+
+    def test_kki_legitimitaets_pakt_aggregates_pakt_signal(self) -> None:
+        pakt = build_legitimitaets_pakt(pakt_id="lpakt-516-sig")
+        sig = pakt.pakt_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(pakt.gesperrt_norm_ids), 0)
+
+    def test_kki_globalpolitik_senat_builds_gesperrt_schutz_norm(self) -> None:
+        senat = build_globalpolitik_senat(senat_id="gpsenat-517-g")
+        gesperrt = [n for n in senat.normen if n.geltung is GlobalpolitikSenatGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) > 0)
+        self.assertEqual(gesperrt[0].globalpolitik_typ, GlobalpolitikSenatTyp.SCHUTZ_GLOBALPOLITIK)
+
+    def test_kki_globalpolitik_senat_builds_globalpolitisch_norm(self) -> None:
+        senat = build_globalpolitik_senat(senat_id="gpsenat-517-g2")
+        global_ = [n for n in senat.normen if n.geltung is GlobalpolitikSenatGeltung.GLOBALPOLITISCH]
+        self.assertTrue(len(global_) > 0)
+        self.assertEqual(global_[0].globalpolitik_typ, GlobalpolitikSenatTyp.ORDNUNGS_GLOBALPOLITIK)
+
+    def test_kki_globalpolitik_senat_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        senat = build_globalpolitik_senat(senat_id="gpsenat-517-gs")
+        grundlegend = [n for n in senat.normen if n.geltung is GlobalpolitikSenatGeltung.GRUNDLEGEND_GLOBALPOLITISCH]
+        self.assertTrue(len(grundlegend) > 0)
+        self.assertEqual(grundlegend[0].globalpolitik_typ, GlobalpolitikSenatTyp.SOUVERAENITAETS_GLOBALPOLITIK)
+
+    def test_kki_globalpolitik_senat_aggregates_senat_signal(self) -> None:
+        senat = build_globalpolitik_senat(senat_id="gpsenat-517-sig")
+        sig = senat.senat_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(senat.gesperrt_norm_ids), 0)
+
+    def test_kki_politik_norm_builds_gesperrt_schutz_norm(self) -> None:
+        normsatz = build_politik_norm(norm_id="pnorm-518-g")
+        gesperrt = [n for n in normsatz.normen if n.geltung is PolitikNormGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) > 0)
+        self.assertEqual(gesperrt[0].politik_norm_typ, PolitikNormTyp.SCHUTZ_POLITIKNORM)
+
+    def test_kki_politik_norm_builds_politiknormativ_norm(self) -> None:
+        normsatz = build_politik_norm(norm_id="pnorm-518-p")
+        politnorm = [n for n in normsatz.normen if n.geltung is PolitikNormGeltung.POLITIKNORMATIV]
+        self.assertTrue(len(politnorm) > 0)
+        self.assertEqual(politnorm[0].politik_norm_typ, PolitikNormTyp.ORDNUNGS_POLITIKNORM)
+
+    def test_kki_politik_norm_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        normsatz = build_politik_norm(norm_id="pnorm-518-gs")
+        grundlegend = [n for n in normsatz.normen if n.geltung is PolitikNormGeltung.GRUNDLEGEND_POLITIKNORMATIV]
+        self.assertTrue(len(grundlegend) > 0)
+        self.assertEqual(grundlegend[0].politik_norm_typ, PolitikNormTyp.SOUVERAENITAETS_POLITIKNORM)
+
+    def test_kki_politik_norm_aggregates_norm_signal(self) -> None:
+        normsatz = build_politik_norm(norm_id="pnorm-518-sig")
+        sig = normsatz.norm_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(normsatz.gesperrt_norm_ids), 0)
+
+    def test_kki_zivilgesellschafts_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_zivilgesellschafts_charta(charta_id="zgcharta-519-g")
+        gesperrt = [n for n in charta.normen if n.geltung is ZivilgesellschaftsChartaGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) > 0)
+        self.assertEqual(gesperrt[0].zivilgesellschafts_typ, ZivilgesellschaftsChartaTyp.SCHUTZ_ZIVILGESELLSCHAFT)
+
+    def test_kki_zivilgesellschafts_charta_builds_zivilgesellschaftlich_norm(self) -> None:
+        charta = build_zivilgesellschafts_charta(charta_id="zgcharta-519-z")
+        zivil = [n for n in charta.normen if n.geltung is ZivilgesellschaftsChartaGeltung.ZIVILGESELLSCHAFTLICH]
+        self.assertTrue(len(zivil) > 0)
+        self.assertEqual(zivil[0].zivilgesellschafts_typ, ZivilgesellschaftsChartaTyp.ORDNUNGS_ZIVILGESELLSCHAFT)
+
+    def test_kki_zivilgesellschafts_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_zivilgesellschafts_charta(charta_id="zgcharta-519-gs")
+        grundlegend = [n for n in charta.normen if n.geltung is ZivilgesellschaftsChartaGeltung.GRUNDLEGEND_ZIVILGESELLSCHAFTLICH]
+        self.assertTrue(len(grundlegend) > 0)
+        self.assertEqual(grundlegend[0].zivilgesellschafts_typ, ZivilgesellschaftsChartaTyp.SOUVERAENITAETS_ZIVILGESELLSCHAFT)
+
+    def test_kki_zivilgesellschafts_charta_aggregates_charta_signal(self) -> None:
+        charta = build_zivilgesellschafts_charta(charta_id="zgcharta-519-sig")
+        sig = charta.charta_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(charta.gesperrt_norm_ids), 0)
+
+    def test_kki_politik_verfassung_builds_gesperrt_schutz_norm(self) -> None:
+        verfassung = build_politik_verfassung(verfassung_id="pverfassung-520-g")
+        gesperrt = [n for n in verfassung.normen if n.geltung is PolitikVerfassungsGeltung.GESPERRT]
+        self.assertTrue(len(gesperrt) > 0)
+        self.assertEqual(gesperrt[0].politik_typ, PolitikVerfassungsTyp.SCHUTZ_POLITIKVERFASSUNG)
+
+    def test_kki_politik_verfassung_builds_politisch_souveraen_norm(self) -> None:
+        verfassung = build_politik_verfassung(verfassung_id="pverfassung-520-p")
+        souveraen = [n for n in verfassung.normen if n.geltung is PolitikVerfassungsGeltung.POLITISCH_SOUVERAEN]
+        self.assertTrue(len(souveraen) > 0)
+        self.assertEqual(souveraen[0].politik_typ, PolitikVerfassungsTyp.ORDNUNGS_POLITIKVERFASSUNG)
+
+    def test_kki_politik_verfassung_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        verfassung = build_politik_verfassung(verfassung_id="pverfassung-520-gs")
+        grundlegend = [n for n in verfassung.normen if n.geltung is PolitikVerfassungsGeltung.GRUNDLEGEND_POLITISCH_SOUVERAEN]
+        self.assertTrue(len(grundlegend) > 0)
+        self.assertEqual(grundlegend[0].politik_typ, PolitikVerfassungsTyp.SOUVERAENITAETS_POLITIKVERFASSUNG)
+
+    def test_kki_politik_verfassung_aggregates_verfassung_signal(self) -> None:
+        verfassung = build_politik_verfassung(verfassung_id="pverfassung-520-sig")
         sig = verfassung.verfassung_signal
         self.assertIsNotNone(sig)
         self.assertIn("gesperrt", sig.status)

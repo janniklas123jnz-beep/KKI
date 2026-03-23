@@ -2379,6 +2379,56 @@ from .ethik_verfassung import (
     EthikVerfassungsProzedur, EthikVerfassungsTyp,
     EthikVerfassung, build_ethik_verfassung,
 )
+from .politik_feld import (
+    PolitikFeldGeltung, PolitikFeldNorm,
+    PolitikFeldProzedur, PolitikFeldTyp,
+    PolitikFeld, build_politik_feld,
+)
+from .staatstheorie_register import (
+    StaatstheorieRegisterGeltung, StaatstheorieRegisterNorm,
+    StaatstheorieRegisterProzedur, StaatstheorieRegisterTyp,
+    StaatstheorieRegister, build_staatstheorie_register,
+)
+from .demokratie_charta import (
+    DemokratieChartaGeltung, DemokratieChartaNorm,
+    DemokratieChartaProzedur, DemokratieChartaTyp,
+    DemokratieCharta, build_demokratie_charta,
+)
+from .macht_kodex import (
+    MachtKodexGeltung, MachtKodexNorm,
+    MachtKodexProzedur, MachtKodexTyp,
+    MachtKodex, build_macht_kodex,
+)
+from .gewaltenteilungs_manifest import (
+    GewaltenteilungsManifestGeltung, GewaltenteilungsManifestNorm,
+    GewaltenteilungsManifestProzedur, GewaltenteilungsManifestTyp,
+    GewaltenteilungsManifest, build_gewaltenteilungs_manifest,
+)
+from .legitimitaets_pakt import (
+    LegitimitaetsPaktGeltung, LegitimitaetsPaktNorm,
+    LegitimitaetsPaktProzedur, LegitimitaetsPaktTyp,
+    LegitimitaetsPakt, build_legitimitaets_pakt,
+)
+from .globalpolitik_senat import (
+    GlobalpolitikSenatGeltung, GlobalpolitikSenatNorm,
+    GlobalpolitikSenatProzedur, GlobalpolitikSenatTyp,
+    GlobalpolitikSenat, build_globalpolitik_senat,
+)
+from .politik_norm import (
+    PolitikNormGeltung, PolitikNormEintrag,
+    PolitikNormProzedur, PolitikNormTyp,
+    PolitikNormSatz, build_politik_norm,
+)
+from .zivilgesellschafts_charta import (
+    ZivilgesellschaftsChartaGeltung, ZivilgesellschaftsChartaNorm,
+    ZivilgesellschaftsChartaProzedur, ZivilgesellschaftsChartaTyp,
+    ZivilgesellschaftsCharta, build_zivilgesellschafts_charta,
+)
+from .politik_verfassung import (
+    PolitikVerfassungsGeltung, PolitikVerfassungsNorm,
+    PolitikVerfassungsProzedur, PolitikVerfassungsTyp,
+    PolitikVerfassung, build_politik_verfassung,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -3979,4 +4029,24 @@ __all__ = [
     "AngewandteEthikCharta", "build_angewandte_ethik_charta",
     "EthikVerfassungsGeltung", "EthikVerfassungsNorm", "EthikVerfassungsProzedur", "EthikVerfassungsTyp",
     "EthikVerfassung", "build_ethik_verfassung",
+    "PolitikFeldGeltung", "PolitikFeldNorm", "PolitikFeldProzedur", "PolitikFeldTyp",
+    "PolitikFeld", "build_politik_feld",
+    "StaatstheorieRegisterGeltung", "StaatstheorieRegisterNorm", "StaatstheorieRegisterProzedur", "StaatstheorieRegisterTyp",
+    "StaatstheorieRegister", "build_staatstheorie_register",
+    "DemokratieChartaGeltung", "DemokratieChartaNorm", "DemokratieChartaProzedur", "DemokratieChartaTyp",
+    "DemokratieCharta", "build_demokratie_charta",
+    "MachtKodexGeltung", "MachtKodexNorm", "MachtKodexProzedur", "MachtKodexTyp",
+    "MachtKodex", "build_macht_kodex",
+    "GewaltenteilungsManifestGeltung", "GewaltenteilungsManifestNorm", "GewaltenteilungsManifestProzedur", "GewaltenteilungsManifestTyp",
+    "GewaltenteilungsManifest", "build_gewaltenteilungs_manifest",
+    "LegitimitaetsPaktGeltung", "LegitimitaetsPaktNorm", "LegitimitaetsPaktProzedur", "LegitimitaetsPaktTyp",
+    "LegitimitaetsPakt", "build_legitimitaets_pakt",
+    "GlobalpolitikSenatGeltung", "GlobalpolitikSenatNorm", "GlobalpolitikSenatProzedur", "GlobalpolitikSenatTyp",
+    "GlobalpolitikSenat", "build_globalpolitik_senat",
+    "PolitikNormGeltung", "PolitikNormEintrag", "PolitikNormProzedur", "PolitikNormTyp",
+    "PolitikNormSatz", "build_politik_norm",
+    "ZivilgesellschaftsChartaGeltung", "ZivilgesellschaftsChartaNorm", "ZivilgesellschaftsChartaProzedur", "ZivilgesellschaftsChartaTyp",
+    "ZivilgesellschaftsCharta", "build_zivilgesellschafts_charta",
+    "PolitikVerfassungsGeltung", "PolitikVerfassungsNorm", "PolitikVerfassungsProzedur", "PolitikVerfassungsTyp",
+    "PolitikVerfassung", "build_politik_verfassung",
 ]

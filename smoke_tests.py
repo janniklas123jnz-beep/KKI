@@ -1771,6 +1771,46 @@ from kki.rechts_verfassung import (
     RechtsVerfassung, RechtsVerfassungsGeltung, RechtsVerfassungsNorm,
     RechtsVerfassungsTyp, RechtsVerfassungsProzedur, build_rechts_verfassung,
 )
+from kki.geschichts_feld import (
+    GeschichtsFeld, GeschichtsFeldGeltung, GeschichtsFeldNorm,
+    GeschichtsFeldTyp, GeschichtsFeldProzedur, build_geschichts_feld,
+)
+from kki.historiographie_register import (
+    HistoriographieRegister, HistoriographieRegisterGeltung, HistoriographieRegisterNorm,
+    HistoriographieRegisterTyp, HistoriographieRegisterProzedur, build_historiographie_register,
+)
+from kki.quellen_charta import (
+    QuellenCharta, QuellenChartaGeltung, QuellenChartaNorm,
+    QuellenChartaTyp, QuellenChartaProzedur, build_quellen_charta,
+)
+from kki.epochen_kodex import (
+    EpochenKodex, EpochenKodexGeltung, EpochenKodexNorm,
+    EpochenKodexTyp, EpochenKodexProzedur, build_epochen_kodex,
+)
+from kki.annales_manifest import (
+    AnnalesManifest, AnnalesManifestGeltung, AnnalesManifestNorm,
+    AnnalesManifestTyp, AnnalesManifestProzedur, build_annales_manifest,
+)
+from kki.zeitgeschichts_pakt import (
+    ZeitgeschichtsPakt, ZeitgeschichtsPaktGeltung, ZeitgeschichtsPaktNorm,
+    ZeitgeschichtsPaktTyp, ZeitgeschichtsPaktProzedur, build_zeitgeschichts_pakt,
+)
+from kki.geschichts_senat import (
+    GeschichtsSenat, GeschichtsSenatGeltung, GeschichtsSenatNorm,
+    GeschichtsSenatTyp, GeschichtsSenatProzedur, build_geschichts_senat,
+)
+from kki.geschichts_norm import (
+    GeschichtsNormSatz, GeschichtsNormGeltung, GeschichtsNormEintrag,
+    GeschichtsNormTyp, GeschichtsNormProzedur, build_geschichts_norm,
+)
+from kki.historiographie_charta import (
+    HistoriographieCharta, HistoriographieChartaGeltung, HistoriographieChartaNorm,
+    HistoriographieChartaTyp, HistoriographieChartaProzedur, build_historiographie_charta,
+)
+from kki.geschichts_verfassung import (
+    GeschichtsVerfassung, GeschichtsVerfassungsGeltung, GeschichtsVerfassungsNorm,
+    GeschichtsVerfassungsTyp, GeschichtsVerfassungsProzedur, build_geschichts_verfassung,
+)
 from kki import (
     KausalitaetsGeltung,
     KausalitaetsNorm,
@@ -19821,6 +19861,392 @@ class SmokeTests(unittest.TestCase):
         self.assertIn("gesperrt", sig.status)
         self.assertGreater(len(verfassung.gesperrt_norm_ids), 0)
 
+    # --- #541 GeschichtsFeld ---
+    def test_kki_geschichts_feld_builds_gesperrt_schutz_norm(self) -> None:
+        feld = build_geschichts_feld(feld_id="gf-541-g")
+        self.assertTrue(any(n.geltung is GeschichtsFeldGeltung.GESPERRT for n in feld.normen))
+        self.assertTrue(any(n.geschichts_typ is GeschichtsFeldTyp.SCHUTZ_GESCHICHTE for n in feld.normen))
 
-if __name__ == "__main__":
-    unittest.main()
+    def test_kki_geschichts_feld_builds_historisch_norm(self) -> None:
+        feld = build_geschichts_feld(feld_id="gf-541-h")
+        self.assertTrue(any(n.geltung is GeschichtsFeldGeltung.HISTORISCH for n in feld.normen))
+        self.assertTrue(any(n.geschichts_typ is GeschichtsFeldTyp.ORDNUNGS_GESCHICHTE for n in feld.normen))
+
+    def test_kki_geschichts_feld_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        feld = build_geschichts_feld(feld_id="gf-541-gs")
+        self.assertTrue(any(n.geltung is GeschichtsFeldGeltung.GRUNDLEGEND_HISTORISCH for n in feld.normen))
+        self.assertTrue(any(n.geschichts_typ is GeschichtsFeldTyp.SOUVERAENITAETS_GESCHICHTE for n in feld.normen))
+
+    def test_kki_geschichts_feld_aggregates_feld_signal(self) -> None:
+        feld = build_geschichts_feld(feld_id="gf-541-sig")
+        sig = feld.feld_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(feld.gesperrt_norm_ids), 0)
+
+    def test_kki_geschichts_feld_builds_historisch_norm_ids(self) -> None:
+        feld = build_geschichts_feld(feld_id="gf-541-hi")
+        self.assertGreater(len(feld.historisch_norm_ids), 0)
+
+    def test_kki_geschichts_feld_builds_grundlegend_norm_ids(self) -> None:
+        feld = build_geschichts_feld(feld_id="gf-541-gni")
+        self.assertGreater(len(feld.grundlegend_norm_ids), 0)
+
+    def test_kki_geschichts_feld_norm_has_geschichts_weight(self) -> None:
+        feld = build_geschichts_feld(feld_id="gf-541-w")
+        self.assertTrue(all(isinstance(n.geschichts_weight, float) for n in feld.normen))
+
+    def test_kki_geschichts_feld_norm_has_geschichts_tier(self) -> None:
+        feld = build_geschichts_feld(feld_id="gf-541-t")
+        self.assertTrue(all(isinstance(n.geschichts_tier, int) for n in feld.normen))
+
+    # --- #542 HistoriographieRegister ---
+    def test_kki_historiographie_register_builds_gesperrt_schutz_norm(self) -> None:
+        reg = build_historiographie_register(register_id="hr-542-g")
+        self.assertTrue(any(n.geltung is HistoriographieRegisterGeltung.GESPERRT for n in reg.normen))
+        self.assertTrue(any(n.geschichts_typ is HistoriographieRegisterTyp.SCHUTZ_HISTORIOGRAPHIE for n in reg.normen))
+
+    def test_kki_historiographie_register_builds_historiographisch_norm(self) -> None:
+        reg = build_historiographie_register(register_id="hr-542-h")
+        self.assertTrue(any(n.geltung is HistoriographieRegisterGeltung.HISTORIOGRAPHISCH for n in reg.normen))
+        self.assertTrue(any(n.geschichts_typ is HistoriographieRegisterTyp.ORDNUNGS_HISTORIOGRAPHIE for n in reg.normen))
+
+    def test_kki_historiographie_register_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        reg = build_historiographie_register(register_id="hr-542-gs")
+        self.assertTrue(any(n.geltung is HistoriographieRegisterGeltung.GRUNDLEGEND_HISTORIOGRAPHISCH for n in reg.normen))
+        self.assertTrue(any(n.geschichts_typ is HistoriographieRegisterTyp.SOUVERAENITAETS_HISTORIOGRAPHIE for n in reg.normen))
+
+    def test_kki_historiographie_register_aggregates_register_signal(self) -> None:
+        reg = build_historiographie_register(register_id="hr-542-sig")
+        sig = reg.register_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(reg.gesperrt_norm_ids), 0)
+
+    def test_kki_historiographie_register_builds_historiographisch_norm_ids(self) -> None:
+        reg = build_historiographie_register(register_id="hr-542-hi")
+        self.assertGreater(len(reg.historiographisch_norm_ids), 0)
+
+    def test_kki_historiographie_register_builds_grundlegend_norm_ids(self) -> None:
+        reg = build_historiographie_register(register_id="hr-542-gni")
+        self.assertGreater(len(reg.grundlegend_norm_ids), 0)
+
+    def test_kki_historiographie_register_norm_has_geschichts_weight(self) -> None:
+        reg = build_historiographie_register(register_id="hr-542-w")
+        self.assertTrue(all(isinstance(n.geschichts_weight, float) for n in reg.normen))
+
+    def test_kki_historiographie_register_norm_has_geschichts_tier(self) -> None:
+        reg = build_historiographie_register(register_id="hr-542-t")
+        self.assertTrue(all(isinstance(n.geschichts_tier, int) for n in reg.normen))
+
+    # --- #543 QuellenCharta ---
+    def test_kki_quellen_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_quellen_charta(charta_id="qc-543-g")
+        self.assertTrue(any(n.geltung is QuellenChartaGeltung.GESPERRT for n in charta.normen))
+        self.assertTrue(any(n.geschichts_typ is QuellenChartaTyp.SCHUTZ_QUELLE for n in charta.normen))
+
+    def test_kki_quellen_charta_builds_quellenkritisch_norm(self) -> None:
+        charta = build_quellen_charta(charta_id="qc-543-q")
+        self.assertTrue(any(n.geltung is QuellenChartaGeltung.QUELLENKRITISCH for n in charta.normen))
+        self.assertTrue(any(n.geschichts_typ is QuellenChartaTyp.ORDNUNGS_QUELLE for n in charta.normen))
+
+    def test_kki_quellen_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_quellen_charta(charta_id="qc-543-gs")
+        self.assertTrue(any(n.geltung is QuellenChartaGeltung.GRUNDLEGEND_QUELLENKRITISCH for n in charta.normen))
+        self.assertTrue(any(n.geschichts_typ is QuellenChartaTyp.SOUVERAENITAETS_QUELLE for n in charta.normen))
+
+    def test_kki_quellen_charta_aggregates_charta_signal(self) -> None:
+        charta = build_quellen_charta(charta_id="qc-543-sig")
+        sig = charta.charta_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(charta.gesperrt_norm_ids), 0)
+
+    def test_kki_quellen_charta_builds_quellenkritisch_norm_ids(self) -> None:
+        charta = build_quellen_charta(charta_id="qc-543-qi")
+        self.assertGreater(len(charta.quellenkritisch_norm_ids), 0)
+
+    def test_kki_quellen_charta_builds_grundlegend_norm_ids(self) -> None:
+        charta = build_quellen_charta(charta_id="qc-543-gni")
+        self.assertGreater(len(charta.grundlegend_norm_ids), 0)
+
+    def test_kki_quellen_charta_norm_has_geschichts_weight(self) -> None:
+        charta = build_quellen_charta(charta_id="qc-543-w")
+        self.assertTrue(all(isinstance(n.geschichts_weight, float) for n in charta.normen))
+
+    def test_kki_quellen_charta_norm_has_geschichts_tier(self) -> None:
+        charta = build_quellen_charta(charta_id="qc-543-t")
+        self.assertTrue(all(isinstance(n.geschichts_tier, int) for n in charta.normen))
+
+    # --- #544 EpochenKodex ---
+    def test_kki_epochen_kodex_builds_gesperrt_schutz_norm(self) -> None:
+        kodex = build_epochen_kodex(kodex_id="ek-544-g")
+        self.assertTrue(any(n.geltung is EpochenKodexGeltung.GESPERRT for n in kodex.normen))
+        self.assertTrue(any(n.geschichts_typ is EpochenKodexTyp.SCHUTZ_EPOCHE for n in kodex.normen))
+
+    def test_kki_epochen_kodex_builds_epochal_norm(self) -> None:
+        kodex = build_epochen_kodex(kodex_id="ek-544-e")
+        self.assertTrue(any(n.geltung is EpochenKodexGeltung.EPOCHAL for n in kodex.normen))
+        self.assertTrue(any(n.geschichts_typ is EpochenKodexTyp.ORDNUNGS_EPOCHE for n in kodex.normen))
+
+    def test_kki_epochen_kodex_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        kodex = build_epochen_kodex(kodex_id="ek-544-gs")
+        self.assertTrue(any(n.geltung is EpochenKodexGeltung.GRUNDLEGEND_EPOCHAL for n in kodex.normen))
+        self.assertTrue(any(n.geschichts_typ is EpochenKodexTyp.SOUVERAENITAETS_EPOCHE for n in kodex.normen))
+
+    def test_kki_epochen_kodex_aggregates_kodex_signal(self) -> None:
+        kodex = build_epochen_kodex(kodex_id="ek-544-sig")
+        sig = kodex.kodex_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(kodex.gesperrt_norm_ids), 0)
+
+    def test_kki_epochen_kodex_builds_epochal_norm_ids(self) -> None:
+        kodex = build_epochen_kodex(kodex_id="ek-544-ei")
+        self.assertGreater(len(kodex.epochal_norm_ids), 0)
+
+    def test_kki_epochen_kodex_builds_grundlegend_norm_ids(self) -> None:
+        kodex = build_epochen_kodex(kodex_id="ek-544-gni")
+        self.assertGreater(len(kodex.grundlegend_norm_ids), 0)
+
+    def test_kki_epochen_kodex_norm_has_geschichts_weight(self) -> None:
+        kodex = build_epochen_kodex(kodex_id="ek-544-w")
+        self.assertTrue(all(isinstance(n.geschichts_weight, float) for n in kodex.normen))
+
+    def test_kki_epochen_kodex_norm_has_geschichts_tier(self) -> None:
+        kodex = build_epochen_kodex(kodex_id="ek-544-t")
+        self.assertTrue(all(isinstance(n.geschichts_tier, int) for n in kodex.normen))
+
+    # --- #545 AnnalesManifest ---
+    def test_kki_annales_manifest_builds_gesperrt_schutz_norm(self) -> None:
+        manifest = build_annales_manifest(manifest_id="am-545-g")
+        self.assertTrue(any(n.geltung is AnnalesManifestGeltung.GESPERRT for n in manifest.normen))
+        self.assertTrue(any(n.geschichts_typ is AnnalesManifestTyp.SCHUTZ_ANNALES for n in manifest.normen))
+
+    def test_kki_annales_manifest_builds_strukturgeschichtlich_norm(self) -> None:
+        manifest = build_annales_manifest(manifest_id="am-545-s")
+        self.assertTrue(any(n.geltung is AnnalesManifestGeltung.STRUKTURGESCHICHTLICH for n in manifest.normen))
+        self.assertTrue(any(n.geschichts_typ is AnnalesManifestTyp.ORDNUNGS_ANNALES for n in manifest.normen))
+
+    def test_kki_annales_manifest_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        manifest = build_annales_manifest(manifest_id="am-545-gs")
+        self.assertTrue(any(n.geltung is AnnalesManifestGeltung.GRUNDLEGEND_STRUKTURGESCHICHTLICH for n in manifest.normen))
+        self.assertTrue(any(n.geschichts_typ is AnnalesManifestTyp.SOUVERAENITAETS_ANNALES for n in manifest.normen))
+
+    def test_kki_annales_manifest_aggregates_manifest_signal(self) -> None:
+        manifest = build_annales_manifest(manifest_id="am-545-sig")
+        sig = manifest.manifest_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(manifest.gesperrt_norm_ids), 0)
+
+    def test_kki_annales_manifest_builds_strukturgeschichtlich_norm_ids(self) -> None:
+        manifest = build_annales_manifest(manifest_id="am-545-si")
+        self.assertGreater(len(manifest.strukturgeschichtlich_norm_ids), 0)
+
+    def test_kki_annales_manifest_builds_grundlegend_norm_ids(self) -> None:
+        manifest = build_annales_manifest(manifest_id="am-545-gni")
+        self.assertGreater(len(manifest.grundlegend_norm_ids), 0)
+
+    def test_kki_annales_manifest_norm_has_geschichts_weight(self) -> None:
+        manifest = build_annales_manifest(manifest_id="am-545-w")
+        self.assertTrue(all(isinstance(n.geschichts_weight, float) for n in manifest.normen))
+
+    def test_kki_annales_manifest_norm_has_geschichts_tier(self) -> None:
+        manifest = build_annales_manifest(manifest_id="am-545-t")
+        self.assertTrue(all(isinstance(n.geschichts_tier, int) for n in manifest.normen))
+
+    # --- #546 ZeitgeschichtsPakt ---
+    def test_kki_zeitgeschichts_pakt_builds_gesperrt_schutz_norm(self) -> None:
+        pakt = build_zeitgeschichts_pakt(pakt_id="zp-546-g")
+        self.assertTrue(any(n.geltung is ZeitgeschichtsPaktGeltung.GESPERRT for n in pakt.normen))
+        self.assertTrue(any(n.geschichts_typ is ZeitgeschichtsPaktTyp.SCHUTZ_ZEITGESCHICHTE for n in pakt.normen))
+
+    def test_kki_zeitgeschichts_pakt_builds_zeitgeschichtlich_norm(self) -> None:
+        pakt = build_zeitgeschichts_pakt(pakt_id="zp-546-z")
+        self.assertTrue(any(n.geltung is ZeitgeschichtsPaktGeltung.ZEITGESCHICHTLICH for n in pakt.normen))
+        self.assertTrue(any(n.geschichts_typ is ZeitgeschichtsPaktTyp.ORDNUNGS_ZEITGESCHICHTE for n in pakt.normen))
+
+    def test_kki_zeitgeschichts_pakt_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        pakt = build_zeitgeschichts_pakt(pakt_id="zp-546-gs")
+        self.assertTrue(any(n.geltung is ZeitgeschichtsPaktGeltung.GRUNDLEGEND_ZEITGESCHICHTLICH for n in pakt.normen))
+        self.assertTrue(any(n.geschichts_typ is ZeitgeschichtsPaktTyp.SOUVERAENITAETS_ZEITGESCHICHTE for n in pakt.normen))
+
+    def test_kki_zeitgeschichts_pakt_aggregates_pakt_signal(self) -> None:
+        pakt = build_zeitgeschichts_pakt(pakt_id="zp-546-sig")
+        sig = pakt.pakt_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(pakt.gesperrt_norm_ids), 0)
+
+    def test_kki_zeitgeschichts_pakt_builds_zeitgeschichtlich_norm_ids(self) -> None:
+        pakt = build_zeitgeschichts_pakt(pakt_id="zp-546-zi")
+        self.assertGreater(len(pakt.zeitgeschichtlich_norm_ids), 0)
+
+    def test_kki_zeitgeschichts_pakt_builds_grundlegend_norm_ids(self) -> None:
+        pakt = build_zeitgeschichts_pakt(pakt_id="zp-546-gni")
+        self.assertGreater(len(pakt.grundlegend_norm_ids), 0)
+
+    def test_kki_zeitgeschichts_pakt_norm_has_geschichts_weight(self) -> None:
+        pakt = build_zeitgeschichts_pakt(pakt_id="zp-546-w")
+        self.assertTrue(all(isinstance(n.geschichts_weight, float) for n in pakt.normen))
+
+    def test_kki_zeitgeschichts_pakt_norm_has_geschichts_tier(self) -> None:
+        pakt = build_zeitgeschichts_pakt(pakt_id="zp-546-t")
+        self.assertTrue(all(isinstance(n.geschichts_tier, int) for n in pakt.normen))
+
+    # --- #547 GeschichtsSenat ---
+    def test_kki_geschichts_senat_builds_gesperrt_schutz_norm(self) -> None:
+        senat = build_geschichts_senat(senat_id="gs-547-g")
+        self.assertTrue(any(n.geltung is GeschichtsSenatGeltung.GESPERRT for n in senat.normen))
+        self.assertTrue(any(n.geschichts_typ is GeschichtsSenatTyp.SCHUTZ_GESCHICHTSSENAT for n in senat.normen))
+
+    def test_kki_geschichts_senat_builds_geschichtswissenschaftlich_norm(self) -> None:
+        senat = build_geschichts_senat(senat_id="gs-547-gw")
+        self.assertTrue(any(n.geltung is GeschichtsSenatGeltung.GESCHICHTSWISSENSCHAFTLICH for n in senat.normen))
+        self.assertTrue(any(n.geschichts_typ is GeschichtsSenatTyp.ORDNUNGS_GESCHICHTSSENAT for n in senat.normen))
+
+    def test_kki_geschichts_senat_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        senat = build_geschichts_senat(senat_id="gs-547-gs")
+        self.assertTrue(any(n.geltung is GeschichtsSenatGeltung.GRUNDLEGEND_GESCHICHTSWISSENSCHAFTLICH for n in senat.normen))
+        self.assertTrue(any(n.geschichts_typ is GeschichtsSenatTyp.SOUVERAENITAETS_GESCHICHTSSENAT for n in senat.normen))
+
+    def test_kki_geschichts_senat_aggregates_senat_signal(self) -> None:
+        senat = build_geschichts_senat(senat_id="gs-547-sig")
+        sig = senat.senat_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(senat.gesperrt_norm_ids), 0)
+
+    def test_kki_geschichts_senat_builds_geschichtswissenschaftlich_norm_ids(self) -> None:
+        senat = build_geschichts_senat(senat_id="gs-547-gwi")
+        self.assertGreater(len(senat.geschichtswissenschaftlich_norm_ids), 0)
+
+    def test_kki_geschichts_senat_builds_grundlegend_norm_ids(self) -> None:
+        senat = build_geschichts_senat(senat_id="gs-547-gni")
+        self.assertGreater(len(senat.grundlegend_norm_ids), 0)
+
+    def test_kki_geschichts_senat_norm_has_geschichts_weight(self) -> None:
+        senat = build_geschichts_senat(senat_id="gs-547-w")
+        self.assertTrue(all(isinstance(n.geschichts_weight, float) for n in senat.normen))
+
+    def test_kki_geschichts_senat_norm_has_geschichts_tier(self) -> None:
+        senat = build_geschichts_senat(senat_id="gs-547-t")
+        self.assertTrue(all(isinstance(n.geschichts_tier, int) for n in senat.normen))
+
+    # --- #548 GeschichtsNorm ---
+    def test_kki_geschichts_norm_builds_gesperrt_schutz_norm(self) -> None:
+        norm = build_geschichts_norm(norm_id="gn-548-g")
+        self.assertTrue(any(n.geltung is GeschichtsNormGeltung.GESPERRT for n in norm.normen))
+        self.assertTrue(any(n.geschichts_norm_typ is GeschichtsNormTyp.SCHUTZ_GESCHICHTSNORM for n in norm.normen))
+
+    def test_kki_geschichts_norm_builds_geschichtsnormativ_norm(self) -> None:
+        norm = build_geschichts_norm(norm_id="gn-548-gn")
+        self.assertTrue(any(n.geltung is GeschichtsNormGeltung.GESCHICHTSNORMATIV for n in norm.normen))
+        self.assertTrue(any(n.geschichts_norm_typ is GeschichtsNormTyp.ORDNUNGS_GESCHICHTSNORM for n in norm.normen))
+
+    def test_kki_geschichts_norm_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        norm = build_geschichts_norm(norm_id="gn-548-gs")
+        self.assertTrue(any(n.geltung is GeschichtsNormGeltung.GRUNDLEGEND_GESCHICHTSNORMATIV for n in norm.normen))
+        self.assertTrue(any(n.geschichts_norm_typ is GeschichtsNormTyp.SOUVERAENITAETS_GESCHICHTSNORM for n in norm.normen))
+
+    def test_kki_geschichts_norm_aggregates_norm_signal(self) -> None:
+        norm = build_geschichts_norm(norm_id="gn-548-sig")
+        sig = norm.norm_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(norm.gesperrt_norm_ids), 0)
+
+    def test_kki_geschichts_norm_builds_geschichtsnormativ_norm_ids(self) -> None:
+        norm = build_geschichts_norm(norm_id="gn-548-gni")
+        self.assertGreater(len(norm.geschichtsnormativ_norm_ids), 0)
+
+    def test_kki_geschichts_norm_builds_grundlegend_norm_ids(self) -> None:
+        norm = build_geschichts_norm(norm_id="gn-548-gln")
+        self.assertGreater(len(norm.grundlegend_norm_ids), 0)
+
+    def test_kki_geschichts_norm_eintrag_has_norm_weight(self) -> None:
+        norm = build_geschichts_norm(norm_id="gn-548-w")
+        self.assertTrue(all(isinstance(n.geschichts_norm_weight, float) for n in norm.normen))
+
+    def test_kki_geschichts_norm_eintrag_has_norm_tier(self) -> None:
+        norm = build_geschichts_norm(norm_id="gn-548-t")
+        self.assertTrue(all(isinstance(n.geschichts_norm_tier, int) for n in norm.normen))
+
+    # --- #549 HistoriographieCharta ---
+    def test_kki_historiographie_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_historiographie_charta(charta_id="hc-549-g")
+        self.assertTrue(any(n.geltung is HistoriographieChartaGeltung.GESPERRT for n in charta.normen))
+        self.assertTrue(any(n.historiographie_typ is HistoriographieChartaTyp.SCHUTZ_HISTORIOGRAPHIE for n in charta.normen))
+
+    def test_kki_historiographie_charta_builds_historiographisch_souveraen_norm(self) -> None:
+        charta = build_historiographie_charta(charta_id="hc-549-hs")
+        self.assertTrue(any(n.geltung is HistoriographieChartaGeltung.HISTORIOGRAPHISCH_SOUVERAEN for n in charta.normen))
+        self.assertTrue(any(n.historiographie_typ is HistoriographieChartaTyp.ORDNUNGS_HISTORIOGRAPHIE for n in charta.normen))
+
+    def test_kki_historiographie_charta_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        charta = build_historiographie_charta(charta_id="hc-549-gs")
+        self.assertTrue(any(n.geltung is HistoriographieChartaGeltung.GRUNDLEGEND_HISTORIOGRAPHISCH_SOUVERAEN for n in charta.normen))
+        self.assertTrue(any(n.historiographie_typ is HistoriographieChartaTyp.SOUVERAENITAETS_HISTORIOGRAPHIE for n in charta.normen))
+
+    def test_kki_historiographie_charta_aggregates_charta_signal(self) -> None:
+        charta = build_historiographie_charta(charta_id="hc-549-sig")
+        sig = charta.charta_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(charta.gesperrt_norm_ids), 0)
+
+    def test_kki_historiographie_charta_builds_historiographisch_norm_ids(self) -> None:
+        charta = build_historiographie_charta(charta_id="hc-549-hi")
+        self.assertGreater(len(charta.historiographisch_norm_ids), 0)
+
+    def test_kki_historiographie_charta_builds_grundlegend_norm_ids(self) -> None:
+        charta = build_historiographie_charta(charta_id="hc-549-gni")
+        self.assertGreater(len(charta.grundlegend_norm_ids), 0)
+
+    def test_kki_historiographie_charta_norm_has_geschichts_weight(self) -> None:
+        charta = build_historiographie_charta(charta_id="hc-549-w")
+        self.assertTrue(all(isinstance(n.geschichts_weight, float) for n in charta.normen))
+
+    def test_kki_historiographie_charta_norm_has_geschichts_tier(self) -> None:
+        charta = build_historiographie_charta(charta_id="hc-549-t")
+        self.assertTrue(all(isinstance(n.geschichts_tier, int) for n in charta.normen))
+
+    # --- #550 GeschichtsVerfassung ---
+    def test_kki_geschichts_verfassung_builds_gesperrt_schutz_norm(self) -> None:
+        verfassung = build_geschichts_verfassung(verfassung_id="gv-550-g")
+        self.assertTrue(any(n.geltung is GeschichtsVerfassungsGeltung.GESPERRT for n in verfassung.normen))
+        self.assertTrue(any(n.geschichts_typ is GeschichtsVerfassungsTyp.SCHUTZ_GESCHICHTSVERFASSUNG for n in verfassung.normen))
+
+    def test_kki_geschichts_verfassung_builds_historisch_souveraen_norm(self) -> None:
+        verfassung = build_geschichts_verfassung(verfassung_id="gv-550-hs")
+        self.assertTrue(any(n.geltung is GeschichtsVerfassungsGeltung.HISTORISCH_SOUVERAEN for n in verfassung.normen))
+        self.assertTrue(any(n.geschichts_typ is GeschichtsVerfassungsTyp.ORDNUNGS_GESCHICHTSVERFASSUNG for n in verfassung.normen))
+
+    def test_kki_geschichts_verfassung_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        verfassung = build_geschichts_verfassung(verfassung_id="gv-550-gs")
+        self.assertTrue(any(n.geltung is GeschichtsVerfassungsGeltung.GRUNDLEGEND_HISTORISCH_SOUVERAEN for n in verfassung.normen))
+        self.assertTrue(any(n.geschichts_typ is GeschichtsVerfassungsTyp.SOUVERAENITAETS_GESCHICHTSVERFASSUNG for n in verfassung.normen))
+
+    def test_kki_geschichts_verfassung_aggregates_verfassung_signal(self) -> None:
+        verfassung = build_geschichts_verfassung(verfassung_id="gv-550-sig")
+        sig = verfassung.verfassung_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(verfassung.gesperrt_norm_ids), 0)
+
+    def test_kki_geschichts_verfassung_builds_historisch_souveraen_norm_ids(self) -> None:
+        verfassung = build_geschichts_verfassung(verfassung_id="gv-550-hsi")
+        self.assertGreater(len(verfassung.historisch_souveraen_norm_ids), 0)
+
+    def test_kki_geschichts_verfassung_builds_grundlegend_norm_ids(self) -> None:
+        verfassung = build_geschichts_verfassung(verfassung_id="gv-550-gni")
+        self.assertGreater(len(verfassung.grundlegend_norm_ids), 0)
+
+    def test_kki_geschichts_verfassung_norm_has_geschichts_weight(self) -> None:
+        verfassung = build_geschichts_verfassung(verfassung_id="gv-550-w")
+        self.assertTrue(all(isinstance(n.geschichts_weight, float) for n in verfassung.normen))
+
+    def test_kki_geschichts_verfassung_norm_has_geschichts_tier(self) -> None:
+        verfassung = build_geschichts_verfassung(verfassung_id="gv-550-t")
+        self.assertTrue(all(isinstance(n.geschichts_tier, int) for n in verfassung.normen))

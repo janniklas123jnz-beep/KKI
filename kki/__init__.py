@@ -2528,6 +2528,57 @@ from .rechts_verfassung import (
     RechtsVerfassungsProzedur, RechtsVerfassungsTyp,
     RechtsVerfassung, build_rechts_verfassung,
 )
+# --- Block #35: Geschichtswissenschaft & Historiographie (#541–#550) ---
+from .geschichts_feld import (
+    GeschichtsFeldGeltung, GeschichtsFeldNorm,
+    GeschichtsFeldProzedur, GeschichtsFeldTyp,
+    GeschichtsFeld, build_geschichts_feld,
+)
+from .historiographie_register import (
+    HistoriographieRegisterGeltung, HistoriographieRegisterNorm,
+    HistoriographieRegisterProzedur, HistoriographieRegisterTyp,
+    HistoriographieRegister, build_historiographie_register,
+)
+from .quellen_charta import (
+    QuellenChartaGeltung, QuellenChartaNorm,
+    QuellenChartaProzedur, QuellenChartaTyp,
+    QuellenCharta, build_quellen_charta,
+)
+from .epochen_kodex import (
+    EpochenKodexGeltung, EpochenKodexNorm,
+    EpochenKodexProzedur, EpochenKodexTyp,
+    EpochenKodex, build_epochen_kodex,
+)
+from .annales_manifest import (
+    AnnalesManifestGeltung, AnnalesManifestNorm,
+    AnnalesManifestProzedur, AnnalesManifestTyp,
+    AnnalesManifest, build_annales_manifest,
+)
+from .zeitgeschichts_pakt import (
+    ZeitgeschichtsPaktGeltung, ZeitgeschichtsPaktNorm,
+    ZeitgeschichtsPaktProzedur, ZeitgeschichtsPaktTyp,
+    ZeitgeschichtsPakt, build_zeitgeschichts_pakt,
+)
+from .geschichts_senat import (
+    GeschichtsSenatGeltung, GeschichtsSenatNorm,
+    GeschichtsSenatProzedur, GeschichtsSenatTyp,
+    GeschichtsSenat, build_geschichts_senat,
+)
+from .geschichts_norm import (
+    GeschichtsNormGeltung, GeschichtsNormEintrag,
+    GeschichtsNormProzedur, GeschichtsNormTyp,
+    GeschichtsNormSatz, build_geschichts_norm,
+)
+from .historiographie_charta import (
+    HistoriographieChartaGeltung, HistoriographieChartaNorm,
+    HistoriographieChartaProzedur, HistoriographieChartaTyp,
+    HistoriographieCharta, build_historiographie_charta,
+)
+from .geschichts_verfassung import (
+    GeschichtsVerfassungsGeltung, GeschichtsVerfassungsNorm,
+    GeschichtsVerfassungsProzedur, GeschichtsVerfassungsTyp,
+    GeschichtsVerfassung, build_geschichts_verfassung,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -4188,4 +4239,25 @@ __all__ = [
     "ZivilrechtsCharta", "build_zivilrechts_charta",
     "RechtsVerfassungsGeltung", "RechtsVerfassungsNorm", "RechtsVerfassungsProzedur", "RechtsVerfassungsTyp",
     "RechtsVerfassung", "build_rechts_verfassung",
+    # --- Block #35: Geschichtswissenschaft & Historiographie (#541–#550) ---
+    "GeschichtsFeldGeltung", "GeschichtsFeldNorm", "GeschichtsFeldProzedur", "GeschichtsFeldTyp",
+    "GeschichtsFeld", "build_geschichts_feld",
+    "HistoriographieRegisterGeltung", "HistoriographieRegisterNorm", "HistoriographieRegisterProzedur", "HistoriographieRegisterTyp",
+    "HistoriographieRegister", "build_historiographie_register",
+    "QuellenChartaGeltung", "QuellenChartaNorm", "QuellenChartaProzedur", "QuellenChartaTyp",
+    "QuellenCharta", "build_quellen_charta",
+    "EpochenKodexGeltung", "EpochenKodexNorm", "EpochenKodexProzedur", "EpochenKodexTyp",
+    "EpochenKodex", "build_epochen_kodex",
+    "AnnalesManifestGeltung", "AnnalesManifestNorm", "AnnalesManifestProzedur", "AnnalesManifestTyp",
+    "AnnalesManifest", "build_annales_manifest",
+    "ZeitgeschichtsPaktGeltung", "ZeitgeschichtsPaktNorm", "ZeitgeschichtsPaktProzedur", "ZeitgeschichtsPaktTyp",
+    "ZeitgeschichtsPakt", "build_zeitgeschichts_pakt",
+    "GeschichtsSenatGeltung", "GeschichtsSenatNorm", "GeschichtsSenatProzedur", "GeschichtsSenatTyp",
+    "GeschichtsSenat", "build_geschichts_senat",
+    "GeschichtsNormGeltung", "GeschichtsNormEintrag", "GeschichtsNormProzedur", "GeschichtsNormTyp",
+    "GeschichtsNormSatz", "build_geschichts_norm",
+    "HistoriographieChartaGeltung", "HistoriographieChartaNorm", "HistoriographieChartaProzedur", "HistoriographieChartaTyp",
+    "HistoriographieCharta", "build_historiographie_charta",
+    "GeschichtsVerfassungsGeltung", "GeschichtsVerfassungsNorm", "GeschichtsVerfassungsProzedur", "GeschichtsVerfassungsTyp",
+    "GeschichtsVerfassung", "build_geschichts_verfassung",
 ]

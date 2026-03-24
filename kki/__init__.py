@@ -2996,6 +2996,48 @@ from .gesundheitswissenschaft_verfassung import (
     GesundheitswissenschaftVerfassungGeltung, GesundheitswissenschaftVerfassungsNorm, GesundheitswissenschaftVerfassungTyp, GesundheitswissenschaftVerfassungProzedur,
     GesundheitswissenschaftVerfassung, build_gesundheitswissenschaft_verfassung,
 )
+from .internet_adapter import (
+    LeitsternInternetAdapter, SearchResult, WikipediaArtikel, RechercheErgebnis,
+)
+from .internet_feld import (
+    InternetFeldGeltung, InternetFeldNorm, InternetFeldTyp, InternetFeldProzedur,
+    InternetFeld, build_internet_feld,
+)
+from .websuch_register import (
+    WebSuchRegisterGeltung, WebSuchRegisterEintrag, WebSuchRegisterTyp, WebSuchRegisterProzedur,
+    WebSuchRegister, build_websuch_register,
+)
+from .datenabruf_charta import (
+    DatenAbrufChartaGeltung, DatenAbrufChartaNorm, DatenAbrufChartaTyp, DatenAbrufChartaProzedur,
+    DatenAbrufCharta, build_datenabruf_charta,
+)
+from .quellenvalidierung_kodex import (
+    QuellenvalidierungKodexGeltung, QuellenvalidierungKodexEintrag, QuellenvalidierungKodexTyp, QuellenvalidierungKodexProzedur,
+    QuellenvalidierungKodex, build_quellenvalidierung_kodex,
+)
+from .informationsextraktor_manifest import (
+    InformationsextraktorManifestGeltung, InformationsextraktorManifestNorm, InformationsextraktorManifestTyp, InformationsextraktorManifestProzedur,
+    InformationsextraktorManifest, build_informationsextraktor_manifest,
+)
+from .recherche_pakt import (
+    RecherchePaktGeltung, RecherchePaktEintrag, RecherchePaktTyp, RecherchePaktProzedur,
+    RecherchePakt, build_recherche_pakt,
+)
+from .wissensaggregat_senat import (
+    WissensaggregatSenatGeltung, WissensaggregatSenatNorm, WissensaggregatSenatTyp, WissensaggregatSenatProzedur,
+    WissensaggregatSenat, build_wissensaggregat_senat,
+)
+from .internet_norm import (
+    InternetNormTyp, InternetNormProzedur, InternetNormGeltung, InternetNormEintrag, InternetNormSatz, build_internet_norm,
+)
+from .autonome_recherche_charta import (
+    AutonomeRechercheChartaGeltung, AutonomeRechercheChartaNorm, AutonomeRechercheChartaTyp, AutonomeRechercheChartaProzedur,
+    AutonomeRechercheCharta, build_autonome_recherche_charta,
+)
+from .internetkapazitaet_verfassung import (
+    InternetkapazitaetVerfassungGeltung, InternetkapazitaetVerfassungsNorm, InternetkapazitaetVerfassungTyp, InternetkapazitaetVerfassungProzedur,
+    InternetkapazitaetVerfassung, build_internetkapazitaet_verfassung,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -4867,4 +4909,24 @@ __all__ = [
     "PublicHealthCharta", "build_public_health_charta",
     "GesundheitswissenschaftVerfassungGeltung", "GesundheitswissenschaftVerfassungsNorm", "GesundheitswissenschaftVerfassungTyp", "GesundheitswissenschaftVerfassungProzedur",
     "GesundheitswissenschaftVerfassung", "build_gesundheitswissenschaft_verfassung",
+    "LeitsternInternetAdapter", "SearchResult", "WikipediaArtikel", "RechercheErgebnis",
+    "InternetFeldGeltung", "InternetFeldNorm", "InternetFeldTyp", "InternetFeldProzedur",
+    "InternetFeld", "build_internet_feld",
+    "WebSuchRegisterGeltung", "WebSuchRegisterEintrag", "WebSuchRegisterTyp", "WebSuchRegisterProzedur",
+    "WebSuchRegister", "build_websuch_register",
+    "DatenAbrufChartaGeltung", "DatenAbrufChartaNorm", "DatenAbrufChartaTyp", "DatenAbrufChartaProzedur",
+    "DatenAbrufCharta", "build_datenabruf_charta",
+    "QuellenvalidierungKodexGeltung", "QuellenvalidierungKodexEintrag", "QuellenvalidierungKodexTyp", "QuellenvalidierungKodexProzedur",
+    "QuellenvalidierungKodex", "build_quellenvalidierung_kodex",
+    "InformationsextraktorManifestGeltung", "InformationsextraktorManifestNorm", "InformationsextraktorManifestTyp", "InformationsextraktorManifestProzedur",
+    "InformationsextraktorManifest", "build_informationsextraktor_manifest",
+    "RecherchePaktGeltung", "RecherchePaktEintrag", "RecherchePaktTyp", "RecherchePaktProzedur",
+    "RecherchePakt", "build_recherche_pakt",
+    "WissensaggregatSenatGeltung", "WissensaggregatSenatNorm", "WissensaggregatSenatTyp", "WissensaggregatSenatProzedur",
+    "WissensaggregatSenat", "build_wissensaggregat_senat",
+    "InternetNormTyp", "InternetNormProzedur", "InternetNormGeltung", "InternetNormEintrag", "InternetNormSatz", "build_internet_norm",
+    "AutonomeRechercheChartaGeltung", "AutonomeRechercheChartaNorm", "AutonomeRechercheChartaTyp", "AutonomeRechercheChartaProzedur",
+    "AutonomeRechercheCharta", "build_autonome_recherche_charta",
+    "InternetkapazitaetVerfassungGeltung", "InternetkapazitaetVerfassungsNorm", "InternetkapazitaetVerfassungTyp", "InternetkapazitaetVerfassungProzedur",
+    "InternetkapazitaetVerfassung", "build_internetkapazitaet_verfassung",
 ]

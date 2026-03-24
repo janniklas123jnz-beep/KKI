@@ -2587,6 +2587,17 @@ from kki.medizin_norm import build_medizin_norm, MedizinNormGeltung
 from kki.public_health_charta import build_public_health_charta, PublicHealthChartaGeltung
 from kki.gesundheitswissenschaft_verfassung import build_gesundheitswissenschaft_verfassung, GesundheitswissenschaftVerfassungGeltung
 
+from kki.internet_feld import build_internet_feld, InternetFeldGeltung
+from kki.websuch_register import build_websuch_register, WebSuchRegisterGeltung
+from kki.datenabruf_charta import build_datenabruf_charta, DatenAbrufChartaGeltung
+from kki.quellenvalidierung_kodex import build_quellenvalidierung_kodex, QuellenvalidierungKodexGeltung
+from kki.informationsextraktor_manifest import build_informationsextraktor_manifest, InformationsextraktorManifestGeltung
+from kki.recherche_pakt import build_recherche_pakt, RecherchePaktGeltung
+from kki.wissensaggregat_senat import build_wissensaggregat_senat, WissensaggregatSenatGeltung
+from kki.internet_norm import build_internet_norm, InternetNormGeltung
+from kki.autonome_recherche_charta import build_autonome_recherche_charta, AutonomeRechercheChartaGeltung
+from kki.internetkapazitaet_verfassung import build_internetkapazitaet_verfassung, InternetkapazitaetVerfassungGeltung
+
 class SmokeTests(unittest.TestCase):
     def run_script(
         self,
@@ -24103,3 +24114,378 @@ class SmokeTests(unittest.TestCase):
         obj = build_gesundheitswissenschaft_verfassung()
         for n in obj.normen:
             self.assertTrue(len(n.medizin_ids) > 0)
+
+    # ── Block #651–660: Internet & Wissensrecherche ──────────────────────────
+
+    def test_kki_internet_feld_builds(self):
+        obj = build_internet_feld()
+        self.assertEqual(obj.feld_id, "internet-feld")
+
+    def test_kki_internet_feld_normen_count(self):
+        obj = build_internet_feld()
+        self.assertEqual(len(obj.normen), len(InternetFeldGeltung))
+
+    def test_kki_internet_feld_gesperrt_weight_zero(self):
+        obj = build_internet_feld()
+        n = next(n for n in obj.normen if n.geltung == InternetFeldGeltung.GESPERRT)
+        self.assertGreaterEqual(n.internet_weight, 0.0)
+
+    def test_kki_internet_feld_has_parent(self):
+        obj = build_internet_feld()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_internet_feld_tags_contain_internet(self):
+        obj = build_internet_feld()
+        for n in obj.normen:
+            self.assertIn("internet", n.internet_tags)
+
+    def test_kki_internet_feld_tier_increases(self):
+        obj = build_internet_feld()
+        tiers = [n.internet_tier for n in obj.normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_internet_feld_canonical_default(self):
+        obj = build_internet_feld()
+        for n in obj.normen:
+            self.assertTrue(n.canonical)
+
+    def test_kki_internet_feld_ids_non_empty(self):
+        obj = build_internet_feld()
+        for n in obj.normen:
+            self.assertTrue(len(n.internet_ids) > 0)
+
+    def test_kki_websuch_register_builds(self):
+        obj = build_websuch_register()
+        self.assertEqual(obj.register_id, "websuch-register")
+
+    def test_kki_websuch_register_eintraege_count(self):
+        obj = build_websuch_register()
+        self.assertEqual(len(obj.eintraege), len(WebSuchRegisterGeltung))
+
+    def test_kki_websuch_register_gesperrt_weight_zero(self):
+        obj = build_websuch_register()
+        e = next(e for e in obj.eintraege if e.geltung == WebSuchRegisterGeltung.GESPERRT)
+        self.assertGreaterEqual(e.internet_weight, 0.0)
+
+    def test_kki_websuch_register_has_parent(self):
+        obj = build_websuch_register()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_websuch_register_tags_contain_websuch(self):
+        obj = build_websuch_register()
+        for e in obj.eintraege:
+            self.assertIn("websuch", e.internet_tags)
+
+    def test_kki_websuch_register_tier_increases(self):
+        obj = build_websuch_register()
+        tiers = [e.internet_tier for e in obj.eintraege]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_websuch_register_canonical_default(self):
+        obj = build_websuch_register()
+        for e in obj.eintraege:
+            self.assertTrue(e.canonical)
+
+    def test_kki_websuch_register_ids_non_empty(self):
+        obj = build_websuch_register()
+        for e in obj.eintraege:
+            self.assertTrue(len(e.internet_ids) > 0)
+
+    def test_kki_datenabruf_charta_builds(self):
+        obj = build_datenabruf_charta()
+        self.assertEqual(obj.charta_id, "datenabruf-charta")
+
+    def test_kki_datenabruf_charta_normen_count(self):
+        obj = build_datenabruf_charta()
+        self.assertEqual(len(obj.normen), len(DatenAbrufChartaGeltung))
+
+    def test_kki_datenabruf_charta_gesperrt_weight_zero(self):
+        obj = build_datenabruf_charta()
+        n = next(n for n in obj.normen if n.geltung == DatenAbrufChartaGeltung.GESPERRT)
+        self.assertGreaterEqual(n.internet_weight, 0.0)
+
+    def test_kki_datenabruf_charta_has_parent(self):
+        obj = build_datenabruf_charta()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_datenabruf_charta_tags_contain_datenabruf(self):
+        obj = build_datenabruf_charta()
+        for n in obj.normen:
+            self.assertIn("datenabruf", n.internet_tags)
+
+    def test_kki_datenabruf_charta_tier_increases(self):
+        obj = build_datenabruf_charta()
+        tiers = [n.internet_tier for n in obj.normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_datenabruf_charta_canonical_default(self):
+        obj = build_datenabruf_charta()
+        for n in obj.normen:
+            self.assertTrue(n.canonical)
+
+    def test_kki_datenabruf_charta_ids_non_empty(self):
+        obj = build_datenabruf_charta()
+        for n in obj.normen:
+            self.assertTrue(len(n.internet_ids) > 0)
+
+    def test_kki_quellenvalidierung_kodex_builds(self):
+        obj = build_quellenvalidierung_kodex()
+        self.assertEqual(obj.kodex_id, "quellenvalidierung-kodex")
+
+    def test_kki_quellenvalidierung_kodex_eintraege_count(self):
+        obj = build_quellenvalidierung_kodex()
+        self.assertEqual(len(obj.eintraege), len(QuellenvalidierungKodexGeltung))
+
+    def test_kki_quellenvalidierung_kodex_gesperrt_weight_zero(self):
+        obj = build_quellenvalidierung_kodex()
+        e = next(e for e in obj.eintraege if e.geltung == QuellenvalidierungKodexGeltung.GESPERRT)
+        self.assertGreaterEqual(e.internet_weight, 0.0)
+
+    def test_kki_quellenvalidierung_kodex_has_parent(self):
+        obj = build_quellenvalidierung_kodex()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_quellenvalidierung_kodex_tags_contain_quellenvalidierung(self):
+        obj = build_quellenvalidierung_kodex()
+        for e in obj.eintraege:
+            self.assertIn("quellenvalidierung", e.internet_tags)
+
+    def test_kki_quellenvalidierung_kodex_tier_increases(self):
+        obj = build_quellenvalidierung_kodex()
+        tiers = [e.internet_tier for e in obj.eintraege]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_quellenvalidierung_kodex_canonical_default(self):
+        obj = build_quellenvalidierung_kodex()
+        for e in obj.eintraege:
+            self.assertTrue(e.canonical)
+
+    def test_kki_quellenvalidierung_kodex_ids_non_empty(self):
+        obj = build_quellenvalidierung_kodex()
+        for e in obj.eintraege:
+            self.assertTrue(len(e.internet_ids) > 0)
+
+    def test_kki_informationsextraktor_manifest_builds(self):
+        obj = build_informationsextraktor_manifest()
+        self.assertEqual(obj.manifest_id, "informationsextraktor-manifest")
+
+    def test_kki_informationsextraktor_manifest_normen_count(self):
+        obj = build_informationsextraktor_manifest()
+        self.assertEqual(len(obj.normen), len(InformationsextraktorManifestGeltung))
+
+    def test_kki_informationsextraktor_manifest_gesperrt_weight_zero(self):
+        obj = build_informationsextraktor_manifest()
+        n = next(n for n in obj.normen if n.geltung == InformationsextraktorManifestGeltung.GESPERRT)
+        self.assertGreaterEqual(n.internet_weight, 0.0)
+
+    def test_kki_informationsextraktor_manifest_has_parent(self):
+        obj = build_informationsextraktor_manifest()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_informationsextraktor_manifest_tags_contain_informationsextraktion(self):
+        obj = build_informationsextraktor_manifest()
+        for n in obj.normen:
+            self.assertIn("informationsextraktion", n.internet_tags)
+
+    def test_kki_informationsextraktor_manifest_tier_increases(self):
+        obj = build_informationsextraktor_manifest()
+        tiers = [n.internet_tier for n in obj.normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_informationsextraktor_manifest_canonical_default(self):
+        obj = build_informationsextraktor_manifest()
+        for n in obj.normen:
+            self.assertTrue(n.canonical)
+
+    def test_kki_informationsextraktor_manifest_ids_non_empty(self):
+        obj = build_informationsextraktor_manifest()
+        for n in obj.normen:
+            self.assertTrue(len(n.internet_ids) > 0)
+
+    def test_kki_recherche_pakt_builds(self):
+        obj = build_recherche_pakt()
+        self.assertEqual(obj.pakt_id, "recherche-pakt")
+
+    def test_kki_recherche_pakt_eintraege_count(self):
+        obj = build_recherche_pakt()
+        self.assertEqual(len(obj.eintraege), len(RecherchePaktGeltung))
+
+    def test_kki_recherche_pakt_gesperrt_weight_zero(self):
+        obj = build_recherche_pakt()
+        e = next(e for e in obj.eintraege if e.geltung == RecherchePaktGeltung.GESPERRT)
+        self.assertGreaterEqual(e.internet_weight, 0.0)
+
+    def test_kki_recherche_pakt_has_parent(self):
+        obj = build_recherche_pakt()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_recherche_pakt_tags_contain_recherche(self):
+        obj = build_recherche_pakt()
+        for e in obj.eintraege:
+            self.assertIn("recherche", e.internet_tags)
+
+    def test_kki_recherche_pakt_tier_increases(self):
+        obj = build_recherche_pakt()
+        tiers = [e.internet_tier for e in obj.eintraege]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_recherche_pakt_canonical_default(self):
+        obj = build_recherche_pakt()
+        for e in obj.eintraege:
+            self.assertTrue(e.canonical)
+
+    def test_kki_recherche_pakt_ids_non_empty(self):
+        obj = build_recherche_pakt()
+        for e in obj.eintraege:
+            self.assertTrue(len(e.internet_ids) > 0)
+
+    def test_kki_wissensaggregat_senat_builds(self):
+        obj = build_wissensaggregat_senat()
+        self.assertEqual(obj.senat_id, "wissensaggregat-senat")
+
+    def test_kki_wissensaggregat_senat_normen_count(self):
+        obj = build_wissensaggregat_senat()
+        self.assertEqual(len(obj.normen), len(WissensaggregatSenatGeltung))
+
+    def test_kki_wissensaggregat_senat_gesperrt_weight_zero(self):
+        obj = build_wissensaggregat_senat()
+        n = next(n for n in obj.normen if n.geltung == WissensaggregatSenatGeltung.GESPERRT)
+        self.assertGreaterEqual(n.internet_weight, 0.0)
+
+    def test_kki_wissensaggregat_senat_has_parent(self):
+        obj = build_wissensaggregat_senat()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_wissensaggregat_senat_tags_contain_wissensaggregat(self):
+        obj = build_wissensaggregat_senat()
+        for n in obj.normen:
+            self.assertIn("wissensaggregat", n.internet_tags)
+
+    def test_kki_wissensaggregat_senat_tier_increases(self):
+        obj = build_wissensaggregat_senat()
+        tiers = [n.internet_tier for n in obj.normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_wissensaggregat_senat_canonical_default(self):
+        obj = build_wissensaggregat_senat()
+        for n in obj.normen:
+            self.assertTrue(n.canonical)
+
+    def test_kki_wissensaggregat_senat_ids_non_empty(self):
+        obj = build_wissensaggregat_senat()
+        for n in obj.normen:
+            self.assertTrue(len(n.internet_ids) > 0)
+
+    def test_kki_internet_norm_builds(self):
+        obj = build_internet_norm()
+        self.assertEqual(obj.norm_id, "internet-norm")
+
+    def test_kki_internet_norm_normen_count(self):
+        obj = build_internet_norm()
+        self.assertEqual(len(obj.normen), len(InternetNormGeltung))
+
+    def test_kki_internet_norm_gesperrt_weight_zero(self):
+        obj = build_internet_norm()
+        e = next(e for e in obj.normen if e.geltung == InternetNormGeltung.GESPERRT)
+        self.assertGreaterEqual(e.internet_norm_weight, 0.0)
+
+    def test_kki_internet_norm_has_parent(self):
+        obj = build_internet_norm()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_internet_norm_tags_contain_norm(self):
+        obj = build_internet_norm()
+        for e in obj.normen:
+            self.assertIn("norm", e.internet_norm_tags)
+
+    def test_kki_internet_norm_tier_increases(self):
+        obj = build_internet_norm()
+        tiers = [e.internet_norm_tier for e in obj.normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_internet_norm_canonical_default(self):
+        obj = build_internet_norm()
+        for e in obj.normen:
+            self.assertTrue(e.canonical)
+
+    def test_kki_internet_norm_ids_non_empty(self):
+        obj = build_internet_norm()
+        for e in obj.normen:
+            self.assertTrue(len(e.internet_norm_ids) > 0)
+
+    def test_kki_autonome_recherche_charta_builds(self):
+        obj = build_autonome_recherche_charta()
+        self.assertEqual(obj.charta_id, "autonome-recherche-charta")
+
+    def test_kki_autonome_recherche_charta_normen_count(self):
+        obj = build_autonome_recherche_charta()
+        self.assertEqual(len(obj.normen), len(AutonomeRechercheChartaGeltung))
+
+    def test_kki_autonome_recherche_charta_gesperrt_weight_zero(self):
+        obj = build_autonome_recherche_charta()
+        n = next(n for n in obj.normen if n.geltung == AutonomeRechercheChartaGeltung.GESPERRT)
+        self.assertGreaterEqual(n.internet_weight, 0.0)
+
+    def test_kki_autonome_recherche_charta_has_parent(self):
+        obj = build_autonome_recherche_charta()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_autonome_recherche_charta_tags_contain_autonome_recherche(self):
+        obj = build_autonome_recherche_charta()
+        for n in obj.normen:
+            self.assertIn("autonome-recherche", n.internet_tags)
+
+    def test_kki_autonome_recherche_charta_tier_increases(self):
+        obj = build_autonome_recherche_charta()
+        tiers = [n.internet_tier for n in obj.normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_autonome_recherche_charta_canonical_default(self):
+        obj = build_autonome_recherche_charta()
+        for n in obj.normen:
+            self.assertTrue(n.canonical)
+
+    def test_kki_autonome_recherche_charta_ids_non_empty(self):
+        obj = build_autonome_recherche_charta()
+        for n in obj.normen:
+            self.assertTrue(len(n.internet_ids) > 0)
+
+    def test_kki_internetkapazitaet_verfassung_builds(self):
+        obj = build_internetkapazitaet_verfassung()
+        self.assertEqual(obj.verfassung_id, "internetkap-verfassung")
+
+    def test_kki_internetkapazitaet_verfassung_normen_count(self):
+        obj = build_internetkapazitaet_verfassung()
+        self.assertEqual(len(obj.normen), len(InternetkapazitaetVerfassungGeltung))
+
+    def test_kki_internetkapazitaet_verfassung_gesperrt_schutz_norm(self):
+        obj = build_internetkapazitaet_verfassung()
+        n = next(n for n in obj.normen if n.geltung == InternetkapazitaetVerfassungGeltung.GESPERRT)
+        self.assertGreaterEqual(n.internet_weight, 0.0)
+
+    def test_kki_internetkapazitaet_verfassung_aggregates_verfassung_signal(self):
+        obj = build_internetkapazitaet_verfassung()
+        sig = obj.aggregates_verfassung_signal()
+        self.assertIsInstance(sig, dict)
+        self.assertIn("verfassung_id", sig)
+        self.assertIn("total_weight", sig)
+        self.assertIn("norm_count", sig)
+
+    def test_kki_internetkapazitaet_verfassung_has_parent(self):
+        obj = build_internetkapazitaet_verfassung()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_internetkapazitaet_verfassung_tier_increases(self):
+        obj = build_internetkapazitaet_verfassung()
+        tiers = [n.internet_tier for n in obj.normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_internetkapazitaet_verfassung_tags_contain_kapazitaet(self):
+        obj = build_internetkapazitaet_verfassung()
+        for n in obj.normen:
+            self.assertIn("kapazitaet", n.internet_tags)
+
+    def test_kki_internetkapazitaet_verfassung_ids_non_empty(self):
+        obj = build_internetkapazitaet_verfassung()
+        for n in obj.normen:
+            self.assertTrue(len(n.internet_ids) > 0)

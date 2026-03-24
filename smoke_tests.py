@@ -2017,6 +2017,46 @@ from kki.psychologie_verfassung import (
     PsychologieVerfassung, PsychologieVerfassungsGeltung, PsychologieVerfassungsNorm,
     PsychologieVerfassungsTyp, PsychologieVerfassungsProzedur, build_psychologie_verfassung,
 )
+from kki.linguistik_feld import (
+    LinguistikFeld, LinguistikFeldGeltung, LinguistikFeldNorm,
+    LinguistikFeldTyp, LinguistikFeldProzedur, build_linguistik_feld,
+)
+from kki.sprachphonik_register import (
+    PhonologieRegister as SprachphonikRegister, PhonologieRegisterGeltung as SprachphonikRegisterGeltung,
+    PhonologieRegisterNorm as SprachphonikRegisterNorm, build_phonologie_register as build_sprachphonik_register,
+)
+from kki.morphologie_charta import (
+    MorphologieCharta, MorphologieChartaGeltung, MorphologieChartaNorm,
+    MorphologieChartaTyp, MorphologieChartaProzedur, build_morphologie_charta,
+)
+from kki.syntax_kodex import (
+    SyntaxKodex, SyntaxKodexGeltung, SyntaxKodexNorm,
+    SyntaxKodexTyp, SyntaxKodexProzedur, build_syntax_kodex,
+)
+from kki.semantik_manifest import (
+    SemantikManifest, SemantikManifestGeltung, SemantikManifestNorm,
+    SemantikManifestTyp, SemantikManifestProzedur, build_semantik_manifest,
+)
+from kki.diskurs_pakt import (
+    PragmatikPakt as DiskursPakt, PragmatikPaktGeltung as DiskursPaktGeltung,
+    PragmatikPaktNorm as DiskursPaktNorm, build_pragmatik_pakt as build_diskurs_pakt,
+)
+from kki.linguistik_senat import (
+    LinguistikSenat, LinguistikSenatGeltung, LinguistikSenatNorm,
+    LinguistikSenatTyp, LinguistikSenatProzedur, build_linguistik_senat,
+)
+from kki.linguistik_norm import (
+    LinguistikNormTyp, LinguistikNormProzedur, LinguistikNormGeltung,
+    LinguistikNormEintrag, LinguistikNormSatz, build_linguistik_norm,
+)
+from kki.semiotik_charta import (
+    SemiotikCharta, SemiotikChartaGeltung, SemiotikChartaNorm,
+    SemiotikChartaTyp, SemiotikChartaProzedur, build_semiotik_charta,
+)
+from kki.sprachwissenschaft_verfassung import (
+    SprachwissenschaftVerfassung, SprachwissenschaftVerfassungGeltung, SprachwissenschaftVerfassungsNorm,
+    SprachwissenschaftVerfassungTyp, SprachwissenschaftVerfassungProzedur, build_sprachwissenschaft_verfassung,
+)
 from kki import (
     KausalitaetsGeltung,
     KausalitaetsNorm,
@@ -22312,3 +22352,334 @@ class SmokeTests(unittest.TestCase):
     def test_kki_psychologie_verfassung_norm_has_psychologie_tier(self) -> None:
         verfassung = build_psychologie_verfassung(verfassung_id="pv-600-h")
         self.assertTrue(all(isinstance(n.psychologie_tier, int) for n in verfassung.normen))
+
+    # --- #601 LinguistikFeld ---
+    def test_kki_linguistik_feld_builds(self) -> None:
+        feld = build_linguistik_feld(feld_id="lf-601-a")
+        self.assertIsInstance(feld, LinguistikFeld)
+
+    def test_kki_linguistik_feld_has_gesperrt_norm(self) -> None:
+        feld = build_linguistik_feld(feld_id="lf-601-b")
+        self.assertTrue(any(n.geltung is LinguistikFeldGeltung.GESPERRT for n in feld.normen))
+
+    def test_kki_linguistik_feld_has_linguistisch_souveraen_norm(self) -> None:
+        feld = build_linguistik_feld(feld_id="lf-601-c")
+        self.assertTrue(any(n.geltung is LinguistikFeldGeltung.LINGUISTISCH_SOUVERAEN for n in feld.normen))
+
+    def test_kki_linguistik_feld_has_grundlegend_norm(self) -> None:
+        feld = build_linguistik_feld(feld_id="lf-601-d")
+        self.assertTrue(any(n.geltung is LinguistikFeldGeltung.GRUNDLEGEND_LINGUISTISCH_SOUVERAEN for n in feld.normen))
+
+    def test_kki_linguistik_feld_norm_has_linguistik_weight(self) -> None:
+        feld = build_linguistik_feld(feld_id="lf-601-e")
+        self.assertTrue(all(isinstance(n.linguistik_weight, float) for n in feld.normen))
+
+    def test_kki_linguistik_feld_norm_has_linguistik_tier(self) -> None:
+        feld = build_linguistik_feld(feld_id="lf-601-f")
+        self.assertTrue(all(isinstance(n.linguistik_tier, int) for n in feld.normen))
+
+    def test_kki_linguistik_feld_has_normen(self) -> None:
+        feld = build_linguistik_feld(feld_id="lf-601-g")
+        self.assertGreater(len(feld.normen), 0)
+
+    def test_kki_linguistik_feld_norm_has_ids(self) -> None:
+        feld = build_linguistik_feld(feld_id="lf-601-h")
+        self.assertTrue(all(len(n.linguistik_ids) > 0 for n in feld.normen))
+
+    # --- #602 SprachphonikRegister ---
+    def test_kki_sprachphonik_register_builds(self) -> None:
+        reg = build_sprachphonik_register(register_id="sr-602-a")
+        self.assertIsInstance(reg, SprachphonikRegister)
+
+    def test_kki_sprachphonik_register_has_gesperrt_norm(self) -> None:
+        reg = build_sprachphonik_register(register_id="sr-602-b")
+        self.assertTrue(any(n.geltung is SprachphonikRegisterGeltung.GESPERRT for n in reg.normen))
+
+    def test_kki_sprachphonik_register_has_phonologisch_norm(self) -> None:
+        reg = build_sprachphonik_register(register_id="sr-602-c")
+        self.assertTrue(any(n.geltung is SprachphonikRegisterGeltung.PHONOLOGISCH for n in reg.normen))
+
+    def test_kki_sprachphonik_register_has_grundlegend_norm(self) -> None:
+        reg = build_sprachphonik_register(register_id="sr-602-d")
+        self.assertTrue(any(n.geltung is SprachphonikRegisterGeltung.GRUNDLEGEND_PHONOLOGISCH for n in reg.normen))
+
+    def test_kki_sprachphonik_register_norm_has_weight(self) -> None:
+        reg = build_sprachphonik_register(register_id="sr-602-e")
+        self.assertTrue(all(isinstance(n.linguistik_weight, float) for n in reg.normen))
+
+    def test_kki_sprachphonik_register_norm_has_tier(self) -> None:
+        reg = build_sprachphonik_register(register_id="sr-602-f")
+        self.assertTrue(all(isinstance(n.linguistik_tier, int) for n in reg.normen))
+
+    def test_kki_sprachphonik_register_has_normen(self) -> None:
+        reg = build_sprachphonik_register(register_id="sr-602-g")
+        self.assertGreater(len(reg.normen), 0)
+
+    def test_kki_sprachphonik_register_norm_has_ids(self) -> None:
+        reg = build_sprachphonik_register(register_id="sr-602-h")
+        self.assertTrue(all(len(n.linguistik_ids) > 0 for n in reg.normen))
+
+    # --- #603 MorphologieCharta ---
+    def test_kki_morphologie_charta_builds(self) -> None:
+        ch = build_morphologie_charta(charta_id="mc-603-a")
+        self.assertIsInstance(ch, MorphologieCharta)
+
+    def test_kki_morphologie_charta_has_gesperrt_norm(self) -> None:
+        ch = build_morphologie_charta(charta_id="mc-603-b")
+        self.assertTrue(any(n.geltung is MorphologieChartaGeltung.GESPERRT for n in ch.normen))
+
+    def test_kki_morphologie_charta_has_morphologisch_norm(self) -> None:
+        ch = build_morphologie_charta(charta_id="mc-603-c")
+        self.assertTrue(any(n.geltung is MorphologieChartaGeltung.MORPHOLOGISCH for n in ch.normen))
+
+    def test_kki_morphologie_charta_has_grundlegend_norm(self) -> None:
+        ch = build_morphologie_charta(charta_id="mc-603-d")
+        self.assertTrue(any(n.geltung is MorphologieChartaGeltung.GRUNDLEGEND_MORPHOLOGISCH for n in ch.normen))
+
+    def test_kki_morphologie_charta_norm_has_weight(self) -> None:
+        ch = build_morphologie_charta(charta_id="mc-603-e")
+        self.assertTrue(all(isinstance(n.linguistik_weight, float) for n in ch.normen))
+
+    def test_kki_morphologie_charta_norm_has_tier(self) -> None:
+        ch = build_morphologie_charta(charta_id="mc-603-f")
+        self.assertTrue(all(isinstance(n.linguistik_tier, int) for n in ch.normen))
+
+    def test_kki_morphologie_charta_has_normen(self) -> None:
+        ch = build_morphologie_charta(charta_id="mc-603-g")
+        self.assertGreater(len(ch.normen), 0)
+
+    def test_kki_morphologie_charta_norm_has_ids(self) -> None:
+        ch = build_morphologie_charta(charta_id="mc-603-h")
+        self.assertTrue(all(len(n.linguistik_ids) > 0 for n in ch.normen))
+
+    # --- #604 SyntaxKodex ---
+    def test_kki_syntax_kodex_builds(self) -> None:
+        sk = build_syntax_kodex(kodex_id="sk-604-a")
+        self.assertIsInstance(sk, SyntaxKodex)
+
+    def test_kki_syntax_kodex_has_gesperrt_norm(self) -> None:
+        sk = build_syntax_kodex(kodex_id="sk-604-b")
+        self.assertTrue(any(n.geltung is SyntaxKodexGeltung.GESPERRT for n in sk.normen))
+
+    def test_kki_syntax_kodex_has_syntaktisch_norm(self) -> None:
+        sk = build_syntax_kodex(kodex_id="sk-604-c")
+        self.assertTrue(any(n.geltung is SyntaxKodexGeltung.SYNTAKTISCH for n in sk.normen))
+
+    def test_kki_syntax_kodex_has_grundlegend_norm(self) -> None:
+        sk = build_syntax_kodex(kodex_id="sk-604-d")
+        self.assertTrue(any(n.geltung is SyntaxKodexGeltung.GRUNDLEGEND_SYNTAKTISCH for n in sk.normen))
+
+    def test_kki_syntax_kodex_norm_has_weight(self) -> None:
+        sk = build_syntax_kodex(kodex_id="sk-604-e")
+        self.assertTrue(all(isinstance(n.linguistik_weight, float) for n in sk.normen))
+
+    def test_kki_syntax_kodex_norm_has_tier(self) -> None:
+        sk = build_syntax_kodex(kodex_id="sk-604-f")
+        self.assertTrue(all(isinstance(n.linguistik_tier, int) for n in sk.normen))
+
+    def test_kki_syntax_kodex_has_normen(self) -> None:
+        sk = build_syntax_kodex(kodex_id="sk-604-g")
+        self.assertGreater(len(sk.normen), 0)
+
+    def test_kki_syntax_kodex_norm_has_ids(self) -> None:
+        sk = build_syntax_kodex(kodex_id="sk-604-h")
+        self.assertTrue(all(len(n.linguistik_ids) > 0 for n in sk.normen))
+
+    # --- #605 SemantikManifest ---
+    def test_kki_semantik_manifest_builds(self) -> None:
+        sm = build_semantik_manifest(manifest_id="sm-605-a")
+        self.assertIsInstance(sm, SemantikManifest)
+
+    def test_kki_semantik_manifest_has_gesperrt_norm(self) -> None:
+        sm = build_semantik_manifest(manifest_id="sm-605-b")
+        self.assertTrue(any(n.geltung is SemantikManifestGeltung.GESPERRT for n in sm.normen))
+
+    def test_kki_semantik_manifest_has_semantisch_norm(self) -> None:
+        sm = build_semantik_manifest(manifest_id="sm-605-c")
+        self.assertTrue(any(n.geltung is SemantikManifestGeltung.SEMANTISCH for n in sm.normen))
+
+    def test_kki_semantik_manifest_has_grundlegend_norm(self) -> None:
+        sm = build_semantik_manifest(manifest_id="sm-605-d")
+        self.assertTrue(any(n.geltung is SemantikManifestGeltung.GRUNDLEGEND_SEMANTISCH for n in sm.normen))
+
+    def test_kki_semantik_manifest_norm_has_weight(self) -> None:
+        sm = build_semantik_manifest(manifest_id="sm-605-e")
+        self.assertTrue(all(isinstance(n.linguistik_weight, float) for n in sm.normen))
+
+    def test_kki_semantik_manifest_norm_has_tier(self) -> None:
+        sm = build_semantik_manifest(manifest_id="sm-605-f")
+        self.assertTrue(all(isinstance(n.linguistik_tier, int) for n in sm.normen))
+
+    def test_kki_semantik_manifest_has_normen(self) -> None:
+        sm = build_semantik_manifest(manifest_id="sm-605-g")
+        self.assertGreater(len(sm.normen), 0)
+
+    def test_kki_semantik_manifest_norm_has_ids(self) -> None:
+        sm = build_semantik_manifest(manifest_id="sm-605-h")
+        self.assertTrue(all(len(n.linguistik_ids) > 0 for n in sm.normen))
+
+    # --- #606 DiskursPakt ---
+    def test_kki_diskurs_pakt_builds(self) -> None:
+        dp = build_diskurs_pakt(pakt_id="dp-606-a")
+        self.assertIsInstance(dp, DiskursPakt)
+
+    def test_kki_diskurs_pakt_has_gesperrt_norm(self) -> None:
+        dp = build_diskurs_pakt(pakt_id="dp-606-b")
+        self.assertTrue(any(n.geltung is DiskursPaktGeltung.GESPERRT for n in dp.normen))
+
+    def test_kki_diskurs_pakt_has_pragmatisch_norm(self) -> None:
+        dp = build_diskurs_pakt(pakt_id="dp-606-c")
+        self.assertTrue(any(n.geltung is DiskursPaktGeltung.PRAGMATISCH for n in dp.normen))
+
+    def test_kki_diskurs_pakt_has_grundlegend_norm(self) -> None:
+        dp = build_diskurs_pakt(pakt_id="dp-606-d")
+        self.assertTrue(any(n.geltung is DiskursPaktGeltung.GRUNDLEGEND_PRAGMATISCH for n in dp.normen))
+
+    def test_kki_diskurs_pakt_norm_has_weight(self) -> None:
+        dp = build_diskurs_pakt(pakt_id="dp-606-e")
+        self.assertTrue(all(isinstance(n.linguistik_weight, float) for n in dp.normen))
+
+    def test_kki_diskurs_pakt_norm_has_tier(self) -> None:
+        dp = build_diskurs_pakt(pakt_id="dp-606-f")
+        self.assertTrue(all(isinstance(n.linguistik_tier, int) for n in dp.normen))
+
+    def test_kki_diskurs_pakt_has_normen(self) -> None:
+        dp = build_diskurs_pakt(pakt_id="dp-606-g")
+        self.assertGreater(len(dp.normen), 0)
+
+    def test_kki_diskurs_pakt_norm_has_ids(self) -> None:
+        dp = build_diskurs_pakt(pakt_id="dp-606-h")
+        self.assertTrue(all(len(n.linguistik_ids) > 0 for n in dp.normen))
+
+    # --- #607 LinguistikSenat ---
+    def test_kki_linguistik_senat_builds(self) -> None:
+        senat = build_linguistik_senat(senat_id="ls-607-a")
+        self.assertIsInstance(senat, LinguistikSenat)
+
+    def test_kki_linguistik_senat_has_gesperrt_norm(self) -> None:
+        senat = build_linguistik_senat(senat_id="ls-607-b")
+        self.assertTrue(any(n.geltung is LinguistikSenatGeltung.GESPERRT for n in senat.normen))
+
+    def test_kki_linguistik_senat_has_senatorisch_norm(self) -> None:
+        senat = build_linguistik_senat(senat_id="ls-607-c")
+        self.assertTrue(any(n.geltung is LinguistikSenatGeltung.LINGUISTISCH_SENATORISCH for n in senat.normen))
+
+    def test_kki_linguistik_senat_has_grundlegend_norm(self) -> None:
+        senat = build_linguistik_senat(senat_id="ls-607-d")
+        self.assertTrue(any(n.geltung is LinguistikSenatGeltung.GRUNDLEGEND_LINGUISTISCH_SENATORISCH for n in senat.normen))
+
+    def test_kki_linguistik_senat_norm_has_weight(self) -> None:
+        senat = build_linguistik_senat(senat_id="ls-607-e")
+        self.assertTrue(all(isinstance(n.linguistik_weight, float) for n in senat.normen))
+
+    def test_kki_linguistik_senat_norm_has_tier(self) -> None:
+        senat = build_linguistik_senat(senat_id="ls-607-f")
+        self.assertTrue(all(isinstance(n.linguistik_tier, int) for n in senat.normen))
+
+    def test_kki_linguistik_senat_has_normen(self) -> None:
+        senat = build_linguistik_senat(senat_id="ls-607-g")
+        self.assertGreater(len(senat.normen), 0)
+
+    def test_kki_linguistik_senat_norm_has_ids(self) -> None:
+        senat = build_linguistik_senat(senat_id="ls-607-h")
+        self.assertTrue(all(len(n.linguistik_ids) > 0 for n in senat.normen))
+
+    # --- #608 LinguistikNorm ---
+    def test_kki_linguistik_norm_builds(self) -> None:
+        ns = build_linguistik_norm(norm_id="ln-608-a")
+        self.assertIsInstance(ns, LinguistikNormSatz)
+
+    def test_kki_linguistik_norm_has_gesperrt_eintrag(self) -> None:
+        ns = build_linguistik_norm(norm_id="ln-608-b")
+        self.assertTrue(any(e.geltung is LinguistikNormGeltung.GESPERRT for e in ns.normen))
+
+    def test_kki_linguistik_norm_has_normativ_eintrag(self) -> None:
+        ns = build_linguistik_norm(norm_id="ln-608-c")
+        self.assertTrue(any(e.geltung is LinguistikNormGeltung.LINGUISTISCH_NORMATIV for e in ns.normen))
+
+    def test_kki_linguistik_norm_has_grundlegend_eintrag(self) -> None:
+        ns = build_linguistik_norm(norm_id="ln-608-d")
+        self.assertTrue(any(e.geltung is LinguistikNormGeltung.GRUNDLEGEND_LINGUISTISCH_NORMATIV for e in ns.normen))
+
+    def test_kki_linguistik_norm_eintrag_has_weight(self) -> None:
+        ns = build_linguistik_norm(norm_id="ln-608-e")
+        self.assertTrue(all(isinstance(e.linguistik_norm_weight, float) for e in ns.normen))
+
+    def test_kki_linguistik_norm_eintrag_has_tier(self) -> None:
+        ns = build_linguistik_norm(norm_id="ln-608-f")
+        self.assertTrue(all(isinstance(e.linguistik_norm_tier, int) for e in ns.normen))
+
+    def test_kki_linguistik_norm_has_eintraege(self) -> None:
+        ns = build_linguistik_norm(norm_id="ln-608-g")
+        self.assertGreater(len(ns.normen), 0)
+
+    def test_kki_linguistik_norm_eintrag_has_ids(self) -> None:
+        ns = build_linguistik_norm(norm_id="ln-608-h")
+        self.assertTrue(all(len(e.linguistik_norm_ids) > 0 for e in ns.normen))
+
+    # --- #609 SemiotikCharta ---
+    def test_kki_semiotik_charta_builds(self) -> None:
+        ch = build_semiotik_charta(charta_id="sc-609-a")
+        self.assertIsInstance(ch, SemiotikCharta)
+
+    def test_kki_semiotik_charta_has_gesperrt_norm(self) -> None:
+        ch = build_semiotik_charta(charta_id="sc-609-b")
+        self.assertTrue(any(n.geltung is SemiotikChartaGeltung.GESPERRT for n in ch.normen))
+
+    def test_kki_semiotik_charta_has_semiotisch_souveraen_norm(self) -> None:
+        ch = build_semiotik_charta(charta_id="sc-609-c")
+        self.assertTrue(any(n.geltung is SemiotikChartaGeltung.SEMIOTISCH_SOUVERAEN for n in ch.normen))
+
+    def test_kki_semiotik_charta_has_grundlegend_norm(self) -> None:
+        ch = build_semiotik_charta(charta_id="sc-609-d")
+        self.assertTrue(any(n.geltung is SemiotikChartaGeltung.GRUNDLEGEND_SEMIOTISCH_SOUVERAEN for n in ch.normen))
+
+    def test_kki_semiotik_charta_norm_has_weight(self) -> None:
+        ch = build_semiotik_charta(charta_id="sc-609-e")
+        self.assertTrue(all(isinstance(n.linguistik_weight, float) for n in ch.normen))
+
+    def test_kki_semiotik_charta_norm_has_tier(self) -> None:
+        ch = build_semiotik_charta(charta_id="sc-609-f")
+        self.assertTrue(all(isinstance(n.linguistik_tier, int) for n in ch.normen))
+
+    def test_kki_semiotik_charta_has_normen(self) -> None:
+        ch = build_semiotik_charta(charta_id="sc-609-g")
+        self.assertGreater(len(ch.normen), 0)
+
+    def test_kki_semiotik_charta_norm_has_ids(self) -> None:
+        ch = build_semiotik_charta(charta_id="sc-609-h")
+        self.assertTrue(all(len(n.linguistik_ids) > 0 for n in ch.normen))
+
+    # --- #610 SprachwissenschaftVerfassung ---
+    def test_kki_sprachwissenschaft_verfassung_builds(self) -> None:
+        v = build_sprachwissenschaft_verfassung(verfassung_id="sv-610-a")
+        self.assertIsInstance(v, SprachwissenschaftVerfassung)
+
+    def test_kki_sprachwissenschaft_verfassung_has_gesperrt_norm(self) -> None:
+        v = build_sprachwissenschaft_verfassung(verfassung_id="sv-610-b")
+        self.assertTrue(any(n.geltung is SprachwissenschaftVerfassungGeltung.GESPERRT for n in v.normen))
+
+    def test_kki_sprachwissenschaft_verfassung_builds_gesperrt_schutz_norm(self) -> None:
+        v = build_sprachwissenschaft_verfassung(verfassung_id="sv-610-c")
+        self.assertTrue(any(n.geltung is SprachwissenschaftVerfassungGeltung.SPRACH_SOUVERAEN for n in v.normen))
+
+    def test_kki_sprachwissenschaft_verfassung_aggregates_charta_signal(self) -> None:
+        v = build_sprachwissenschaft_verfassung(verfassung_id="sv-610-d")
+        sig = v.aggregates_verfassung_signal()
+        self.assertIsNotNone(sig)
+
+    def test_kki_sprachwissenschaft_verfassung_builds_grundlegend_norm_ids(self) -> None:
+        v = build_sprachwissenschaft_verfassung(verfassung_id="sv-610-e")
+        self.assertTrue(any(n.geltung is SprachwissenschaftVerfassungGeltung.GRUNDLEGEND_SPRACH_SOUVERAEN for n in v.normen))
+
+    def test_kki_sprachwissenschaft_verfassung_norm_has_linguistik_weight(self) -> None:
+        v = build_sprachwissenschaft_verfassung(verfassung_id="sv-610-f")
+        self.assertTrue(all(isinstance(n.linguistik_weight, float) for n in v.normen))
+
+    def test_kki_sprachwissenschaft_verfassung_norm_has_linguistik_tier(self) -> None:
+        v = build_sprachwissenschaft_verfassung(verfassung_id="sv-610-g")
+        self.assertTrue(all(isinstance(n.linguistik_tier, int) for n in v.normen))
+
+    def test_kki_sprachwissenschaft_verfassung_norm_has_ids(self) -> None:
+        v = build_sprachwissenschaft_verfassung(verfassung_id="sv-610-h")
+        self.assertTrue(all(len(n.linguistik_ids) > 0 for n in v.normen))

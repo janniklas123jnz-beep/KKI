@@ -2795,6 +2795,51 @@ from .psychologie_verfassung import (
     PsychologieVerfassungsGeltung, PsychologieVerfassungsNorm, PsychologieVerfassungsProzedur, PsychologieVerfassungsTyp,
     PsychologieVerfassung, build_psychologie_verfassung,
 )
+from .linguistik_feld import (
+    LinguistikFeldGeltung, LinguistikFeldNorm, LinguistikFeldProzedur, LinguistikFeldTyp,
+    LinguistikFeld, build_linguistik_feld,
+)
+from .sprachphonik_register import (
+    PhonologieRegisterGeltung as SprachphonikRegisterGeltung,
+    PhonologieRegisterNorm as SprachphonikRegisterNorm,
+    PhonologieRegisterTyp as SprachphonikRegisterTyp,
+    PhonologieRegister as SprachphonikRegister,
+    build_phonologie_register as build_sprachphonik_register,
+)
+from .morphologie_charta import (
+    MorphologieChartaGeltung, MorphologieChartaNorm, MorphologieChartaProzedur, MorphologieChartaTyp,
+    MorphologieCharta, build_morphologie_charta,
+)
+from .syntax_kodex import (
+    SyntaxKodexGeltung, SyntaxKodexNorm, SyntaxKodexProzedur, SyntaxKodexTyp,
+    SyntaxKodex, build_syntax_kodex,
+)
+from .semantik_manifest import (
+    SemantikManifestGeltung, SemantikManifestNorm, SemantikManifestProzedur, SemantikManifestTyp,
+    SemantikManifest, build_semantik_manifest,
+)
+from .diskurs_pakt import (
+    PragmatikPaktGeltung as DiskursPaktGeltung,
+    PragmatikPaktNorm as DiskursPaktNorm,
+    PragmatikPaktTyp as DiskursPaktTyp,
+    PragmatikPakt as DiskursPakt,
+    build_pragmatik_pakt as build_diskurs_pakt,
+)
+from .linguistik_senat import (
+    LinguistikSenatGeltung, LinguistikSenatNorm, LinguistikSenatProzedur, LinguistikSenatTyp,
+    LinguistikSenat, build_linguistik_senat,
+)
+from .linguistik_norm import (
+    LinguistikNormTyp, LinguistikNormProzedur, LinguistikNormGeltung, LinguistikNormEintrag, LinguistikNormSatz, build_linguistik_norm,
+)
+from .semiotik_charta import (
+    SemiotikChartaGeltung, SemiotikChartaNorm, SemiotikChartaProzedur, SemiotikChartaTyp,
+    SemiotikCharta, build_semiotik_charta,
+)
+from .sprachwissenschaft_verfassung import (
+    SprachwissenschaftVerfassungGeltung, SprachwissenschaftVerfassungsNorm, SprachwissenschaftVerfassungProzedur, SprachwissenschaftVerfassungTyp,
+    SprachwissenschaftVerfassung, build_sprachwissenschaft_verfassung,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -4571,4 +4616,23 @@ __all__ = [
     "KognitionsCharta", "build_kognitions_charta",
     "PsychologieVerfassungsGeltung", "PsychologieVerfassungsNorm", "PsychologieVerfassungsProzedur", "PsychologieVerfassungsTyp",
     "PsychologieVerfassung", "build_psychologie_verfassung",
+    "LinguistikFeldGeltung", "LinguistikFeldNorm", "LinguistikFeldProzedur", "LinguistikFeldTyp",
+    "LinguistikFeld", "build_linguistik_feld",
+    "SprachphonikRegisterGeltung", "SprachphonikRegisterNorm", "SprachphonikRegisterTyp",
+    "SprachphonikRegister", "build_sprachphonik_register",
+    "MorphologieChartaGeltung", "MorphologieChartaNorm", "MorphologieChartaProzedur", "MorphologieChartaTyp",
+    "MorphologieCharta", "build_morphologie_charta",
+    "SyntaxKodexGeltung", "SyntaxKodexNorm", "SyntaxKodexProzedur", "SyntaxKodexTyp",
+    "SyntaxKodex", "build_syntax_kodex",
+    "SemantikManifestGeltung", "SemantikManifestNorm", "SemantikManifestProzedur", "SemantikManifestTyp",
+    "SemantikManifest", "build_semantik_manifest",
+    "DiskursPaktGeltung", "DiskursPaktNorm", "DiskursPaktTyp",
+    "DiskursPakt", "build_diskurs_pakt",
+    "LinguistikSenatGeltung", "LinguistikSenatNorm", "LinguistikSenatProzedur", "LinguistikSenatTyp",
+    "LinguistikSenat", "build_linguistik_senat",
+    "LinguistikNormTyp", "LinguistikNormProzedur", "LinguistikNormGeltung", "LinguistikNormEintrag", "LinguistikNormSatz", "build_linguistik_norm",
+    "SemiotikChartaGeltung", "SemiotikChartaNorm", "SemiotikChartaProzedur", "SemiotikChartaTyp",
+    "SemiotikCharta", "build_semiotik_charta",
+    "SprachwissenschaftVerfassungGeltung", "SprachwissenschaftVerfassungsNorm", "SprachwissenschaftVerfassungProzedur", "SprachwissenschaftVerfassungTyp",
+    "SprachwissenschaftVerfassung", "build_sprachwissenschaft_verfassung",
 ]

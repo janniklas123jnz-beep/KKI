@@ -2548,6 +2548,20 @@ from kki.religions_norm import ReligionsNormSatz, ReligionsNormGeltung, build_re
 from kki.sakrale_charta import SakraleCharta, SakraleChartaGeltung, build_sakrale_charta
 from kki.religionswissenschaft_verfassung import ReligionswissenschaftVerfassung, ReligionswissenschaftVerfassungGeltung, build_religionswissenschaft_verfassung
 
+# ---------------------------------------------------------------------------
+# Block #621–630 — Musikwissenschaft
+# ---------------------------------------------------------------------------
+from kki.musik_feld import MusikFeld, MusikFeldGeltung, build_musik_feld
+from kki.harmonik_register import HarmonikRegister, HarmonikRegisterGeltung, build_harmonik_register
+from kki.rhythmus_charta import RhythmusCharta, RhythmusChartaGeltung, build_rhythmus_charta
+from kki.melodie_kodex import MelodieKodex, MelodieKodexGeltung, build_melodie_kodex
+from kki.kompositions_manifest import KompositionsManifest, KompositionsManifestGeltung, build_kompositions_manifest
+from kki.musikgeschichte_pakt import MusikgeschichtePakt, MusikgeschichtePaktGeltung, build_musikgeschichte_pakt
+from kki.musikethnologie_senat import MusikEthnologieSenat, MusikEthnologieSenatGeltung, build_musikethnologie_senat
+from kki.musik_norm import MusikNormSatz, MusikNormGeltung, build_musik_norm
+from kki.akustik_charta import AkustikCharta, AkustikChartaGeltung, build_akustik_charta
+from kki.musikwissenschaft_verfassung import MusikwissenschaftVerfassung, MusikwissenschaftVerfassungGeltung, build_musikwissenschaft_verfassung
+
 class SmokeTests(unittest.TestCase):
     def run_script(
         self,
@@ -23027,4 +23041,335 @@ class SmokeTests(unittest.TestCase):
     def test_kki_religionswissenschaft_verfassung_norm_has_ids(self) -> None:
         rv = build_religionswissenschaft_verfassung(verfassung_id="rv-620-h")
         self.assertTrue(all(len(n.religions_ids) > 0 for n in rv.normen))
+
+    # --- #621 MusikFeld ---
+    def test_kki_musik_feld_builds(self) -> None:
+        mf = build_musik_feld(feld_id="mf-621-a")
+        self.assertIsInstance(mf, MusikFeld)
+
+    def test_kki_musik_feld_gesperrt_schutz_norm(self) -> None:
+        mf = build_musik_feld(feld_id="mf-621-b")
+        self.assertTrue(any(n.geltung == MusikFeldGeltung.GESPERRT for n in mf.normen))
+
+    def test_kki_musik_feld_domain_geltung_norm(self) -> None:
+        mf = build_musik_feld(feld_id="mf-621-c")
+        self.assertTrue(any(n.geltung == MusikFeldGeltung.MUSIKALISCH_SOUVERAEN for n in mf.normen))
+
+    def test_kki_musik_feld_grundlegend_norm(self) -> None:
+        mf = build_musik_feld(feld_id="mf-621-d")
+        self.assertTrue(any(n.geltung == MusikFeldGeltung.GRUNDLEGEND_MUSIKALISCH_SOUVERAEN for n in mf.normen))
+
+    def test_kki_musik_feld_weight_float(self) -> None:
+        mf = build_musik_feld(feld_id="mf-621-e")
+        self.assertTrue(all(isinstance(n.musik_weight, float) for n in mf.normen))
+
+    def test_kki_musik_feld_tier_int(self) -> None:
+        mf = build_musik_feld(feld_id="mf-621-f")
+        self.assertTrue(all(isinstance(n.musik_tier, int) for n in mf.normen))
+
+    def test_kki_musik_feld_has_normen(self) -> None:
+        mf = build_musik_feld(feld_id="mf-621-g")
+        self.assertGreater(len(mf.normen), 0)
+
+    def test_kki_musik_feld_has_ids(self) -> None:
+        mf = build_musik_feld(feld_id="mf-621-h")
+        self.assertTrue(all(len(n.musik_ids) > 0 for n in mf.normen))
+
+    # --- #622 HarmonikRegister ---
+    def test_kki_harmonik_register_builds(self) -> None:
+        hr = build_harmonik_register(register_id="hr-622-a")
+        self.assertIsInstance(hr, HarmonikRegister)
+
+    def test_kki_harmonik_register_gesperrt_schutz_norm(self) -> None:
+        hr = build_harmonik_register(register_id="hr-622-b")
+        self.assertTrue(any(n.geltung == HarmonikRegisterGeltung.GESPERRT for n in hr.normen))
+
+    def test_kki_harmonik_register_domain_geltung_norm(self) -> None:
+        hr = build_harmonik_register(register_id="hr-622-c")
+        self.assertTrue(any(n.geltung == HarmonikRegisterGeltung.HARMONISCH for n in hr.normen))
+
+    def test_kki_harmonik_register_grundlegend_norm(self) -> None:
+        hr = build_harmonik_register(register_id="hr-622-d")
+        self.assertTrue(any(n.geltung == HarmonikRegisterGeltung.GRUNDLEGEND_HARMONISCH for n in hr.normen))
+
+    def test_kki_harmonik_register_weight_float(self) -> None:
+        hr = build_harmonik_register(register_id="hr-622-e")
+        self.assertTrue(all(isinstance(n.musik_weight, float) for n in hr.normen))
+
+    def test_kki_harmonik_register_tier_int(self) -> None:
+        hr = build_harmonik_register(register_id="hr-622-f")
+        self.assertTrue(all(isinstance(n.musik_tier, int) for n in hr.normen))
+
+    def test_kki_harmonik_register_has_normen(self) -> None:
+        hr = build_harmonik_register(register_id="hr-622-g")
+        self.assertGreater(len(hr.normen), 0)
+
+    def test_kki_harmonik_register_has_ids(self) -> None:
+        hr = build_harmonik_register(register_id="hr-622-h")
+        self.assertTrue(all(len(n.musik_ids) > 0 for n in hr.normen))
+
+    # --- #623 RhythmusCharta ---
+    def test_kki_rhythmus_charta_builds(self) -> None:
+        rc = build_rhythmus_charta(charta_id="rc-623-a")
+        self.assertIsInstance(rc, RhythmusCharta)
+
+    def test_kki_rhythmus_charta_gesperrt_schutz_norm(self) -> None:
+        rc = build_rhythmus_charta(charta_id="rc-623-b")
+        self.assertTrue(any(n.geltung == RhythmusChartaGeltung.GESPERRT for n in rc.normen))
+
+    def test_kki_rhythmus_charta_domain_geltung_norm(self) -> None:
+        rc = build_rhythmus_charta(charta_id="rc-623-c")
+        self.assertTrue(any(n.geltung == RhythmusChartaGeltung.RHYTHMISCH for n in rc.normen))
+
+    def test_kki_rhythmus_charta_grundlegend_norm(self) -> None:
+        rc = build_rhythmus_charta(charta_id="rc-623-d")
+        self.assertTrue(any(n.geltung == RhythmusChartaGeltung.GRUNDLEGEND_RHYTHMISCH for n in rc.normen))
+
+    def test_kki_rhythmus_charta_weight_float(self) -> None:
+        rc = build_rhythmus_charta(charta_id="rc-623-e")
+        self.assertTrue(all(isinstance(n.musik_weight, float) for n in rc.normen))
+
+    def test_kki_rhythmus_charta_tier_int(self) -> None:
+        rc = build_rhythmus_charta(charta_id="rc-623-f")
+        self.assertTrue(all(isinstance(n.musik_tier, int) for n in rc.normen))
+
+    def test_kki_rhythmus_charta_has_normen(self) -> None:
+        rc = build_rhythmus_charta(charta_id="rc-623-g")
+        self.assertGreater(len(rc.normen), 0)
+
+    def test_kki_rhythmus_charta_has_ids(self) -> None:
+        rc = build_rhythmus_charta(charta_id="rc-623-h")
+        self.assertTrue(all(len(n.musik_ids) > 0 for n in rc.normen))
+
+    # --- #624 MelodieKodex ---
+    def test_kki_melodie_kodex_builds(self) -> None:
+        mk = build_melodie_kodex(kodex_id="mk-624-a")
+        self.assertIsInstance(mk, MelodieKodex)
+
+    def test_kki_melodie_kodex_gesperrt_schutz_norm(self) -> None:
+        mk = build_melodie_kodex(kodex_id="mk-624-b")
+        self.assertTrue(any(n.geltung == MelodieKodexGeltung.GESPERRT for n in mk.normen))
+
+    def test_kki_melodie_kodex_domain_geltung_norm(self) -> None:
+        mk = build_melodie_kodex(kodex_id="mk-624-c")
+        self.assertTrue(any(n.geltung == MelodieKodexGeltung.MELODISCH for n in mk.normen))
+
+    def test_kki_melodie_kodex_grundlegend_norm(self) -> None:
+        mk = build_melodie_kodex(kodex_id="mk-624-d")
+        self.assertTrue(any(n.geltung == MelodieKodexGeltung.GRUNDLEGEND_MELODISCH for n in mk.normen))
+
+    def test_kki_melodie_kodex_weight_float(self) -> None:
+        mk = build_melodie_kodex(kodex_id="mk-624-e")
+        self.assertTrue(all(isinstance(n.musik_weight, float) for n in mk.normen))
+
+    def test_kki_melodie_kodex_tier_int(self) -> None:
+        mk = build_melodie_kodex(kodex_id="mk-624-f")
+        self.assertTrue(all(isinstance(n.musik_tier, int) for n in mk.normen))
+
+    def test_kki_melodie_kodex_has_normen(self) -> None:
+        mk = build_melodie_kodex(kodex_id="mk-624-g")
+        self.assertGreater(len(mk.normen), 0)
+
+    def test_kki_melodie_kodex_has_ids(self) -> None:
+        mk = build_melodie_kodex(kodex_id="mk-624-h")
+        self.assertTrue(all(len(n.musik_ids) > 0 for n in mk.normen))
+
+    # --- #625 KompositionsManifest ---
+    def test_kki_kompositions_manifest_builds(self) -> None:
+        km = build_kompositions_manifest(manifest_id="km-625-a")
+        self.assertIsInstance(km, KompositionsManifest)
+
+    def test_kki_kompositions_manifest_gesperrt_schutz_norm(self) -> None:
+        km = build_kompositions_manifest(manifest_id="km-625-b")
+        self.assertTrue(any(n.geltung == KompositionsManifestGeltung.GESPERRT for n in km.normen))
+
+    def test_kki_kompositions_manifest_domain_geltung_norm(self) -> None:
+        km = build_kompositions_manifest(manifest_id="km-625-c")
+        self.assertTrue(any(n.geltung == KompositionsManifestGeltung.KOMPOSITORISCH for n in km.normen))
+
+    def test_kki_kompositions_manifest_grundlegend_norm(self) -> None:
+        km = build_kompositions_manifest(manifest_id="km-625-d")
+        self.assertTrue(any(n.geltung == KompositionsManifestGeltung.GRUNDLEGEND_KOMPOSITORISCH for n in km.normen))
+
+    def test_kki_kompositions_manifest_weight_float(self) -> None:
+        km = build_kompositions_manifest(manifest_id="km-625-e")
+        self.assertTrue(all(isinstance(n.musik_weight, float) for n in km.normen))
+
+    def test_kki_kompositions_manifest_tier_int(self) -> None:
+        km = build_kompositions_manifest(manifest_id="km-625-f")
+        self.assertTrue(all(isinstance(n.musik_tier, int) for n in km.normen))
+
+    def test_kki_kompositions_manifest_has_normen(self) -> None:
+        km = build_kompositions_manifest(manifest_id="km-625-g")
+        self.assertGreater(len(km.normen), 0)
+
+    def test_kki_kompositions_manifest_has_ids(self) -> None:
+        km = build_kompositions_manifest(manifest_id="km-625-h")
+        self.assertTrue(all(len(n.musik_ids) > 0 for n in km.normen))
+
+    # --- #626 MusikgeschichtePakt ---
+    def test_kki_musikgeschichte_pakt_builds(self) -> None:
+        mgp = build_musikgeschichte_pakt(pakt_id="mgp-626-a")
+        self.assertIsInstance(mgp, MusikgeschichtePakt)
+
+    def test_kki_musikgeschichte_pakt_gesperrt_schutz_norm(self) -> None:
+        mgp = build_musikgeschichte_pakt(pakt_id="mgp-626-b")
+        self.assertTrue(any(n.geltung == MusikgeschichtePaktGeltung.GESPERRT for n in mgp.normen))
+
+    def test_kki_musikgeschichte_pakt_domain_geltung_norm(self) -> None:
+        mgp = build_musikgeschichte_pakt(pakt_id="mgp-626-c")
+        self.assertTrue(any(n.geltung == MusikgeschichtePaktGeltung.MUSIKHISTORISCH for n in mgp.normen))
+
+    def test_kki_musikgeschichte_pakt_grundlegend_norm(self) -> None:
+        mgp = build_musikgeschichte_pakt(pakt_id="mgp-626-d")
+        self.assertTrue(any(n.geltung == MusikgeschichtePaktGeltung.GRUNDLEGEND_MUSIKHISTORISCH for n in mgp.normen))
+
+    def test_kki_musikgeschichte_pakt_weight_float(self) -> None:
+        mgp = build_musikgeschichte_pakt(pakt_id="mgp-626-e")
+        self.assertTrue(all(isinstance(n.musik_weight, float) for n in mgp.normen))
+
+    def test_kki_musikgeschichte_pakt_tier_int(self) -> None:
+        mgp = build_musikgeschichte_pakt(pakt_id="mgp-626-f")
+        self.assertTrue(all(isinstance(n.musik_tier, int) for n in mgp.normen))
+
+    def test_kki_musikgeschichte_pakt_has_normen(self) -> None:
+        mgp = build_musikgeschichte_pakt(pakt_id="mgp-626-g")
+        self.assertGreater(len(mgp.normen), 0)
+
+    def test_kki_musikgeschichte_pakt_has_ids(self) -> None:
+        mgp = build_musikgeschichte_pakt(pakt_id="mgp-626-h")
+        self.assertTrue(all(len(n.musik_ids) > 0 for n in mgp.normen))
+
+    # --- #627 MusikEthnologieSenat ---
+    def test_kki_musikethnologie_senat_builds(self) -> None:
+        mes = build_musikethnologie_senat(senat_id="mes-627-a")
+        self.assertIsInstance(mes, MusikEthnologieSenat)
+
+    def test_kki_musikethnologie_senat_gesperrt_schutz_norm(self) -> None:
+        mes = build_musikethnologie_senat(senat_id="mes-627-b")
+        self.assertTrue(any(n.geltung == MusikEthnologieSenatGeltung.GESPERRT for n in mes.normen))
+
+    def test_kki_musikethnologie_senat_domain_geltung_norm(self) -> None:
+        mes = build_musikethnologie_senat(senat_id="mes-627-c")
+        self.assertTrue(any(n.geltung == MusikEthnologieSenatGeltung.MUSIKETHNOLOGISCH for n in mes.normen))
+
+    def test_kki_musikethnologie_senat_grundlegend_norm(self) -> None:
+        mes = build_musikethnologie_senat(senat_id="mes-627-d")
+        self.assertTrue(any(n.geltung == MusikEthnologieSenatGeltung.GRUNDLEGEND_MUSIKETHNOLOGISCH for n in mes.normen))
+
+    def test_kki_musikethnologie_senat_weight_float(self) -> None:
+        mes = build_musikethnologie_senat(senat_id="mes-627-e")
+        self.assertTrue(all(isinstance(n.musik_weight, float) for n in mes.normen))
+
+    def test_kki_musikethnologie_senat_tier_int(self) -> None:
+        mes = build_musikethnologie_senat(senat_id="mes-627-f")
+        self.assertTrue(all(isinstance(n.musik_tier, int) for n in mes.normen))
+
+    def test_kki_musikethnologie_senat_has_normen(self) -> None:
+        mes = build_musikethnologie_senat(senat_id="mes-627-g")
+        self.assertGreater(len(mes.normen), 0)
+
+    def test_kki_musikethnologie_senat_has_ids(self) -> None:
+        mes = build_musikethnologie_senat(senat_id="mes-627-h")
+        self.assertTrue(all(len(n.musik_ids) > 0 for n in mes.normen))
+
+    # --- #628 MusikNorm (*_norm pattern) ---
+    def test_kki_musik_norm_builds(self) -> None:
+        ns = build_musik_norm(norm_id="mn-628-a")
+        self.assertIsInstance(ns, MusikNormSatz)
+
+    def test_kki_musik_norm_gesperrt_eintrag(self) -> None:
+        ns = build_musik_norm(norm_id="mn-628-b")
+        self.assertTrue(any(e.geltung == MusikNormGeltung.GESPERRT for e in ns.normen))
+
+    def test_kki_musik_norm_normativ_eintrag(self) -> None:
+        ns = build_musik_norm(norm_id="mn-628-c")
+        self.assertTrue(any(e.geltung == MusikNormGeltung.MUSIKALISCH_NORMATIV for e in ns.normen))
+
+    def test_kki_musik_norm_grundlegend_eintrag(self) -> None:
+        ns = build_musik_norm(norm_id="mn-628-d")
+        self.assertTrue(any(e.geltung == MusikNormGeltung.GRUNDLEGEND_MUSIKALISCH_NORMATIV for e in ns.normen))
+
+    def test_kki_musik_norm_weight_float(self) -> None:
+        ns = build_musik_norm(norm_id="mn-628-e")
+        self.assertTrue(all(isinstance(e.musik_norm_weight, float) for e in ns.normen))
+
+    def test_kki_musik_norm_tier_int(self) -> None:
+        ns = build_musik_norm(norm_id="mn-628-f")
+        self.assertTrue(all(isinstance(e.musik_norm_tier, int) for e in ns.normen))
+
+    def test_kki_musik_norm_has_normen(self) -> None:
+        ns = build_musik_norm(norm_id="mn-628-g")
+        self.assertGreater(len(ns.normen), 0)
+
+    def test_kki_musik_norm_has_ids(self) -> None:
+        ns = build_musik_norm(norm_id="mn-628-h")
+        self.assertTrue(all(len(e.musik_norm_ids) > 0 for e in ns.normen))
+
+    # --- #629 AkustikCharta ---
+    def test_kki_akustik_charta_builds(self) -> None:
+        ac = build_akustik_charta(charta_id="ac-629-a")
+        self.assertIsInstance(ac, AkustikCharta)
+
+    def test_kki_akustik_charta_gesperrt_schutz_norm(self) -> None:
+        ac = build_akustik_charta(charta_id="ac-629-b")
+        self.assertTrue(any(n.geltung == AkustikChartaGeltung.GESPERRT for n in ac.normen))
+
+    def test_kki_akustik_charta_domain_geltung_norm(self) -> None:
+        ac = build_akustik_charta(charta_id="ac-629-c")
+        self.assertTrue(any(n.geltung == AkustikChartaGeltung.AKUSTISCH_SOUVERAEN for n in ac.normen))
+
+    def test_kki_akustik_charta_grundlegend_norm(self) -> None:
+        ac = build_akustik_charta(charta_id="ac-629-d")
+        self.assertTrue(any(n.geltung == AkustikChartaGeltung.GRUNDLEGEND_AKUSTISCH_SOUVERAEN for n in ac.normen))
+
+    def test_kki_akustik_charta_weight_float(self) -> None:
+        ac = build_akustik_charta(charta_id="ac-629-e")
+        self.assertTrue(all(isinstance(n.musik_weight, float) for n in ac.normen))
+
+    def test_kki_akustik_charta_tier_int(self) -> None:
+        ac = build_akustik_charta(charta_id="ac-629-f")
+        self.assertTrue(all(isinstance(n.musik_tier, int) for n in ac.normen))
+
+    def test_kki_akustik_charta_has_normen(self) -> None:
+        ac = build_akustik_charta(charta_id="ac-629-g")
+        self.assertGreater(len(ac.normen), 0)
+
+    def test_kki_akustik_charta_has_ids(self) -> None:
+        ac = build_akustik_charta(charta_id="ac-629-h")
+        self.assertTrue(all(len(n.musik_ids) > 0 for n in ac.normen))
+
+    # --- #630 MusikwissenschaftVerfassung (Block-Krone) ---
+    def test_kki_musikwissenschaft_verfassung_builds(self) -> None:
+        mv = build_musikwissenschaft_verfassung(verfassung_id="mv-630-a")
+        self.assertIsInstance(mv, MusikwissenschaftVerfassung)
+
+    def test_kki_musikwissenschaft_verfassung_gesperrt_schutz_norm(self) -> None:
+        mv = build_musikwissenschaft_verfassung(verfassung_id="mv-630-b")
+        self.assertTrue(any(n.geltung == MusikwissenschaftVerfassungGeltung.GESPERRT for n in mv.normen))
+
+    def test_kki_musikwissenschaft_verfassung_domain_geltung_norm(self) -> None:
+        mv = build_musikwissenschaft_verfassung(verfassung_id="mv-630-c")
+        self.assertTrue(any(n.geltung == MusikwissenschaftVerfassungGeltung.MUSIKWISS_SOUVERAEN for n in mv.normen))
+
+    def test_kki_musikwissenschaft_verfassung_grundlegend_norm(self) -> None:
+        mv = build_musikwissenschaft_verfassung(verfassung_id="mv-630-d")
+        self.assertTrue(any(n.geltung == MusikwissenschaftVerfassungGeltung.GRUNDLEGEND_MUSIKWISS_SOUVERAEN for n in mv.normen))
+
+    def test_kki_musikwissenschaft_verfassung_weight_float(self) -> None:
+        mv = build_musikwissenschaft_verfassung(verfassung_id="mv-630-e")
+        self.assertTrue(all(isinstance(n.musik_weight, float) for n in mv.normen))
+
+    def test_kki_musikwissenschaft_verfassung_tier_int(self) -> None:
+        mv = build_musikwissenschaft_verfassung(verfassung_id="mv-630-f")
+        self.assertTrue(all(isinstance(n.musik_tier, int) for n in mv.normen))
+
+    def test_kki_musikwissenschaft_verfassung_aggregates_verfassung_signal(self) -> None:
+        mv = build_musikwissenschaft_verfassung(verfassung_id="mv-630-g")
+        sig = mv.aggregates_verfassung_signal()
+        self.assertIsInstance(sig, dict)
+
+    def test_kki_musikwissenschaft_verfassung_norm_has_ids(self) -> None:
+        mv = build_musikwissenschaft_verfassung(verfassung_id="mv-630-h")
+        self.assertTrue(all(len(n.musik_ids) > 0 for n in mv.normen))
 

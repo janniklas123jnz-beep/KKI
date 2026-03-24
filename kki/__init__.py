@@ -2879,6 +2879,45 @@ from .religionswissenschaft_verfassung import (
     ReligionswissenschaftVerfassungGeltung, ReligionswissenschaftVerfassungsNorm, ReligionswissenschaftVerfassungProzedur, ReligionswissenschaftVerfassungTyp,
     ReligionswissenschaftVerfassung, build_religionswissenschaft_verfassung,
 )
+from .musik_feld import (
+    MusikFeldGeltung, MusikFeldNorm, MusikFeldProzedur, MusikFeldTyp,
+    MusikFeld, build_musik_feld,
+)
+from .harmonik_register import (
+    HarmonikRegisterGeltung, HarmonikRegisterNorm, HarmonikRegisterTyp,
+    HarmonikRegister, build_harmonik_register,
+)
+from .rhythmus_charta import (
+    RhythmusChartaGeltung, RhythmusChartaNorm, RhythmusChartaTyp,
+    RhythmusCharta, build_rhythmus_charta,
+)
+from .melodie_kodex import (
+    MelodieKodexGeltung, MelodieKodexNorm, MelodieKodexTyp,
+    MelodieKodex, build_melodie_kodex,
+)
+from .kompositions_manifest import (
+    KompositionsManifestGeltung, KompositionsManifestNorm, KompositionsManifestTyp,
+    KompositionsManifest, build_kompositions_manifest,
+)
+from .musikgeschichte_pakt import (
+    MusikgeschichtePaktGeltung, MusikgeschichtePaktNorm, MusikgeschichtePaktTyp,
+    MusikgeschichtePakt, build_musikgeschichte_pakt,
+)
+from .musikethnologie_senat import (
+    MusikEthnologieSenatGeltung, MusikEthnologieSenatNorm, MusikEthnologieSenatTyp,
+    MusikEthnologieSenat, build_musikethnologie_senat,
+)
+from .musik_norm import (
+    MusikNormTyp, MusikNormProzedur, MusikNormGeltung, MusikNormEintrag, MusikNormSatz, build_musik_norm,
+)
+from .akustik_charta import (
+    AkustikChartaGeltung, AkustikChartaNorm, AkustikChartaProzedur, AkustikChartaTyp,
+    AkustikCharta, build_akustik_charta,
+)
+from .musikwissenschaft_verfassung import (
+    MusikwissenschaftVerfassungGeltung, MusikwissenschaftVerfassungsNorm, MusikwissenschaftVerfassungProzedur, MusikwissenschaftVerfassungTyp,
+    MusikwissenschaftVerfassung, build_musikwissenschaft_verfassung,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -4693,4 +4732,23 @@ __all__ = [
     "SakraleCharta", "build_sakrale_charta",
     "ReligionswissenschaftVerfassungGeltung", "ReligionswissenschaftVerfassungsNorm", "ReligionswissenschaftVerfassungProzedur", "ReligionswissenschaftVerfassungTyp",
     "ReligionswissenschaftVerfassung", "build_religionswissenschaft_verfassung",
+    "MusikFeldGeltung", "MusikFeldNorm", "MusikFeldProzedur", "MusikFeldTyp",
+    "MusikFeld", "build_musik_feld",
+    "HarmonikRegisterGeltung", "HarmonikRegisterNorm", "HarmonikRegisterTyp",
+    "HarmonikRegister", "build_harmonik_register",
+    "RhythmusChartaGeltung", "RhythmusChartaNorm", "RhythmusChartaTyp",
+    "RhythmusCharta", "build_rhythmus_charta",
+    "MelodieKodexGeltung", "MelodieKodexNorm", "MelodieKodexTyp",
+    "MelodieKodex", "build_melodie_kodex",
+    "KompositionsManifestGeltung", "KompositionsManifestNorm", "KompositionsManifestTyp",
+    "KompositionsManifest", "build_kompositions_manifest",
+    "MusikgeschichtePaktGeltung", "MusikgeschichtePaktNorm", "MusikgeschichtePaktTyp",
+    "MusikgeschichtePakt", "build_musikgeschichte_pakt",
+    "MusikEthnologieSenatGeltung", "MusikEthnologieSenatNorm", "MusikEthnologieSenatTyp",
+    "MusikEthnologieSenat", "build_musikethnologie_senat",
+    "MusikNormTyp", "MusikNormProzedur", "MusikNormGeltung", "MusikNormEintrag", "MusikNormSatz", "build_musik_norm",
+    "AkustikChartaGeltung", "AkustikChartaNorm", "AkustikChartaProzedur", "AkustikChartaTyp",
+    "AkustikCharta", "build_akustik_charta",
+    "MusikwissenschaftVerfassungGeltung", "MusikwissenschaftVerfassungsNorm", "MusikwissenschaftVerfassungProzedur", "MusikwissenschaftVerfassungTyp",
+    "MusikwissenschaftVerfassung", "build_musikwissenschaft_verfassung",
 ]

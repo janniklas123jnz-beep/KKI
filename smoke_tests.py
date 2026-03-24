@@ -2534,6 +2534,20 @@ REPO_ROOT = Path(__file__).resolve().parent
 PYTHON = sys.executable
 
 
+# ---------------------------------------------------------------------------
+# Block #611–620 — Religionswissenschaft & Theologie
+# ---------------------------------------------------------------------------
+from kki.religions_feld import ReligionsFeld, ReligionsFeldGeltung, build_religions_feld
+from kki.mythos_register import MythosRegister, MythosRegisterGeltung, build_mythos_register
+from kki.heilige_tradition_charta import HeiligeTraditionCharta, HeiligeTraditionChartaGeltung, build_heilige_tradition_charta
+from kki.theologie_kodex import TheologieKodex, TheologieKodexGeltung, build_theologie_kodex
+from kki.glaubens_manifest import GlaubensManifest, GlaubensManifestGeltung, build_glaubens_manifest
+from kki.spiritualitaets_pakt import SpiritualitaetsPakt, SpiritualitaetsPaktGeltung, build_spiritualitaets_pakt
+from kki.religionsphilosophie_senat import ReligionsphilosophieSenat, ReligionsphilosophieSenatGeltung, build_religionsphilosophie_senat
+from kki.religions_norm import ReligionsNormSatz, ReligionsNormGeltung, build_religions_norm
+from kki.sakrale_charta import SakraleCharta, SakraleChartaGeltung, build_sakrale_charta
+from kki.religionswissenschaft_verfassung import ReligionswissenschaftVerfassung, ReligionswissenschaftVerfassungGeltung, build_religionswissenschaft_verfassung
+
 class SmokeTests(unittest.TestCase):
     def run_script(
         self,
@@ -22683,3 +22697,334 @@ class SmokeTests(unittest.TestCase):
     def test_kki_sprachwissenschaft_verfassung_norm_has_ids(self) -> None:
         v = build_sprachwissenschaft_verfassung(verfassung_id="sv-610-h")
         self.assertTrue(all(len(n.linguistik_ids) > 0 for n in v.normen))
+    # --- #611 ReligionsFeld ---
+    def test_kki_religions_feld_builds(self) -> None:
+        rf = build_religions_feld(feld_id="rf-611-a")
+        self.assertIsInstance(rf, ReligionsFeld)
+
+    def test_kki_religions_feld_gesperrt_schutz_norm(self) -> None:
+        rf = build_religions_feld(feld_id="rf-611-b")
+        self.assertTrue(any(n.geltung == ReligionsFeldGeltung.GESPERRT for n in rf.normen))
+
+    def test_kki_religions_feld_domain_geltung_norm(self) -> None:
+        rf = build_religions_feld(feld_id="rf-611-c")
+        self.assertTrue(any(n.geltung == ReligionsFeldGeltung.RELIGIOES_SOUVERAEN for n in rf.normen))
+
+    def test_kki_religions_feld_grundlegend_norm(self) -> None:
+        rf = build_religions_feld(feld_id="rf-611-d")
+        self.assertTrue(any(n.geltung == ReligionsFeldGeltung.GRUNDLEGEND_RELIGIOES_SOUVERAEN for n in rf.normen))
+
+    def test_kki_religions_feld_weight_float(self) -> None:
+        rf = build_religions_feld(feld_id="rf-611-e")
+        self.assertTrue(all(isinstance(n.religions_weight, float) for n in rf.normen))
+
+    def test_kki_religions_feld_tier_int(self) -> None:
+        rf = build_religions_feld(feld_id="rf-611-f")
+        self.assertTrue(all(isinstance(n.religions_tier, int) for n in rf.normen))
+
+    def test_kki_religions_feld_has_normen(self) -> None:
+        rf = build_religions_feld(feld_id="rf-611-g")
+        self.assertGreater(len(rf.normen), 0)
+
+    def test_kki_religions_feld_has_ids(self) -> None:
+        rf = build_religions_feld(feld_id="rf-611-h")
+        self.assertTrue(all(len(n.religions_ids) > 0 for n in rf.normen))
+
+    # --- #612 MythosRegister ---
+    def test_kki_mythos_register_builds(self) -> None:
+        mr = build_mythos_register(register_id="mr-612-a")
+        self.assertIsInstance(mr, MythosRegister)
+
+    def test_kki_mythos_register_gesperrt_schutz_norm(self) -> None:
+        mr = build_mythos_register(register_id="mr-612-b")
+        self.assertTrue(any(n.geltung == MythosRegisterGeltung.GESPERRT for n in mr.normen))
+
+    def test_kki_mythos_register_domain_geltung_norm(self) -> None:
+        mr = build_mythos_register(register_id="mr-612-c")
+        self.assertTrue(any(n.geltung == MythosRegisterGeltung.MYTHOLOGISCH for n in mr.normen))
+
+    def test_kki_mythos_register_grundlegend_norm(self) -> None:
+        mr = build_mythos_register(register_id="mr-612-d")
+        self.assertTrue(any(n.geltung == MythosRegisterGeltung.GRUNDLEGEND_MYTHOLOGISCH for n in mr.normen))
+
+    def test_kki_mythos_register_weight_float(self) -> None:
+        mr = build_mythos_register(register_id="mr-612-e")
+        self.assertTrue(all(isinstance(n.religions_weight, float) for n in mr.normen))
+
+    def test_kki_mythos_register_tier_int(self) -> None:
+        mr = build_mythos_register(register_id="mr-612-f")
+        self.assertTrue(all(isinstance(n.religions_tier, int) for n in mr.normen))
+
+    def test_kki_mythos_register_has_normen(self) -> None:
+        mr = build_mythos_register(register_id="mr-612-g")
+        self.assertGreater(len(mr.normen), 0)
+
+    def test_kki_mythos_register_has_ids(self) -> None:
+        mr = build_mythos_register(register_id="mr-612-h")
+        self.assertTrue(all(len(n.religions_ids) > 0 for n in mr.normen))
+
+    # --- #613 HeiligeTraditionCharta ---
+    def test_kki_heilige_tradition_charta_builds(self) -> None:
+        htc = build_heilige_tradition_charta(charta_id="htc-613-a")
+        self.assertIsInstance(htc, HeiligeTraditionCharta)
+
+    def test_kki_heilige_tradition_charta_gesperrt_schutz_norm(self) -> None:
+        htc = build_heilige_tradition_charta(charta_id="htc-613-b")
+        self.assertTrue(any(n.geltung == HeiligeTraditionChartaGeltung.GESPERRT for n in htc.normen))
+
+    def test_kki_heilige_tradition_charta_domain_geltung_norm(self) -> None:
+        htc = build_heilige_tradition_charta(charta_id="htc-613-c")
+        self.assertTrue(any(n.geltung == HeiligeTraditionChartaGeltung.TRADITIONELL_HEILIG for n in htc.normen))
+
+    def test_kki_heilige_tradition_charta_grundlegend_norm(self) -> None:
+        htc = build_heilige_tradition_charta(charta_id="htc-613-d")
+        self.assertTrue(any(n.geltung == HeiligeTraditionChartaGeltung.GRUNDLEGEND_TRADITIONELL_HEILIG for n in htc.normen))
+
+    def test_kki_heilige_tradition_charta_weight_float(self) -> None:
+        htc = build_heilige_tradition_charta(charta_id="htc-613-e")
+        self.assertTrue(all(isinstance(n.religions_weight, float) for n in htc.normen))
+
+    def test_kki_heilige_tradition_charta_tier_int(self) -> None:
+        htc = build_heilige_tradition_charta(charta_id="htc-613-f")
+        self.assertTrue(all(isinstance(n.religions_tier, int) for n in htc.normen))
+
+    def test_kki_heilige_tradition_charta_has_normen(self) -> None:
+        htc = build_heilige_tradition_charta(charta_id="htc-613-g")
+        self.assertGreater(len(htc.normen), 0)
+
+    def test_kki_heilige_tradition_charta_has_ids(self) -> None:
+        htc = build_heilige_tradition_charta(charta_id="htc-613-h")
+        self.assertTrue(all(len(n.religions_ids) > 0 for n in htc.normen))
+
+    # --- #614 TheologieKodex ---
+    def test_kki_theologie_kodex_builds(self) -> None:
+        tk = build_theologie_kodex(kodex_id="tk-614-a")
+        self.assertIsInstance(tk, TheologieKodex)
+
+    def test_kki_theologie_kodex_gesperrt_schutz_norm(self) -> None:
+        tk = build_theologie_kodex(kodex_id="tk-614-b")
+        self.assertTrue(any(n.geltung == TheologieKodexGeltung.GESPERRT for n in tk.normen))
+
+    def test_kki_theologie_kodex_domain_geltung_norm(self) -> None:
+        tk = build_theologie_kodex(kodex_id="tk-614-c")
+        self.assertTrue(any(n.geltung == TheologieKodexGeltung.THEOLOGISCH for n in tk.normen))
+
+    def test_kki_theologie_kodex_grundlegend_norm(self) -> None:
+        tk = build_theologie_kodex(kodex_id="tk-614-d")
+        self.assertTrue(any(n.geltung == TheologieKodexGeltung.GRUNDLEGEND_THEOLOGISCH for n in tk.normen))
+
+    def test_kki_theologie_kodex_weight_float(self) -> None:
+        tk = build_theologie_kodex(kodex_id="tk-614-e")
+        self.assertTrue(all(isinstance(n.religions_weight, float) for n in tk.normen))
+
+    def test_kki_theologie_kodex_tier_int(self) -> None:
+        tk = build_theologie_kodex(kodex_id="tk-614-f")
+        self.assertTrue(all(isinstance(n.religions_tier, int) for n in tk.normen))
+
+    def test_kki_theologie_kodex_has_normen(self) -> None:
+        tk = build_theologie_kodex(kodex_id="tk-614-g")
+        self.assertGreater(len(tk.normen), 0)
+
+    def test_kki_theologie_kodex_has_ids(self) -> None:
+        tk = build_theologie_kodex(kodex_id="tk-614-h")
+        self.assertTrue(all(len(n.religions_ids) > 0 for n in tk.normen))
+
+    # --- #615 GlaubensManifest ---
+    def test_kki_glaubens_manifest_builds(self) -> None:
+        gm = build_glaubens_manifest(manifest_id="gm-615-a")
+        self.assertIsInstance(gm, GlaubensManifest)
+
+    def test_kki_glaubens_manifest_gesperrt_schutz_norm(self) -> None:
+        gm = build_glaubens_manifest(manifest_id="gm-615-b")
+        self.assertTrue(any(n.geltung == GlaubensManifestGeltung.GESPERRT for n in gm.normen))
+
+    def test_kki_glaubens_manifest_domain_geltung_norm(self) -> None:
+        gm = build_glaubens_manifest(manifest_id="gm-615-c")
+        self.assertTrue(any(n.geltung == GlaubensManifestGeltung.GLAEUBIG for n in gm.normen))
+
+    def test_kki_glaubens_manifest_grundlegend_norm(self) -> None:
+        gm = build_glaubens_manifest(manifest_id="gm-615-d")
+        self.assertTrue(any(n.geltung == GlaubensManifestGeltung.GRUNDLEGEND_GLAEUBIG for n in gm.normen))
+
+    def test_kki_glaubens_manifest_weight_float(self) -> None:
+        gm = build_glaubens_manifest(manifest_id="gm-615-e")
+        self.assertTrue(all(isinstance(n.religions_weight, float) for n in gm.normen))
+
+    def test_kki_glaubens_manifest_tier_int(self) -> None:
+        gm = build_glaubens_manifest(manifest_id="gm-615-f")
+        self.assertTrue(all(isinstance(n.religions_tier, int) for n in gm.normen))
+
+    def test_kki_glaubens_manifest_has_normen(self) -> None:
+        gm = build_glaubens_manifest(manifest_id="gm-615-g")
+        self.assertGreater(len(gm.normen), 0)
+
+    def test_kki_glaubens_manifest_has_ids(self) -> None:
+        gm = build_glaubens_manifest(manifest_id="gm-615-h")
+        self.assertTrue(all(len(n.religions_ids) > 0 for n in gm.normen))
+
+    # --- #616 SpiritualitaetsPakt ---
+    def test_kki_spiritualitaets_pakt_builds(self) -> None:
+        sp = build_spiritualitaets_pakt(pakt_id="sp-616-a")
+        self.assertIsInstance(sp, SpiritualitaetsPakt)
+
+    def test_kki_spiritualitaets_pakt_gesperrt_schutz_norm(self) -> None:
+        sp = build_spiritualitaets_pakt(pakt_id="sp-616-b")
+        self.assertTrue(any(n.geltung == SpiritualitaetsPaktGeltung.GESPERRT for n in sp.normen))
+
+    def test_kki_spiritualitaets_pakt_domain_geltung_norm(self) -> None:
+        sp = build_spiritualitaets_pakt(pakt_id="sp-616-c")
+        self.assertTrue(any(n.geltung == SpiritualitaetsPaktGeltung.SPIRITUELL for n in sp.normen))
+
+    def test_kki_spiritualitaets_pakt_grundlegend_norm(self) -> None:
+        sp = build_spiritualitaets_pakt(pakt_id="sp-616-d")
+        self.assertTrue(any(n.geltung == SpiritualitaetsPaktGeltung.GRUNDLEGEND_SPIRITUELL for n in sp.normen))
+
+    def test_kki_spiritualitaets_pakt_weight_float(self) -> None:
+        sp = build_spiritualitaets_pakt(pakt_id="sp-616-e")
+        self.assertTrue(all(isinstance(n.religions_weight, float) for n in sp.normen))
+
+    def test_kki_spiritualitaets_pakt_tier_int(self) -> None:
+        sp = build_spiritualitaets_pakt(pakt_id="sp-616-f")
+        self.assertTrue(all(isinstance(n.religions_tier, int) for n in sp.normen))
+
+    def test_kki_spiritualitaets_pakt_has_normen(self) -> None:
+        sp = build_spiritualitaets_pakt(pakt_id="sp-616-g")
+        self.assertGreater(len(sp.normen), 0)
+
+    def test_kki_spiritualitaets_pakt_has_ids(self) -> None:
+        sp = build_spiritualitaets_pakt(pakt_id="sp-616-h")
+        self.assertTrue(all(len(n.religions_ids) > 0 for n in sp.normen))
+
+    # --- #617 ReligionsphilosophieSenat ---
+    def test_kki_religionsphilosophie_senat_builds(self) -> None:
+        rs = build_religionsphilosophie_senat(senat_id="rs-617-a")
+        self.assertIsInstance(rs, ReligionsphilosophieSenat)
+
+    def test_kki_religionsphilosophie_senat_gesperrt_schutz_norm(self) -> None:
+        rs = build_religionsphilosophie_senat(senat_id="rs-617-b")
+        self.assertTrue(any(n.geltung == ReligionsphilosophieSenatGeltung.GESPERRT for n in rs.normen))
+
+    def test_kki_religionsphilosophie_senat_domain_geltung_norm(self) -> None:
+        rs = build_religionsphilosophie_senat(senat_id="rs-617-c")
+        self.assertTrue(any(n.geltung == ReligionsphilosophieSenatGeltung.RELIGIONSPHILOSOPHISCH for n in rs.normen))
+
+    def test_kki_religionsphilosophie_senat_grundlegend_norm(self) -> None:
+        rs = build_religionsphilosophie_senat(senat_id="rs-617-d")
+        self.assertTrue(any(n.geltung == ReligionsphilosophieSenatGeltung.GRUNDLEGEND_RELIGIONSPHILOSOPHISCH for n in rs.normen))
+
+    def test_kki_religionsphilosophie_senat_weight_float(self) -> None:
+        rs = build_religionsphilosophie_senat(senat_id="rs-617-e")
+        self.assertTrue(all(isinstance(n.religions_weight, float) for n in rs.normen))
+
+    def test_kki_religionsphilosophie_senat_tier_int(self) -> None:
+        rs = build_religionsphilosophie_senat(senat_id="rs-617-f")
+        self.assertTrue(all(isinstance(n.religions_tier, int) for n in rs.normen))
+
+    def test_kki_religionsphilosophie_senat_has_normen(self) -> None:
+        rs = build_religionsphilosophie_senat(senat_id="rs-617-g")
+        self.assertGreater(len(rs.normen), 0)
+
+    def test_kki_religionsphilosophie_senat_has_ids(self) -> None:
+        rs = build_religionsphilosophie_senat(senat_id="rs-617-h")
+        self.assertTrue(all(len(n.religions_ids) > 0 for n in rs.normen))
+
+    # --- #618 ReligionsNorm (*_norm pattern) ---
+    def test_kki_religions_norm_builds(self) -> None:
+        ns = build_religions_norm(norm_id="rn-618-a")
+        self.assertIsInstance(ns, ReligionsNormSatz)
+
+    def test_kki_religions_norm_gesperrt_eintrag(self) -> None:
+        ns = build_religions_norm(norm_id="rn-618-b")
+        self.assertTrue(any(e.geltung == ReligionsNormGeltung.GESPERRT for e in ns.normen))
+
+    def test_kki_religions_norm_normativ_eintrag(self) -> None:
+        ns = build_religions_norm(norm_id="rn-618-c")
+        self.assertTrue(any(e.geltung == ReligionsNormGeltung.RELIGIOES_NORMATIV for e in ns.normen))
+
+    def test_kki_religions_norm_grundlegend_eintrag(self) -> None:
+        ns = build_religions_norm(norm_id="rn-618-d")
+        self.assertTrue(any(e.geltung == ReligionsNormGeltung.GRUNDLEGEND_RELIGIOES_NORMATIV for e in ns.normen))
+
+    def test_kki_religions_norm_weight_float(self) -> None:
+        ns = build_religions_norm(norm_id="rn-618-e")
+        self.assertTrue(all(isinstance(e.religions_norm_weight, float) for e in ns.normen))
+
+    def test_kki_religions_norm_tier_int(self) -> None:
+        ns = build_religions_norm(norm_id="rn-618-f")
+        self.assertTrue(all(isinstance(e.religions_norm_tier, int) for e in ns.normen))
+
+    def test_kki_religions_norm_has_normen(self) -> None:
+        ns = build_religions_norm(norm_id="rn-618-g")
+        self.assertGreater(len(ns.normen), 0)
+
+    def test_kki_religions_norm_has_ids(self) -> None:
+        ns = build_religions_norm(norm_id="rn-618-h")
+        self.assertTrue(all(len(e.religions_norm_ids) > 0 for e in ns.normen))
+
+    # --- #619 SakraleCharta ---
+    def test_kki_sakrale_charta_builds(self) -> None:
+        sc = build_sakrale_charta(charta_id="sc-619-a")
+        self.assertIsInstance(sc, SakraleCharta)
+
+    def test_kki_sakrale_charta_gesperrt_schutz_norm(self) -> None:
+        sc = build_sakrale_charta(charta_id="sc-619-b")
+        self.assertTrue(any(n.geltung == SakraleChartaGeltung.GESPERRT for n in sc.normen))
+
+    def test_kki_sakrale_charta_domain_geltung_norm(self) -> None:
+        sc = build_sakrale_charta(charta_id="sc-619-c")
+        self.assertTrue(any(n.geltung == SakraleChartaGeltung.SAKRAL_SOUVERAEN for n in sc.normen))
+
+    def test_kki_sakrale_charta_grundlegend_norm(self) -> None:
+        sc = build_sakrale_charta(charta_id="sc-619-d")
+        self.assertTrue(any(n.geltung == SakraleChartaGeltung.GRUNDLEGEND_SAKRAL_SOUVERAEN for n in sc.normen))
+
+    def test_kki_sakrale_charta_weight_float(self) -> None:
+        sc = build_sakrale_charta(charta_id="sc-619-e")
+        self.assertTrue(all(isinstance(n.religions_weight, float) for n in sc.normen))
+
+    def test_kki_sakrale_charta_tier_int(self) -> None:
+        sc = build_sakrale_charta(charta_id="sc-619-f")
+        self.assertTrue(all(isinstance(n.religions_tier, int) for n in sc.normen))
+
+    def test_kki_sakrale_charta_has_normen(self) -> None:
+        sc = build_sakrale_charta(charta_id="sc-619-g")
+        self.assertGreater(len(sc.normen), 0)
+
+    def test_kki_sakrale_charta_has_ids(self) -> None:
+        sc = build_sakrale_charta(charta_id="sc-619-h")
+        self.assertTrue(all(len(n.religions_ids) > 0 for n in sc.normen))
+
+    # --- #620 ReligionswissenschaftVerfassung (Block-Krone) ---
+    def test_kki_religionswissenschaft_verfassung_builds(self) -> None:
+        rv = build_religionswissenschaft_verfassung(verfassung_id="rv-620-a")
+        self.assertIsInstance(rv, ReligionswissenschaftVerfassung)
+
+    def test_kki_religionswissenschaft_verfassung_gesperrt_schutz_norm(self) -> None:
+        rv = build_religionswissenschaft_verfassung(verfassung_id="rv-620-b")
+        self.assertTrue(any(n.geltung == ReligionswissenschaftVerfassungGeltung.GESPERRT for n in rv.normen))
+
+    def test_kki_religionswissenschaft_verfassung_domain_geltung_norm(self) -> None:
+        rv = build_religionswissenschaft_verfassung(verfassung_id="rv-620-c")
+        self.assertTrue(any(n.geltung == ReligionswissenschaftVerfassungGeltung.RELWISS_SOUVERAEN for n in rv.normen))
+
+    def test_kki_religionswissenschaft_verfassung_grundlegend_norm(self) -> None:
+        rv = build_religionswissenschaft_verfassung(verfassung_id="rv-620-d")
+        self.assertTrue(any(n.geltung == ReligionswissenschaftVerfassungGeltung.GRUNDLEGEND_RELWISS_SOUVERAEN for n in rv.normen))
+
+    def test_kki_religionswissenschaft_verfassung_weight_float(self) -> None:
+        rv = build_religionswissenschaft_verfassung(verfassung_id="rv-620-e")
+        self.assertTrue(all(isinstance(n.religions_weight, float) for n in rv.normen))
+
+    def test_kki_religionswissenschaft_verfassung_tier_int(self) -> None:
+        rv = build_religionswissenschaft_verfassung(verfassung_id="rv-620-f")
+        self.assertTrue(all(isinstance(n.religions_tier, int) for n in rv.normen))
+
+    def test_kki_religionswissenschaft_verfassung_aggregates_verfassung_signal(self) -> None:
+        rv = build_religionswissenschaft_verfassung(verfassung_id="rv-620-g")
+        sig = rv.aggregates_verfassung_signal()
+        self.assertIsInstance(sig, dict)
+
+    def test_kki_religionswissenschaft_verfassung_norm_has_ids(self) -> None:
+        rv = build_religionswissenschaft_verfassung(verfassung_id="rv-620-h")
+        self.assertTrue(all(len(n.religions_ids) > 0 for n in rv.normen))
+

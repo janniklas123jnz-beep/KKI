@@ -2840,6 +2840,45 @@ from .sprachwissenschaft_verfassung import (
     SprachwissenschaftVerfassungGeltung, SprachwissenschaftVerfassungsNorm, SprachwissenschaftVerfassungProzedur, SprachwissenschaftVerfassungTyp,
     SprachwissenschaftVerfassung, build_sprachwissenschaft_verfassung,
 )
+from .religions_feld import (
+    ReligionsFeldGeltung, ReligionsFeldNorm, ReligionsFeldProzedur, ReligionsFeldTyp,
+    ReligionsFeld, build_religions_feld,
+)
+from .mythos_register import (
+    MythosRegisterGeltung, MythosRegisterNorm, MythosRegisterTyp,
+    MythosRegister, build_mythos_register,
+)
+from .heilige_tradition_charta import (
+    HeiligeTraditionChartaGeltung, HeiligeTraditionChartaNorm, HeiligeTraditionChartaTyp,
+    HeiligeTraditionCharta, build_heilige_tradition_charta,
+)
+from .theologie_kodex import (
+    TheologieKodexGeltung, TheologieKodexNorm, TheologieKodexTyp,
+    TheologieKodex, build_theologie_kodex,
+)
+from .glaubens_manifest import (
+    GlaubensManifestGeltung, GlaubensManifestNorm, GlaubensManifestTyp,
+    GlaubensManifest, build_glaubens_manifest,
+)
+from .spiritualitaets_pakt import (
+    SpiritualitaetsPaktGeltung, SpiritualitaetsPaktNorm, SpiritualitaetsPaktTyp,
+    SpiritualitaetsPakt, build_spiritualitaets_pakt,
+)
+from .religionsphilosophie_senat import (
+    ReligionsphilosophieSenatGeltung, ReligionsphilosophieSenatNorm, ReligionsphilosophieSenatTyp,
+    ReligionsphilosophieSenat, build_religionsphilosophie_senat,
+)
+from .religions_norm import (
+    ReligionsNormTyp, ReligionsNormProzedur, ReligionsNormGeltung, ReligionsNormEintrag, ReligionsNormSatz, build_religions_norm,
+)
+from .sakrale_charta import (
+    SakraleChartaGeltung, SakraleChartaNorm, SakraleChartaProzedur, SakraleChartaTyp,
+    SakraleCharta, build_sakrale_charta,
+)
+from .religionswissenschaft_verfassung import (
+    ReligionswissenschaftVerfassungGeltung, ReligionswissenschaftVerfassungsNorm, ReligionswissenschaftVerfassungProzedur, ReligionswissenschaftVerfassungTyp,
+    ReligionswissenschaftVerfassung, build_religionswissenschaft_verfassung,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -4635,4 +4674,23 @@ __all__ = [
     "SemiotikCharta", "build_semiotik_charta",
     "SprachwissenschaftVerfassungGeltung", "SprachwissenschaftVerfassungsNorm", "SprachwissenschaftVerfassungProzedur", "SprachwissenschaftVerfassungTyp",
     "SprachwissenschaftVerfassung", "build_sprachwissenschaft_verfassung",
+    "ReligionsFeldGeltung", "ReligionsFeldNorm", "ReligionsFeldProzedur", "ReligionsFeldTyp",
+    "ReligionsFeld", "build_religions_feld",
+    "MythosRegisterGeltung", "MythosRegisterNorm", "MythosRegisterTyp",
+    "MythosRegister", "build_mythos_register",
+    "HeiligeTraditionChartaGeltung", "HeiligeTraditionChartaNorm", "HeiligeTraditionChartaTyp",
+    "HeiligeTraditionCharta", "build_heilige_tradition_charta",
+    "TheologieKodexGeltung", "TheologieKodexNorm", "TheologieKodexTyp",
+    "TheologieKodex", "build_theologie_kodex",
+    "GlaubensManifestGeltung", "GlaubensManifestNorm", "GlaubensManifestTyp",
+    "GlaubensManifest", "build_glaubens_manifest",
+    "SpiritualitaetsPaktGeltung", "SpiritualitaetsPaktNorm", "SpiritualitaetsPaktTyp",
+    "SpiritualitaetsPakt", "build_spiritualitaets_pakt",
+    "ReligionsphilosophieSenatGeltung", "ReligionsphilosophieSenatNorm", "ReligionsphilosophieSenatTyp",
+    "ReligionsphilosophieSenat", "build_religionsphilosophie_senat",
+    "ReligionsNormTyp", "ReligionsNormProzedur", "ReligionsNormGeltung", "ReligionsNormEintrag", "ReligionsNormSatz", "build_religions_norm",
+    "SakraleChartaGeltung", "SakraleChartaNorm", "SakraleChartaProzedur", "SakraleChartaTyp",
+    "SakraleCharta", "build_sakrale_charta",
+    "ReligionswissenschaftVerfassungGeltung", "ReligionswissenschaftVerfassungsNorm", "ReligionswissenschaftVerfassungProzedur", "ReligionswissenschaftVerfassungTyp",
+    "ReligionswissenschaftVerfassung", "build_religionswissenschaft_verfassung",
 ]

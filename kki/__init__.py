@@ -2716,6 +2716,46 @@ from .kunst_verfassung import (
     KunstVerfassungsGeltung, KunstVerfassungsNorm, KunstVerfassungsProzedur, KunstVerfassungsTyp,
     KunstVerfassung, build_kunst_verfassung,
 )
+from .paedagogik_feld import (
+    PaedagogikFeldGeltung, PaedagogikFeldNorm, PaedagogikFeldProzedur, PaedagogikFeldTyp,
+    PaedagogikFeld, build_paedagogik_feld,
+)
+from .bildungstheorie_register import (
+    BildungstheorieRegisterGeltung, BildungstheorieRegisterNorm, BildungstheorieRegisterProzedur, BildungstheorieRegisterTyp,
+    BildungstheorieRegister, build_bildungstheorie_register,
+)
+from .lerntheorie_charta import (
+    LerntheorieChartaGeltung, LerntheorieChartaNorm, LerntheorieChartaProzedur, LerntheorieChartaTyp,
+    LerntheorieCharta, build_lerntheorie_charta,
+)
+from .didaktik_kodex import (
+    DidaktikKodexGeltung, DidaktikKodexNorm, DidaktikKodexProzedur, DidaktikKodexTyp,
+    DidaktikKodex, build_didaktik_kodex,
+)
+from .curriculum_manifest import (
+    CurriculumManifestGeltung, CurriculumManifestNorm, CurriculumManifestProzedur, CurriculumManifestTyp,
+    CurriculumManifest, build_curriculum_manifest,
+)
+from .bildungsinstitution_pakt import (
+    BildungsinstitutionPaktGeltung, BildungsinstitutionPaktNorm, BildungsinstitutionPaktProzedur, BildungsinstitutionPaktTyp,
+    BildungsinstitutionPakt, build_bildungsinstitution_pakt,
+)
+from .paedagogik_senat import (
+    PaedagogikSenatGeltung, PaedagogikSenatNorm, PaedagogikSenatProzedur, PaedagogikSenatTyp,
+    PaedagogikSenat, build_paedagogik_senat,
+)
+from .paedagogik_norm import (
+    PaedagogikNormTyp, PaedagogikNormProzedur, PaedagogikNormGeltung, PaedagogikNormEintrag, PaedagogikNormSatz, build_paedagogik_norm,
+)
+from .bildungsphilosophie_charta import (
+    BildungsphilosophieChartaGeltung, BildungsphilosophieChartaNorm,
+    BildungsphilosophieChartaProzedur, BildungsphilosophieChartaTyp,
+    BildungsphilosophieCharta, build_bildungsphilosophie_charta,
+)
+from .paedagogik_verfassung import (
+    PaedagogikVerfassungsGeltung, PaedagogikVerfassungsNorm, PaedagogikVerfassungsProzedur, PaedagogikVerfassungsTyp,
+    PaedagogikVerfassung, build_paedagogik_verfassung,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -4454,4 +4494,23 @@ __all__ = [
     "AesthetischeUrteilsCharta", "build_aesthetische_urteils_charta",
     "KunstVerfassungsGeltung", "KunstVerfassungsNorm", "KunstVerfassungsProzedur", "KunstVerfassungsTyp",
     "KunstVerfassung", "build_kunst_verfassung",
+    "PaedagogikFeldGeltung", "PaedagogikFeldNorm", "PaedagogikFeldProzedur", "PaedagogikFeldTyp",
+    "PaedagogikFeld", "build_paedagogik_feld",
+    "BildungstheorieRegisterGeltung", "BildungstheorieRegisterNorm", "BildungstheorieRegisterProzedur", "BildungstheorieRegisterTyp",
+    "BildungstheorieRegister", "build_bildungstheorie_register",
+    "LerntheorieChartaGeltung", "LerntheorieChartaNorm", "LerntheorieChartaProzedur", "LerntheorieChartaTyp",
+    "LerntheorieCharta", "build_lerntheorie_charta",
+    "DidaktikKodexGeltung", "DidaktikKodexNorm", "DidaktikKodexProzedur", "DidaktikKodexTyp",
+    "DidaktikKodex", "build_didaktik_kodex",
+    "CurriculumManifestGeltung", "CurriculumManifestNorm", "CurriculumManifestProzedur", "CurriculumManifestTyp",
+    "CurriculumManifest", "build_curriculum_manifest",
+    "BildungsinstitutionPaktGeltung", "BildungsinstitutionPaktNorm", "BildungsinstitutionPaktProzedur", "BildungsinstitutionPaktTyp",
+    "BildungsinstitutionPakt", "build_bildungsinstitution_pakt",
+    "PaedagogikSenatGeltung", "PaedagogikSenatNorm", "PaedagogikSenatProzedur", "PaedagogikSenatTyp",
+    "PaedagogikSenat", "build_paedagogik_senat",
+    "PaedagogikNormTyp", "PaedagogikNormProzedur", "PaedagogikNormGeltung", "PaedagogikNormEintrag", "PaedagogikNormSatz", "build_paedagogik_norm",
+    "BildungsphilosophieChartaGeltung", "BildungsphilosophieChartaNorm", "BildungsphilosophieChartaProzedur", "BildungsphilosophieChartaTyp",
+    "BildungsphilosophieCharta", "build_bildungsphilosophie_charta",
+    "PaedagogikVerfassungsGeltung", "PaedagogikVerfassungsNorm", "PaedagogikVerfassungsProzedur", "PaedagogikVerfassungsTyp",
+    "PaedagogikVerfassung", "build_paedagogik_verfassung",
 ]

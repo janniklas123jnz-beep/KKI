@@ -1937,6 +1937,46 @@ from kki.kunst_verfassung import (
     KunstVerfassung, KunstVerfassungsGeltung, KunstVerfassungsNorm,
     KunstVerfassungsTyp, KunstVerfassungsProzedur, build_kunst_verfassung,
 )
+from kki.paedagogik_feld import (
+    PaedagogikFeld, PaedagogikFeldGeltung, PaedagogikFeldNorm,
+    PaedagogikFeldTyp, PaedagogikFeldProzedur, build_paedagogik_feld,
+)
+from kki.bildungstheorie_register import (
+    BildungstheorieRegister, BildungstheorieRegisterGeltung, BildungstheorieRegisterNorm,
+    BildungstheorieRegisterTyp, BildungstheorieRegisterProzedur, build_bildungstheorie_register,
+)
+from kki.lerntheorie_charta import (
+    LerntheorieCharta, LerntheorieChartaGeltung, LerntheorieChartaNorm,
+    LerntheorieChartaTyp, LerntheorieChartaProzedur, build_lerntheorie_charta,
+)
+from kki.didaktik_kodex import (
+    DidaktikKodex, DidaktikKodexGeltung, DidaktikKodexNorm,
+    DidaktikKodexTyp, DidaktikKodexProzedur, build_didaktik_kodex,
+)
+from kki.curriculum_manifest import (
+    CurriculumManifest, CurriculumManifestGeltung, CurriculumManifestNorm,
+    CurriculumManifestTyp, CurriculumManifestProzedur, build_curriculum_manifest,
+)
+from kki.bildungsinstitution_pakt import (
+    BildungsinstitutionPakt, BildungsinstitutionPaktGeltung, BildungsinstitutionPaktNorm,
+    BildungsinstitutionPaktTyp, BildungsinstitutionPaktProzedur, build_bildungsinstitution_pakt,
+)
+from kki.paedagogik_senat import (
+    PaedagogikSenat, PaedagogikSenatGeltung, PaedagogikSenatNorm,
+    PaedagogikSenatTyp, PaedagogikSenatProzedur, build_paedagogik_senat,
+)
+from kki.paedagogik_norm import (
+    PaedagogikNormSatz, PaedagogikNormEintrag, PaedagogikNormGeltung,
+    PaedagogikNormTyp, PaedagogikNormProzedur, build_paedagogik_norm,
+)
+from kki.bildungsphilosophie_charta import (
+    BildungsphilosophieCharta, BildungsphilosophieChartaGeltung, BildungsphilosophieChartaNorm,
+    BildungsphilosophieChartaTyp, BildungsphilosophieChartaProzedur, build_bildungsphilosophie_charta,
+)
+from kki.paedagogik_verfassung import (
+    PaedagogikVerfassung, PaedagogikVerfassungsGeltung, PaedagogikVerfassungsNorm,
+    PaedagogikVerfassungsTyp, PaedagogikVerfassungsProzedur, build_paedagogik_verfassung,
+)
 from kki import (
     KausalitaetsGeltung,
     KausalitaetsNorm,
@@ -21536,3 +21576,374 @@ class SmokeTests(unittest.TestCase):
     def test_kki_kunst_verfassung_norm_has_kunst_tier(self) -> None:
         verfassung = build_kunst_verfassung(verfassung_id="kv-580-t")
         self.assertTrue(all(isinstance(n.kunst_tier, int) for n in verfassung.normen))
+
+    # ------------------------------------------------------------------ #
+    # Block #581–#590: Pädagogik & Bildungswissenschaft                   #
+    # ------------------------------------------------------------------ #
+
+    # --- #581 PaedagogikFeld ---
+    def test_kki_paedagogik_feld_builds_gesperrt_schutz_norm(self) -> None:
+        feld = build_paedagogik_feld(feld_id="pf-581-g")
+        self.assertTrue(any(n.geltung is PaedagogikFeldGeltung.GESPERRT for n in feld.normen))
+        self.assertTrue(any(n.paedagogik_typ is PaedagogikFeldTyp.SCHUTZ_PAEDAGOGIKFELD for n in feld.normen))
+
+    def test_kki_paedagogik_feld_builds_paedagogisch_souveraen_norm(self) -> None:
+        feld = build_paedagogik_feld(feld_id="pf-581-ps")
+        self.assertTrue(any(n.geltung is PaedagogikFeldGeltung.PAEDAGOGISCH_SOUVERAEN for n in feld.normen))
+        self.assertTrue(any(n.paedagogik_typ is PaedagogikFeldTyp.ORDNUNGS_PAEDAGOGIKFELD for n in feld.normen))
+
+    def test_kki_paedagogik_feld_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        feld = build_paedagogik_feld(feld_id="pf-581-gs")
+        self.assertTrue(any(n.geltung is PaedagogikFeldGeltung.GRUNDLEGEND_PAEDAGOGISCH_SOUVERAEN for n in feld.normen))
+        self.assertTrue(any(n.paedagogik_typ is PaedagogikFeldTyp.SOUVERAENITAETS_PAEDAGOGIKFELD for n in feld.normen))
+
+    def test_kki_paedagogik_feld_aggregates_feld_signal(self) -> None:
+        feld = build_paedagogik_feld(feld_id="pf-581-sig")
+        sig = feld.feld_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(feld.gesperrt_norm_ids), 0)
+
+    def test_kki_paedagogik_feld_builds_paedagogisch_souveraen_norm_ids(self) -> None:
+        feld = build_paedagogik_feld(feld_id="pf-581-psi")
+        self.assertGreater(len(feld.paedagogisch_souveraen_norm_ids), 0)
+
+    def test_kki_paedagogik_feld_builds_grundlegend_norm_ids(self) -> None:
+        feld = build_paedagogik_feld(feld_id="pf-581-gni")
+        self.assertGreater(len(feld.grundlegend_norm_ids), 0)
+
+    def test_kki_paedagogik_feld_norm_has_paedagogik_weight(self) -> None:
+        feld = build_paedagogik_feld(feld_id="pf-581-w")
+        self.assertTrue(all(isinstance(n.paedagogik_weight, float) for n in feld.normen))
+
+    def test_kki_paedagogik_feld_norm_has_paedagogik_tier(self) -> None:
+        feld = build_paedagogik_feld(feld_id="pf-581-t")
+        self.assertTrue(all(isinstance(n.paedagogik_tier, int) for n in feld.normen))
+
+    # --- #582 BildungstheorieRegister ---
+    def test_kki_bildungstheorie_register_builds_gesperrt_schutz_norm(self) -> None:
+        reg = build_bildungstheorie_register(register_id="br-582-g")
+        self.assertTrue(any(n.geltung is BildungstheorieRegisterGeltung.GESPERRT for n in reg.normen))
+        self.assertTrue(any(n.paedagogik_typ is BildungstheorieRegisterTyp.SCHUTZ_BILDUNGSTHEORIE for n in reg.normen))
+
+    def test_kki_bildungstheorie_register_builds_bildungstheoretisch_norm(self) -> None:
+        reg = build_bildungstheorie_register(register_id="br-582-bt")
+        self.assertTrue(any(n.geltung is BildungstheorieRegisterGeltung.BILDUNGSTHEORETISCH for n in reg.normen))
+
+    def test_kki_bildungstheorie_register_builds_grundlegend_norm(self) -> None:
+        reg = build_bildungstheorie_register(register_id="br-582-gs")
+        self.assertTrue(any(n.geltung is BildungstheorieRegisterGeltung.GRUNDLEGEND_BILDUNGSTHEORETISCH for n in reg.normen))
+
+    def test_kki_bildungstheorie_register_aggregates_register_signal(self) -> None:
+        reg = build_bildungstheorie_register(register_id="br-582-sig")
+        sig = reg.register_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+
+    def test_kki_bildungstheorie_register_builds_grundlegend_norm_ids(self) -> None:
+        reg = build_bildungstheorie_register(register_id="br-582-gni")
+        self.assertGreater(len(reg.grundlegend_norm_ids), 0)
+
+    def test_kki_bildungstheorie_register_norm_has_paedagogik_weight(self) -> None:
+        reg = build_bildungstheorie_register(register_id="br-582-w")
+        self.assertTrue(all(isinstance(n.paedagogik_weight, float) for n in reg.normen))
+
+    def test_kki_bildungstheorie_register_norm_has_paedagogik_tier(self) -> None:
+        reg = build_bildungstheorie_register(register_id="br-582-t")
+        self.assertTrue(all(isinstance(n.paedagogik_tier, int) for n in reg.normen))
+
+    def test_kki_bildungstheorie_register_norm_has_paedagogik_ids(self) -> None:
+        reg = build_bildungstheorie_register(register_id="br-582-ids")
+        self.assertTrue(all(isinstance(n.paedagogik_ids, tuple) for n in reg.normen))
+
+    # --- #583 LerntheorieCharta ---
+    def test_kki_lerntheorie_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_lerntheorie_charta(charta_id="ltc-583-g")
+        self.assertTrue(any(n.geltung is LerntheorieChartaGeltung.GESPERRT for n in charta.normen))
+        self.assertTrue(any(n.paedagogik_typ is LerntheorieChartaTyp.SCHUTZ_LERNTHEORIE for n in charta.normen))
+
+    def test_kki_lerntheorie_charta_builds_lerntheoretisch_norm(self) -> None:
+        charta = build_lerntheorie_charta(charta_id="ltc-583-lt")
+        self.assertTrue(any(n.geltung is LerntheorieChartaGeltung.LERNTHEORETISCH for n in charta.normen))
+
+    def test_kki_lerntheorie_charta_builds_grundlegend_norm(self) -> None:
+        charta = build_lerntheorie_charta(charta_id="ltc-583-gs")
+        self.assertTrue(any(n.geltung is LerntheorieChartaGeltung.GRUNDLEGEND_LERNTHEORETISCH for n in charta.normen))
+
+    def test_kki_lerntheorie_charta_aggregates_charta_signal(self) -> None:
+        charta = build_lerntheorie_charta(charta_id="ltc-583-sig")
+        sig = charta.charta_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+
+    def test_kki_lerntheorie_charta_builds_grundlegend_norm_ids(self) -> None:
+        charta = build_lerntheorie_charta(charta_id="ltc-583-gni")
+        self.assertGreater(len(charta.grundlegend_norm_ids), 0)
+
+    def test_kki_lerntheorie_charta_norm_has_paedagogik_weight(self) -> None:
+        charta = build_lerntheorie_charta(charta_id="ltc-583-w")
+        self.assertTrue(all(isinstance(n.paedagogik_weight, float) for n in charta.normen))
+
+    def test_kki_lerntheorie_charta_norm_has_paedagogik_tier(self) -> None:
+        charta = build_lerntheorie_charta(charta_id="ltc-583-t")
+        self.assertTrue(all(isinstance(n.paedagogik_tier, int) for n in charta.normen))
+
+    def test_kki_lerntheorie_charta_norm_has_paedagogik_ids(self) -> None:
+        charta = build_lerntheorie_charta(charta_id="ltc-583-ids")
+        self.assertTrue(all(isinstance(n.paedagogik_ids, tuple) for n in charta.normen))
+
+    # --- #584 DidaktikKodex ---
+    def test_kki_didaktik_kodex_builds_gesperrt_schutz_norm(self) -> None:
+        kodex = build_didaktik_kodex(kodex_id="dk-584-g")
+        self.assertTrue(any(n.geltung is DidaktikKodexGeltung.GESPERRT for n in kodex.normen))
+        self.assertTrue(any(n.paedagogik_typ is DidaktikKodexTyp.SCHUTZ_DIDAKTIK for n in kodex.normen))
+
+    def test_kki_didaktik_kodex_builds_didaktisch_norm(self) -> None:
+        kodex = build_didaktik_kodex(kodex_id="dk-584-d")
+        self.assertTrue(any(n.geltung is DidaktikKodexGeltung.DIDAKTISCH for n in kodex.normen))
+
+    def test_kki_didaktik_kodex_builds_grundlegend_norm(self) -> None:
+        kodex = build_didaktik_kodex(kodex_id="dk-584-gs")
+        self.assertTrue(any(n.geltung is DidaktikKodexGeltung.GRUNDLEGEND_DIDAKTISCH for n in kodex.normen))
+
+    def test_kki_didaktik_kodex_aggregates_kodex_signal(self) -> None:
+        kodex = build_didaktik_kodex(kodex_id="dk-584-sig")
+        sig = kodex.kodex_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+
+    def test_kki_didaktik_kodex_builds_grundlegend_norm_ids(self) -> None:
+        kodex = build_didaktik_kodex(kodex_id="dk-584-gni")
+        self.assertGreater(len(kodex.grundlegend_norm_ids), 0)
+
+    def test_kki_didaktik_kodex_norm_has_paedagogik_weight(self) -> None:
+        kodex = build_didaktik_kodex(kodex_id="dk-584-w")
+        self.assertTrue(all(isinstance(n.paedagogik_weight, float) for n in kodex.normen))
+
+    def test_kki_didaktik_kodex_norm_has_paedagogik_tier(self) -> None:
+        kodex = build_didaktik_kodex(kodex_id="dk-584-t")
+        self.assertTrue(all(isinstance(n.paedagogik_tier, int) for n in kodex.normen))
+
+    def test_kki_didaktik_kodex_norm_has_paedagogik_ids(self) -> None:
+        kodex = build_didaktik_kodex(kodex_id="dk-584-ids")
+        self.assertTrue(all(isinstance(n.paedagogik_ids, tuple) for n in kodex.normen))
+
+    # --- #585 CurriculumManifest ---
+    def test_kki_curriculum_manifest_builds_gesperrt_schutz_norm(self) -> None:
+        manifest = build_curriculum_manifest(manifest_id="cm-585-g")
+        self.assertTrue(any(n.geltung is CurriculumManifestGeltung.GESPERRT for n in manifest.normen))
+        self.assertTrue(any(n.paedagogik_typ is CurriculumManifestTyp.SCHUTZ_CURRICULUM for n in manifest.normen))
+
+    def test_kki_curriculum_manifest_builds_curricular_norm(self) -> None:
+        manifest = build_curriculum_manifest(manifest_id="cm-585-c")
+        self.assertTrue(any(n.geltung is CurriculumManifestGeltung.CURRICULAR for n in manifest.normen))
+
+    def test_kki_curriculum_manifest_builds_grundlegend_norm(self) -> None:
+        manifest = build_curriculum_manifest(manifest_id="cm-585-gs")
+        self.assertTrue(any(n.geltung is CurriculumManifestGeltung.GRUNDLEGEND_CURRICULAR for n in manifest.normen))
+
+    def test_kki_curriculum_manifest_aggregates_manifest_signal(self) -> None:
+        manifest = build_curriculum_manifest(manifest_id="cm-585-sig")
+        sig = manifest.manifest_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+
+    def test_kki_curriculum_manifest_builds_grundlegend_norm_ids(self) -> None:
+        manifest = build_curriculum_manifest(manifest_id="cm-585-gni")
+        self.assertGreater(len(manifest.grundlegend_norm_ids), 0)
+
+    def test_kki_curriculum_manifest_norm_has_paedagogik_weight(self) -> None:
+        manifest = build_curriculum_manifest(manifest_id="cm-585-w")
+        self.assertTrue(all(isinstance(n.paedagogik_weight, float) for n in manifest.normen))
+
+    def test_kki_curriculum_manifest_norm_has_paedagogik_tier(self) -> None:
+        manifest = build_curriculum_manifest(manifest_id="cm-585-t")
+        self.assertTrue(all(isinstance(n.paedagogik_tier, int) for n in manifest.normen))
+
+    def test_kki_curriculum_manifest_norm_has_paedagogik_ids(self) -> None:
+        manifest = build_curriculum_manifest(manifest_id="cm-585-ids")
+        self.assertTrue(all(isinstance(n.paedagogik_ids, tuple) for n in manifest.normen))
+
+    # --- #586 BildungsinstitutionPakt ---
+    def test_kki_bildungsinstitution_pakt_builds_gesperrt_schutz_norm(self) -> None:
+        pakt = build_bildungsinstitution_pakt(pakt_id="bp-586-g")
+        self.assertTrue(any(n.geltung is BildungsinstitutionPaktGeltung.GESPERRT for n in pakt.normen))
+        self.assertTrue(any(n.paedagogik_typ is BildungsinstitutionPaktTyp.SCHUTZ_BILDUNGSINSTITUTION for n in pakt.normen))
+
+    def test_kki_bildungsinstitution_pakt_builds_institutionell_bildend_norm(self) -> None:
+        pakt = build_bildungsinstitution_pakt(pakt_id="bp-586-ib")
+        self.assertTrue(any(n.geltung is BildungsinstitutionPaktGeltung.INSTITUTIONELL_BILDEND for n in pakt.normen))
+
+    def test_kki_bildungsinstitution_pakt_builds_grundlegend_norm(self) -> None:
+        pakt = build_bildungsinstitution_pakt(pakt_id="bp-586-gs")
+        self.assertTrue(any(n.geltung is BildungsinstitutionPaktGeltung.GRUNDLEGEND_INSTITUTIONELL_BILDEND for n in pakt.normen))
+
+    def test_kki_bildungsinstitution_pakt_aggregates_pakt_signal(self) -> None:
+        pakt = build_bildungsinstitution_pakt(pakt_id="bp-586-sig")
+        sig = pakt.pakt_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+
+    def test_kki_bildungsinstitution_pakt_builds_grundlegend_norm_ids(self) -> None:
+        pakt = build_bildungsinstitution_pakt(pakt_id="bp-586-gni")
+        self.assertGreater(len(pakt.grundlegend_norm_ids), 0)
+
+    def test_kki_bildungsinstitution_pakt_norm_has_paedagogik_weight(self) -> None:
+        pakt = build_bildungsinstitution_pakt(pakt_id="bp-586-w")
+        self.assertTrue(all(isinstance(n.paedagogik_weight, float) for n in pakt.normen))
+
+    def test_kki_bildungsinstitution_pakt_norm_has_paedagogik_tier(self) -> None:
+        pakt = build_bildungsinstitution_pakt(pakt_id="bp-586-t")
+        self.assertTrue(all(isinstance(n.paedagogik_tier, int) for n in pakt.normen))
+
+    def test_kki_bildungsinstitution_pakt_norm_has_paedagogik_ids(self) -> None:
+        pakt = build_bildungsinstitution_pakt(pakt_id="bp-586-ids")
+        self.assertTrue(all(isinstance(n.paedagogik_ids, tuple) for n in pakt.normen))
+
+    # --- #587 PaedagogikSenat ---
+    def test_kki_paedagogik_senat_builds_gesperrt_schutz_norm(self) -> None:
+        senat = build_paedagogik_senat(senat_id="ps-587-g")
+        self.assertTrue(any(n.geltung is PaedagogikSenatGeltung.GESPERRT for n in senat.normen))
+        self.assertTrue(any(n.paedagogik_typ is PaedagogikSenatTyp.SCHUTZ_PAEDAGOGIKSENAT for n in senat.normen))
+
+    def test_kki_paedagogik_senat_builds_paedagogisch_senatorisch_norm(self) -> None:
+        senat = build_paedagogik_senat(senat_id="ps-587-pss")
+        self.assertTrue(any(n.geltung is PaedagogikSenatGeltung.PAEDAGOGISCH_SENATORISCH for n in senat.normen))
+
+    def test_kki_paedagogik_senat_builds_grundlegend_norm(self) -> None:
+        senat = build_paedagogik_senat(senat_id="ps-587-gs")
+        self.assertTrue(any(n.geltung is PaedagogikSenatGeltung.GRUNDLEGEND_PAEDAGOGISCH_SENATORISCH for n in senat.normen))
+
+    def test_kki_paedagogik_senat_aggregates_senat_signal(self) -> None:
+        senat = build_paedagogik_senat(senat_id="ps-587-sig")
+        sig = senat.senat_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+
+    def test_kki_paedagogik_senat_builds_grundlegend_norm_ids(self) -> None:
+        senat = build_paedagogik_senat(senat_id="ps-587-gni")
+        self.assertGreater(len(senat.grundlegend_norm_ids), 0)
+
+    def test_kki_paedagogik_senat_norm_has_paedagogik_weight(self) -> None:
+        senat = build_paedagogik_senat(senat_id="ps-587-w")
+        self.assertTrue(all(isinstance(n.paedagogik_weight, float) for n in senat.normen))
+
+    def test_kki_paedagogik_senat_norm_has_paedagogik_tier(self) -> None:
+        senat = build_paedagogik_senat(senat_id="ps-587-t")
+        self.assertTrue(all(isinstance(n.paedagogik_tier, int) for n in senat.normen))
+
+    def test_kki_paedagogik_senat_norm_has_paedagogik_ids(self) -> None:
+        senat = build_paedagogik_senat(senat_id="ps-587-ids")
+        self.assertTrue(all(isinstance(n.paedagogik_ids, tuple) for n in senat.normen))
+
+    # --- #588 PaedagogikNorm (*_norm pattern) ---
+    def test_kki_paedagogik_norm_builds_gesperrt_norm(self) -> None:
+        normsatz = build_paedagogik_norm(norm_id="pn-588-g")
+        self.assertTrue(any(n.geltung is PaedagogikNormGeltung.GESPERRT for n in normsatz.normen))
+        self.assertTrue(any(n.paedagogik_norm_typ is PaedagogikNormTyp.SCHUTZ_PAEDAGOGIKNORM for n in normsatz.normen))
+
+    def test_kki_paedagogik_norm_builds_paedagogisch_normativ_norm(self) -> None:
+        normsatz = build_paedagogik_norm(norm_id="pn-588-pn")
+        self.assertTrue(any(n.geltung is PaedagogikNormGeltung.PAEDAGOGISCH_NORMATIV for n in normsatz.normen))
+        self.assertTrue(any(n.paedagogik_norm_typ is PaedagogikNormTyp.ORDNUNGS_PAEDAGOGIKNORM for n in normsatz.normen))
+
+    def test_kki_paedagogik_norm_builds_grundlegend_norm(self) -> None:
+        normsatz = build_paedagogik_norm(norm_id="pn-588-gs")
+        self.assertTrue(any(n.geltung is PaedagogikNormGeltung.GRUNDLEGEND_PAEDAGOGISCH_NORMATIV for n in normsatz.normen))
+
+    def test_kki_paedagogik_norm_aggregates_norm_signal(self) -> None:
+        normsatz = build_paedagogik_norm(norm_id="pn-588-sig")
+        sig = normsatz.norm_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+
+    def test_kki_paedagogik_norm_builds_paedagogisch_normativ_norm_ids(self) -> None:
+        normsatz = build_paedagogik_norm(norm_id="pn-588-pni")
+        self.assertGreater(len(normsatz.paedagogisch_normativ_norm_ids), 0)
+
+    def test_kki_paedagogik_norm_builds_grundlegend_norm_ids(self) -> None:
+        normsatz = build_paedagogik_norm(norm_id="pn-588-gni")
+        self.assertGreater(len(normsatz.grundlegend_norm_ids), 0)
+
+    def test_kki_paedagogik_norm_norm_has_paedagogik_norm_weight(self) -> None:
+        normsatz = build_paedagogik_norm(norm_id="pn-588-w")
+        self.assertTrue(all(isinstance(n.paedagogik_norm_weight, float) for n in normsatz.normen))
+
+    def test_kki_paedagogik_norm_norm_has_paedagogik_norm_tier(self) -> None:
+        normsatz = build_paedagogik_norm(norm_id="pn-588-t")
+        self.assertTrue(all(isinstance(n.paedagogik_norm_tier, int) for n in normsatz.normen))
+
+    # --- #589 BildungsphilosophieCharta ---
+    def test_kki_bildungsphilosophie_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_bildungsphilosophie_charta(charta_id="bpc-589-g")
+        self.assertTrue(any(n.geltung is BildungsphilosophieChartaGeltung.GESPERRT for n in charta.normen))
+        self.assertTrue(any(n.paedagogik_typ is BildungsphilosophieChartaTyp.SCHUTZ_BILDUNGSPHILOSOPHIE for n in charta.normen))
+
+    def test_kki_bildungsphilosophie_charta_builds_bildungsphilosophisch_norm(self) -> None:
+        charta = build_bildungsphilosophie_charta(charta_id="bpc-589-bp")
+        self.assertTrue(any(n.geltung is BildungsphilosophieChartaGeltung.BILDUNGSPHILOSOPHISCH for n in charta.normen))
+
+    def test_kki_bildungsphilosophie_charta_builds_grundlegend_norm(self) -> None:
+        charta = build_bildungsphilosophie_charta(charta_id="bpc-589-gs")
+        self.assertTrue(any(n.geltung is BildungsphilosophieChartaGeltung.GRUNDLEGEND_BILDUNGSPHILOSOPHISCH for n in charta.normen))
+
+    def test_kki_bildungsphilosophie_charta_aggregates_charta_signal(self) -> None:
+        charta = build_bildungsphilosophie_charta(charta_id="bpc-589-sig")
+        sig = charta.charta_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+
+    def test_kki_bildungsphilosophie_charta_builds_grundlegend_norm_ids(self) -> None:
+        charta = build_bildungsphilosophie_charta(charta_id="bpc-589-gni")
+        self.assertGreater(len(charta.grundlegend_norm_ids), 0)
+
+    def test_kki_bildungsphilosophie_charta_norm_has_paedagogik_weight(self) -> None:
+        charta = build_bildungsphilosophie_charta(charta_id="bpc-589-w")
+        self.assertTrue(all(isinstance(n.paedagogik_weight, float) for n in charta.normen))
+
+    def test_kki_bildungsphilosophie_charta_norm_has_paedagogik_tier(self) -> None:
+        charta = build_bildungsphilosophie_charta(charta_id="bpc-589-t")
+        self.assertTrue(all(isinstance(n.paedagogik_tier, int) for n in charta.normen))
+
+    def test_kki_bildungsphilosophie_charta_norm_has_paedagogik_ids(self) -> None:
+        charta = build_bildungsphilosophie_charta(charta_id="bpc-589-ids")
+        self.assertTrue(all(isinstance(n.paedagogik_ids, tuple) for n in charta.normen))
+
+    # --- #590 PaedagogikVerfassung (Block-Krone ⭐) ---
+    def test_kki_paedagogik_verfassung_builds_gesperrt_schutz_norm(self) -> None:
+        verfassung = build_paedagogik_verfassung(verfassung_id="pv-590-g")
+        self.assertTrue(any(n.geltung is PaedagogikVerfassungsGeltung.GESPERRT for n in verfassung.normen))
+        self.assertTrue(any(n.paedagogik_typ is PaedagogikVerfassungsTyp.SCHUTZ_PAEDAGOGIKVERFASSUNG for n in verfassung.normen))
+
+    def test_kki_paedagogik_verfassung_builds_bildungs_souveraen_norm(self) -> None:
+        verfassung = build_paedagogik_verfassung(verfassung_id="pv-590-bs")
+        self.assertTrue(any(n.geltung is PaedagogikVerfassungsGeltung.BILDUNGS_SOUVERAEN for n in verfassung.normen))
+        self.assertTrue(any(n.paedagogik_typ is PaedagogikVerfassungsTyp.ORDNUNGS_PAEDAGOGIKVERFASSUNG for n in verfassung.normen))
+
+    def test_kki_paedagogik_verfassung_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        verfassung = build_paedagogik_verfassung(verfassung_id="pv-590-gs")
+        self.assertTrue(any(n.geltung is PaedagogikVerfassungsGeltung.GRUNDLEGEND_BILDUNGS_SOUVERAEN for n in verfassung.normen))
+        self.assertTrue(any(n.paedagogik_typ is PaedagogikVerfassungsTyp.SOUVERAENITAETS_PAEDAGOGIKVERFASSUNG for n in verfassung.normen))
+
+    def test_kki_paedagogik_verfassung_aggregates_verfassung_signal(self) -> None:
+        verfassung = build_paedagogik_verfassung(verfassung_id="pv-590-sig")
+        sig = verfassung.verfassung_signal
+        self.assertIsNotNone(sig)
+        self.assertIn("gesperrt", sig.status)
+        self.assertGreater(len(verfassung.gesperrt_norm_ids), 0)
+
+    def test_kki_paedagogik_verfassung_builds_bildungs_souveraen_norm_ids(self) -> None:
+        verfassung = build_paedagogik_verfassung(verfassung_id="pv-590-bsi")
+        self.assertGreater(len(verfassung.bildungs_souveraen_norm_ids), 0)
+
+    def test_kki_paedagogik_verfassung_builds_grundlegend_norm_ids(self) -> None:
+        verfassung = build_paedagogik_verfassung(verfassung_id="pv-590-gni")
+        self.assertGreater(len(verfassung.grundlegend_norm_ids), 0)
+
+    def test_kki_paedagogik_verfassung_norm_has_paedagogik_weight(self) -> None:
+        verfassung = build_paedagogik_verfassung(verfassung_id="pv-590-w")
+        self.assertTrue(all(isinstance(n.paedagogik_weight, float) for n in verfassung.normen))
+
+    def test_kki_paedagogik_verfassung_norm_has_paedagogik_tier(self) -> None:
+        verfassung = build_paedagogik_verfassung(verfassung_id="pv-590-t")
+        self.assertTrue(all(isinstance(n.paedagogik_tier, int) for n in verfassung.normen))

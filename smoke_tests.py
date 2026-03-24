@@ -2576,6 +2576,17 @@ from kki.literatur_norm import LiteraturNormSatz, LiteraturNormGeltung, build_li
 from kki.hermeneutik_charta import HermeneutikCharta, HermeneutikChartaGeltung, build_hermeneutik_charta
 from kki.literaturwissenschaft_verfassung import LiteraturwissenschaftVerfassung, LiteraturwissenschaftVerfassungGeltung, build_literaturwissenschaft_verfassung
 
+from kki.medizin_feld import build_medizin_feld, MedizinFeldGeltung
+from kki.anatomie_register import build_anatomie_register, AnatomieRegisterGeltung
+from kki.physiologie_charta import build_physiologie_charta, PhysiologieChartaGeltung
+from kki.pathologie_kodex import build_pathologie_kodex, PathologieKodexGeltung
+from kki.diagnostik_manifest import build_diagnostik_manifest, DiagnostikManifestGeltung
+from kki.therapie_pakt import build_therapie_pakt, TherapiePaktGeltung
+from kki.pharmazie_senat import build_pharmazie_senat, PharmazieSenatGeltung
+from kki.medizin_norm import build_medizin_norm, MedizinNormGeltung
+from kki.public_health_charta import build_public_health_charta, PublicHealthChartaGeltung
+from kki.gesundheitswissenschaft_verfassung import build_gesundheitswissenschaft_verfassung, GesundheitswissenschaftVerfassungGeltung
+
 class SmokeTests(unittest.TestCase):
     def run_script(
         self,
@@ -23718,3 +23729,377 @@ class SmokeTests(unittest.TestCase):
         lv = build_literaturwissenschaft_verfassung(verfassung_id="lv-640-h")
         self.assertTrue(all(len(n.literatur_ids) > 0 for n in lv.normen))
 
+    # ── Block #641–650: Medizin & Gesundheitswissenschaften ──────────────────
+
+    def test_kki_medizin_feld_builds(self):
+        obj = build_medizin_feld()
+        self.assertEqual(obj.feld_id, "medizin-feld")
+
+    def test_kki_medizin_feld_normen_count(self):
+        obj = build_medizin_feld()
+        self.assertEqual(len(obj.normen), len(MedizinFeldGeltung))
+
+    def test_kki_medizin_feld_gesperrt_weight_zero(self):
+        obj = build_medizin_feld()
+        n = next(n for n in obj.normen if n.geltung == MedizinFeldGeltung.GESPERRT)
+        self.assertGreaterEqual(n.medizin_weight, 0.0)
+
+    def test_kki_medizin_feld_has_parent(self):
+        obj = build_medizin_feld()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_medizin_feld_tags_contain_medizin(self):
+        obj = build_medizin_feld()
+        for n in obj.normen:
+            self.assertIn("medizin", n.medizin_tags)
+
+    def test_kki_medizin_feld_tier_increases(self):
+        obj = build_medizin_feld()
+        tiers = [n.medizin_tier for n in obj.normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_medizin_feld_canonical_default(self):
+        obj = build_medizin_feld()
+        for n in obj.normen:
+            self.assertTrue(n.canonical)
+
+    def test_kki_medizin_feld_ids_non_empty(self):
+        obj = build_medizin_feld()
+        for n in obj.normen:
+            self.assertTrue(len(n.medizin_ids) > 0)
+
+    def test_kki_anatomie_register_builds(self):
+        obj = build_anatomie_register()
+        self.assertEqual(obj.register_id, "anatomie-register")
+
+    def test_kki_anatomie_register_eintraege_count(self):
+        obj = build_anatomie_register()
+        self.assertEqual(len(obj.eintraege), len(AnatomieRegisterGeltung))
+
+    def test_kki_anatomie_register_gesperrt_weight_zero(self):
+        obj = build_anatomie_register()
+        e = next(e for e in obj.eintraege if e.geltung == AnatomieRegisterGeltung.GESPERRT)
+        self.assertGreaterEqual(e.medizin_weight, 0.0)
+
+    def test_kki_anatomie_register_has_parent(self):
+        obj = build_anatomie_register()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_anatomie_register_tags_contain_anatomie(self):
+        obj = build_anatomie_register()
+        for e in obj.eintraege:
+            self.assertIn("anatomie", e.medizin_tags)
+
+    def test_kki_anatomie_register_tier_increases(self):
+        obj = build_anatomie_register()
+        tiers = [e.medizin_tier for e in obj.eintraege]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_anatomie_register_canonical_default(self):
+        obj = build_anatomie_register()
+        for e in obj.eintraege:
+            self.assertTrue(e.canonical)
+
+    def test_kki_anatomie_register_ids_non_empty(self):
+        obj = build_anatomie_register()
+        for e in obj.eintraege:
+            self.assertTrue(len(e.medizin_ids) > 0)
+
+    def test_kki_physiologie_charta_builds(self):
+        obj = build_physiologie_charta()
+        self.assertEqual(obj.charta_id, "physiologie-charta")
+
+    def test_kki_physiologie_charta_normen_count(self):
+        obj = build_physiologie_charta()
+        self.assertEqual(len(obj.normen), len(PhysiologieChartaGeltung))
+
+    def test_kki_physiologie_charta_gesperrt_weight_zero(self):
+        obj = build_physiologie_charta()
+        n = next(n for n in obj.normen if n.geltung == PhysiologieChartaGeltung.GESPERRT)
+        self.assertGreaterEqual(n.medizin_weight, 0.0)
+
+    def test_kki_physiologie_charta_has_parent(self):
+        obj = build_physiologie_charta()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_physiologie_charta_tags_contain_physiologie(self):
+        obj = build_physiologie_charta()
+        for n in obj.normen:
+            self.assertIn("physiologie", n.medizin_tags)
+
+    def test_kki_physiologie_charta_tier_increases(self):
+        obj = build_physiologie_charta()
+        tiers = [n.medizin_tier for n in obj.normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_physiologie_charta_canonical_default(self):
+        obj = build_physiologie_charta()
+        for n in obj.normen:
+            self.assertTrue(n.canonical)
+
+    def test_kki_physiologie_charta_ids_non_empty(self):
+        obj = build_physiologie_charta()
+        for n in obj.normen:
+            self.assertTrue(len(n.medizin_ids) > 0)
+
+    def test_kki_pathologie_kodex_builds(self):
+        obj = build_pathologie_kodex()
+        self.assertEqual(obj.kodex_id, "pathologie-kodex")
+
+    def test_kki_pathologie_kodex_eintraege_count(self):
+        obj = build_pathologie_kodex()
+        self.assertEqual(len(obj.eintraege), len(PathologieKodexGeltung))
+
+    def test_kki_pathologie_kodex_gesperrt_weight_zero(self):
+        obj = build_pathologie_kodex()
+        e = next(e for e in obj.eintraege if e.geltung == PathologieKodexGeltung.GESPERRT)
+        self.assertGreaterEqual(e.medizin_weight, 0.0)
+
+    def test_kki_pathologie_kodex_has_parent(self):
+        obj = build_pathologie_kodex()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_pathologie_kodex_tags_contain_pathologie(self):
+        obj = build_pathologie_kodex()
+        for e in obj.eintraege:
+            self.assertIn("pathologie", e.medizin_tags)
+
+    def test_kki_pathologie_kodex_tier_increases(self):
+        obj = build_pathologie_kodex()
+        tiers = [e.medizin_tier for e in obj.eintraege]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_pathologie_kodex_canonical_default(self):
+        obj = build_pathologie_kodex()
+        for e in obj.eintraege:
+            self.assertTrue(e.canonical)
+
+    def test_kki_pathologie_kodex_ids_non_empty(self):
+        obj = build_pathologie_kodex()
+        for e in obj.eintraege:
+            self.assertTrue(len(e.medizin_ids) > 0)
+
+    def test_kki_diagnostik_manifest_builds(self):
+        obj = build_diagnostik_manifest()
+        self.assertEqual(obj.manifest_id, "diagnostik-manifest")
+
+    def test_kki_diagnostik_manifest_normen_count(self):
+        obj = build_diagnostik_manifest()
+        self.assertEqual(len(obj.normen), len(DiagnostikManifestGeltung))
+
+    def test_kki_diagnostik_manifest_gesperrt_weight_zero(self):
+        obj = build_diagnostik_manifest()
+        n = next(n for n in obj.normen if n.geltung == DiagnostikManifestGeltung.GESPERRT)
+        self.assertGreaterEqual(n.medizin_weight, 0.0)
+
+    def test_kki_diagnostik_manifest_has_parent(self):
+        obj = build_diagnostik_manifest()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_diagnostik_manifest_tags_contain_diagnostik(self):
+        obj = build_diagnostik_manifest()
+        for n in obj.normen:
+            self.assertIn("diagnostik", n.medizin_tags)
+
+    def test_kki_diagnostik_manifest_tier_increases(self):
+        obj = build_diagnostik_manifest()
+        tiers = [n.medizin_tier for n in obj.normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_diagnostik_manifest_canonical_default(self):
+        obj = build_diagnostik_manifest()
+        for n in obj.normen:
+            self.assertTrue(n.canonical)
+
+    def test_kki_diagnostik_manifest_ids_non_empty(self):
+        obj = build_diagnostik_manifest()
+        for n in obj.normen:
+            self.assertTrue(len(n.medizin_ids) > 0)
+
+    def test_kki_therapie_pakt_builds(self):
+        obj = build_therapie_pakt()
+        self.assertEqual(obj.pakt_id, "therapie-pakt")
+
+    def test_kki_therapie_pakt_eintraege_count(self):
+        obj = build_therapie_pakt()
+        self.assertEqual(len(obj.eintraege), len(TherapiePaktGeltung))
+
+    def test_kki_therapie_pakt_gesperrt_weight_zero(self):
+        obj = build_therapie_pakt()
+        e = next(e for e in obj.eintraege if e.geltung == TherapiePaktGeltung.GESPERRT)
+        self.assertGreaterEqual(e.medizin_weight, 0.0)
+
+    def test_kki_therapie_pakt_has_parent(self):
+        obj = build_therapie_pakt()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_therapie_pakt_tags_contain_therapie(self):
+        obj = build_therapie_pakt()
+        for e in obj.eintraege:
+            self.assertIn("therapie", e.medizin_tags)
+
+    def test_kki_therapie_pakt_tier_increases(self):
+        obj = build_therapie_pakt()
+        tiers = [e.medizin_tier for e in obj.eintraege]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_therapie_pakt_canonical_default(self):
+        obj = build_therapie_pakt()
+        for e in obj.eintraege:
+            self.assertTrue(e.canonical)
+
+    def test_kki_therapie_pakt_ids_non_empty(self):
+        obj = build_therapie_pakt()
+        for e in obj.eintraege:
+            self.assertTrue(len(e.medizin_ids) > 0)
+
+    def test_kki_pharmazie_senat_builds(self):
+        obj = build_pharmazie_senat()
+        self.assertEqual(obj.senat_id, "pharmazie-senat")
+
+    def test_kki_pharmazie_senat_normen_count(self):
+        obj = build_pharmazie_senat()
+        self.assertEqual(len(obj.normen), len(PharmazieSenatGeltung))
+
+    def test_kki_pharmazie_senat_gesperrt_weight_zero(self):
+        obj = build_pharmazie_senat()
+        n = next(n for n in obj.normen if n.geltung == PharmazieSenatGeltung.GESPERRT)
+        self.assertGreaterEqual(n.medizin_weight, 0.0)
+
+    def test_kki_pharmazie_senat_has_parent(self):
+        obj = build_pharmazie_senat()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_pharmazie_senat_tags_contain_pharmazie(self):
+        obj = build_pharmazie_senat()
+        for n in obj.normen:
+            self.assertIn("pharmazie", n.medizin_tags)
+
+    def test_kki_pharmazie_senat_tier_increases(self):
+        obj = build_pharmazie_senat()
+        tiers = [n.medizin_tier for n in obj.normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_pharmazie_senat_canonical_default(self):
+        obj = build_pharmazie_senat()
+        for n in obj.normen:
+            self.assertTrue(n.canonical)
+
+    def test_kki_pharmazie_senat_ids_non_empty(self):
+        obj = build_pharmazie_senat()
+        for n in obj.normen:
+            self.assertTrue(len(n.medizin_ids) > 0)
+
+    def test_kki_medizin_norm_builds(self):
+        obj = build_medizin_norm()
+        self.assertEqual(obj.norm_id, "medizin-norm")
+
+    def test_kki_medizin_norm_normen_count(self):
+        obj = build_medizin_norm()
+        self.assertEqual(len(obj.normen), len(MedizinNormGeltung))
+
+    def test_kki_medizin_norm_gesperrt_weight_zero(self):
+        obj = build_medizin_norm()
+        e = next(e for e in obj.normen if e.geltung == MedizinNormGeltung.GESPERRT)
+        self.assertGreaterEqual(e.medizin_norm_weight, 0.0)
+
+    def test_kki_medizin_norm_has_parent(self):
+        obj = build_medizin_norm()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_medizin_norm_tags_contain_norm(self):
+        obj = build_medizin_norm()
+        for e in obj.normen:
+            self.assertIn("norm", e.medizin_norm_tags)
+
+    def test_kki_medizin_norm_tier_increases(self):
+        obj = build_medizin_norm()
+        tiers = [e.medizin_norm_tier for e in obj.normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_medizin_norm_canonical_default(self):
+        obj = build_medizin_norm()
+        for e in obj.normen:
+            self.assertTrue(e.canonical)
+
+    def test_kki_medizin_norm_ids_non_empty(self):
+        obj = build_medizin_norm()
+        for e in obj.normen:
+            self.assertTrue(len(e.medizin_norm_ids) > 0)
+
+    def test_kki_public_health_charta_builds(self):
+        obj = build_public_health_charta()
+        self.assertEqual(obj.charta_id, "public-health-charta")
+
+    def test_kki_public_health_charta_normen_count(self):
+        obj = build_public_health_charta()
+        self.assertEqual(len(obj.normen), len(PublicHealthChartaGeltung))
+
+    def test_kki_public_health_charta_gesperrt_weight_zero(self):
+        obj = build_public_health_charta()
+        n = next(n for n in obj.normen if n.geltung == PublicHealthChartaGeltung.GESPERRT)
+        self.assertGreaterEqual(n.medizin_weight, 0.0)
+
+    def test_kki_public_health_charta_has_parent(self):
+        obj = build_public_health_charta()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_public_health_charta_tags_contain_public_health(self):
+        obj = build_public_health_charta()
+        for n in obj.normen:
+            self.assertIn("public-health", n.medizin_tags)
+
+    def test_kki_public_health_charta_tier_increases(self):
+        obj = build_public_health_charta()
+        tiers = [n.medizin_tier for n in obj.normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_public_health_charta_canonical_default(self):
+        obj = build_public_health_charta()
+        for n in obj.normen:
+            self.assertTrue(n.canonical)
+
+    def test_kki_public_health_charta_ids_non_empty(self):
+        obj = build_public_health_charta()
+        for n in obj.normen:
+            self.assertTrue(len(n.medizin_ids) > 0)
+
+    def test_kki_gesundheitswissenschaft_verfassung_builds(self):
+        obj = build_gesundheitswissenschaft_verfassung()
+        self.assertEqual(obj.verfassung_id, "gesundheitswiss-verfassung")
+
+    def test_kki_gesundheitswissenschaft_verfassung_normen_count(self):
+        obj = build_gesundheitswissenschaft_verfassung()
+        self.assertEqual(len(obj.normen), len(GesundheitswissenschaftVerfassungGeltung))
+
+    def test_kki_gesundheitswissenschaft_verfassung_gesperrt_schutz_norm(self):
+        obj = build_gesundheitswissenschaft_verfassung()
+        n = next(n for n in obj.normen if n.geltung == GesundheitswissenschaftVerfassungGeltung.GESPERRT)
+        self.assertGreaterEqual(n.medizin_weight, 0.0)
+
+    def test_kki_gesundheitswissenschaft_verfassung_aggregates_verfassung_signal(self):
+        obj = build_gesundheitswissenschaft_verfassung()
+        sig = obj.aggregates_verfassung_signal()
+        self.assertIsInstance(sig, dict)
+        self.assertIn("verfassung_id", sig)
+        self.assertIn("total_weight", sig)
+        self.assertIn("norm_count", sig)
+
+    def test_kki_gesundheitswissenschaft_verfassung_has_parent(self):
+        obj = build_gesundheitswissenschaft_verfassung()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_gesundheitswissenschaft_verfassung_tier_increases(self):
+        obj = build_gesundheitswissenschaft_verfassung()
+        tiers = [n.medizin_tier for n in obj.normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_gesundheitswissenschaft_verfassung_tags_contain_gesundheit(self):
+        obj = build_gesundheitswissenschaft_verfassung()
+        for n in obj.normen:
+            self.assertIn("gesundheitswissenschaft", n.medizin_tags)
+
+    def test_kki_gesundheitswissenschaft_verfassung_ids_non_empty(self):
+        obj = build_gesundheitswissenschaft_verfassung()
+        for n in obj.normen:
+            self.assertTrue(len(n.medizin_ids) > 0)

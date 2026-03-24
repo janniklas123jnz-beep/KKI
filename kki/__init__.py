@@ -2957,6 +2957,45 @@ from .literaturwissenschaft_verfassung import (
     LiteraturwissenschaftVerfassungGeltung, LiteraturwissenschaftVerfassungsNorm, LiteraturwissenschaftVerfassungProzedur, LiteraturwissenschaftVerfassungTyp,
     LiteraturwissenschaftVerfassung, build_literaturwissenschaft_verfassung,
 )
+from .medizin_feld import (
+    MedizinFeldGeltung, MedizinFeldNorm, MedizinFeldTyp, MedizinFeldProzedur,
+    MedizinFeld, build_medizin_feld,
+)
+from .anatomie_register import (
+    AnatomieRegisterGeltung, AnatomieRegisterEintrag, AnatomieRegisterTyp, AnatomieRegisterProzedur,
+    AnatomieRegister, build_anatomie_register,
+)
+from .physiologie_charta import (
+    PhysiologieChartaGeltung, PhysiologieChartaNorm, PhysiologieChartaTyp, PhysiologieChartaProzedur,
+    PhysiologieCharta, build_physiologie_charta,
+)
+from .pathologie_kodex import (
+    PathologieKodexGeltung, PathologieKodexEintrag, PathologieKodexTyp, PathologieKodexProzedur,
+    PathologieKodex, build_pathologie_kodex,
+)
+from .diagnostik_manifest import (
+    DiagnostikManifestGeltung, DiagnostikManifestNorm, DiagnostikManifestTyp, DiagnostikManifestProzedur,
+    DiagnostikManifest, build_diagnostik_manifest,
+)
+from .therapie_pakt import (
+    TherapiePaktGeltung, TherapiePaktEintrag, TherapiePaktTyp, TherapiePaktProzedur,
+    TherapiePakt, build_therapie_pakt,
+)
+from .pharmazie_senat import (
+    PharmazieSenatGeltung, PharmazieSenatNorm, PharmazieSenatTyp, PharmazieSenatProzedur,
+    PharmazieSenat, build_pharmazie_senat,
+)
+from .medizin_norm import (
+    MedizinNormTyp, MedizinNormProzedur, MedizinNormGeltung, MedizinNormEintrag, MedizinNormSatz, build_medizin_norm,
+)
+from .public_health_charta import (
+    PublicHealthChartaGeltung, PublicHealthChartaNorm, PublicHealthChartaTyp, PublicHealthChartaProzedur,
+    PublicHealthCharta, build_public_health_charta,
+)
+from .gesundheitswissenschaft_verfassung import (
+    GesundheitswissenschaftVerfassungGeltung, GesundheitswissenschaftVerfassungsNorm, GesundheitswissenschaftVerfassungTyp, GesundheitswissenschaftVerfassungProzedur,
+    GesundheitswissenschaftVerfassung, build_gesundheitswissenschaft_verfassung,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -4809,4 +4848,23 @@ __all__ = [
     "HermeneutikCharta", "build_hermeneutik_charta",
     "LiteraturwissenschaftVerfassungGeltung", "LiteraturwissenschaftVerfassungsNorm", "LiteraturwissenschaftVerfassungProzedur", "LiteraturwissenschaftVerfassungTyp",
     "LiteraturwissenschaftVerfassung", "build_literaturwissenschaft_verfassung",
+    "MedizinFeldGeltung", "MedizinFeldNorm", "MedizinFeldTyp", "MedizinFeldProzedur",
+    "MedizinFeld", "build_medizin_feld",
+    "AnatomieRegisterGeltung", "AnatomieRegisterEintrag", "AnatomieRegisterTyp", "AnatomieRegisterProzedur",
+    "AnatomieRegister", "build_anatomie_register",
+    "PhysiologieChartaGeltung", "PhysiologieChartaNorm", "PhysiologieChartaTyp", "PhysiologieChartaProzedur",
+    "PhysiologieCharta", "build_physiologie_charta",
+    "PathologieKodexGeltung", "PathologieKodexEintrag", "PathologieKodexTyp", "PathologieKodexProzedur",
+    "PathologieKodex", "build_pathologie_kodex",
+    "DiagnostikManifestGeltung", "DiagnostikManifestNorm", "DiagnostikManifestTyp", "DiagnostikManifestProzedur",
+    "DiagnostikManifest", "build_diagnostik_manifest",
+    "TherapiePaktGeltung", "TherapiePaktEintrag", "TherapiePaktTyp", "TherapiePaktProzedur",
+    "TherapiePakt", "build_therapie_pakt",
+    "PharmazieSenatGeltung", "PharmazieSenatNorm", "PharmazieSenatTyp", "PharmazieSenatProzedur",
+    "PharmazieSenat", "build_pharmazie_senat",
+    "MedizinNormTyp", "MedizinNormProzedur", "MedizinNormGeltung", "MedizinNormEintrag", "MedizinNormSatz", "build_medizin_norm",
+    "PublicHealthChartaGeltung", "PublicHealthChartaNorm", "PublicHealthChartaTyp", "PublicHealthChartaProzedur",
+    "PublicHealthCharta", "build_public_health_charta",
+    "GesundheitswissenschaftVerfassungGeltung", "GesundheitswissenschaftVerfassungsNorm", "GesundheitswissenschaftVerfassungTyp", "GesundheitswissenschaftVerfassungProzedur",
+    "GesundheitswissenschaftVerfassung", "build_gesundheitswissenschaft_verfassung",
 ]

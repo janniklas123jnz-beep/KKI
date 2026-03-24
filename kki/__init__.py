@@ -2918,6 +2918,45 @@ from .musikwissenschaft_verfassung import (
     MusikwissenschaftVerfassungGeltung, MusikwissenschaftVerfassungsNorm, MusikwissenschaftVerfassungProzedur, MusikwissenschaftVerfassungTyp,
     MusikwissenschaftVerfassung, build_musikwissenschaft_verfassung,
 )
+from .literatur_feld import (
+    LiteraturFeldGeltung, LiteraturFeldNorm, LiteraturFeldProzedur, LiteraturFeldTyp,
+    LiteraturFeld, build_literatur_feld,
+)
+from .narrativ_register import (
+    NarrativRegisterGeltung, NarrativRegisterNorm, NarrativRegisterTyp,
+    NarrativRegister, build_narrativ_register,
+)
+from .lyrik_charta import (
+    LyrikChartaGeltung, LyrikChartaNorm, LyrikChartaTyp,
+    LyrikCharta, build_lyrik_charta,
+)
+from .dramatik_kodex import (
+    DramatikKodexGeltung, DramatikKodexNorm, DramatikKodexTyp,
+    DramatikKodex, build_dramatik_kodex,
+)
+from .stilistik_manifest import (
+    StilistikManifestGeltung, StilistikManifestNorm, StilistikManifestTyp,
+    StilistikManifest, build_stilistik_manifest,
+)
+from .literaturgeschichte_pakt import (
+    LiteraturgeschichtePaktGeltung, LiteraturgeschichtePaktNorm, LiteraturgeschichtePaktTyp,
+    LiteraturgeschichtePakt, build_literaturgeschichte_pakt,
+)
+from .komparatistik_senat import (
+    KomparatistikSenatGeltung, KomparatistikSenatNorm, KomparatistikSenatTyp,
+    KomparatistikSenat, build_komparatistik_senat,
+)
+from .literatur_norm import (
+    LiteraturNormTyp, LiteraturNormProzedur, LiteraturNormGeltung, LiteraturNormEintrag, LiteraturNormSatz, build_literatur_norm,
+)
+from .hermeneutik_charta import (
+    HermeneutikChartaGeltung, HermeneutikChartaNorm, HermeneutikChartaProzedur, HermeneutikChartaTyp,
+    HermeneutikCharta, build_hermeneutik_charta,
+)
+from .literaturwissenschaft_verfassung import (
+    LiteraturwissenschaftVerfassungGeltung, LiteraturwissenschaftVerfassungsNorm, LiteraturwissenschaftVerfassungProzedur, LiteraturwissenschaftVerfassungTyp,
+    LiteraturwissenschaftVerfassung, build_literaturwissenschaft_verfassung,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -4751,4 +4790,23 @@ __all__ = [
     "AkustikCharta", "build_akustik_charta",
     "MusikwissenschaftVerfassungGeltung", "MusikwissenschaftVerfassungsNorm", "MusikwissenschaftVerfassungProzedur", "MusikwissenschaftVerfassungTyp",
     "MusikwissenschaftVerfassung", "build_musikwissenschaft_verfassung",
+    "LiteraturFeldGeltung", "LiteraturFeldNorm", "LiteraturFeldProzedur", "LiteraturFeldTyp",
+    "LiteraturFeld", "build_literatur_feld",
+    "NarrativRegisterGeltung", "NarrativRegisterNorm", "NarrativRegisterTyp",
+    "NarrativRegister", "build_narrativ_register",
+    "LyrikChartaGeltung", "LyrikChartaNorm", "LyrikChartaTyp",
+    "LyrikCharta", "build_lyrik_charta",
+    "DramatikKodexGeltung", "DramatikKodexNorm", "DramatikKodexTyp",
+    "DramatikKodex", "build_dramatik_kodex",
+    "StilistikManifestGeltung", "StilistikManifestNorm", "StilistikManifestTyp",
+    "StilistikManifest", "build_stilistik_manifest",
+    "LiteraturgeschichtePaktGeltung", "LiteraturgeschichtePaktNorm", "LiteraturgeschichtePaktTyp",
+    "LiteraturgeschichtePakt", "build_literaturgeschichte_pakt",
+    "KomparatistikSenatGeltung", "KomparatistikSenatNorm", "KomparatistikSenatTyp",
+    "KomparatistikSenat", "build_komparatistik_senat",
+    "LiteraturNormTyp", "LiteraturNormProzedur", "LiteraturNormGeltung", "LiteraturNormEintrag", "LiteraturNormSatz", "build_literatur_norm",
+    "HermeneutikChartaGeltung", "HermeneutikChartaNorm", "HermeneutikChartaProzedur", "HermeneutikChartaTyp",
+    "HermeneutikCharta", "build_hermeneutik_charta",
+    "LiteraturwissenschaftVerfassungGeltung", "LiteraturwissenschaftVerfassungsNorm", "LiteraturwissenschaftVerfassungProzedur", "LiteraturwissenschaftVerfassungTyp",
+    "LiteraturwissenschaftVerfassung", "build_literaturwissenschaft_verfassung",
 ]

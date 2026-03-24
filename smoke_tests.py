@@ -2562,6 +2562,20 @@ from kki.musik_norm import MusikNormSatz, MusikNormGeltung, build_musik_norm
 from kki.akustik_charta import AkustikCharta, AkustikChartaGeltung, build_akustik_charta
 from kki.musikwissenschaft_verfassung import MusikwissenschaftVerfassung, MusikwissenschaftVerfassungGeltung, build_musikwissenschaft_verfassung
 
+# ---------------------------------------------------------------------------
+# Block #631–640 — Literaturwissenschaft
+# ---------------------------------------------------------------------------
+from kki.literatur_feld import LiteraturFeld, LiteraturFeldGeltung, build_literatur_feld
+from kki.narrativ_register import NarrativRegister, NarrativRegisterGeltung, build_narrativ_register
+from kki.lyrik_charta import LyrikCharta, LyrikChartaGeltung, build_lyrik_charta
+from kki.dramatik_kodex import DramatikKodex, DramatikKodexGeltung, build_dramatik_kodex
+from kki.stilistik_manifest import StilistikManifest, StilistikManifestGeltung, build_stilistik_manifest
+from kki.literaturgeschichte_pakt import LiteraturgeschichtePakt, LiteraturgeschichtePaktGeltung, build_literaturgeschichte_pakt
+from kki.komparatistik_senat import KomparatistikSenat, KomparatistikSenatGeltung, build_komparatistik_senat
+from kki.literatur_norm import LiteraturNormSatz, LiteraturNormGeltung, build_literatur_norm
+from kki.hermeneutik_charta import HermeneutikCharta, HermeneutikChartaGeltung, build_hermeneutik_charta
+from kki.literaturwissenschaft_verfassung import LiteraturwissenschaftVerfassung, LiteraturwissenschaftVerfassungGeltung, build_literaturwissenschaft_verfassung
+
 class SmokeTests(unittest.TestCase):
     def run_script(
         self,
@@ -23372,4 +23386,335 @@ class SmokeTests(unittest.TestCase):
     def test_kki_musikwissenschaft_verfassung_norm_has_ids(self) -> None:
         mv = build_musikwissenschaft_verfassung(verfassung_id="mv-630-h")
         self.assertTrue(all(len(n.musik_ids) > 0 for n in mv.normen))
+
+    # --- #631 LiteraturFeld ---
+    def test_kki_literatur_feld_builds(self) -> None:
+        lf = build_literatur_feld(feld_id="lf-631-a")
+        self.assertIsInstance(lf, LiteraturFeld)
+
+    def test_kki_literatur_feld_gesperrt_schutz_norm(self) -> None:
+        lf = build_literatur_feld(feld_id="lf-631-b")
+        self.assertTrue(any(n.geltung == LiteraturFeldGeltung.GESPERRT for n in lf.normen))
+
+    def test_kki_literatur_feld_domain_geltung_norm(self) -> None:
+        lf = build_literatur_feld(feld_id="lf-631-c")
+        self.assertTrue(any(n.geltung == LiteraturFeldGeltung.LITERARISCH_SOUVERAEN for n in lf.normen))
+
+    def test_kki_literatur_feld_grundlegend_norm(self) -> None:
+        lf = build_literatur_feld(feld_id="lf-631-d")
+        self.assertTrue(any(n.geltung == LiteraturFeldGeltung.GRUNDLEGEND_LITERARISCH_SOUVERAEN for n in lf.normen))
+
+    def test_kki_literatur_feld_weight_float(self) -> None:
+        lf = build_literatur_feld(feld_id="lf-631-e")
+        self.assertTrue(all(isinstance(n.literatur_weight, float) for n in lf.normen))
+
+    def test_kki_literatur_feld_tier_int(self) -> None:
+        lf = build_literatur_feld(feld_id="lf-631-f")
+        self.assertTrue(all(isinstance(n.literatur_tier, int) for n in lf.normen))
+
+    def test_kki_literatur_feld_has_normen(self) -> None:
+        lf = build_literatur_feld(feld_id="lf-631-g")
+        self.assertGreater(len(lf.normen), 0)
+
+    def test_kki_literatur_feld_has_ids(self) -> None:
+        lf = build_literatur_feld(feld_id="lf-631-h")
+        self.assertTrue(all(len(n.literatur_ids) > 0 for n in lf.normen))
+
+    # --- #632 NarrativRegister ---
+    def test_kki_narrativ_register_builds(self) -> None:
+        nr = build_narrativ_register(register_id="nr-632-a")
+        self.assertIsInstance(nr, NarrativRegister)
+
+    def test_kki_narrativ_register_gesperrt_schutz_norm(self) -> None:
+        nr = build_narrativ_register(register_id="nr-632-b")
+        self.assertTrue(any(n.geltung == NarrativRegisterGeltung.GESPERRT for n in nr.normen))
+
+    def test_kki_narrativ_register_domain_geltung_norm(self) -> None:
+        nr = build_narrativ_register(register_id="nr-632-c")
+        self.assertTrue(any(n.geltung == NarrativRegisterGeltung.NARRATIV for n in nr.normen))
+
+    def test_kki_narrativ_register_grundlegend_norm(self) -> None:
+        nr = build_narrativ_register(register_id="nr-632-d")
+        self.assertTrue(any(n.geltung == NarrativRegisterGeltung.GRUNDLEGEND_NARRATIV for n in nr.normen))
+
+    def test_kki_narrativ_register_weight_float(self) -> None:
+        nr = build_narrativ_register(register_id="nr-632-e")
+        self.assertTrue(all(isinstance(n.literatur_weight, float) for n in nr.normen))
+
+    def test_kki_narrativ_register_tier_int(self) -> None:
+        nr = build_narrativ_register(register_id="nr-632-f")
+        self.assertTrue(all(isinstance(n.literatur_tier, int) for n in nr.normen))
+
+    def test_kki_narrativ_register_has_normen(self) -> None:
+        nr = build_narrativ_register(register_id="nr-632-g")
+        self.assertGreater(len(nr.normen), 0)
+
+    def test_kki_narrativ_register_has_ids(self) -> None:
+        nr = build_narrativ_register(register_id="nr-632-h")
+        self.assertTrue(all(len(n.literatur_ids) > 0 for n in nr.normen))
+
+    # --- #633 LyrikCharta ---
+    def test_kki_lyrik_charta_builds(self) -> None:
+        lc = build_lyrik_charta(charta_id="lc-633-a")
+        self.assertIsInstance(lc, LyrikCharta)
+
+    def test_kki_lyrik_charta_gesperrt_schutz_norm(self) -> None:
+        lc = build_lyrik_charta(charta_id="lc-633-b")
+        self.assertTrue(any(n.geltung == LyrikChartaGeltung.GESPERRT for n in lc.normen))
+
+    def test_kki_lyrik_charta_domain_geltung_norm(self) -> None:
+        lc = build_lyrik_charta(charta_id="lc-633-c")
+        self.assertTrue(any(n.geltung == LyrikChartaGeltung.LYRISCH for n in lc.normen))
+
+    def test_kki_lyrik_charta_grundlegend_norm(self) -> None:
+        lc = build_lyrik_charta(charta_id="lc-633-d")
+        self.assertTrue(any(n.geltung == LyrikChartaGeltung.GRUNDLEGEND_LYRISCH for n in lc.normen))
+
+    def test_kki_lyrik_charta_weight_float(self) -> None:
+        lc = build_lyrik_charta(charta_id="lc-633-e")
+        self.assertTrue(all(isinstance(n.literatur_weight, float) for n in lc.normen))
+
+    def test_kki_lyrik_charta_tier_int(self) -> None:
+        lc = build_lyrik_charta(charta_id="lc-633-f")
+        self.assertTrue(all(isinstance(n.literatur_tier, int) for n in lc.normen))
+
+    def test_kki_lyrik_charta_has_normen(self) -> None:
+        lc = build_lyrik_charta(charta_id="lc-633-g")
+        self.assertGreater(len(lc.normen), 0)
+
+    def test_kki_lyrik_charta_has_ids(self) -> None:
+        lc = build_lyrik_charta(charta_id="lc-633-h")
+        self.assertTrue(all(len(n.literatur_ids) > 0 for n in lc.normen))
+
+    # --- #634 DramatikKodex ---
+    def test_kki_dramatik_kodex_builds(self) -> None:
+        dk = build_dramatik_kodex(kodex_id="dk-634-a")
+        self.assertIsInstance(dk, DramatikKodex)
+
+    def test_kki_dramatik_kodex_gesperrt_schutz_norm(self) -> None:
+        dk = build_dramatik_kodex(kodex_id="dk-634-b")
+        self.assertTrue(any(n.geltung == DramatikKodexGeltung.GESPERRT for n in dk.normen))
+
+    def test_kki_dramatik_kodex_domain_geltung_norm(self) -> None:
+        dk = build_dramatik_kodex(kodex_id="dk-634-c")
+        self.assertTrue(any(n.geltung == DramatikKodexGeltung.DRAMATISCH for n in dk.normen))
+
+    def test_kki_dramatik_kodex_grundlegend_norm(self) -> None:
+        dk = build_dramatik_kodex(kodex_id="dk-634-d")
+        self.assertTrue(any(n.geltung == DramatikKodexGeltung.GRUNDLEGEND_DRAMATISCH for n in dk.normen))
+
+    def test_kki_dramatik_kodex_weight_float(self) -> None:
+        dk = build_dramatik_kodex(kodex_id="dk-634-e")
+        self.assertTrue(all(isinstance(n.literatur_weight, float) for n in dk.normen))
+
+    def test_kki_dramatik_kodex_tier_int(self) -> None:
+        dk = build_dramatik_kodex(kodex_id="dk-634-f")
+        self.assertTrue(all(isinstance(n.literatur_tier, int) for n in dk.normen))
+
+    def test_kki_dramatik_kodex_has_normen(self) -> None:
+        dk = build_dramatik_kodex(kodex_id="dk-634-g")
+        self.assertGreater(len(dk.normen), 0)
+
+    def test_kki_dramatik_kodex_has_ids(self) -> None:
+        dk = build_dramatik_kodex(kodex_id="dk-634-h")
+        self.assertTrue(all(len(n.literatur_ids) > 0 for n in dk.normen))
+
+    # --- #635 StilistikManifest ---
+    def test_kki_stilistik_manifest_builds(self) -> None:
+        sm = build_stilistik_manifest(manifest_id="sm-635-a")
+        self.assertIsInstance(sm, StilistikManifest)
+
+    def test_kki_stilistik_manifest_gesperrt_schutz_norm(self) -> None:
+        sm = build_stilistik_manifest(manifest_id="sm-635-b")
+        self.assertTrue(any(n.geltung == StilistikManifestGeltung.GESPERRT for n in sm.normen))
+
+    def test_kki_stilistik_manifest_domain_geltung_norm(self) -> None:
+        sm = build_stilistik_manifest(manifest_id="sm-635-c")
+        self.assertTrue(any(n.geltung == StilistikManifestGeltung.STILISTISCH for n in sm.normen))
+
+    def test_kki_stilistik_manifest_grundlegend_norm(self) -> None:
+        sm = build_stilistik_manifest(manifest_id="sm-635-d")
+        self.assertTrue(any(n.geltung == StilistikManifestGeltung.GRUNDLEGEND_STILISTISCH for n in sm.normen))
+
+    def test_kki_stilistik_manifest_weight_float(self) -> None:
+        sm = build_stilistik_manifest(manifest_id="sm-635-e")
+        self.assertTrue(all(isinstance(n.literatur_weight, float) for n in sm.normen))
+
+    def test_kki_stilistik_manifest_tier_int(self) -> None:
+        sm = build_stilistik_manifest(manifest_id="sm-635-f")
+        self.assertTrue(all(isinstance(n.literatur_tier, int) for n in sm.normen))
+
+    def test_kki_stilistik_manifest_has_normen(self) -> None:
+        sm = build_stilistik_manifest(manifest_id="sm-635-g")
+        self.assertGreater(len(sm.normen), 0)
+
+    def test_kki_stilistik_manifest_has_ids(self) -> None:
+        sm = build_stilistik_manifest(manifest_id="sm-635-h")
+        self.assertTrue(all(len(n.literatur_ids) > 0 for n in sm.normen))
+
+    # --- #636 LiteraturgeschichtePakt ---
+    def test_kki_literaturgeschichte_pakt_builds(self) -> None:
+        lgp = build_literaturgeschichte_pakt(pakt_id="lgp-636-a")
+        self.assertIsInstance(lgp, LiteraturgeschichtePakt)
+
+    def test_kki_literaturgeschichte_pakt_gesperrt_schutz_norm(self) -> None:
+        lgp = build_literaturgeschichte_pakt(pakt_id="lgp-636-b")
+        self.assertTrue(any(n.geltung == LiteraturgeschichtePaktGeltung.GESPERRT for n in lgp.normen))
+
+    def test_kki_literaturgeschichte_pakt_domain_geltung_norm(self) -> None:
+        lgp = build_literaturgeschichte_pakt(pakt_id="lgp-636-c")
+        self.assertTrue(any(n.geltung == LiteraturgeschichtePaktGeltung.LITERATURHISTORISCH for n in lgp.normen))
+
+    def test_kki_literaturgeschichte_pakt_grundlegend_norm(self) -> None:
+        lgp = build_literaturgeschichte_pakt(pakt_id="lgp-636-d")
+        self.assertTrue(any(n.geltung == LiteraturgeschichtePaktGeltung.GRUNDLEGEND_LITERATURHISTORISCH for n in lgp.normen))
+
+    def test_kki_literaturgeschichte_pakt_weight_float(self) -> None:
+        lgp = build_literaturgeschichte_pakt(pakt_id="lgp-636-e")
+        self.assertTrue(all(isinstance(n.literatur_weight, float) for n in lgp.normen))
+
+    def test_kki_literaturgeschichte_pakt_tier_int(self) -> None:
+        lgp = build_literaturgeschichte_pakt(pakt_id="lgp-636-f")
+        self.assertTrue(all(isinstance(n.literatur_tier, int) for n in lgp.normen))
+
+    def test_kki_literaturgeschichte_pakt_has_normen(self) -> None:
+        lgp = build_literaturgeschichte_pakt(pakt_id="lgp-636-g")
+        self.assertGreater(len(lgp.normen), 0)
+
+    def test_kki_literaturgeschichte_pakt_has_ids(self) -> None:
+        lgp = build_literaturgeschichte_pakt(pakt_id="lgp-636-h")
+        self.assertTrue(all(len(n.literatur_ids) > 0 for n in lgp.normen))
+
+    # --- #637 KomparatistikSenat ---
+    def test_kki_komparatistik_senat_builds(self) -> None:
+        ks = build_komparatistik_senat(senat_id="ks-637-a")
+        self.assertIsInstance(ks, KomparatistikSenat)
+
+    def test_kki_komparatistik_senat_gesperrt_schutz_norm(self) -> None:
+        ks = build_komparatistik_senat(senat_id="ks-637-b")
+        self.assertTrue(any(n.geltung == KomparatistikSenatGeltung.GESPERRT for n in ks.normen))
+
+    def test_kki_komparatistik_senat_domain_geltung_norm(self) -> None:
+        ks = build_komparatistik_senat(senat_id="ks-637-c")
+        self.assertTrue(any(n.geltung == KomparatistikSenatGeltung.KOMPARATISTISCH for n in ks.normen))
+
+    def test_kki_komparatistik_senat_grundlegend_norm(self) -> None:
+        ks = build_komparatistik_senat(senat_id="ks-637-d")
+        self.assertTrue(any(n.geltung == KomparatistikSenatGeltung.GRUNDLEGEND_KOMPARATISTISCH for n in ks.normen))
+
+    def test_kki_komparatistik_senat_weight_float(self) -> None:
+        ks = build_komparatistik_senat(senat_id="ks-637-e")
+        self.assertTrue(all(isinstance(n.literatur_weight, float) for n in ks.normen))
+
+    def test_kki_komparatistik_senat_tier_int(self) -> None:
+        ks = build_komparatistik_senat(senat_id="ks-637-f")
+        self.assertTrue(all(isinstance(n.literatur_tier, int) for n in ks.normen))
+
+    def test_kki_komparatistik_senat_has_normen(self) -> None:
+        ks = build_komparatistik_senat(senat_id="ks-637-g")
+        self.assertGreater(len(ks.normen), 0)
+
+    def test_kki_komparatistik_senat_has_ids(self) -> None:
+        ks = build_komparatistik_senat(senat_id="ks-637-h")
+        self.assertTrue(all(len(n.literatur_ids) > 0 for n in ks.normen))
+
+    # --- #638 LiteraturNorm (*_norm pattern) ---
+    def test_kki_literatur_norm_builds(self) -> None:
+        ns = build_literatur_norm(norm_id="ln-638-a")
+        self.assertIsInstance(ns, LiteraturNormSatz)
+
+    def test_kki_literatur_norm_gesperrt_eintrag(self) -> None:
+        ns = build_literatur_norm(norm_id="ln-638-b")
+        self.assertTrue(any(e.geltung == LiteraturNormGeltung.GESPERRT for e in ns.normen))
+
+    def test_kki_literatur_norm_normativ_eintrag(self) -> None:
+        ns = build_literatur_norm(norm_id="ln-638-c")
+        self.assertTrue(any(e.geltung == LiteraturNormGeltung.LITERARISCH_NORMATIV for e in ns.normen))
+
+    def test_kki_literatur_norm_grundlegend_eintrag(self) -> None:
+        ns = build_literatur_norm(norm_id="ln-638-d")
+        self.assertTrue(any(e.geltung == LiteraturNormGeltung.GRUNDLEGEND_LITERARISCH_NORMATIV for e in ns.normen))
+
+    def test_kki_literatur_norm_weight_float(self) -> None:
+        ns = build_literatur_norm(norm_id="ln-638-e")
+        self.assertTrue(all(isinstance(e.literatur_norm_weight, float) for e in ns.normen))
+
+    def test_kki_literatur_norm_tier_int(self) -> None:
+        ns = build_literatur_norm(norm_id="ln-638-f")
+        self.assertTrue(all(isinstance(e.literatur_norm_tier, int) for e in ns.normen))
+
+    def test_kki_literatur_norm_has_normen(self) -> None:
+        ns = build_literatur_norm(norm_id="ln-638-g")
+        self.assertGreater(len(ns.normen), 0)
+
+    def test_kki_literatur_norm_has_ids(self) -> None:
+        ns = build_literatur_norm(norm_id="ln-638-h")
+        self.assertTrue(all(len(e.literatur_norm_ids) > 0 for e in ns.normen))
+
+    # --- #639 HermeneutikCharta ---
+    def test_kki_hermeneutik_charta_builds(self) -> None:
+        hc = build_hermeneutik_charta(charta_id="hc-639-a")
+        self.assertIsInstance(hc, HermeneutikCharta)
+
+    def test_kki_hermeneutik_charta_gesperrt_schutz_norm(self) -> None:
+        hc = build_hermeneutik_charta(charta_id="hc-639-b")
+        self.assertTrue(any(n.geltung == HermeneutikChartaGeltung.GESPERRT for n in hc.normen))
+
+    def test_kki_hermeneutik_charta_domain_geltung_norm(self) -> None:
+        hc = build_hermeneutik_charta(charta_id="hc-639-c")
+        self.assertTrue(any(n.geltung == HermeneutikChartaGeltung.HERMENEUTISCH_SOUVERAEN for n in hc.normen))
+
+    def test_kki_hermeneutik_charta_grundlegend_norm(self) -> None:
+        hc = build_hermeneutik_charta(charta_id="hc-639-d")
+        self.assertTrue(any(n.geltung == HermeneutikChartaGeltung.GRUNDLEGEND_HERMENEUTISCH_SOUVERAEN for n in hc.normen))
+
+    def test_kki_hermeneutik_charta_weight_float(self) -> None:
+        hc = build_hermeneutik_charta(charta_id="hc-639-e")
+        self.assertTrue(all(isinstance(n.literatur_weight, float) for n in hc.normen))
+
+    def test_kki_hermeneutik_charta_tier_int(self) -> None:
+        hc = build_hermeneutik_charta(charta_id="hc-639-f")
+        self.assertTrue(all(isinstance(n.literatur_tier, int) for n in hc.normen))
+
+    def test_kki_hermeneutik_charta_has_normen(self) -> None:
+        hc = build_hermeneutik_charta(charta_id="hc-639-g")
+        self.assertGreater(len(hc.normen), 0)
+
+    def test_kki_hermeneutik_charta_has_ids(self) -> None:
+        hc = build_hermeneutik_charta(charta_id="hc-639-h")
+        self.assertTrue(all(len(n.literatur_ids) > 0 for n in hc.normen))
+
+    # --- #640 LiteraturwissenschaftVerfassung (Block-Krone) ---
+    def test_kki_literaturwissenschaft_verfassung_builds(self) -> None:
+        lv = build_literaturwissenschaft_verfassung(verfassung_id="lv-640-a")
+        self.assertIsInstance(lv, LiteraturwissenschaftVerfassung)
+
+    def test_kki_literaturwissenschaft_verfassung_gesperrt_schutz_norm(self) -> None:
+        lv = build_literaturwissenschaft_verfassung(verfassung_id="lv-640-b")
+        self.assertTrue(any(n.geltung == LiteraturwissenschaftVerfassungGeltung.GESPERRT for n in lv.normen))
+
+    def test_kki_literaturwissenschaft_verfassung_domain_geltung_norm(self) -> None:
+        lv = build_literaturwissenschaft_verfassung(verfassung_id="lv-640-c")
+        self.assertTrue(any(n.geltung == LiteraturwissenschaftVerfassungGeltung.LITERATURWISS_SOUVERAEN for n in lv.normen))
+
+    def test_kki_literaturwissenschaft_verfassung_grundlegend_norm(self) -> None:
+        lv = build_literaturwissenschaft_verfassung(verfassung_id="lv-640-d")
+        self.assertTrue(any(n.geltung == LiteraturwissenschaftVerfassungGeltung.GRUNDLEGEND_LITERATURWISS_SOUVERAEN for n in lv.normen))
+
+    def test_kki_literaturwissenschaft_verfassung_weight_float(self) -> None:
+        lv = build_literaturwissenschaft_verfassung(verfassung_id="lv-640-e")
+        self.assertTrue(all(isinstance(n.literatur_weight, float) for n in lv.normen))
+
+    def test_kki_literaturwissenschaft_verfassung_tier_int(self) -> None:
+        lv = build_literaturwissenschaft_verfassung(verfassung_id="lv-640-f")
+        self.assertTrue(all(isinstance(n.literatur_tier, int) for n in lv.normen))
+
+    def test_kki_literaturwissenschaft_verfassung_aggregates_verfassung_signal(self) -> None:
+        lv = build_literaturwissenschaft_verfassung(verfassung_id="lv-640-g")
+        sig = lv.aggregates_verfassung_signal()
+        self.assertIsInstance(sig, dict)
+
+    def test_kki_literaturwissenschaft_verfassung_norm_has_ids(self) -> None:
+        lv = build_literaturwissenschaft_verfassung(verfassung_id="lv-640-h")
+        self.assertTrue(all(len(n.literatur_ids) > 0 for n in lv.normen))
 

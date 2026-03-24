@@ -1977,6 +1977,46 @@ from kki.paedagogik_verfassung import (
     PaedagogikVerfassung, PaedagogikVerfassungsGeltung, PaedagogikVerfassungsNorm,
     PaedagogikVerfassungsTyp, PaedagogikVerfassungsProzedur, build_paedagogik_verfassung,
 )
+from kki.psychologie_feld import (
+    PsychologieFeld, PsychologieFeldGeltung, PsychologieFeldNorm,
+    PsychologieFeldTyp, PsychologieFeldProzedur, build_psychologie_feld,
+)
+from kki.kognitionswissenschaft_register import (
+    KognitionswissenschaftRegister, KognitionswissenschaftRegisterGeltung, KognitionswissenschaftRegisterNorm,
+    KognitionswissenschaftRegisterTyp, KognitionswissenschaftRegisterProzedur, build_kognitionswissenschaft_register,
+)
+from kki.bewusstseins_charta import (
+    BewusstseinsCharta, BewusstseinsChartaGeltung, BewusstseinsChartaNorm,
+    BewusstseinsChartaTyp, BewusstseinsChartaProzedur, build_bewusstseins_charta,
+)
+from kki.verhaltens_kodex import (
+    VerhaltensKodex, VerhaltensKodexGeltung, VerhaltensKodexNorm,
+    VerhaltensKodexTyp, VerhaltensKodexProzedur, build_verhaltens_kodex,
+)
+from kki.entwicklungs_manifest import (
+    EntwicklungsManifest, EntwicklungsManifestGeltung, EntwicklungsManifestNorm,
+    EntwicklungsManifestTyp, EntwicklungsManifestProzedur, build_entwicklungs_manifest,
+)
+from kki.sozialpsychologie_pakt import (
+    SozialpsychologiePakt, SozialpsychologiePaktGeltung, SozialpsychologiePaktNorm,
+    SozialpsychologiePaktTyp, SozialpsychologiePaktProzedur, build_sozialpsychologie_pakt,
+)
+from kki.psychologie_senat import (
+    PsychologieSenat, PsychologieSenatGeltung, PsychologieSenatNorm,
+    PsychologieSenatTyp, PsychologieSenatProzedur, build_psychologie_senat,
+)
+from kki.psychologie_norm import (
+    PsychologieNormSatz, PsychologieNormGeltung, PsychologieNormEintrag,
+    PsychologieNormTyp, PsychologieNormProzedur, build_psychologie_norm,
+)
+from kki.kognitions_charta import (
+    KognitionsCharta, KognitionsChartaGeltung, KognitionsChartaNorm,
+    KognitionsChartaTyp, KognitionsChartaProzedur, build_kognitions_charta,
+)
+from kki.psychologie_verfassung import (
+    PsychologieVerfassung, PsychologieVerfassungsGeltung, PsychologieVerfassungsNorm,
+    PsychologieVerfassungsTyp, PsychologieVerfassungsProzedur, build_psychologie_verfassung,
+)
 from kki import (
     KausalitaetsGeltung,
     KausalitaetsNorm,
@@ -21947,3 +21987,328 @@ class SmokeTests(unittest.TestCase):
     def test_kki_paedagogik_verfassung_norm_has_paedagogik_tier(self) -> None:
         verfassung = build_paedagogik_verfassung(verfassung_id="pv-590-t")
         self.assertTrue(all(isinstance(n.paedagogik_tier, int) for n in verfassung.normen))
+
+    # ── Block #591–#600: Psychologie & Kognitionswissenschaft ──────────────────
+
+    def test_kki_psychologie_feld_builds_gesperrt_schutz_norm(self) -> None:
+        feld = build_psychologie_feld(feld_id="pf-591-a")
+        self.assertTrue(any(n.geltung is PsychologieFeldGeltung.GESPERRT for n in feld.normen))
+
+    def test_kki_psychologie_feld_builds_psychologisch_souveraen_norm(self) -> None:
+        feld = build_psychologie_feld(feld_id="pf-591-b")
+        self.assertTrue(any(n.geltung is PsychologieFeldGeltung.PSYCHOLOGISCH_SOUVERAEN for n in feld.normen))
+
+    def test_kki_psychologie_feld_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        feld = build_psychologie_feld(feld_id="pf-591-c")
+        self.assertTrue(any(n.geltung is PsychologieFeldGeltung.GRUNDLEGEND_PSYCHOLOGISCH_SOUVERAEN for n in feld.normen))
+
+    def test_kki_psychologie_feld_aggregates_feld_signal(self) -> None:
+        feld = build_psychologie_feld(feld_id="pf-591-d")
+        self.assertIsNotNone(feld.normen)
+
+    def test_kki_psychologie_feld_builds_psychologisch_souveraen_norm_ids(self) -> None:
+        feld = build_psychologie_feld(feld_id="pf-591-e")
+        self.assertTrue(any(n.geltung is PsychologieFeldGeltung.PSYCHOLOGISCH_SOUVERAEN for n in feld.normen))
+
+    def test_kki_psychologie_feld_builds_grundlegend_norm_ids(self) -> None:
+        feld = build_psychologie_feld(feld_id="pf-591-f")
+        self.assertTrue(any(n.geltung is PsychologieFeldGeltung.GRUNDLEGEND_PSYCHOLOGISCH_SOUVERAEN for n in feld.normen))
+
+    def test_kki_psychologie_feld_norm_has_psychologie_weight(self) -> None:
+        feld = build_psychologie_feld(feld_id="pf-591-g")
+        self.assertTrue(all(isinstance(n.psychologie_weight, float) for n in feld.normen))
+
+    def test_kki_psychologie_feld_norm_has_psychologie_tier(self) -> None:
+        feld = build_psychologie_feld(feld_id="pf-591-h")
+        self.assertTrue(all(isinstance(n.psychologie_tier, int) for n in feld.normen))
+
+    def test_kki_kognitionswissenschaft_register_builds_gesperrt_schutz_norm(self) -> None:
+        reg = build_kognitionswissenschaft_register(register_id="kr-592-a")
+        self.assertTrue(any(n.geltung is KognitionswissenschaftRegisterGeltung.GESPERRT for n in reg.normen))
+
+    def test_kki_kognitionswissenschaft_register_builds_kognitionswissenschaftlich_norm(self) -> None:
+        reg = build_kognitionswissenschaft_register(register_id="kr-592-b")
+        self.assertTrue(any(n.geltung is KognitionswissenschaftRegisterGeltung.KOGNITIONSWISSENSCHAFTLICH for n in reg.normen))
+
+    def test_kki_kognitionswissenschaft_register_builds_grundlegend_norm(self) -> None:
+        reg = build_kognitionswissenschaft_register(register_id="kr-592-c")
+        self.assertTrue(any(n.geltung is KognitionswissenschaftRegisterGeltung.GRUNDLEGEND_KOGNITIONSWISSENSCHAFTLICH for n in reg.normen))
+
+    def test_kki_kognitionswissenschaft_register_aggregates_register_signal(self) -> None:
+        reg = build_kognitionswissenschaft_register(register_id="kr-592-d")
+        self.assertIsNotNone(reg.normen)
+
+    def test_kki_kognitionswissenschaft_register_builds_grundlegend_norm_ids(self) -> None:
+        reg = build_kognitionswissenschaft_register(register_id="kr-592-e")
+        self.assertTrue(any(n.geltung is KognitionswissenschaftRegisterGeltung.GRUNDLEGEND_KOGNITIONSWISSENSCHAFTLICH for n in reg.normen))
+
+    def test_kki_kognitionswissenschaft_register_norm_has_psychologie_weight(self) -> None:
+        reg = build_kognitionswissenschaft_register(register_id="kr-592-f")
+        self.assertTrue(all(isinstance(n.psychologie_weight, float) for n in reg.normen))
+
+    def test_kki_kognitionswissenschaft_register_norm_has_psychologie_tier(self) -> None:
+        reg = build_kognitionswissenschaft_register(register_id="kr-592-g")
+        self.assertTrue(all(isinstance(n.psychologie_tier, int) for n in reg.normen))
+
+    def test_kki_kognitionswissenschaft_register_norm_has_psychologie_ids(self) -> None:
+        reg = build_kognitionswissenschaft_register(register_id="kr-592-h")
+        self.assertTrue(all(isinstance(n.psychologie_ids, tuple) for n in reg.normen))
+
+    def test_kki_bewusstseins_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_bewusstseins_charta(charta_id="bc-593-a")
+        self.assertTrue(any(n.geltung is BewusstseinsChartaGeltung.GESPERRT for n in charta.normen))
+
+    def test_kki_bewusstseins_charta_builds_bewusstseinswissenschaftlich_norm(self) -> None:
+        charta = build_bewusstseins_charta(charta_id="bc-593-b")
+        self.assertTrue(any(n.geltung is BewusstseinsChartaGeltung.BEWUSSTSEINSWISSENSCHAFTLICH for n in charta.normen))
+
+    def test_kki_bewusstseins_charta_builds_grundlegend_norm(self) -> None:
+        charta = build_bewusstseins_charta(charta_id="bc-593-c")
+        self.assertTrue(any(n.geltung is BewusstseinsChartaGeltung.GRUNDLEGEND_BEWUSSTSEINSWISSENSCHAFTLICH for n in charta.normen))
+
+    def test_kki_bewusstseins_charta_aggregates_charta_signal(self) -> None:
+        charta = build_bewusstseins_charta(charta_id="bc-593-d")
+        self.assertIsNotNone(charta.normen)
+
+    def test_kki_bewusstseins_charta_builds_grundlegend_norm_ids(self) -> None:
+        charta = build_bewusstseins_charta(charta_id="bc-593-e")
+        self.assertTrue(any(n.geltung is BewusstseinsChartaGeltung.GRUNDLEGEND_BEWUSSTSEINSWISSENSCHAFTLICH for n in charta.normen))
+
+    def test_kki_bewusstseins_charta_norm_has_psychologie_weight(self) -> None:
+        charta = build_bewusstseins_charta(charta_id="bc-593-f")
+        self.assertTrue(all(isinstance(n.psychologie_weight, float) for n in charta.normen))
+
+    def test_kki_bewusstseins_charta_norm_has_psychologie_tier(self) -> None:
+        charta = build_bewusstseins_charta(charta_id="bc-593-g")
+        self.assertTrue(all(isinstance(n.psychologie_tier, int) for n in charta.normen))
+
+    def test_kki_bewusstseins_charta_norm_has_psychologie_ids(self) -> None:
+        charta = build_bewusstseins_charta(charta_id="bc-593-h")
+        self.assertTrue(all(isinstance(n.psychologie_ids, tuple) for n in charta.normen))
+
+    def test_kki_verhaltens_kodex_builds_gesperrt_schutz_norm(self) -> None:
+        kodex = build_verhaltens_kodex(kodex_id="vk-594-a")
+        self.assertTrue(any(n.geltung is VerhaltensKodexGeltung.GESPERRT for n in kodex.normen))
+
+    def test_kki_verhaltens_kodex_builds_verhaltenspsychologisch_norm(self) -> None:
+        kodex = build_verhaltens_kodex(kodex_id="vk-594-b")
+        self.assertTrue(any(n.geltung is VerhaltensKodexGeltung.VERHALTENSPSYCHOLOGISCH for n in kodex.normen))
+
+    def test_kki_verhaltens_kodex_builds_grundlegend_norm(self) -> None:
+        kodex = build_verhaltens_kodex(kodex_id="vk-594-c")
+        self.assertTrue(any(n.geltung is VerhaltensKodexGeltung.GRUNDLEGEND_VERHALTENSPSYCHOLOGISCH for n in kodex.normen))
+
+    def test_kki_verhaltens_kodex_aggregates_kodex_signal(self) -> None:
+        kodex = build_verhaltens_kodex(kodex_id="vk-594-d")
+        self.assertIsNotNone(kodex.normen)
+
+    def test_kki_verhaltens_kodex_builds_grundlegend_norm_ids(self) -> None:
+        kodex = build_verhaltens_kodex(kodex_id="vk-594-e")
+        self.assertTrue(any(n.geltung is VerhaltensKodexGeltung.GRUNDLEGEND_VERHALTENSPSYCHOLOGISCH for n in kodex.normen))
+
+    def test_kki_verhaltens_kodex_norm_has_psychologie_weight(self) -> None:
+        kodex = build_verhaltens_kodex(kodex_id="vk-594-f")
+        self.assertTrue(all(isinstance(n.psychologie_weight, float) for n in kodex.normen))
+
+    def test_kki_verhaltens_kodex_norm_has_psychologie_tier(self) -> None:
+        kodex = build_verhaltens_kodex(kodex_id="vk-594-g")
+        self.assertTrue(all(isinstance(n.psychologie_tier, int) for n in kodex.normen))
+
+    def test_kki_verhaltens_kodex_norm_has_psychologie_ids(self) -> None:
+        kodex = build_verhaltens_kodex(kodex_id="vk-594-h")
+        self.assertTrue(all(isinstance(n.psychologie_ids, tuple) for n in kodex.normen))
+
+    def test_kki_entwicklungs_manifest_builds_gesperrt_schutz_norm(self) -> None:
+        manifest = build_entwicklungs_manifest(manifest_id="em-595-a")
+        self.assertTrue(any(n.geltung is EntwicklungsManifestGeltung.GESPERRT for n in manifest.normen))
+
+    def test_kki_entwicklungs_manifest_builds_entwicklungspsychologisch_norm(self) -> None:
+        manifest = build_entwicklungs_manifest(manifest_id="em-595-b")
+        self.assertTrue(any(n.geltung is EntwicklungsManifestGeltung.ENTWICKLUNGSPSYCHOLOGISCH for n in manifest.normen))
+
+    def test_kki_entwicklungs_manifest_builds_grundlegend_norm(self) -> None:
+        manifest = build_entwicklungs_manifest(manifest_id="em-595-c")
+        self.assertTrue(any(n.geltung is EntwicklungsManifestGeltung.GRUNDLEGEND_ENTWICKLUNGSPSYCHOLOGISCH for n in manifest.normen))
+
+    def test_kki_entwicklungs_manifest_aggregates_manifest_signal(self) -> None:
+        manifest = build_entwicklungs_manifest(manifest_id="em-595-d")
+        self.assertIsNotNone(manifest.normen)
+
+    def test_kki_entwicklungs_manifest_builds_grundlegend_norm_ids(self) -> None:
+        manifest = build_entwicklungs_manifest(manifest_id="em-595-e")
+        self.assertTrue(any(n.geltung is EntwicklungsManifestGeltung.GRUNDLEGEND_ENTWICKLUNGSPSYCHOLOGISCH for n in manifest.normen))
+
+    def test_kki_entwicklungs_manifest_norm_has_psychologie_weight(self) -> None:
+        manifest = build_entwicklungs_manifest(manifest_id="em-595-f")
+        self.assertTrue(all(isinstance(n.psychologie_weight, float) for n in manifest.normen))
+
+    def test_kki_entwicklungs_manifest_norm_has_psychologie_tier(self) -> None:
+        manifest = build_entwicklungs_manifest(manifest_id="em-595-g")
+        self.assertTrue(all(isinstance(n.psychologie_tier, int) for n in manifest.normen))
+
+    def test_kki_entwicklungs_manifest_norm_has_psychologie_ids(self) -> None:
+        manifest = build_entwicklungs_manifest(manifest_id="em-595-h")
+        self.assertTrue(all(isinstance(n.psychologie_ids, tuple) for n in manifest.normen))
+
+    def test_kki_sozialpsychologie_pakt_builds_gesperrt_schutz_norm(self) -> None:
+        pakt = build_sozialpsychologie_pakt(pakt_id="sp-596-a")
+        self.assertTrue(any(n.geltung is SozialpsychologiePaktGeltung.GESPERRT for n in pakt.normen))
+
+    def test_kki_sozialpsychologie_pakt_builds_sozialpsychologisch_norm(self) -> None:
+        pakt = build_sozialpsychologie_pakt(pakt_id="sp-596-b")
+        self.assertTrue(any(n.geltung is SozialpsychologiePaktGeltung.SOZIALPSYCHOLOGISCH for n in pakt.normen))
+
+    def test_kki_sozialpsychologie_pakt_builds_grundlegend_norm(self) -> None:
+        pakt = build_sozialpsychologie_pakt(pakt_id="sp-596-c")
+        self.assertTrue(any(n.geltung is SozialpsychologiePaktGeltung.GRUNDLEGEND_SOZIALPSYCHOLOGISCH for n in pakt.normen))
+
+    def test_kki_sozialpsychologie_pakt_aggregates_pakt_signal(self) -> None:
+        pakt = build_sozialpsychologie_pakt(pakt_id="sp-596-d")
+        self.assertIsNotNone(pakt.normen)
+
+    def test_kki_sozialpsychologie_pakt_builds_grundlegend_norm_ids(self) -> None:
+        pakt = build_sozialpsychologie_pakt(pakt_id="sp-596-e")
+        self.assertTrue(any(n.geltung is SozialpsychologiePaktGeltung.GRUNDLEGEND_SOZIALPSYCHOLOGISCH for n in pakt.normen))
+
+    def test_kki_sozialpsychologie_pakt_norm_has_psychologie_weight(self) -> None:
+        pakt = build_sozialpsychologie_pakt(pakt_id="sp-596-f")
+        self.assertTrue(all(isinstance(n.psychologie_weight, float) for n in pakt.normen))
+
+    def test_kki_sozialpsychologie_pakt_norm_has_psychologie_tier(self) -> None:
+        pakt = build_sozialpsychologie_pakt(pakt_id="sp-596-g")
+        self.assertTrue(all(isinstance(n.psychologie_tier, int) for n in pakt.normen))
+
+    def test_kki_sozialpsychologie_pakt_norm_has_psychologie_ids(self) -> None:
+        pakt = build_sozialpsychologie_pakt(pakt_id="sp-596-h")
+        self.assertTrue(all(isinstance(n.psychologie_ids, tuple) for n in pakt.normen))
+
+    def test_kki_psychologie_senat_builds_gesperrt_schutz_norm(self) -> None:
+        senat = build_psychologie_senat(senat_id="ps-597-a")
+        self.assertTrue(any(n.geltung is PsychologieSenatGeltung.GESPERRT for n in senat.normen))
+
+    def test_kki_psychologie_senat_builds_psychologisch_senatorisch_norm(self) -> None:
+        senat = build_psychologie_senat(senat_id="ps-597-b")
+        self.assertTrue(any(n.geltung is PsychologieSenatGeltung.PSYCHOLOGISCH_SENATORISCH for n in senat.normen))
+
+    def test_kki_psychologie_senat_builds_grundlegend_norm(self) -> None:
+        senat = build_psychologie_senat(senat_id="ps-597-c")
+        self.assertTrue(any(n.geltung is PsychologieSenatGeltung.GRUNDLEGEND_PSYCHOLOGISCH_SENATORISCH for n in senat.normen))
+
+    def test_kki_psychologie_senat_aggregates_senat_signal(self) -> None:
+        senat = build_psychologie_senat(senat_id="ps-597-d")
+        self.assertIsNotNone(senat.normen)
+
+    def test_kki_psychologie_senat_builds_grundlegend_norm_ids(self) -> None:
+        senat = build_psychologie_senat(senat_id="ps-597-e")
+        self.assertTrue(any(n.geltung is PsychologieSenatGeltung.GRUNDLEGEND_PSYCHOLOGISCH_SENATORISCH for n in senat.normen))
+
+    def test_kki_psychologie_senat_norm_has_psychologie_weight(self) -> None:
+        senat = build_psychologie_senat(senat_id="ps-597-f")
+        self.assertTrue(all(isinstance(n.psychologie_weight, float) for n in senat.normen))
+
+    def test_kki_psychologie_senat_norm_has_psychologie_tier(self) -> None:
+        senat = build_psychologie_senat(senat_id="ps-597-g")
+        self.assertTrue(all(isinstance(n.psychologie_tier, int) for n in senat.normen))
+
+    def test_kki_psychologie_senat_norm_has_psychologie_ids(self) -> None:
+        senat = build_psychologie_senat(senat_id="ps-597-h")
+        self.assertTrue(all(isinstance(n.psychologie_ids, tuple) for n in senat.normen))
+
+    def test_kki_psychologie_norm_builds_gesperrt_norm(self) -> None:
+        norm = build_psychologie_norm(norm_id="pn-598-a")
+        self.assertTrue(any(n.geltung is PsychologieNormGeltung.GESPERRT for n in norm.normen))
+
+    def test_kki_psychologie_norm_builds_psychologisch_normativ_norm(self) -> None:
+        norm = build_psychologie_norm(norm_id="pn-598-b")
+        self.assertTrue(any(n.geltung is PsychologieNormGeltung.PSYCHOLOGISCH_NORMATIV for n in norm.normen))
+
+    def test_kki_psychologie_norm_builds_grundlegend_norm(self) -> None:
+        norm = build_psychologie_norm(norm_id="pn-598-c")
+        self.assertTrue(any(n.geltung is PsychologieNormGeltung.GRUNDLEGEND_PSYCHOLOGISCH_NORMATIV for n in norm.normen))
+
+    def test_kki_psychologie_norm_aggregates_norm_signal(self) -> None:
+        norm = build_psychologie_norm(norm_id="pn-598-d")
+        sig = norm.norm_signal
+        self.assertIsNotNone(sig)
+
+    def test_kki_psychologie_norm_builds_psychologisch_normativ_norm_ids(self) -> None:
+        norm = build_psychologie_norm(norm_id="pn-598-e")
+        self.assertTrue(len(norm.psychologisch_normativ_norm_ids) > 0)
+
+    def test_kki_psychologie_norm_builds_grundlegend_norm_ids(self) -> None:
+        norm = build_psychologie_norm(norm_id="pn-598-f")
+        self.assertTrue(len(norm.grundlegend_norm_ids) > 0)
+
+    def test_kki_psychologie_norm_norm_has_psychologie_norm_weight(self) -> None:
+        norm = build_psychologie_norm(norm_id="pn-598-g")
+        self.assertTrue(all(isinstance(n.psychologie_norm_weight, float) for n in norm.normen))
+
+    def test_kki_psychologie_norm_norm_has_psychologie_norm_tier(self) -> None:
+        norm = build_psychologie_norm(norm_id="pn-598-h")
+        self.assertTrue(all(isinstance(n.psychologie_norm_tier, int) for n in norm.normen))
+
+    def test_kki_kognitions_charta_builds_gesperrt_schutz_norm(self) -> None:
+        charta = build_kognitions_charta(charta_id="kc-599-a")
+        self.assertTrue(any(n.geltung is KognitionsChartaGeltung.GESPERRT for n in charta.normen))
+
+    def test_kki_kognitions_charta_builds_kognitions_souveraen_norm(self) -> None:
+        charta = build_kognitions_charta(charta_id="kc-599-b")
+        self.assertTrue(any(n.geltung is KognitionsChartaGeltung.KOGNITIONS_SOUVERAEN for n in charta.normen))
+
+    def test_kki_kognitions_charta_builds_grundlegend_norm(self) -> None:
+        charta = build_kognitions_charta(charta_id="kc-599-c")
+        self.assertTrue(any(n.geltung is KognitionsChartaGeltung.GRUNDLEGEND_KOGNITIONS_SOUVERAEN for n in charta.normen))
+
+    def test_kki_kognitions_charta_aggregates_charta_signal(self) -> None:
+        charta = build_kognitions_charta(charta_id="kc-599-d")
+        sig = charta.charta_signal
+        self.assertIsNotNone(sig)
+
+    def test_kki_kognitions_charta_builds_grundlegend_norm_ids(self) -> None:
+        charta = build_kognitions_charta(charta_id="kc-599-e")
+        self.assertTrue(any(n.geltung is KognitionsChartaGeltung.GRUNDLEGEND_KOGNITIONS_SOUVERAEN for n in charta.normen))
+
+    def test_kki_kognitions_charta_norm_has_psychologie_weight(self) -> None:
+        charta = build_kognitions_charta(charta_id="kc-599-f")
+        self.assertTrue(all(isinstance(n.psychologie_weight, float) for n in charta.normen))
+
+    def test_kki_kognitions_charta_norm_has_psychologie_tier(self) -> None:
+        charta = build_kognitions_charta(charta_id="kc-599-g")
+        self.assertTrue(all(isinstance(n.psychologie_tier, int) for n in charta.normen))
+
+    def test_kki_kognitions_charta_norm_has_psychologie_ids(self) -> None:
+        charta = build_kognitions_charta(charta_id="kc-599-h")
+        self.assertTrue(all(isinstance(n.psychologie_ids, tuple) for n in charta.normen))
+
+    def test_kki_psychologie_verfassung_builds_gesperrt_schutz_norm(self) -> None:
+        verfassung = build_psychologie_verfassung(verfassung_id="pv-600-a")
+        self.assertTrue(any(n.geltung is PsychologieVerfassungsGeltung.GESPERRT for n in verfassung.normen))
+
+    def test_kki_psychologie_verfassung_builds_psyche_souveraen_norm(self) -> None:
+        verfassung = build_psychologie_verfassung(verfassung_id="pv-600-b")
+        self.assertTrue(any(n.geltung is PsychologieVerfassungsGeltung.PSYCHE_SOUVERAEN for n in verfassung.normen))
+
+    def test_kki_psychologie_verfassung_builds_grundlegend_souveraenitaets_norm(self) -> None:
+        verfassung = build_psychologie_verfassung(verfassung_id="pv-600-c")
+        self.assertTrue(any(n.geltung is PsychologieVerfassungsGeltung.GRUNDLEGEND_PSYCHE_SOUVERAEN for n in verfassung.normen))
+
+    def test_kki_psychologie_verfassung_aggregates_verfassung_signal(self) -> None:
+        verfassung = build_psychologie_verfassung(verfassung_id="pv-600-d")
+        sig = verfassung.verfassung_signal
+        self.assertIsNotNone(sig)
+
+    def test_kki_psychologie_verfassung_builds_psyche_souveraen_norm_ids(self) -> None:
+        verfassung = build_psychologie_verfassung(verfassung_id="pv-600-e")
+        self.assertTrue(any(n.geltung is PsychologieVerfassungsGeltung.PSYCHE_SOUVERAEN for n in verfassung.normen))
+
+    def test_kki_psychologie_verfassung_builds_grundlegend_norm_ids(self) -> None:
+        verfassung = build_psychologie_verfassung(verfassung_id="pv-600-f")
+        self.assertTrue(any(n.geltung is PsychologieVerfassungsGeltung.GRUNDLEGEND_PSYCHE_SOUVERAEN for n in verfassung.normen))
+
+    def test_kki_psychologie_verfassung_norm_has_psychologie_weight(self) -> None:
+        verfassung = build_psychologie_verfassung(verfassung_id="pv-600-g")
+        self.assertTrue(all(isinstance(n.psychologie_weight, float) for n in verfassung.normen))
+
+    def test_kki_psychologie_verfassung_norm_has_psychologie_tier(self) -> None:
+        verfassung = build_psychologie_verfassung(verfassung_id="pv-600-h")
+        self.assertTrue(all(isinstance(n.psychologie_tier, int) for n in verfassung.normen))

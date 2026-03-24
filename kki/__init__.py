@@ -2756,6 +2756,45 @@ from .paedagogik_verfassung import (
     PaedagogikVerfassungsGeltung, PaedagogikVerfassungsNorm, PaedagogikVerfassungsProzedur, PaedagogikVerfassungsTyp,
     PaedagogikVerfassung, build_paedagogik_verfassung,
 )
+from .psychologie_feld import (
+    PsychologieFeldGeltung, PsychologieFeldNorm, PsychologieFeldProzedur, PsychologieFeldTyp,
+    PsychologieFeld, build_psychologie_feld,
+)
+from .kognitionswissenschaft_register import (
+    KognitionswissenschaftRegisterGeltung, KognitionswissenschaftRegisterNorm, KognitionswissenschaftRegisterProzedur, KognitionswissenschaftRegisterTyp,
+    KognitionswissenschaftRegister, build_kognitionswissenschaft_register,
+)
+from .bewusstseins_charta import (
+    BewusstseinsChartaGeltung, BewusstseinsChartaNorm, BewusstseinsChartaProzedur, BewusstseinsChartaTyp,
+    BewusstseinsCharta, build_bewusstseins_charta,
+)
+from .verhaltens_kodex import (
+    VerhaltensKodexGeltung, VerhaltensKodexNorm, VerhaltensKodexProzedur, VerhaltensKodexTyp,
+    VerhaltensKodex, build_verhaltens_kodex,
+)
+from .entwicklungs_manifest import (
+    EntwicklungsManifestGeltung, EntwicklungsManifestNorm, EntwicklungsManifestProzedur, EntwicklungsManifestTyp,
+    EntwicklungsManifest, build_entwicklungs_manifest,
+)
+from .sozialpsychologie_pakt import (
+    SozialpsychologiePaktGeltung, SozialpsychologiePaktNorm, SozialpsychologiePaktProzedur, SozialpsychologiePaktTyp,
+    SozialpsychologiePakt, build_sozialpsychologie_pakt,
+)
+from .psychologie_senat import (
+    PsychologieSenatGeltung, PsychologieSenatNorm, PsychologieSenatProzedur, PsychologieSenatTyp,
+    PsychologieSenat, build_psychologie_senat,
+)
+from .psychologie_norm import (
+    PsychologieNormTyp, PsychologieNormProzedur, PsychologieNormGeltung, PsychologieNormEintrag, PsychologieNormSatz, build_psychologie_norm,
+)
+from .kognitions_charta import (
+    KognitionsChartaGeltung, KognitionsChartaNorm, KognitionsChartaProzedur, KognitionsChartaTyp,
+    KognitionsCharta, build_kognitions_charta,
+)
+from .psychologie_verfassung import (
+    PsychologieVerfassungsGeltung, PsychologieVerfassungsNorm, PsychologieVerfassungsProzedur, PsychologieVerfassungsTyp,
+    PsychologieVerfassung, build_psychologie_verfassung,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -4513,4 +4552,23 @@ __all__ = [
     "BildungsphilosophieCharta", "build_bildungsphilosophie_charta",
     "PaedagogikVerfassungsGeltung", "PaedagogikVerfassungsNorm", "PaedagogikVerfassungsProzedur", "PaedagogikVerfassungsTyp",
     "PaedagogikVerfassung", "build_paedagogik_verfassung",
+    "PsychologieFeldGeltung", "PsychologieFeldNorm", "PsychologieFeldProzedur", "PsychologieFeldTyp",
+    "PsychologieFeld", "build_psychologie_feld",
+    "KognitionswissenschaftRegisterGeltung", "KognitionswissenschaftRegisterNorm", "KognitionswissenschaftRegisterProzedur", "KognitionswissenschaftRegisterTyp",
+    "KognitionswissenschaftRegister", "build_kognitionswissenschaft_register",
+    "BewusstseinsChartaGeltung", "BewusstseinsChartaNorm", "BewusstseinsChartaProzedur", "BewusstseinsChartaTyp",
+    "BewusstseinsCharta", "build_bewusstseins_charta",
+    "VerhaltensKodexGeltung", "VerhaltensKodexNorm", "VerhaltensKodexProzedur", "VerhaltensKodexTyp",
+    "VerhaltensKodex", "build_verhaltens_kodex",
+    "EntwicklungsManifestGeltung", "EntwicklungsManifestNorm", "EntwicklungsManifestProzedur", "EntwicklungsManifestTyp",
+    "EntwicklungsManifest", "build_entwicklungs_manifest",
+    "SozialpsychologiePaktGeltung", "SozialpsychologiePaktNorm", "SozialpsychologiePaktProzedur", "SozialpsychologiePaktTyp",
+    "SozialpsychologiePakt", "build_sozialpsychologie_pakt",
+    "PsychologieSenatGeltung", "PsychologieSenatNorm", "PsychologieSenatProzedur", "PsychologieSenatTyp",
+    "PsychologieSenat", "build_psychologie_senat",
+    "PsychologieNormTyp", "PsychologieNormProzedur", "PsychologieNormGeltung", "PsychologieNormEintrag", "PsychologieNormSatz", "build_psychologie_norm",
+    "KognitionsChartaGeltung", "KognitionsChartaNorm", "KognitionsChartaProzedur", "KognitionsChartaTyp",
+    "KognitionsCharta", "build_kognitions_charta",
+    "PsychologieVerfassungsGeltung", "PsychologieVerfassungsNorm", "PsychologieVerfassungsProzedur", "PsychologieVerfassungsTyp",
+    "PsychologieVerfassung", "build_psychologie_verfassung",
 ]

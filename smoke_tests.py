@@ -28924,3 +28924,367 @@ class SmokeTests(unittest.TestCase):
     def test_kki_statistik_verfassung_builds_parent_chain(self):
         from kki.statistik_verfassung import build_statistik_verfassung
         self.assertIsNotNone(build_statistik_verfassung().parent)
+
+    # ── Block #761–770: Pharmakologie & Arzneimittelwissenschaft ──────────────
+
+    def test_kki_pharma_feld_builds(self):
+        from kki.pharma_feld import build_pharma_feld
+        self.assertIsNotNone(build_pharma_feld())
+
+    def test_kki_pharma_feld_normen_count(self):
+        from kki.pharma_feld import build_pharma_feld
+        self.assertEqual(len(build_pharma_feld().normen), 5)
+
+    def test_kki_pharma_feld_weight_positive(self):
+        from kki.pharma_feld import build_pharma_feld
+        for n in build_pharma_feld().normen:
+            self.assertGreaterEqual(n.pharma_weight, 0.0)
+
+    def test_kki_pharma_feld_gesperrt_schutz_norm(self):
+        from kki.pharma_feld import build_pharma_feld, PharmaFeldGeltung
+        self.assertIn(PharmaFeldGeltung.GESPERRT, [n.geltung for n in build_pharma_feld().normen])
+
+    def test_kki_pharma_feld_tier_sequence(self):
+        from kki.pharma_feld import build_pharma_feld
+        tiers = [n.pharma_tier for n in build_pharma_feld().normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_pharma_feld_ids_not_empty(self):
+        from kki.pharma_feld import build_pharma_feld
+        for n in build_pharma_feld().normen:
+            self.assertTrue(len(n.pharma_ids) > 0)
+
+    def test_kki_pharma_feld_tags_contain_domain(self):
+        from kki.pharma_feld import build_pharma_feld
+        for n in build_pharma_feld().normen:
+            self.assertIn("pharma", n.pharma_tags)
+
+    def test_kki_pharma_feld_builds_parent_chain(self):
+        from kki.pharma_feld import build_pharma_feld
+        self.assertIsNotNone(build_pharma_feld().parent)
+
+    def test_kki_arzneimittel_register_builds(self):
+        from kki.arzneimittel_register import build_arzneimittel_register
+        self.assertIsNotNone(build_arzneimittel_register())
+
+    def test_kki_arzneimittel_register_eintraege_count(self):
+        from kki.arzneimittel_register import build_arzneimittel_register
+        self.assertEqual(len(build_arzneimittel_register().eintraege), 5)
+
+    def test_kki_arzneimittel_register_weight_positive(self):
+        from kki.arzneimittel_register import build_arzneimittel_register
+        for e in build_arzneimittel_register().eintraege:
+            self.assertGreaterEqual(e.pharma_weight, 0.0)
+
+    def test_kki_arzneimittel_register_gesperrt_schutz_norm(self):
+        from kki.arzneimittel_register import build_arzneimittel_register, ArzneimittelRegisterGeltung
+        self.assertIn(ArzneimittelRegisterGeltung.GESPERRT, [e.geltung for e in build_arzneimittel_register().eintraege])
+
+    def test_kki_arzneimittel_register_tier_sequence(self):
+        from kki.arzneimittel_register import build_arzneimittel_register
+        tiers = [e.pharma_tier for e in build_arzneimittel_register().eintraege]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_arzneimittel_register_ids_not_empty(self):
+        from kki.arzneimittel_register import build_arzneimittel_register
+        for e in build_arzneimittel_register().eintraege:
+            self.assertTrue(len(e.pharma_ids) > 0)
+
+    def test_kki_arzneimittel_register_tags_contain_domain(self):
+        from kki.arzneimittel_register import build_arzneimittel_register
+        for e in build_arzneimittel_register().eintraege:
+            self.assertIn("arzneimittel", e.pharma_tags)
+
+    def test_kki_arzneimittel_register_builds_parent_chain(self):
+        from kki.arzneimittel_register import build_arzneimittel_register
+        self.assertIsNotNone(build_arzneimittel_register().parent)
+
+    def test_kki_pharmakokinetika_charta_builds(self):
+        from kki.pharmakokinetika_charta import build_pharmakokinetika_charta
+        self.assertIsNotNone(build_pharmakokinetika_charta())
+
+    def test_kki_pharmakokinetika_charta_normen_count(self):
+        from kki.pharmakokinetika_charta import build_pharmakokinetika_charta
+        self.assertEqual(len(build_pharmakokinetika_charta().normen), 5)
+
+    def test_kki_pharmakokinetika_charta_weight_positive(self):
+        from kki.pharmakokinetika_charta import build_pharmakokinetika_charta
+        for n in build_pharmakokinetika_charta().normen:
+            self.assertGreaterEqual(n.pharma_weight, 0.0)
+
+    def test_kki_pharmakokinetika_charta_gesperrt_schutz_norm(self):
+        from kki.pharmakokinetika_charta import build_pharmakokinetika_charta, PharmakokinetikaChartaGeltung
+        self.assertIn(PharmakokinetikaChartaGeltung.GESPERRT, [n.geltung for n in build_pharmakokinetika_charta().normen])
+
+    def test_kki_pharmakokinetika_charta_tier_sequence(self):
+        from kki.pharmakokinetika_charta import build_pharmakokinetika_charta
+        tiers = [n.pharma_tier for n in build_pharmakokinetika_charta().normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_pharmakokinetika_charta_ids_not_empty(self):
+        from kki.pharmakokinetika_charta import build_pharmakokinetika_charta
+        for n in build_pharmakokinetika_charta().normen:
+            self.assertTrue(len(n.pharma_ids) > 0)
+
+    def test_kki_pharmakokinetika_charta_tags_contain_domain(self):
+        from kki.pharmakokinetika_charta import build_pharmakokinetika_charta
+        for n in build_pharmakokinetika_charta().normen:
+            self.assertIn("pharmakokinetika", n.pharma_tags)
+
+    def test_kki_pharmakokinetika_charta_builds_parent_chain(self):
+        from kki.pharmakokinetika_charta import build_pharmakokinetika_charta
+        self.assertIsNotNone(build_pharmakokinetika_charta().parent)
+
+    def test_kki_pharmakodynamik_kodex_builds(self):
+        from kki.pharmakodynamik_kodex import build_pharmakodynamik_kodex
+        self.assertIsNotNone(build_pharmakodynamik_kodex())
+
+    def test_kki_pharmakodynamik_kodex_eintraege_count(self):
+        from kki.pharmakodynamik_kodex import build_pharmakodynamik_kodex
+        self.assertEqual(len(build_pharmakodynamik_kodex().eintraege), 5)
+
+    def test_kki_pharmakodynamik_kodex_weight_positive(self):
+        from kki.pharmakodynamik_kodex import build_pharmakodynamik_kodex
+        for e in build_pharmakodynamik_kodex().eintraege:
+            self.assertGreaterEqual(e.pharma_weight, 0.0)
+
+    def test_kki_pharmakodynamik_kodex_gesperrt_schutz_norm(self):
+        from kki.pharmakodynamik_kodex import build_pharmakodynamik_kodex, PharmakodynamikKodexGeltung
+        self.assertIn(PharmakodynamikKodexGeltung.GESPERRT, [e.geltung for e in build_pharmakodynamik_kodex().eintraege])
+
+    def test_kki_pharmakodynamik_kodex_tier_sequence(self):
+        from kki.pharmakodynamik_kodex import build_pharmakodynamik_kodex
+        tiers = [e.pharma_tier for e in build_pharmakodynamik_kodex().eintraege]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_pharmakodynamik_kodex_ids_not_empty(self):
+        from kki.pharmakodynamik_kodex import build_pharmakodynamik_kodex
+        for e in build_pharmakodynamik_kodex().eintraege:
+            self.assertTrue(len(e.pharma_ids) > 0)
+
+    def test_kki_pharmakodynamik_kodex_tags_contain_domain(self):
+        from kki.pharmakodynamik_kodex import build_pharmakodynamik_kodex
+        for e in build_pharmakodynamik_kodex().eintraege:
+            self.assertIn("pharmakodynamik", e.pharma_tags)
+
+    def test_kki_pharmakodynamik_kodex_builds_parent_chain(self):
+        from kki.pharmakodynamik_kodex import build_pharmakodynamik_kodex
+        self.assertIsNotNone(build_pharmakodynamik_kodex().parent)
+
+    def test_kki_wirkstoff_manifest_builds(self):
+        from kki.wirkstoff_manifest import build_wirkstoff_manifest
+        self.assertIsNotNone(build_wirkstoff_manifest())
+
+    def test_kki_wirkstoff_manifest_normen_count(self):
+        from kki.wirkstoff_manifest import build_wirkstoff_manifest
+        self.assertEqual(len(build_wirkstoff_manifest().normen), 5)
+
+    def test_kki_wirkstoff_manifest_weight_positive(self):
+        from kki.wirkstoff_manifest import build_wirkstoff_manifest
+        for n in build_wirkstoff_manifest().normen:
+            self.assertGreaterEqual(n.pharma_weight, 0.0)
+
+    def test_kki_wirkstoff_manifest_gesperrt_schutz_norm(self):
+        from kki.wirkstoff_manifest import build_wirkstoff_manifest, WirkstoffManifestGeltung
+        self.assertIn(WirkstoffManifestGeltung.GESPERRT, [n.geltung for n in build_wirkstoff_manifest().normen])
+
+    def test_kki_wirkstoff_manifest_tier_sequence(self):
+        from kki.wirkstoff_manifest import build_wirkstoff_manifest
+        tiers = [n.pharma_tier for n in build_wirkstoff_manifest().normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_wirkstoff_manifest_ids_not_empty(self):
+        from kki.wirkstoff_manifest import build_wirkstoff_manifest
+        for n in build_wirkstoff_manifest().normen:
+            self.assertTrue(len(n.pharma_ids) > 0)
+
+    def test_kki_wirkstoff_manifest_tags_contain_domain(self):
+        from kki.wirkstoff_manifest import build_wirkstoff_manifest
+        for n in build_wirkstoff_manifest().normen:
+            self.assertIn("wirkstoff", n.pharma_tags)
+
+    def test_kki_wirkstoff_manifest_builds_parent_chain(self):
+        from kki.wirkstoff_manifest import build_wirkstoff_manifest
+        self.assertIsNotNone(build_wirkstoff_manifest().parent)
+
+    def test_kki_drug_target_pakt_builds(self):
+        from kki.drug_target_pakt import build_drug_target_pakt
+        self.assertIsNotNone(build_drug_target_pakt())
+
+    def test_kki_drug_target_pakt_eintraege_count(self):
+        from kki.drug_target_pakt import build_drug_target_pakt
+        self.assertEqual(len(build_drug_target_pakt().eintraege), 5)
+
+    def test_kki_drug_target_pakt_weight_positive(self):
+        from kki.drug_target_pakt import build_drug_target_pakt
+        for e in build_drug_target_pakt().eintraege:
+            self.assertGreaterEqual(e.pharma_weight, 0.0)
+
+    def test_kki_drug_target_pakt_gesperrt_schutz_norm(self):
+        from kki.drug_target_pakt import build_drug_target_pakt, DrugTargetPaktGeltung
+        self.assertIn(DrugTargetPaktGeltung.GESPERRT, [e.geltung for e in build_drug_target_pakt().eintraege])
+
+    def test_kki_drug_target_pakt_tier_sequence(self):
+        from kki.drug_target_pakt import build_drug_target_pakt
+        tiers = [e.pharma_tier for e in build_drug_target_pakt().eintraege]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_drug_target_pakt_ids_not_empty(self):
+        from kki.drug_target_pakt import build_drug_target_pakt
+        for e in build_drug_target_pakt().eintraege:
+            self.assertTrue(len(e.pharma_ids) > 0)
+
+    def test_kki_drug_target_pakt_tags_contain_domain(self):
+        from kki.drug_target_pakt import build_drug_target_pakt
+        for e in build_drug_target_pakt().eintraege:
+            self.assertIn("drug-target", e.pharma_tags)
+
+    def test_kki_drug_target_pakt_builds_parent_chain(self):
+        from kki.drug_target_pakt import build_drug_target_pakt
+        self.assertIsNotNone(build_drug_target_pakt().parent)
+
+    def test_kki_pharmakologie_senat_builds(self):
+        from kki.pharmakologie_senat import build_pharmakologie_senat
+        self.assertIsNotNone(build_pharmakologie_senat())
+
+    def test_kki_pharmakologie_senat_normen_count(self):
+        from kki.pharmakologie_senat import build_pharmakologie_senat
+        self.assertEqual(len(build_pharmakologie_senat().normen), 5)
+
+    def test_kki_pharmakologie_senat_weight_positive(self):
+        from kki.pharmakologie_senat import build_pharmakologie_senat
+        for n in build_pharmakologie_senat().normen:
+            self.assertGreaterEqual(n.pharma_weight, 0.0)
+
+    def test_kki_pharmakologie_senat_gesperrt_schutz_norm(self):
+        from kki.pharmakologie_senat import build_pharmakologie_senat, PharmakologieSanatGeltung
+        self.assertIn(PharmakologieSanatGeltung.GESPERRT, [n.geltung for n in build_pharmakologie_senat().normen])
+
+    def test_kki_pharmakologie_senat_tier_sequence(self):
+        from kki.pharmakologie_senat import build_pharmakologie_senat
+        tiers = [n.pharma_tier for n in build_pharmakologie_senat().normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_pharmakologie_senat_ids_not_empty(self):
+        from kki.pharmakologie_senat import build_pharmakologie_senat
+        for n in build_pharmakologie_senat().normen:
+            self.assertTrue(len(n.pharma_ids) > 0)
+
+    def test_kki_pharmakologie_senat_tags_contain_domain(self):
+        from kki.pharmakologie_senat import build_pharmakologie_senat
+        for n in build_pharmakologie_senat().normen:
+            self.assertIn("pharmakologie", n.pharma_tags)
+
+    def test_kki_pharmakologie_senat_builds_parent_chain(self):
+        from kki.pharmakologie_senat import build_pharmakologie_senat
+        self.assertIsNotNone(build_pharmakologie_senat().parent)
+
+    def test_kki_pharma_norm_builds(self):
+        from kki.pharma_norm import build_pharma_norm
+        self.assertIsNotNone(build_pharma_norm())
+
+    def test_kki_pharma_norm_normen_count(self):
+        from kki.pharma_norm import build_pharma_norm
+        self.assertEqual(len(build_pharma_norm().normen), 5)
+
+    def test_kki_pharma_norm_weight_positive(self):
+        from kki.pharma_norm import build_pharma_norm
+        for e in build_pharma_norm().normen:
+            self.assertGreaterEqual(e.pharma_norm_weight, 0.0)
+
+    def test_kki_pharma_norm_gesperrt_schutz_norm(self):
+        from kki.pharma_norm import build_pharma_norm, PharmaNormGeltung
+        self.assertIn(PharmaNormGeltung.GESPERRT, [e.geltung for e in build_pharma_norm().normen])
+
+    def test_kki_pharma_norm_tier_sequence(self):
+        from kki.pharma_norm import build_pharma_norm
+        tiers = [e.pharma_norm_tier for e in build_pharma_norm().normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_pharma_norm_ids_not_empty(self):
+        from kki.pharma_norm import build_pharma_norm
+        for e in build_pharma_norm().normen:
+            self.assertTrue(len(e.pharma_norm_ids) > 0)
+
+    def test_kki_pharma_norm_tags_contain_domain(self):
+        from kki.pharma_norm import build_pharma_norm
+        for e in build_pharma_norm().normen:
+            self.assertIn("pharma", e.pharma_norm_tags)
+
+    def test_kki_pharma_norm_builds_parent_chain(self):
+        from kki.pharma_norm import build_pharma_norm
+        self.assertIsNotNone(build_pharma_norm().parent)
+
+    def test_kki_klinische_studien_charta_builds(self):
+        from kki.klinische_studien_charta import build_klinische_studien_charta
+        self.assertIsNotNone(build_klinische_studien_charta())
+
+    def test_kki_klinische_studien_charta_normen_count(self):
+        from kki.klinische_studien_charta import build_klinische_studien_charta
+        self.assertEqual(len(build_klinische_studien_charta().normen), 5)
+
+    def test_kki_klinische_studien_charta_weight_positive(self):
+        from kki.klinische_studien_charta import build_klinische_studien_charta
+        for n in build_klinische_studien_charta().normen:
+            self.assertGreaterEqual(n.pharma_weight, 0.0)
+
+    def test_kki_klinische_studien_charta_gesperrt_schutz_norm(self):
+        from kki.klinische_studien_charta import build_klinische_studien_charta, KlinischeStudienChartaGeltung
+        self.assertIn(KlinischeStudienChartaGeltung.GESPERRT, [n.geltung for n in build_klinische_studien_charta().normen])
+
+    def test_kki_klinische_studien_charta_tier_sequence(self):
+        from kki.klinische_studien_charta import build_klinische_studien_charta
+        tiers = [n.pharma_tier for n in build_klinische_studien_charta().normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_klinische_studien_charta_ids_not_empty(self):
+        from kki.klinische_studien_charta import build_klinische_studien_charta
+        for n in build_klinische_studien_charta().normen:
+            self.assertTrue(len(n.pharma_ids) > 0)
+
+    def test_kki_klinische_studien_charta_tags_contain_domain(self):
+        from kki.klinische_studien_charta import build_klinische_studien_charta
+        for n in build_klinische_studien_charta().normen:
+            self.assertIn("klinische-studien", n.pharma_tags)
+
+    def test_kki_klinische_studien_charta_builds_parent_chain(self):
+        from kki.klinische_studien_charta import build_klinische_studien_charta
+        self.assertIsNotNone(build_klinische_studien_charta().parent)
+
+    def test_kki_pharma_verfassung_builds(self):
+        from kki.pharma_verfassung import build_pharma_verfassung
+        self.assertIsNotNone(build_pharma_verfassung())
+
+    def test_kki_pharma_verfassung_normen_count(self):
+        from kki.pharma_verfassung import build_pharma_verfassung
+        self.assertEqual(len(build_pharma_verfassung().normen), 5)
+
+    def test_kki_pharma_verfassung_gesperrt_schutz_norm(self):
+        from kki.pharma_verfassung import build_pharma_verfassung, PharmaVerfassungGeltung
+        self.assertIn(PharmaVerfassungGeltung.GESPERRT, [n.geltung for n in build_pharma_verfassung().normen])
+
+    def test_kki_pharma_verfassung_aggregates_verfassung_signal(self):
+        from kki.pharma_verfassung import build_pharma_verfassung
+        sig = build_pharma_verfassung().aggregates_verfassung_signal()
+        self.assertEqual(sig["verfassung_id"], "pharma-verfassung-770")
+        self.assertGreater(sig["total_weight"], 0)
+        self.assertEqual(sig["norm_count"], 5)
+
+    def test_kki_pharma_verfassung_tier_sequence(self):
+        from kki.pharma_verfassung import build_pharma_verfassung
+        tiers = [n.pharma_tier for n in build_pharma_verfassung().normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_pharma_verfassung_ids_not_empty(self):
+        from kki.pharma_verfassung import build_pharma_verfassung
+        for n in build_pharma_verfassung().normen:
+            self.assertTrue(len(n.pharma_ids) > 0)
+
+    def test_kki_pharma_verfassung_tags_contain_domain(self):
+        from kki.pharma_verfassung import build_pharma_verfassung
+        for n in build_pharma_verfassung().normen:
+            self.assertIn("pharma", n.pharma_tags)
+
+    def test_kki_pharma_verfassung_builds_parent_chain(self):
+        from kki.pharma_verfassung import build_pharma_verfassung
+        self.assertIsNotNone(build_pharma_verfassung().parent)

@@ -3442,6 +3442,47 @@ from .statistik_verfassung import (
     StatistikVerfassungGeltung, StatistikVerfassungsNorm, StatistikVerfassungTyp, StatistikVerfassungProzedur,
     StatistikVerfassung, build_statistik_verfassung,
 )
+# Block #761–770: Pharmakologie & Arzneimittelwissenschaft
+from .pharma_feld import (
+    PharmaFeldGeltung, PharmaFeldNorm, PharmaFeldTyp, PharmaFeldProzedur,
+    PharmaFeld, build_pharma_feld,
+)
+from .arzneimittel_register import (
+    ArzneimittelRegisterGeltung, ArzneimittelRegisterEintrag, ArzneimittelRegisterTyp, ArzneimittelRegisterProzedur,
+    ArzneimittelRegister, build_arzneimittel_register,
+)
+from .pharmakokinetika_charta import (
+    PharmakokinetikaChartaGeltung, PharmakokinetikaChartaNorm, PharmakokinetikaChartaTyp, PharmakokinetikaChartaProzedur,
+    PharmakokinetikaCharta, build_pharmakokinetika_charta,
+)
+from .pharmakodynamik_kodex import (
+    PharmakodynamikKodexGeltung, PharmakodynamikKodexEintrag, PharmakodynamikKodexTyp, PharmakodynamikKodexProzedur,
+    PharmakodynamikKodex, build_pharmakodynamik_kodex,
+)
+from .wirkstoff_manifest import (
+    WirkstoffManifestGeltung, WirkstoffManifestNorm, WirkstoffManifestTyp, WirkstoffManifestProzedur,
+    WirkstoffManifest, build_wirkstoff_manifest,
+)
+from .drug_target_pakt import (
+    DrugTargetPaktGeltung, DrugTargetPaktEintrag, DrugTargetPaktTyp, DrugTargetPaktProzedur,
+    DrugTargetPakt, build_drug_target_pakt,
+)
+from .pharmakologie_senat import (
+    PharmakologieSanatGeltung, PharmakologieSanatNorm, PharmakologieSanatTyp, PharmakologieSanatProzedur,
+    PharmakologieSenat, build_pharmakologie_senat,
+)
+from .pharma_norm import (
+    PharmaNormGeltung, PharmaNormEintrag, PharmaNormTyp, PharmaNormProzedur,
+    PharmaNormSatz, build_pharma_norm,
+)
+from .klinische_studien_charta import (
+    KlinischeStudienChartaGeltung, KlinischeStudienChartaNorm, KlinischeStudienChartaTyp, KlinischeStudienChartaProzedur,
+    KlinischeStudienCharta, build_klinische_studien_charta,
+)
+from .pharma_verfassung import (
+    PharmaVerfassungGeltung, PharmaVerfassungsNorm, PharmaVerfassungTyp, PharmaVerfassungProzedur,
+    PharmaVerfassung, build_pharma_verfassung,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -5537,4 +5578,25 @@ __all__ = [
     "InferenzstatistikCharta", "build_inferenzstatistik_charta",
     "StatistikVerfassungGeltung", "StatistikVerfassungsNorm", "StatistikVerfassungTyp", "StatistikVerfassungProzedur",
     "StatistikVerfassung", "build_statistik_verfassung",
+    # Block #761–770: Pharmakologie & Arzneimittelwissenschaft
+    "PharmaFeldGeltung", "PharmaFeldNorm", "PharmaFeldTyp", "PharmaFeldProzedur",
+    "PharmaFeld", "build_pharma_feld",
+    "ArzneimittelRegisterGeltung", "ArzneimittelRegisterEintrag", "ArzneimittelRegisterTyp", "ArzneimittelRegisterProzedur",
+    "ArzneimittelRegister", "build_arzneimittel_register",
+    "PharmakokinetikaChartaGeltung", "PharmakokinetikaChartaNorm", "PharmakokinetikaChartaTyp", "PharmakokinetikaChartaProzedur",
+    "PharmakokinetikaCharta", "build_pharmakokinetika_charta",
+    "PharmakodynamikKodexGeltung", "PharmakodynamikKodexEintrag", "PharmakodynamikKodexTyp", "PharmakodynamikKodexProzedur",
+    "PharmakodynamikKodex", "build_pharmakodynamik_kodex",
+    "WirkstoffManifestGeltung", "WirkstoffManifestNorm", "WirkstoffManifestTyp", "WirkstoffManifestProzedur",
+    "WirkstoffManifest", "build_wirkstoff_manifest",
+    "DrugTargetPaktGeltung", "DrugTargetPaktEintrag", "DrugTargetPaktTyp", "DrugTargetPaktProzedur",
+    "DrugTargetPakt", "build_drug_target_pakt",
+    "PharmakologieSanatGeltung", "PharmakologieSanatNorm", "PharmakologieSanatTyp", "PharmakologieSanatProzedur",
+    "PharmakologieSenat", "build_pharmakologie_senat",
+    "PharmaNormGeltung", "PharmaNormEintrag", "PharmaNormTyp", "PharmaNormProzedur",
+    "PharmaNormSatz", "build_pharma_norm",
+    "KlinischeStudienChartaGeltung", "KlinischeStudienChartaNorm", "KlinischeStudienChartaTyp", "KlinischeStudienChartaProzedur",
+    "KlinischeStudienCharta", "build_klinische_studien_charta",
+    "PharmaVerfassungGeltung", "PharmaVerfassungsNorm", "PharmaVerfassungTyp", "PharmaVerfassungProzedur",
+    "PharmaVerfassung", "build_pharma_verfassung",
 ]

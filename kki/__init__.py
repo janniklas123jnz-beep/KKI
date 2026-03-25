@@ -3483,6 +3483,47 @@ from .pharma_verfassung import (
     PharmaVerfassungGeltung, PharmaVerfassungsNorm, PharmaVerfassungTyp, PharmaVerfassungProzedur,
     PharmaVerfassung, build_pharma_verfassung,
 )
+# Block #771–780: Sportwissenschaft & Bewegungslehre
+from .sport_feld import (
+    SportFeldGeltung, SportFeldNorm, SportFeldTyp, SportFeldProzedur,
+    SportFeld, build_sport_feld,
+)
+from .biomechanik_register import (
+    BiomechanikRegisterGeltung, BiomechanikRegisterEintrag, BiomechanikRegisterTyp, BiomechanikRegisterProzedur,
+    BiomechanikRegister, build_biomechanik_register,
+)
+from .trainingslehre_charta import (
+    TrainingslehreChartaGeltung, TrainingslehreChartaNorm, TrainingslehreChartaTyp, TrainingslehreChartaProzedur,
+    TrainingslehreCharta, build_trainingslehre_charta,
+)
+from .sportphysiologie_kodex import (
+    SportphysiologieKodexGeltung, SportphysiologieKodexEintrag, SportphysiologieKodexTyp, SportphysiologieKodexProzedur,
+    SportphysiologieKodex, build_sportphysiologie_kodex,
+)
+from .leistungsdiagnostik_manifest import (
+    LeistungsdiagnostikManifestGeltung, LeistungsdiagnostikManifestNorm, LeistungsdiagnostikManifestTyp, LeistungsdiagnostikManifestProzedur,
+    LeistungsdiagnostikManifest, build_leistungsdiagnostik_manifest,
+)
+from .sportpsychologie_pakt import (
+    SportpsychologiePaktGeltung, SportpsychologiePaktEintrag, SportpsychologiePaktTyp, SportpsychologiePaktProzedur,
+    SportpsychologiePakt, build_sportpsychologie_pakt,
+)
+from .bewegungslehre_senat import (
+    BewegungslehreSenatGeltung, BewegungslehreSenatNorm, BewegungslehreSenatTyp, BewegungslehreSenatProzedur,
+    BewegungslehreSenat, build_bewegungslehre_senat,
+)
+from .sport_norm import (
+    SportNormGeltung, SportNormEintrag, SportNormTyp, SportNormProzedur,
+    SportNormSatz, build_sport_norm,
+)
+from .sportmedizin_charta import (
+    SportmedizinChartaGeltung, SportmedizinChartaNorm, SportmedizinChartaTyp, SportmedizinChartaProzedur,
+    SportmedizinCharta, build_sportmedizin_charta,
+)
+from .sport_verfassung import (
+    SportVerfassungGeltung, SportVerfassungsNorm, SportVerfassungTyp, SportVerfassungProzedur,
+    SportVerfassung, build_sport_verfassung,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -5599,4 +5640,25 @@ __all__ = [
     "KlinischeStudienCharta", "build_klinische_studien_charta",
     "PharmaVerfassungGeltung", "PharmaVerfassungsNorm", "PharmaVerfassungTyp", "PharmaVerfassungProzedur",
     "PharmaVerfassung", "build_pharma_verfassung",
+    # Block #771–780: Sportwissenschaft & Bewegungslehre
+    "SportFeldGeltung", "SportFeldNorm", "SportFeldTyp", "SportFeldProzedur",
+    "SportFeld", "build_sport_feld",
+    "BiomechanikRegisterGeltung", "BiomechanikRegisterEintrag", "BiomechanikRegisterTyp", "BiomechanikRegisterProzedur",
+    "BiomechanikRegister", "build_biomechanik_register",
+    "TrainingslehreChartaGeltung", "TrainingslehreChartaNorm", "TrainingslehreChartaTyp", "TrainingslehreChartaProzedur",
+    "TrainingslehreCharta", "build_trainingslehre_charta",
+    "SportphysiologieKodexGeltung", "SportphysiologieKodexEintrag", "SportphysiologieKodexTyp", "SportphysiologieKodexProzedur",
+    "SportphysiologieKodex", "build_sportphysiologie_kodex",
+    "LeistungsdiagnostikManifestGeltung", "LeistungsdiagnostikManifestNorm", "LeistungsdiagnostikManifestTyp", "LeistungsdiagnostikManifestProzedur",
+    "LeistungsdiagnostikManifest", "build_leistungsdiagnostik_manifest",
+    "SportpsychologiePaktGeltung", "SportpsychologiePaktEintrag", "SportpsychologiePaktTyp", "SportpsychologiePaktProzedur",
+    "SportpsychologiePakt", "build_sportpsychologie_pakt",
+    "BewegungslehreSenatGeltung", "BewegungslehreSenatNorm", "BewegungslehreSenatTyp", "BewegungslehreSenatProzedur",
+    "BewegungslehreSenat", "build_bewegungslehre_senat",
+    "SportNormGeltung", "SportNormEintrag", "SportNormTyp", "SportNormProzedur",
+    "SportNormSatz", "build_sport_norm",
+    "SportmedizinChartaGeltung", "SportmedizinChartaNorm", "SportmedizinChartaTyp", "SportmedizinChartaProzedur",
+    "SportmedizinCharta", "build_sportmedizin_charta",
+    "SportVerfassungGeltung", "SportVerfassungsNorm", "SportVerfassungTyp", "SportVerfassungProzedur",
+    "SportVerfassung", "build_sport_verfassung",
 ]

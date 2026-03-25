@@ -29288,3 +29288,367 @@ class SmokeTests(unittest.TestCase):
     def test_kki_pharma_verfassung_builds_parent_chain(self):
         from kki.pharma_verfassung import build_pharma_verfassung
         self.assertIsNotNone(build_pharma_verfassung().parent)
+
+    # ── Block #771–780: Sportwissenschaft & Bewegungslehre ───────────────────
+
+    def test_kki_sport_feld_builds(self):
+        from kki.sport_feld import build_sport_feld
+        self.assertIsNotNone(build_sport_feld())
+
+    def test_kki_sport_feld_normen_count(self):
+        from kki.sport_feld import build_sport_feld
+        self.assertEqual(len(build_sport_feld().normen), 5)
+
+    def test_kki_sport_feld_weight_positive(self):
+        from kki.sport_feld import build_sport_feld
+        for n in build_sport_feld().normen:
+            self.assertGreaterEqual(n.sport_weight, 0.0)
+
+    def test_kki_sport_feld_gesperrt_schutz_norm(self):
+        from kki.sport_feld import build_sport_feld, SportFeldGeltung
+        self.assertIn(SportFeldGeltung.GESPERRT, [n.geltung for n in build_sport_feld().normen])
+
+    def test_kki_sport_feld_tier_sequence(self):
+        from kki.sport_feld import build_sport_feld
+        tiers = [n.sport_tier for n in build_sport_feld().normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_sport_feld_ids_not_empty(self):
+        from kki.sport_feld import build_sport_feld
+        for n in build_sport_feld().normen:
+            self.assertTrue(len(n.sport_ids) > 0)
+
+    def test_kki_sport_feld_tags_contain_domain(self):
+        from kki.sport_feld import build_sport_feld
+        for n in build_sport_feld().normen:
+            self.assertIn("sport", n.sport_tags)
+
+    def test_kki_sport_feld_builds_parent_chain(self):
+        from kki.sport_feld import build_sport_feld
+        self.assertIsNotNone(build_sport_feld().parent)
+
+    def test_kki_biomechanik_register_builds(self):
+        from kki.biomechanik_register import build_biomechanik_register
+        self.assertIsNotNone(build_biomechanik_register())
+
+    def test_kki_biomechanik_register_eintraege_count(self):
+        from kki.biomechanik_register import build_biomechanik_register
+        self.assertEqual(len(build_biomechanik_register().eintraege), 5)
+
+    def test_kki_biomechanik_register_weight_positive(self):
+        from kki.biomechanik_register import build_biomechanik_register
+        for e in build_biomechanik_register().eintraege:
+            self.assertGreaterEqual(e.sport_weight, 0.0)
+
+    def test_kki_biomechanik_register_gesperrt_schutz_norm(self):
+        from kki.biomechanik_register import build_biomechanik_register, BiomechanikRegisterGeltung
+        self.assertIn(BiomechanikRegisterGeltung.GESPERRT, [e.geltung for e in build_biomechanik_register().eintraege])
+
+    def test_kki_biomechanik_register_tier_sequence(self):
+        from kki.biomechanik_register import build_biomechanik_register
+        tiers = [e.sport_tier for e in build_biomechanik_register().eintraege]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_biomechanik_register_ids_not_empty(self):
+        from kki.biomechanik_register import build_biomechanik_register
+        for e in build_biomechanik_register().eintraege:
+            self.assertTrue(len(e.sport_ids) > 0)
+
+    def test_kki_biomechanik_register_tags_contain_domain(self):
+        from kki.biomechanik_register import build_biomechanik_register
+        for e in build_biomechanik_register().eintraege:
+            self.assertIn("biomechanik", e.sport_tags)
+
+    def test_kki_biomechanik_register_builds_parent_chain(self):
+        from kki.biomechanik_register import build_biomechanik_register
+        self.assertIsNotNone(build_biomechanik_register().parent)
+
+    def test_kki_trainingslehre_charta_builds(self):
+        from kki.trainingslehre_charta import build_trainingslehre_charta
+        self.assertIsNotNone(build_trainingslehre_charta())
+
+    def test_kki_trainingslehre_charta_normen_count(self):
+        from kki.trainingslehre_charta import build_trainingslehre_charta
+        self.assertEqual(len(build_trainingslehre_charta().normen), 5)
+
+    def test_kki_trainingslehre_charta_weight_positive(self):
+        from kki.trainingslehre_charta import build_trainingslehre_charta
+        for n in build_trainingslehre_charta().normen:
+            self.assertGreaterEqual(n.sport_weight, 0.0)
+
+    def test_kki_trainingslehre_charta_gesperrt_schutz_norm(self):
+        from kki.trainingslehre_charta import build_trainingslehre_charta, TrainingslehreChartaGeltung
+        self.assertIn(TrainingslehreChartaGeltung.GESPERRT, [n.geltung for n in build_trainingslehre_charta().normen])
+
+    def test_kki_trainingslehre_charta_tier_sequence(self):
+        from kki.trainingslehre_charta import build_trainingslehre_charta
+        tiers = [n.sport_tier for n in build_trainingslehre_charta().normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_trainingslehre_charta_ids_not_empty(self):
+        from kki.trainingslehre_charta import build_trainingslehre_charta
+        for n in build_trainingslehre_charta().normen:
+            self.assertTrue(len(n.sport_ids) > 0)
+
+    def test_kki_trainingslehre_charta_tags_contain_domain(self):
+        from kki.trainingslehre_charta import build_trainingslehre_charta
+        for n in build_trainingslehre_charta().normen:
+            self.assertIn("trainingslehre", n.sport_tags)
+
+    def test_kki_trainingslehre_charta_builds_parent_chain(self):
+        from kki.trainingslehre_charta import build_trainingslehre_charta
+        self.assertIsNotNone(build_trainingslehre_charta().parent)
+
+    def test_kki_sportphysiologie_kodex_builds(self):
+        from kki.sportphysiologie_kodex import build_sportphysiologie_kodex
+        self.assertIsNotNone(build_sportphysiologie_kodex())
+
+    def test_kki_sportphysiologie_kodex_eintraege_count(self):
+        from kki.sportphysiologie_kodex import build_sportphysiologie_kodex
+        self.assertEqual(len(build_sportphysiologie_kodex().eintraege), 5)
+
+    def test_kki_sportphysiologie_kodex_weight_positive(self):
+        from kki.sportphysiologie_kodex import build_sportphysiologie_kodex
+        for e in build_sportphysiologie_kodex().eintraege:
+            self.assertGreaterEqual(e.sport_weight, 0.0)
+
+    def test_kki_sportphysiologie_kodex_gesperrt_schutz_norm(self):
+        from kki.sportphysiologie_kodex import build_sportphysiologie_kodex, SportphysiologieKodexGeltung
+        self.assertIn(SportphysiologieKodexGeltung.GESPERRT, [e.geltung for e in build_sportphysiologie_kodex().eintraege])
+
+    def test_kki_sportphysiologie_kodex_tier_sequence(self):
+        from kki.sportphysiologie_kodex import build_sportphysiologie_kodex
+        tiers = [e.sport_tier for e in build_sportphysiologie_kodex().eintraege]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_sportphysiologie_kodex_ids_not_empty(self):
+        from kki.sportphysiologie_kodex import build_sportphysiologie_kodex
+        for e in build_sportphysiologie_kodex().eintraege:
+            self.assertTrue(len(e.sport_ids) > 0)
+
+    def test_kki_sportphysiologie_kodex_tags_contain_domain(self):
+        from kki.sportphysiologie_kodex import build_sportphysiologie_kodex
+        for e in build_sportphysiologie_kodex().eintraege:
+            self.assertIn("sportphysiologie", e.sport_tags)
+
+    def test_kki_sportphysiologie_kodex_builds_parent_chain(self):
+        from kki.sportphysiologie_kodex import build_sportphysiologie_kodex
+        self.assertIsNotNone(build_sportphysiologie_kodex().parent)
+
+    def test_kki_leistungsdiagnostik_manifest_builds(self):
+        from kki.leistungsdiagnostik_manifest import build_leistungsdiagnostik_manifest
+        self.assertIsNotNone(build_leistungsdiagnostik_manifest())
+
+    def test_kki_leistungsdiagnostik_manifest_normen_count(self):
+        from kki.leistungsdiagnostik_manifest import build_leistungsdiagnostik_manifest
+        self.assertEqual(len(build_leistungsdiagnostik_manifest().normen), 5)
+
+    def test_kki_leistungsdiagnostik_manifest_weight_positive(self):
+        from kki.leistungsdiagnostik_manifest import build_leistungsdiagnostik_manifest
+        for n in build_leistungsdiagnostik_manifest().normen:
+            self.assertGreaterEqual(n.sport_weight, 0.0)
+
+    def test_kki_leistungsdiagnostik_manifest_gesperrt_schutz_norm(self):
+        from kki.leistungsdiagnostik_manifest import build_leistungsdiagnostik_manifest, LeistungsdiagnostikManifestGeltung
+        self.assertIn(LeistungsdiagnostikManifestGeltung.GESPERRT, [n.geltung for n in build_leistungsdiagnostik_manifest().normen])
+
+    def test_kki_leistungsdiagnostik_manifest_tier_sequence(self):
+        from kki.leistungsdiagnostik_manifest import build_leistungsdiagnostik_manifest
+        tiers = [n.sport_tier for n in build_leistungsdiagnostik_manifest().normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_leistungsdiagnostik_manifest_ids_not_empty(self):
+        from kki.leistungsdiagnostik_manifest import build_leistungsdiagnostik_manifest
+        for n in build_leistungsdiagnostik_manifest().normen:
+            self.assertTrue(len(n.sport_ids) > 0)
+
+    def test_kki_leistungsdiagnostik_manifest_tags_contain_domain(self):
+        from kki.leistungsdiagnostik_manifest import build_leistungsdiagnostik_manifest
+        for n in build_leistungsdiagnostik_manifest().normen:
+            self.assertIn("leistungsdiagnostik", n.sport_tags)
+
+    def test_kki_leistungsdiagnostik_manifest_builds_parent_chain(self):
+        from kki.leistungsdiagnostik_manifest import build_leistungsdiagnostik_manifest
+        self.assertIsNotNone(build_leistungsdiagnostik_manifest().parent)
+
+    def test_kki_sportpsychologie_pakt_builds(self):
+        from kki.sportpsychologie_pakt import build_sportpsychologie_pakt
+        self.assertIsNotNone(build_sportpsychologie_pakt())
+
+    def test_kki_sportpsychologie_pakt_eintraege_count(self):
+        from kki.sportpsychologie_pakt import build_sportpsychologie_pakt
+        self.assertEqual(len(build_sportpsychologie_pakt().eintraege), 5)
+
+    def test_kki_sportpsychologie_pakt_weight_positive(self):
+        from kki.sportpsychologie_pakt import build_sportpsychologie_pakt
+        for e in build_sportpsychologie_pakt().eintraege:
+            self.assertGreaterEqual(e.sport_weight, 0.0)
+
+    def test_kki_sportpsychologie_pakt_gesperrt_schutz_norm(self):
+        from kki.sportpsychologie_pakt import build_sportpsychologie_pakt, SportpsychologiePaktGeltung
+        self.assertIn(SportpsychologiePaktGeltung.GESPERRT, [e.geltung for e in build_sportpsychologie_pakt().eintraege])
+
+    def test_kki_sportpsychologie_pakt_tier_sequence(self):
+        from kki.sportpsychologie_pakt import build_sportpsychologie_pakt
+        tiers = [e.sport_tier for e in build_sportpsychologie_pakt().eintraege]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_sportpsychologie_pakt_ids_not_empty(self):
+        from kki.sportpsychologie_pakt import build_sportpsychologie_pakt
+        for e in build_sportpsychologie_pakt().eintraege:
+            self.assertTrue(len(e.sport_ids) > 0)
+
+    def test_kki_sportpsychologie_pakt_tags_contain_domain(self):
+        from kki.sportpsychologie_pakt import build_sportpsychologie_pakt
+        for e in build_sportpsychologie_pakt().eintraege:
+            self.assertIn("sportpsychologie", e.sport_tags)
+
+    def test_kki_sportpsychologie_pakt_builds_parent_chain(self):
+        from kki.sportpsychologie_pakt import build_sportpsychologie_pakt
+        self.assertIsNotNone(build_sportpsychologie_pakt().parent)
+
+    def test_kki_bewegungslehre_senat_builds(self):
+        from kki.bewegungslehre_senat import build_bewegungslehre_senat
+        self.assertIsNotNone(build_bewegungslehre_senat())
+
+    def test_kki_bewegungslehre_senat_normen_count(self):
+        from kki.bewegungslehre_senat import build_bewegungslehre_senat
+        self.assertEqual(len(build_bewegungslehre_senat().normen), 5)
+
+    def test_kki_bewegungslehre_senat_weight_positive(self):
+        from kki.bewegungslehre_senat import build_bewegungslehre_senat
+        for n in build_bewegungslehre_senat().normen:
+            self.assertGreaterEqual(n.sport_weight, 0.0)
+
+    def test_kki_bewegungslehre_senat_gesperrt_schutz_norm(self):
+        from kki.bewegungslehre_senat import build_bewegungslehre_senat, BewegungslehreSenatGeltung
+        self.assertIn(BewegungslehreSenatGeltung.GESPERRT, [n.geltung for n in build_bewegungslehre_senat().normen])
+
+    def test_kki_bewegungslehre_senat_tier_sequence(self):
+        from kki.bewegungslehre_senat import build_bewegungslehre_senat
+        tiers = [n.sport_tier for n in build_bewegungslehre_senat().normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_bewegungslehre_senat_ids_not_empty(self):
+        from kki.bewegungslehre_senat import build_bewegungslehre_senat
+        for n in build_bewegungslehre_senat().normen:
+            self.assertTrue(len(n.sport_ids) > 0)
+
+    def test_kki_bewegungslehre_senat_tags_contain_domain(self):
+        from kki.bewegungslehre_senat import build_bewegungslehre_senat
+        for n in build_bewegungslehre_senat().normen:
+            self.assertIn("bewegungslehre", n.sport_tags)
+
+    def test_kki_bewegungslehre_senat_builds_parent_chain(self):
+        from kki.bewegungslehre_senat import build_bewegungslehre_senat
+        self.assertIsNotNone(build_bewegungslehre_senat().parent)
+
+    def test_kki_sport_norm_builds(self):
+        from kki.sport_norm import build_sport_norm
+        self.assertIsNotNone(build_sport_norm())
+
+    def test_kki_sport_norm_normen_count(self):
+        from kki.sport_norm import build_sport_norm
+        self.assertEqual(len(build_sport_norm().normen), 5)
+
+    def test_kki_sport_norm_weight_positive(self):
+        from kki.sport_norm import build_sport_norm
+        for e in build_sport_norm().normen:
+            self.assertGreaterEqual(e.sport_norm_weight, 0.0)
+
+    def test_kki_sport_norm_gesperrt_schutz_norm(self):
+        from kki.sport_norm import build_sport_norm, SportNormGeltung
+        self.assertIn(SportNormGeltung.GESPERRT, [e.geltung for e in build_sport_norm().normen])
+
+    def test_kki_sport_norm_tier_sequence(self):
+        from kki.sport_norm import build_sport_norm
+        tiers = [e.sport_norm_tier for e in build_sport_norm().normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_sport_norm_ids_not_empty(self):
+        from kki.sport_norm import build_sport_norm
+        for e in build_sport_norm().normen:
+            self.assertTrue(len(e.sport_norm_ids) > 0)
+
+    def test_kki_sport_norm_tags_contain_domain(self):
+        from kki.sport_norm import build_sport_norm
+        for e in build_sport_norm().normen:
+            self.assertIn("sport", e.sport_norm_tags)
+
+    def test_kki_sport_norm_builds_parent_chain(self):
+        from kki.sport_norm import build_sport_norm
+        self.assertIsNotNone(build_sport_norm().parent)
+
+    def test_kki_sportmedizin_charta_builds(self):
+        from kki.sportmedizin_charta import build_sportmedizin_charta
+        self.assertIsNotNone(build_sportmedizin_charta())
+
+    def test_kki_sportmedizin_charta_normen_count(self):
+        from kki.sportmedizin_charta import build_sportmedizin_charta
+        self.assertEqual(len(build_sportmedizin_charta().normen), 5)
+
+    def test_kki_sportmedizin_charta_weight_positive(self):
+        from kki.sportmedizin_charta import build_sportmedizin_charta
+        for n in build_sportmedizin_charta().normen:
+            self.assertGreaterEqual(n.sport_weight, 0.0)
+
+    def test_kki_sportmedizin_charta_gesperrt_schutz_norm(self):
+        from kki.sportmedizin_charta import build_sportmedizin_charta, SportmedizinChartaGeltung
+        self.assertIn(SportmedizinChartaGeltung.GESPERRT, [n.geltung for n in build_sportmedizin_charta().normen])
+
+    def test_kki_sportmedizin_charta_tier_sequence(self):
+        from kki.sportmedizin_charta import build_sportmedizin_charta
+        tiers = [n.sport_tier for n in build_sportmedizin_charta().normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_sportmedizin_charta_ids_not_empty(self):
+        from kki.sportmedizin_charta import build_sportmedizin_charta
+        for n in build_sportmedizin_charta().normen:
+            self.assertTrue(len(n.sport_ids) > 0)
+
+    def test_kki_sportmedizin_charta_tags_contain_domain(self):
+        from kki.sportmedizin_charta import build_sportmedizin_charta
+        for n in build_sportmedizin_charta().normen:
+            self.assertIn("sportmedizin", n.sport_tags)
+
+    def test_kki_sportmedizin_charta_builds_parent_chain(self):
+        from kki.sportmedizin_charta import build_sportmedizin_charta
+        self.assertIsNotNone(build_sportmedizin_charta().parent)
+
+    def test_kki_sport_verfassung_builds(self):
+        from kki.sport_verfassung import build_sport_verfassung
+        self.assertIsNotNone(build_sport_verfassung())
+
+    def test_kki_sport_verfassung_normen_count(self):
+        from kki.sport_verfassung import build_sport_verfassung
+        self.assertEqual(len(build_sport_verfassung().normen), 5)
+
+    def test_kki_sport_verfassung_gesperrt_schutz_norm(self):
+        from kki.sport_verfassung import build_sport_verfassung, SportVerfassungGeltung
+        self.assertIn(SportVerfassungGeltung.GESPERRT, [n.geltung for n in build_sport_verfassung().normen])
+
+    def test_kki_sport_verfassung_aggregates_verfassung_signal(self):
+        from kki.sport_verfassung import build_sport_verfassung
+        sig = build_sport_verfassung().aggregates_verfassung_signal()
+        self.assertEqual(sig["verfassung_id"], "sport-verfassung-780")
+        self.assertGreater(sig["total_weight"], 0)
+        self.assertEqual(sig["norm_count"], 5)
+
+    def test_kki_sport_verfassung_tier_sequence(self):
+        from kki.sport_verfassung import build_sport_verfassung
+        tiers = [n.sport_tier for n in build_sport_verfassung().normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_sport_verfassung_ids_not_empty(self):
+        from kki.sport_verfassung import build_sport_verfassung
+        for n in build_sport_verfassung().normen:
+            self.assertTrue(len(n.sport_ids) > 0)
+
+    def test_kki_sport_verfassung_tags_contain_domain(self):
+        from kki.sport_verfassung import build_sport_verfassung
+        for n in build_sport_verfassung().normen:
+            self.assertIn("sport", n.sport_tags)
+
+    def test_kki_sport_verfassung_builds_parent_chain(self):
+        from kki.sport_verfassung import build_sport_verfassung
+        self.assertIsNotNone(build_sport_verfassung().parent)

@@ -3524,6 +3524,47 @@ from .sport_verfassung import (
     SportVerfassungGeltung, SportVerfassungsNorm, SportVerfassungTyp, SportVerfassungProzedur,
     SportVerfassung, build_sport_verfassung,
 )
+# Block #781–790: Agrarwissenschaft & Ernährung
+from .agrar_feld import (
+    AgrarFeldGeltung, AgrarFeldNorm, AgrarFeldTyp, AgrarFeldProzedur,
+    AgrarFeld, build_agrar_feld,
+)
+from .pflanzenbau_register import (
+    PflanzenbauRegisterGeltung, PflanzenbauRegisterEintrag, PflanzenbauRegisterTyp, PflanzenbauRegisterProzedur,
+    PflanzenbauRegister, build_pflanzenbau_register,
+)
+from .tierhaltung_charta import (
+    TierhaltungChartaGeltung, TierhaltungChartaNorm, TierhaltungChartaTyp, TierhaltungChartaProzedur,
+    TierhaltungCharta, build_tierhaltung_charta,
+)
+from .bodenkunde_kodex import (
+    BodenkundeKodexGeltung, BodenkundeKodexEintrag, BodenkundeKodexTyp, BodenkundeKodexProzedur,
+    BodenkundeKodex, build_bodenkunde_kodex,
+)
+from .ernaehrungswissenschaft_manifest import (
+    ErnaehrungswissenschaftManifestGeltung, ErnaehrungswissenschaftManifestNorm, ErnaehrungswissenschaftManifestTyp, ErnaehrungswissenschaftManifestProzedur,
+    ErnaehrungswissenschaftManifest, build_ernaehrungswissenschaft_manifest,
+)
+from .landwirtschaft_pakt import (
+    LandwirtschaftPaktGeltung, LandwirtschaftPaktEintrag, LandwirtschaftPaktTyp, LandwirtschaftPaktProzedur,
+    LandwirtschaftPakt, build_landwirtschaft_pakt,
+)
+from .agraroekologie_senat import (
+    AgraroekologieSenatGeltung, AgraroekologieSenatNorm, AgraroekologieSenatTyp, AgraroekologieSenatProzedur,
+    AgraroekologieSenat, build_agraoekologie_senat,
+)
+from .agrar_norm import (
+    AgrarNormGeltung, AgrarNormEintrag, AgrarNormTyp, AgrarNormProzedur,
+    AgrarNormSatz, build_agrar_norm,
+)
+from .lebensmittel_charta import (
+    LebensmittelChartaGeltung, LebensmittelChartaNorm, LebensmittelChartaTyp, LebensmittelChartaProzedur,
+    LebensmittelCharta, build_lebensmittel_charta,
+)
+from .agrar_verfassung import (
+    AgrarVerfassungGeltung, AgrarVerfassungsNorm, AgrarVerfassungTyp, AgrarVerfassungProzedur,
+    AgrarVerfassung, build_agrar_verfassung,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -5661,4 +5702,25 @@ __all__ = [
     "SportmedizinCharta", "build_sportmedizin_charta",
     "SportVerfassungGeltung", "SportVerfassungsNorm", "SportVerfassungTyp", "SportVerfassungProzedur",
     "SportVerfassung", "build_sport_verfassung",
+    # Block #781–790: Agrarwissenschaft & Ernährung
+    "AgrarFeldGeltung", "AgrarFeldNorm", "AgrarFeldTyp", "AgrarFeldProzedur",
+    "AgrarFeld", "build_agrar_feld",
+    "PflanzenbauRegisterGeltung", "PflanzenbauRegisterEintrag", "PflanzenbauRegisterTyp", "PflanzenbauRegisterProzedur",
+    "PflanzenbauRegister", "build_pflanzenbau_register",
+    "TierhaltungChartaGeltung", "TierhaltungChartaNorm", "TierhaltungChartaTyp", "TierhaltungChartaProzedur",
+    "TierhaltungCharta", "build_tierhaltung_charta",
+    "BodenkundeKodexGeltung", "BodenkundeKodexEintrag", "BodenkundeKodexTyp", "BodenkundeKodexProzedur",
+    "BodenkundeKodex", "build_bodenkunde_kodex",
+    "ErnaehrungswissenschaftManifestGeltung", "ErnaehrungswissenschaftManifestNorm", "ErnaehrungswissenschaftManifestTyp", "ErnaehrungswissenschaftManifestProzedur",
+    "ErnaehrungswissenschaftManifest", "build_ernaehrungswissenschaft_manifest",
+    "LandwirtschaftPaktGeltung", "LandwirtschaftPaktEintrag", "LandwirtschaftPaktTyp", "LandwirtschaftPaktProzedur",
+    "LandwirtschaftPakt", "build_landwirtschaft_pakt",
+    "AgraroekologieSenatGeltung", "AgraroekologieSenatNorm", "AgraroekologieSenatTyp", "AgraroekologieSenatProzedur",
+    "AgraroekologieSenat", "build_agraoekologie_senat",
+    "AgrarNormGeltung", "AgrarNormEintrag", "AgrarNormTyp", "AgrarNormProzedur",
+    "AgrarNormSatz", "build_agrar_norm",
+    "LebensmittelChartaGeltung", "LebensmittelChartaNorm", "LebensmittelChartaTyp", "LebensmittelChartaProzedur",
+    "LebensmittelCharta", "build_lebensmittel_charta",
+    "AgrarVerfassungGeltung", "AgrarVerfassungsNorm", "AgrarVerfassungTyp", "AgrarVerfassungProzedur",
+    "AgrarVerfassung", "build_agrar_verfassung",
 ]

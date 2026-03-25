@@ -29652,3 +29652,367 @@ class SmokeTests(unittest.TestCase):
     def test_kki_sport_verfassung_builds_parent_chain(self):
         from kki.sport_verfassung import build_sport_verfassung
         self.assertIsNotNone(build_sport_verfassung().parent)
+
+    # ── Block #781–790: Agrarwissenschaft & Ernährung ────────────────────────
+
+    def test_kki_agrar_feld_builds(self):
+        from kki.agrar_feld import build_agrar_feld
+        self.assertIsNotNone(build_agrar_feld())
+
+    def test_kki_agrar_feld_normen_count(self):
+        from kki.agrar_feld import build_agrar_feld
+        self.assertEqual(len(build_agrar_feld().normen), 5)
+
+    def test_kki_agrar_feld_weight_positive(self):
+        from kki.agrar_feld import build_agrar_feld
+        for n in build_agrar_feld().normen:
+            self.assertGreaterEqual(n.agrar_weight, 0.0)
+
+    def test_kki_agrar_feld_gesperrt_schutz_norm(self):
+        from kki.agrar_feld import build_agrar_feld, AgrarFeldGeltung
+        self.assertIn(AgrarFeldGeltung.GESPERRT, [n.geltung for n in build_agrar_feld().normen])
+
+    def test_kki_agrar_feld_tier_sequence(self):
+        from kki.agrar_feld import build_agrar_feld
+        tiers = [n.agrar_tier for n in build_agrar_feld().normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_agrar_feld_ids_not_empty(self):
+        from kki.agrar_feld import build_agrar_feld
+        for n in build_agrar_feld().normen:
+            self.assertTrue(len(n.agrar_ids) > 0)
+
+    def test_kki_agrar_feld_tags_contain_domain(self):
+        from kki.agrar_feld import build_agrar_feld
+        for n in build_agrar_feld().normen:
+            self.assertIn("agrar", n.agrar_tags)
+
+    def test_kki_agrar_feld_builds_parent_chain(self):
+        from kki.agrar_feld import build_agrar_feld
+        self.assertIsNotNone(build_agrar_feld().parent)
+
+    def test_kki_pflanzenbau_register_builds(self):
+        from kki.pflanzenbau_register import build_pflanzenbau_register
+        self.assertIsNotNone(build_pflanzenbau_register())
+
+    def test_kki_pflanzenbau_register_eintraege_count(self):
+        from kki.pflanzenbau_register import build_pflanzenbau_register
+        self.assertEqual(len(build_pflanzenbau_register().eintraege), 5)
+
+    def test_kki_pflanzenbau_register_weight_positive(self):
+        from kki.pflanzenbau_register import build_pflanzenbau_register
+        for e in build_pflanzenbau_register().eintraege:
+            self.assertGreaterEqual(e.agrar_weight, 0.0)
+
+    def test_kki_pflanzenbau_register_gesperrt_schutz_norm(self):
+        from kki.pflanzenbau_register import build_pflanzenbau_register, PflanzenbauRegisterGeltung
+        self.assertIn(PflanzenbauRegisterGeltung.GESPERRT, [e.geltung for e in build_pflanzenbau_register().eintraege])
+
+    def test_kki_pflanzenbau_register_tier_sequence(self):
+        from kki.pflanzenbau_register import build_pflanzenbau_register
+        tiers = [e.agrar_tier for e in build_pflanzenbau_register().eintraege]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_pflanzenbau_register_ids_not_empty(self):
+        from kki.pflanzenbau_register import build_pflanzenbau_register
+        for e in build_pflanzenbau_register().eintraege:
+            self.assertTrue(len(e.agrar_ids) > 0)
+
+    def test_kki_pflanzenbau_register_tags_contain_domain(self):
+        from kki.pflanzenbau_register import build_pflanzenbau_register
+        for e in build_pflanzenbau_register().eintraege:
+            self.assertIn("pflanzenbau", e.agrar_tags)
+
+    def test_kki_pflanzenbau_register_builds_parent_chain(self):
+        from kki.pflanzenbau_register import build_pflanzenbau_register
+        self.assertIsNotNone(build_pflanzenbau_register().parent)
+
+    def test_kki_tierhaltung_charta_builds(self):
+        from kki.tierhaltung_charta import build_tierhaltung_charta
+        self.assertIsNotNone(build_tierhaltung_charta())
+
+    def test_kki_tierhaltung_charta_normen_count(self):
+        from kki.tierhaltung_charta import build_tierhaltung_charta
+        self.assertEqual(len(build_tierhaltung_charta().normen), 5)
+
+    def test_kki_tierhaltung_charta_weight_positive(self):
+        from kki.tierhaltung_charta import build_tierhaltung_charta
+        for n in build_tierhaltung_charta().normen:
+            self.assertGreaterEqual(n.agrar_weight, 0.0)
+
+    def test_kki_tierhaltung_charta_gesperrt_schutz_norm(self):
+        from kki.tierhaltung_charta import build_tierhaltung_charta, TierhaltungChartaGeltung
+        self.assertIn(TierhaltungChartaGeltung.GESPERRT, [n.geltung for n in build_tierhaltung_charta().normen])
+
+    def test_kki_tierhaltung_charta_tier_sequence(self):
+        from kki.tierhaltung_charta import build_tierhaltung_charta
+        tiers = [n.agrar_tier for n in build_tierhaltung_charta().normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_tierhaltung_charta_ids_not_empty(self):
+        from kki.tierhaltung_charta import build_tierhaltung_charta
+        for n in build_tierhaltung_charta().normen:
+            self.assertTrue(len(n.agrar_ids) > 0)
+
+    def test_kki_tierhaltung_charta_tags_contain_domain(self):
+        from kki.tierhaltung_charta import build_tierhaltung_charta
+        for n in build_tierhaltung_charta().normen:
+            self.assertIn("tierhaltung", n.agrar_tags)
+
+    def test_kki_tierhaltung_charta_builds_parent_chain(self):
+        from kki.tierhaltung_charta import build_tierhaltung_charta
+        self.assertIsNotNone(build_tierhaltung_charta().parent)
+
+    def test_kki_bodenkunde_kodex_builds(self):
+        from kki.bodenkunde_kodex import build_bodenkunde_kodex
+        self.assertIsNotNone(build_bodenkunde_kodex())
+
+    def test_kki_bodenkunde_kodex_eintraege_count(self):
+        from kki.bodenkunde_kodex import build_bodenkunde_kodex
+        self.assertEqual(len(build_bodenkunde_kodex().eintraege), 5)
+
+    def test_kki_bodenkunde_kodex_weight_positive(self):
+        from kki.bodenkunde_kodex import build_bodenkunde_kodex
+        for e in build_bodenkunde_kodex().eintraege:
+            self.assertGreaterEqual(e.agrar_weight, 0.0)
+
+    def test_kki_bodenkunde_kodex_gesperrt_schutz_norm(self):
+        from kki.bodenkunde_kodex import build_bodenkunde_kodex, BodenkundeKodexGeltung
+        self.assertIn(BodenkundeKodexGeltung.GESPERRT, [e.geltung for e in build_bodenkunde_kodex().eintraege])
+
+    def test_kki_bodenkunde_kodex_tier_sequence(self):
+        from kki.bodenkunde_kodex import build_bodenkunde_kodex
+        tiers = [e.agrar_tier for e in build_bodenkunde_kodex().eintraege]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_bodenkunde_kodex_ids_not_empty(self):
+        from kki.bodenkunde_kodex import build_bodenkunde_kodex
+        for e in build_bodenkunde_kodex().eintraege:
+            self.assertTrue(len(e.agrar_ids) > 0)
+
+    def test_kki_bodenkunde_kodex_tags_contain_domain(self):
+        from kki.bodenkunde_kodex import build_bodenkunde_kodex
+        for e in build_bodenkunde_kodex().eintraege:
+            self.assertIn("bodenkunde", e.agrar_tags)
+
+    def test_kki_bodenkunde_kodex_builds_parent_chain(self):
+        from kki.bodenkunde_kodex import build_bodenkunde_kodex
+        self.assertIsNotNone(build_bodenkunde_kodex().parent)
+
+    def test_kki_ernaehrungswissenschaft_manifest_builds(self):
+        from kki.ernaehrungswissenschaft_manifest import build_ernaehrungswissenschaft_manifest
+        self.assertIsNotNone(build_ernaehrungswissenschaft_manifest())
+
+    def test_kki_ernaehrungswissenschaft_manifest_normen_count(self):
+        from kki.ernaehrungswissenschaft_manifest import build_ernaehrungswissenschaft_manifest
+        self.assertEqual(len(build_ernaehrungswissenschaft_manifest().normen), 5)
+
+    def test_kki_ernaehrungswissenschaft_manifest_weight_positive(self):
+        from kki.ernaehrungswissenschaft_manifest import build_ernaehrungswissenschaft_manifest
+        for n in build_ernaehrungswissenschaft_manifest().normen:
+            self.assertGreaterEqual(n.agrar_weight, 0.0)
+
+    def test_kki_ernaehrungswissenschaft_manifest_gesperrt_schutz_norm(self):
+        from kki.ernaehrungswissenschaft_manifest import build_ernaehrungswissenschaft_manifest, ErnaehrungswissenschaftManifestGeltung
+        self.assertIn(ErnaehrungswissenschaftManifestGeltung.GESPERRT, [n.geltung for n in build_ernaehrungswissenschaft_manifest().normen])
+
+    def test_kki_ernaehrungswissenschaft_manifest_tier_sequence(self):
+        from kki.ernaehrungswissenschaft_manifest import build_ernaehrungswissenschaft_manifest
+        tiers = [n.agrar_tier for n in build_ernaehrungswissenschaft_manifest().normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_ernaehrungswissenschaft_manifest_ids_not_empty(self):
+        from kki.ernaehrungswissenschaft_manifest import build_ernaehrungswissenschaft_manifest
+        for n in build_ernaehrungswissenschaft_manifest().normen:
+            self.assertTrue(len(n.agrar_ids) > 0)
+
+    def test_kki_ernaehrungswissenschaft_manifest_tags_contain_domain(self):
+        from kki.ernaehrungswissenschaft_manifest import build_ernaehrungswissenschaft_manifest
+        for n in build_ernaehrungswissenschaft_manifest().normen:
+            self.assertIn("ernaehrungswissenschaft", n.agrar_tags)
+
+    def test_kki_ernaehrungswissenschaft_manifest_builds_parent_chain(self):
+        from kki.ernaehrungswissenschaft_manifest import build_ernaehrungswissenschaft_manifest
+        self.assertIsNotNone(build_ernaehrungswissenschaft_manifest().parent)
+
+    def test_kki_landwirtschaft_pakt_builds(self):
+        from kki.landwirtschaft_pakt import build_landwirtschaft_pakt
+        self.assertIsNotNone(build_landwirtschaft_pakt())
+
+    def test_kki_landwirtschaft_pakt_eintraege_count(self):
+        from kki.landwirtschaft_pakt import build_landwirtschaft_pakt
+        self.assertEqual(len(build_landwirtschaft_pakt().eintraege), 5)
+
+    def test_kki_landwirtschaft_pakt_weight_positive(self):
+        from kki.landwirtschaft_pakt import build_landwirtschaft_pakt
+        for e in build_landwirtschaft_pakt().eintraege:
+            self.assertGreaterEqual(e.agrar_weight, 0.0)
+
+    def test_kki_landwirtschaft_pakt_gesperrt_schutz_norm(self):
+        from kki.landwirtschaft_pakt import build_landwirtschaft_pakt, LandwirtschaftPaktGeltung
+        self.assertIn(LandwirtschaftPaktGeltung.GESPERRT, [e.geltung for e in build_landwirtschaft_pakt().eintraege])
+
+    def test_kki_landwirtschaft_pakt_tier_sequence(self):
+        from kki.landwirtschaft_pakt import build_landwirtschaft_pakt
+        tiers = [e.agrar_tier for e in build_landwirtschaft_pakt().eintraege]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_landwirtschaft_pakt_ids_not_empty(self):
+        from kki.landwirtschaft_pakt import build_landwirtschaft_pakt
+        for e in build_landwirtschaft_pakt().eintraege:
+            self.assertTrue(len(e.agrar_ids) > 0)
+
+    def test_kki_landwirtschaft_pakt_tags_contain_domain(self):
+        from kki.landwirtschaft_pakt import build_landwirtschaft_pakt
+        for e in build_landwirtschaft_pakt().eintraege:
+            self.assertIn("landwirtschaft", e.agrar_tags)
+
+    def test_kki_landwirtschaft_pakt_builds_parent_chain(self):
+        from kki.landwirtschaft_pakt import build_landwirtschaft_pakt
+        self.assertIsNotNone(build_landwirtschaft_pakt().parent)
+
+    def test_kki_agraroekologie_senat_builds(self):
+        from kki.agraroekologie_senat import build_agraoekologie_senat
+        self.assertIsNotNone(build_agraoekologie_senat())
+
+    def test_kki_agraroekologie_senat_normen_count(self):
+        from kki.agraroekologie_senat import build_agraoekologie_senat
+        self.assertEqual(len(build_agraoekologie_senat().normen), 5)
+
+    def test_kki_agraroekologie_senat_weight_positive(self):
+        from kki.agraroekologie_senat import build_agraoekologie_senat
+        for n in build_agraoekologie_senat().normen:
+            self.assertGreaterEqual(n.agrar_weight, 0.0)
+
+    def test_kki_agraroekologie_senat_gesperrt_schutz_norm(self):
+        from kki.agraroekologie_senat import build_agraoekologie_senat, AgraroekologieSenatGeltung
+        self.assertIn(AgraroekologieSenatGeltung.GESPERRT, [n.geltung for n in build_agraoekologie_senat().normen])
+
+    def test_kki_agraroekologie_senat_tier_sequence(self):
+        from kki.agraroekologie_senat import build_agraoekologie_senat
+        tiers = [n.agrar_tier for n in build_agraoekologie_senat().normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_agraroekologie_senat_ids_not_empty(self):
+        from kki.agraroekologie_senat import build_agraoekologie_senat
+        for n in build_agraoekologie_senat().normen:
+            self.assertTrue(len(n.agrar_ids) > 0)
+
+    def test_kki_agraroekologie_senat_tags_contain_domain(self):
+        from kki.agraroekologie_senat import build_agraoekologie_senat
+        for n in build_agraoekologie_senat().normen:
+            self.assertIn("agraroekologie", n.agrar_tags)
+
+    def test_kki_agraroekologie_senat_builds_parent_chain(self):
+        from kki.agraroekologie_senat import build_agraoekologie_senat
+        self.assertIsNotNone(build_agraoekologie_senat().parent)
+
+    def test_kki_agrar_norm_builds(self):
+        from kki.agrar_norm import build_agrar_norm
+        self.assertIsNotNone(build_agrar_norm())
+
+    def test_kki_agrar_norm_normen_count(self):
+        from kki.agrar_norm import build_agrar_norm
+        self.assertEqual(len(build_agrar_norm().normen), 5)
+
+    def test_kki_agrar_norm_weight_positive(self):
+        from kki.agrar_norm import build_agrar_norm
+        for e in build_agrar_norm().normen:
+            self.assertGreaterEqual(e.agrar_norm_weight, 0.0)
+
+    def test_kki_agrar_norm_gesperrt_schutz_norm(self):
+        from kki.agrar_norm import build_agrar_norm, AgrarNormGeltung
+        self.assertIn(AgrarNormGeltung.GESPERRT, [e.geltung for e in build_agrar_norm().normen])
+
+    def test_kki_agrar_norm_tier_sequence(self):
+        from kki.agrar_norm import build_agrar_norm
+        tiers = [e.agrar_norm_tier for e in build_agrar_norm().normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_agrar_norm_ids_not_empty(self):
+        from kki.agrar_norm import build_agrar_norm
+        for e in build_agrar_norm().normen:
+            self.assertTrue(len(e.agrar_norm_ids) > 0)
+
+    def test_kki_agrar_norm_tags_contain_domain(self):
+        from kki.agrar_norm import build_agrar_norm
+        for e in build_agrar_norm().normen:
+            self.assertIn("agrar", e.agrar_norm_tags)
+
+    def test_kki_agrar_norm_builds_parent_chain(self):
+        from kki.agrar_norm import build_agrar_norm
+        self.assertIsNotNone(build_agrar_norm().parent)
+
+    def test_kki_lebensmittel_charta_builds(self):
+        from kki.lebensmittel_charta import build_lebensmittel_charta
+        self.assertIsNotNone(build_lebensmittel_charta())
+
+    def test_kki_lebensmittel_charta_normen_count(self):
+        from kki.lebensmittel_charta import build_lebensmittel_charta
+        self.assertEqual(len(build_lebensmittel_charta().normen), 5)
+
+    def test_kki_lebensmittel_charta_weight_positive(self):
+        from kki.lebensmittel_charta import build_lebensmittel_charta
+        for n in build_lebensmittel_charta().normen:
+            self.assertGreaterEqual(n.agrar_weight, 0.0)
+
+    def test_kki_lebensmittel_charta_gesperrt_schutz_norm(self):
+        from kki.lebensmittel_charta import build_lebensmittel_charta, LebensmittelChartaGeltung
+        self.assertIn(LebensmittelChartaGeltung.GESPERRT, [n.geltung for n in build_lebensmittel_charta().normen])
+
+    def test_kki_lebensmittel_charta_tier_sequence(self):
+        from kki.lebensmittel_charta import build_lebensmittel_charta
+        tiers = [n.agrar_tier for n in build_lebensmittel_charta().normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_lebensmittel_charta_ids_not_empty(self):
+        from kki.lebensmittel_charta import build_lebensmittel_charta
+        for n in build_lebensmittel_charta().normen:
+            self.assertTrue(len(n.agrar_ids) > 0)
+
+    def test_kki_lebensmittel_charta_tags_contain_domain(self):
+        from kki.lebensmittel_charta import build_lebensmittel_charta
+        for n in build_lebensmittel_charta().normen:
+            self.assertIn("lebensmittel", n.agrar_tags)
+
+    def test_kki_lebensmittel_charta_builds_parent_chain(self):
+        from kki.lebensmittel_charta import build_lebensmittel_charta
+        self.assertIsNotNone(build_lebensmittel_charta().parent)
+
+    def test_kki_agrar_verfassung_builds(self):
+        from kki.agrar_verfassung import build_agrar_verfassung
+        self.assertIsNotNone(build_agrar_verfassung())
+
+    def test_kki_agrar_verfassung_normen_count(self):
+        from kki.agrar_verfassung import build_agrar_verfassung
+        self.assertEqual(len(build_agrar_verfassung().normen), 5)
+
+    def test_kki_agrar_verfassung_gesperrt_schutz_norm(self):
+        from kki.agrar_verfassung import build_agrar_verfassung, AgrarVerfassungGeltung
+        self.assertIn(AgrarVerfassungGeltung.GESPERRT, [n.geltung for n in build_agrar_verfassung().normen])
+
+    def test_kki_agrar_verfassung_aggregates_verfassung_signal(self):
+        from kki.agrar_verfassung import build_agrar_verfassung
+        sig = build_agrar_verfassung().aggregates_verfassung_signal()
+        self.assertEqual(sig["verfassung_id"], "agrar-verfassung-790")
+        self.assertGreater(sig["total_weight"], 0)
+        self.assertEqual(sig["norm_count"], 5)
+
+    def test_kki_agrar_verfassung_tier_sequence(self):
+        from kki.agrar_verfassung import build_agrar_verfassung
+        tiers = [n.agrar_tier for n in build_agrar_verfassung().normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_agrar_verfassung_ids_not_empty(self):
+        from kki.agrar_verfassung import build_agrar_verfassung
+        for n in build_agrar_verfassung().normen:
+            self.assertTrue(len(n.agrar_ids) > 0)
+
+    def test_kki_agrar_verfassung_tags_contain_domain(self):
+        from kki.agrar_verfassung import build_agrar_verfassung
+        for n in build_agrar_verfassung().normen:
+            self.assertIn("agrar", n.agrar_tags)
+
+    def test_kki_agrar_verfassung_builds_parent_chain(self):
+        from kki.agrar_verfassung import build_agrar_verfassung
+        self.assertIsNotNone(build_agrar_verfassung().parent)

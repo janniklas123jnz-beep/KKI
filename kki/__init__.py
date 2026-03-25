@@ -3078,6 +3078,46 @@ from .umweltwissenschaft_verfassung import (
     UmweltwissenschaftVerfassungGeltung, UmweltwissenschaftVerfassungsNorm, UmweltwissenschaftVerfassungTyp, UmweltwissenschaftVerfassungProzedur,
     UmweltwissenschaftVerfassung, build_umweltwissenschaft_verfassung,
 )
+from .chemie_feld import (
+    ChemieFeldGeltung, ChemieFeldNorm, ChemieFeldTyp, ChemieFeldProzedur,
+    ChemieFeld, build_chemie_feld,
+)
+from .atomstruktur_register import (
+    AtomstrukturRegisterGeltung, AtomstrukturRegisterEintrag, AtomstrukturRegisterTyp, AtomstrukturRegisterProzedur,
+    AtomstrukturRegister, build_atomstruktur_register,
+)
+from .chemische_bindungs_charta import (
+    ChemischeBindungsChartaGeltung, ChemischeBindungsChartaNorm, ChemischeBindungsChartaTyp, ChemischeBindungsChartaProzedur,
+    ChemischeBindungsCharta, build_chemische_bindungs_charta,
+)
+from .reaktionskinetik_kodex import (
+    ReaktionskinetikKodexGeltung, ReaktionskinetikKodexEintrag, ReaktionskinetikKodexTyp, ReaktionskinetikKodexProzedur,
+    ReaktionskinetikKodex, build_reaktionskinetik_kodex,
+)
+from .thermochemie_manifest import (
+    ThermochemieManifestGeltung, ThermochemieManifestNorm, ThermochemieManifestTyp, ThermochemieManifestProzedur,
+    ThermochemieManifest, build_thermochemie_manifest,
+)
+from .organische_chemie_pakt import (
+    OrganischeChemiePaktGeltung, OrganischeChemiePaktEintrag, OrganischeChemiePaktTyp, OrganischeChemiePaktProzedur,
+    OrganischeChemiePakt, build_organische_chemie_pakt,
+)
+from .biochemie_senat import (
+    BiochemieSenatGeltung, BiochemieSenatNorm, BiochemieSenatTyp, BiochemieSenatProzedur,
+    BiochemieSenat, build_biochemie_senat,
+)
+from .chemie_norm import (
+    ChemieNormGeltung, ChemieNormEintrag, ChemieNormTyp, ChemieNormProzedur,
+    ChemieNormSatz, build_chemie_norm,
+)
+from .green_chemistry_charta import (
+    GreenChemistryChartaGeltung, GreenChemistryChartaNorm, GreenChemistryChartaTyp, GreenChemistryChartaProzedur,
+    GreenChemistryCharta, build_green_chemistry_charta,
+)
+from .molekularwissenschaft_verfassung import (
+    MolekularwissenschaftVerfassungGeltung, MolekularwissenschaftVerfassungsNorm, MolekularwissenschaftVerfassungTyp, MolekularwissenschaftVerfassungProzedur,
+    MolekularwissenschaftVerfassung, build_molekularwissenschaft_verfassung,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -4989,4 +5029,24 @@ __all__ = [
     "KlimawandelCharta", "build_klimawandel_charta",
     "UmweltwissenschaftVerfassungGeltung", "UmweltwissenschaftVerfassungsNorm", "UmweltwissenschaftVerfassungTyp", "UmweltwissenschaftVerfassungProzedur",
     "UmweltwissenschaftVerfassung", "build_umweltwissenschaft_verfassung",
+    "ChemieFeldGeltung", "ChemieFeldNorm", "ChemieFeldTyp", "ChemieFeldProzedur",
+    "ChemieFeld", "build_chemie_feld",
+    "AtomstrukturRegisterGeltung", "AtomstrukturRegisterEintrag", "AtomstrukturRegisterTyp", "AtomstrukturRegisterProzedur",
+    "AtomstrukturRegister", "build_atomstruktur_register",
+    "ChemischeBindungsChartaGeltung", "ChemischeBindungsChartaNorm", "ChemischeBindungsChartaTyp", "ChemischeBindungsChartaProzedur",
+    "ChemischeBindungsCharta", "build_chemische_bindungs_charta",
+    "ReaktionskinetikKodexGeltung", "ReaktionskinetikKodexEintrag", "ReaktionskinetikKodexTyp", "ReaktionskinetikKodexProzedur",
+    "ReaktionskinetikKodex", "build_reaktionskinetik_kodex",
+    "ThermochemieManifestGeltung", "ThermochemieManifestNorm", "ThermochemieManifestTyp", "ThermochemieManifestProzedur",
+    "ThermochemieManifest", "build_thermochemie_manifest",
+    "OrganischeChemiePaktGeltung", "OrganischeChemiePaktEintrag", "OrganischeChemiePaktTyp", "OrganischeChemiePaktProzedur",
+    "OrganischeChemiePakt", "build_organische_chemie_pakt",
+    "BiochemieSenatGeltung", "BiochemieSenatNorm", "BiochemieSenatTyp", "BiochemieSenatProzedur",
+    "BiochemieSenat", "build_biochemie_senat",
+    "ChemieNormGeltung", "ChemieNormEintrag", "ChemieNormTyp", "ChemieNormProzedur",
+    "ChemieNormSatz", "build_chemie_norm",
+    "GreenChemistryChartaGeltung", "GreenChemistryChartaNorm", "GreenChemistryChartaTyp", "GreenChemistryChartaProzedur",
+    "GreenChemistryCharta", "build_green_chemistry_charta",
+    "MolekularwissenschaftVerfassungGeltung", "MolekularwissenschaftVerfassungsNorm", "MolekularwissenschaftVerfassungTyp", "MolekularwissenschaftVerfassungProzedur",
+    "MolekularwissenschaftVerfassung", "build_molekularwissenschaft_verfassung",
 ]

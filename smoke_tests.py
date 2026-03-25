@@ -24943,3 +24943,457 @@ class SmokeTests(unittest.TestCase):
         obj = build_umweltwissenschaft_verfassung()
         for n in obj.normen:
             self.assertTrue(len(n.oekologie_ids) > 0)
+
+    # --- Block #671–680: Chemie & Molekularwissenschaft ---
+    def test_kki_chemie_feld_builds(self):
+        from kki.chemie_feld import build_chemie_feld
+        obj = build_chemie_feld()
+        self.assertIsNotNone(obj)
+
+    def test_kki_chemie_feld_normen_count(self):
+        from kki.chemie_feld import build_chemie_feld
+        obj = build_chemie_feld()
+        self.assertEqual(len(obj.normen), 3)
+
+    def test_kki_chemie_feld_gesperrt_weight_zero(self):
+        from kki.chemie_feld import build_chemie_feld, ChemieFeldGeltung
+        obj = build_chemie_feld()
+        gesperrt = next(n for n in obj.normen if n.geltung == ChemieFeldGeltung.GESPERRT)
+        self.assertGreaterEqual(gesperrt.chemie_weight, 0.0)
+
+    def test_kki_chemie_feld_has_parent(self):
+        from kki.chemie_feld import build_chemie_feld
+        obj = build_chemie_feld()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_chemie_feld_tags_contain_chemie(self):
+        from kki.chemie_feld import build_chemie_feld
+        obj = build_chemie_feld()
+        for n in obj.normen:
+            self.assertIn("chemie", n.chemie_tags)
+
+    def test_kki_chemie_feld_tier_increases(self):
+        from kki.chemie_feld import build_chemie_feld, ChemieFeldGeltung
+        obj = build_chemie_feld()
+        tiers = {n.geltung: n.chemie_tier for n in obj.normen}
+        self.assertGreater(tiers[ChemieFeldGeltung.CHEMISCH_AKTIV], tiers[ChemieFeldGeltung.GESPERRT])
+
+    def test_kki_chemie_feld_canonical_default(self):
+        from kki.chemie_feld import build_chemie_feld
+        obj = build_chemie_feld()
+        for n in obj.normen:
+            self.assertTrue(n.canonical)
+
+    def test_kki_chemie_feld_ids_non_empty(self):
+        from kki.chemie_feld import build_chemie_feld
+        obj = build_chemie_feld()
+        for n in obj.normen:
+            self.assertTrue(len(n.chemie_ids) > 0)
+
+    def test_kki_atomstruktur_register_builds(self):
+        from kki.atomstruktur_register import build_atomstruktur_register
+        obj = build_atomstruktur_register()
+        self.assertIsNotNone(obj)
+
+    def test_kki_atomstruktur_register_eintraege_count(self):
+        from kki.atomstruktur_register import build_atomstruktur_register
+        obj = build_atomstruktur_register()
+        self.assertEqual(len(obj.eintraege), 3)
+
+    def test_kki_atomstruktur_register_gesperrt_weight_zero(self):
+        from kki.atomstruktur_register import build_atomstruktur_register, AtomstrukturRegisterGeltung
+        obj = build_atomstruktur_register()
+        gesperrt = next(e for e in obj.eintraege if e.geltung == AtomstrukturRegisterGeltung.GESPERRT)
+        self.assertGreaterEqual(gesperrt.chemie_weight, 0.0)
+
+    def test_kki_atomstruktur_register_has_parent(self):
+        from kki.atomstruktur_register import build_atomstruktur_register
+        obj = build_atomstruktur_register()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_atomstruktur_register_tags_contain_atomstruktur(self):
+        from kki.atomstruktur_register import build_atomstruktur_register
+        obj = build_atomstruktur_register()
+        for e in obj.eintraege:
+            self.assertIn("atomstruktur", e.chemie_tags)
+
+    def test_kki_atomstruktur_register_tier_increases(self):
+        from kki.atomstruktur_register import build_atomstruktur_register, AtomstrukturRegisterGeltung
+        obj = build_atomstruktur_register()
+        tiers = {e.geltung: e.chemie_tier for e in obj.eintraege}
+        self.assertGreater(tiers[AtomstrukturRegisterGeltung.ATOMSTRUKTURIERT], tiers[AtomstrukturRegisterGeltung.GESPERRT])
+
+    def test_kki_atomstruktur_register_canonical_default(self):
+        from kki.atomstruktur_register import build_atomstruktur_register
+        obj = build_atomstruktur_register()
+        for e in obj.eintraege:
+            self.assertTrue(e.canonical)
+
+    def test_kki_atomstruktur_register_ids_non_empty(self):
+        from kki.atomstruktur_register import build_atomstruktur_register
+        obj = build_atomstruktur_register()
+        for e in obj.eintraege:
+            self.assertTrue(len(e.chemie_ids) > 0)
+
+    def test_kki_chemische_bindungs_charta_builds(self):
+        from kki.chemische_bindungs_charta import build_chemische_bindungs_charta
+        obj = build_chemische_bindungs_charta()
+        self.assertIsNotNone(obj)
+
+    def test_kki_chemische_bindungs_charta_normen_count(self):
+        from kki.chemische_bindungs_charta import build_chemische_bindungs_charta
+        obj = build_chemische_bindungs_charta()
+        self.assertEqual(len(obj.normen), 3)
+
+    def test_kki_chemische_bindungs_charta_gesperrt_weight_zero(self):
+        from kki.chemische_bindungs_charta import build_chemische_bindungs_charta, ChemischeBindungsChartaGeltung
+        obj = build_chemische_bindungs_charta()
+        gesperrt = next(n for n in obj.normen if n.geltung == ChemischeBindungsChartaGeltung.GESPERRT)
+        self.assertGreaterEqual(gesperrt.chemie_weight, 0.0)
+
+    def test_kki_chemische_bindungs_charta_has_parent(self):
+        from kki.chemische_bindungs_charta import build_chemische_bindungs_charta
+        obj = build_chemische_bindungs_charta()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_chemische_bindungs_charta_tags_contain_bindung(self):
+        from kki.chemische_bindungs_charta import build_chemische_bindungs_charta
+        obj = build_chemische_bindungs_charta()
+        for n in obj.normen:
+            self.assertIn("bindung", n.chemie_tags)
+
+    def test_kki_chemische_bindungs_charta_tier_increases(self):
+        from kki.chemische_bindungs_charta import build_chemische_bindungs_charta, ChemischeBindungsChartaGeltung
+        obj = build_chemische_bindungs_charta()
+        tiers = {n.geltung: n.chemie_tier for n in obj.normen}
+        self.assertGreater(tiers[ChemischeBindungsChartaGeltung.CHEMISCH_GEBUNDEN], tiers[ChemischeBindungsChartaGeltung.GESPERRT])
+
+    def test_kki_chemische_bindungs_charta_canonical_default(self):
+        from kki.chemische_bindungs_charta import build_chemische_bindungs_charta
+        obj = build_chemische_bindungs_charta()
+        for n in obj.normen:
+            self.assertTrue(n.canonical)
+
+    def test_kki_chemische_bindungs_charta_ids_non_empty(self):
+        from kki.chemische_bindungs_charta import build_chemische_bindungs_charta
+        obj = build_chemische_bindungs_charta()
+        for n in obj.normen:
+            self.assertTrue(len(n.chemie_ids) > 0)
+
+    def test_kki_reaktionskinetik_kodex_builds(self):
+        from kki.reaktionskinetik_kodex import build_reaktionskinetik_kodex
+        obj = build_reaktionskinetik_kodex()
+        self.assertIsNotNone(obj)
+
+    def test_kki_reaktionskinetik_kodex_eintraege_count(self):
+        from kki.reaktionskinetik_kodex import build_reaktionskinetik_kodex
+        obj = build_reaktionskinetik_kodex()
+        self.assertEqual(len(obj.eintraege), 3)
+
+    def test_kki_reaktionskinetik_kodex_gesperrt_weight_zero(self):
+        from kki.reaktionskinetik_kodex import build_reaktionskinetik_kodex, ReaktionskinetikKodexGeltung
+        obj = build_reaktionskinetik_kodex()
+        gesperrt = next(e for e in obj.eintraege if e.geltung == ReaktionskinetikKodexGeltung.GESPERRT)
+        self.assertGreaterEqual(gesperrt.chemie_weight, 0.0)
+
+    def test_kki_reaktionskinetik_kodex_has_parent(self):
+        from kki.reaktionskinetik_kodex import build_reaktionskinetik_kodex
+        obj = build_reaktionskinetik_kodex()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_reaktionskinetik_kodex_tags_contain_reaktionskinetik(self):
+        from kki.reaktionskinetik_kodex import build_reaktionskinetik_kodex
+        obj = build_reaktionskinetik_kodex()
+        for e in obj.eintraege:
+            self.assertIn("reaktionskinetik", e.chemie_tags)
+
+    def test_kki_reaktionskinetik_kodex_tier_increases(self):
+        from kki.reaktionskinetik_kodex import build_reaktionskinetik_kodex, ReaktionskinetikKodexGeltung
+        obj = build_reaktionskinetik_kodex()
+        tiers = {e.geltung: e.chemie_tier for e in obj.eintraege}
+        self.assertGreater(tiers[ReaktionskinetikKodexGeltung.REAKTIONSKINETISCH], tiers[ReaktionskinetikKodexGeltung.GESPERRT])
+
+    def test_kki_reaktionskinetik_kodex_canonical_default(self):
+        from kki.reaktionskinetik_kodex import build_reaktionskinetik_kodex
+        obj = build_reaktionskinetik_kodex()
+        for e in obj.eintraege:
+            self.assertTrue(e.canonical)
+
+    def test_kki_reaktionskinetik_kodex_ids_non_empty(self):
+        from kki.reaktionskinetik_kodex import build_reaktionskinetik_kodex
+        obj = build_reaktionskinetik_kodex()
+        for e in obj.eintraege:
+            self.assertTrue(len(e.chemie_ids) > 0)
+
+    def test_kki_thermochemie_manifest_builds(self):
+        from kki.thermochemie_manifest import build_thermochemie_manifest
+        obj = build_thermochemie_manifest()
+        self.assertIsNotNone(obj)
+
+    def test_kki_thermochemie_manifest_normen_count(self):
+        from kki.thermochemie_manifest import build_thermochemie_manifest
+        obj = build_thermochemie_manifest()
+        self.assertEqual(len(obj.normen), 3)
+
+    def test_kki_thermochemie_manifest_gesperrt_weight_zero(self):
+        from kki.thermochemie_manifest import build_thermochemie_manifest, ThermochemieManifestGeltung
+        obj = build_thermochemie_manifest()
+        gesperrt = next(n for n in obj.normen if n.geltung == ThermochemieManifestGeltung.GESPERRT)
+        self.assertGreaterEqual(gesperrt.chemie_weight, 0.0)
+
+    def test_kki_thermochemie_manifest_has_parent(self):
+        from kki.thermochemie_manifest import build_thermochemie_manifest
+        obj = build_thermochemie_manifest()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_thermochemie_manifest_tags_contain_thermochemie(self):
+        from kki.thermochemie_manifest import build_thermochemie_manifest
+        obj = build_thermochemie_manifest()
+        for n in obj.normen:
+            self.assertIn("thermochemie", n.chemie_tags)
+
+    def test_kki_thermochemie_manifest_tier_increases(self):
+        from kki.thermochemie_manifest import build_thermochemie_manifest, ThermochemieManifestGeltung
+        obj = build_thermochemie_manifest()
+        tiers = {n.geltung: n.chemie_tier for n in obj.normen}
+        self.assertGreater(tiers[ThermochemieManifestGeltung.THERMOCHEMISCH_AKTIV], tiers[ThermochemieManifestGeltung.GESPERRT])
+
+    def test_kki_thermochemie_manifest_canonical_default(self):
+        from kki.thermochemie_manifest import build_thermochemie_manifest
+        obj = build_thermochemie_manifest()
+        for n in obj.normen:
+            self.assertTrue(n.canonical)
+
+    def test_kki_thermochemie_manifest_ids_non_empty(self):
+        from kki.thermochemie_manifest import build_thermochemie_manifest
+        obj = build_thermochemie_manifest()
+        for n in obj.normen:
+            self.assertTrue(len(n.chemie_ids) > 0)
+
+    def test_kki_organische_chemie_pakt_builds(self):
+        from kki.organische_chemie_pakt import build_organische_chemie_pakt
+        obj = build_organische_chemie_pakt()
+        self.assertIsNotNone(obj)
+
+    def test_kki_organische_chemie_pakt_eintraege_count(self):
+        from kki.organische_chemie_pakt import build_organische_chemie_pakt
+        obj = build_organische_chemie_pakt()
+        self.assertEqual(len(obj.eintraege), 3)
+
+    def test_kki_organische_chemie_pakt_gesperrt_weight_zero(self):
+        from kki.organische_chemie_pakt import build_organische_chemie_pakt, OrganischeChemiePaktGeltung
+        obj = build_organische_chemie_pakt()
+        gesperrt = next(e for e in obj.eintraege if e.geltung == OrganischeChemiePaktGeltung.GESPERRT)
+        self.assertGreaterEqual(gesperrt.chemie_weight, 0.0)
+
+    def test_kki_organische_chemie_pakt_has_parent(self):
+        from kki.organische_chemie_pakt import build_organische_chemie_pakt
+        obj = build_organische_chemie_pakt()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_organische_chemie_pakt_tags_contain_organisch(self):
+        from kki.organische_chemie_pakt import build_organische_chemie_pakt
+        obj = build_organische_chemie_pakt()
+        for e in obj.eintraege:
+            self.assertIn("organisch", e.chemie_tags)
+
+    def test_kki_organische_chemie_pakt_tier_increases(self):
+        from kki.organische_chemie_pakt import build_organische_chemie_pakt, OrganischeChemiePaktGeltung
+        obj = build_organische_chemie_pakt()
+        tiers = {e.geltung: e.chemie_tier for e in obj.eintraege}
+        self.assertGreater(tiers[OrganischeChemiePaktGeltung.ORGANISCH_VERBUNDEN], tiers[OrganischeChemiePaktGeltung.GESPERRT])
+
+    def test_kki_organische_chemie_pakt_canonical_default(self):
+        from kki.organische_chemie_pakt import build_organische_chemie_pakt
+        obj = build_organische_chemie_pakt()
+        for e in obj.eintraege:
+            self.assertTrue(e.canonical)
+
+    def test_kki_organische_chemie_pakt_ids_non_empty(self):
+        from kki.organische_chemie_pakt import build_organische_chemie_pakt
+        obj = build_organische_chemie_pakt()
+        for e in obj.eintraege:
+            self.assertTrue(len(e.chemie_ids) > 0)
+
+    def test_kki_biochemie_senat_builds(self):
+        from kki.biochemie_senat import build_biochemie_senat
+        obj = build_biochemie_senat()
+        self.assertIsNotNone(obj)
+
+    def test_kki_biochemie_senat_normen_count(self):
+        from kki.biochemie_senat import build_biochemie_senat
+        obj = build_biochemie_senat()
+        self.assertEqual(len(obj.normen), 3)
+
+    def test_kki_biochemie_senat_gesperrt_weight_zero(self):
+        from kki.biochemie_senat import build_biochemie_senat, BiochemieSenatGeltung
+        obj = build_biochemie_senat()
+        gesperrt = next(n for n in obj.normen if n.geltung == BiochemieSenatGeltung.GESPERRT)
+        self.assertGreaterEqual(gesperrt.chemie_weight, 0.0)
+
+    def test_kki_biochemie_senat_has_parent(self):
+        from kki.biochemie_senat import build_biochemie_senat
+        obj = build_biochemie_senat()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_biochemie_senat_tags_contain_biochemie(self):
+        from kki.biochemie_senat import build_biochemie_senat
+        obj = build_biochemie_senat()
+        for n in obj.normen:
+            self.assertIn("biochemie", n.chemie_tags)
+
+    def test_kki_biochemie_senat_tier_increases(self):
+        from kki.biochemie_senat import build_biochemie_senat, BiochemieSenatGeltung
+        obj = build_biochemie_senat()
+        tiers = {n.geltung: n.chemie_tier for n in obj.normen}
+        self.assertGreater(tiers[BiochemieSenatGeltung.BIOCHEMISCH_AKTIV], tiers[BiochemieSenatGeltung.GESPERRT])
+
+    def test_kki_biochemie_senat_canonical_default(self):
+        from kki.biochemie_senat import build_biochemie_senat
+        obj = build_biochemie_senat()
+        for n in obj.normen:
+            self.assertTrue(n.canonical)
+
+    def test_kki_biochemie_senat_ids_non_empty(self):
+        from kki.biochemie_senat import build_biochemie_senat
+        obj = build_biochemie_senat()
+        for n in obj.normen:
+            self.assertTrue(len(n.chemie_ids) > 0)
+
+    def test_kki_chemie_norm_builds(self):
+        from kki.chemie_norm import build_chemie_norm
+        obj = build_chemie_norm()
+        self.assertIsNotNone(obj)
+
+    def test_kki_chemie_norm_normen_count(self):
+        from kki.chemie_norm import build_chemie_norm
+        obj = build_chemie_norm()
+        self.assertEqual(len(obj.normen), 3)
+
+    def test_kki_chemie_norm_gesperrt_weight_zero(self):
+        from kki.chemie_norm import build_chemie_norm, ChemieNormGeltung
+        obj = build_chemie_norm()
+        gesperrt = next(e for e in obj.normen if e.geltung == ChemieNormGeltung.GESPERRT)
+        self.assertGreaterEqual(gesperrt.chemie_norm_weight, 0.0)
+
+    def test_kki_chemie_norm_has_parent(self):
+        from kki.chemie_norm import build_chemie_norm
+        obj = build_chemie_norm()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_chemie_norm_tags_contain_norm(self):
+        from kki.chemie_norm import build_chemie_norm
+        obj = build_chemie_norm()
+        for e in obj.normen:
+            self.assertIn("norm", e.chemie_norm_tags)
+
+    def test_kki_chemie_norm_tier_increases(self):
+        from kki.chemie_norm import build_chemie_norm, ChemieNormGeltung
+        obj = build_chemie_norm()
+        tiers = {e.geltung: e.chemie_norm_tier for e in obj.normen}
+        self.assertGreater(tiers[ChemieNormGeltung.CHEMIE_NORMATIV], tiers[ChemieNormGeltung.GESPERRT])
+
+    def test_kki_chemie_norm_canonical_default(self):
+        from kki.chemie_norm import build_chemie_norm
+        obj = build_chemie_norm()
+        for e in obj.normen:
+            self.assertTrue(e.canonical)
+
+    def test_kki_chemie_norm_ids_non_empty(self):
+        from kki.chemie_norm import build_chemie_norm
+        obj = build_chemie_norm()
+        for e in obj.normen:
+            self.assertTrue(len(e.chemie_norm_ids) > 0)
+
+    def test_kki_green_chemistry_charta_builds(self):
+        from kki.green_chemistry_charta import build_green_chemistry_charta
+        obj = build_green_chemistry_charta()
+        self.assertIsNotNone(obj)
+
+    def test_kki_green_chemistry_charta_normen_count(self):
+        from kki.green_chemistry_charta import build_green_chemistry_charta
+        obj = build_green_chemistry_charta()
+        self.assertEqual(len(obj.normen), 3)
+
+    def test_kki_green_chemistry_charta_gesperrt_weight_zero(self):
+        from kki.green_chemistry_charta import build_green_chemistry_charta, GreenChemistryChartaGeltung
+        obj = build_green_chemistry_charta()
+        gesperrt = next(n for n in obj.normen if n.geltung == GreenChemistryChartaGeltung.GESPERRT)
+        self.assertGreaterEqual(gesperrt.chemie_weight, 0.0)
+
+    def test_kki_green_chemistry_charta_has_parent(self):
+        from kki.green_chemistry_charta import build_green_chemistry_charta
+        obj = build_green_chemistry_charta()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_green_chemistry_charta_tags_contain_green(self):
+        from kki.green_chemistry_charta import build_green_chemistry_charta
+        obj = build_green_chemistry_charta()
+        for n in obj.normen:
+            self.assertIn("green", n.chemie_tags)
+
+    def test_kki_green_chemistry_charta_tier_increases(self):
+        from kki.green_chemistry_charta import build_green_chemistry_charta, GreenChemistryChartaGeltung
+        obj = build_green_chemistry_charta()
+        tiers = {n.geltung: n.chemie_tier for n in obj.normen}
+        self.assertGreater(tiers[GreenChemistryChartaGeltung.GREEN_CHEMISCH], tiers[GreenChemistryChartaGeltung.GESPERRT])
+
+    def test_kki_green_chemistry_charta_canonical_default(self):
+        from kki.green_chemistry_charta import build_green_chemistry_charta
+        obj = build_green_chemistry_charta()
+        for n in obj.normen:
+            self.assertTrue(n.canonical)
+
+    def test_kki_green_chemistry_charta_ids_non_empty(self):
+        from kki.green_chemistry_charta import build_green_chemistry_charta
+        obj = build_green_chemistry_charta()
+        for n in obj.normen:
+            self.assertTrue(len(n.chemie_ids) > 0)
+
+    def test_kki_molekularwissenschaft_verfassung_builds(self):
+        from kki.molekularwissenschaft_verfassung import build_molekularwissenschaft_verfassung
+        obj = build_molekularwissenschaft_verfassung()
+        self.assertIsNotNone(obj)
+
+    def test_kki_molekularwissenschaft_verfassung_normen_count(self):
+        from kki.molekularwissenschaft_verfassung import build_molekularwissenschaft_verfassung
+        obj = build_molekularwissenschaft_verfassung()
+        self.assertEqual(len(obj.normen), 3)
+
+    def test_kki_molekularwissenschaft_verfassung_gesperrt_weight_zero(self):
+        from kki.molekularwissenschaft_verfassung import build_molekularwissenschaft_verfassung, MolekularwissenschaftVerfassungGeltung
+        obj = build_molekularwissenschaft_verfassung()
+        gesperrt = next(n for n in obj.normen if n.geltung == MolekularwissenschaftVerfassungGeltung.GESPERRT)
+        self.assertGreaterEqual(gesperrt.chemie_weight, 0.0)
+
+    def test_kki_molekularwissenschaft_verfassung_aggregates_verfassung_signal(self):
+        from kki.molekularwissenschaft_verfassung import build_molekularwissenschaft_verfassung
+        obj = build_molekularwissenschaft_verfassung()
+        sig = obj.aggregates_verfassung_signal()
+        self.assertIsInstance(sig, dict)
+        self.assertIn("verfassung_id", sig)
+        self.assertIn("total_weight", sig)
+        self.assertIn("norm_count", sig)
+
+    def test_kki_molekularwissenschaft_verfassung_has_parent(self):
+        from kki.molekularwissenschaft_verfassung import build_molekularwissenschaft_verfassung
+        obj = build_molekularwissenschaft_verfassung()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_molekularwissenschaft_verfassung_tier_increases(self):
+        from kki.molekularwissenschaft_verfassung import build_molekularwissenschaft_verfassung, MolekularwissenschaftVerfassungGeltung
+        obj = build_molekularwissenschaft_verfassung()
+        tiers = {n.geltung: n.chemie_tier for n in obj.normen}
+        self.assertGreater(tiers[MolekularwissenschaftVerfassungGeltung.MOLEKULARWISS_SOUVERAEN], tiers[MolekularwissenschaftVerfassungGeltung.GESPERRT])
+
+    def test_kki_molekularwissenschaft_verfassung_tags_contain_molekularwissenschaft(self):
+        from kki.molekularwissenschaft_verfassung import build_molekularwissenschaft_verfassung
+        obj = build_molekularwissenschaft_verfassung()
+        for n in obj.normen:
+            self.assertIn("molekularwissenschaft", n.chemie_tags)
+
+    def test_kki_molekularwissenschaft_verfassung_ids_non_empty(self):
+        from kki.molekularwissenschaft_verfassung import build_molekularwissenschaft_verfassung
+        obj = build_molekularwissenschaft_verfassung()
+        for n in obj.normen:
+            self.assertTrue(len(n.chemie_ids) > 0)

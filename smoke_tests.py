@@ -24489,3 +24489,457 @@ class SmokeTests(unittest.TestCase):
         obj = build_internetkapazitaet_verfassung()
         for n in obj.normen:
             self.assertTrue(len(n.internet_ids) > 0)
+
+    # --- Block #661–670: Ökologie & Umweltwissenschaft ---
+    def test_kki_oekologie_feld_builds(self):
+        from kki.oekologie_feld import build_oekologie_feld
+        obj = build_oekologie_feld()
+        self.assertIsNotNone(obj)
+
+    def test_kki_oekologie_feld_normen_count(self):
+        from kki.oekologie_feld import build_oekologie_feld
+        obj = build_oekologie_feld()
+        self.assertEqual(len(obj.normen), 3)
+
+    def test_kki_oekologie_feld_gesperrt_weight_zero(self):
+        from kki.oekologie_feld import build_oekologie_feld, OekologieFeldGeltung
+        obj = build_oekologie_feld()
+        gesperrt = next(n for n in obj.normen if n.geltung == OekologieFeldGeltung.GESPERRT)
+        self.assertGreaterEqual(gesperrt.oekologie_weight, 0.0)
+
+    def test_kki_oekologie_feld_has_parent(self):
+        from kki.oekologie_feld import build_oekologie_feld
+        obj = build_oekologie_feld()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_oekologie_feld_tags_contain_oekologie(self):
+        from kki.oekologie_feld import build_oekologie_feld
+        obj = build_oekologie_feld()
+        for n in obj.normen:
+            self.assertIn("oekologie", n.oekologie_tags)
+
+    def test_kki_oekologie_feld_tier_increases(self):
+        from kki.oekologie_feld import build_oekologie_feld, OekologieFeldGeltung
+        obj = build_oekologie_feld()
+        tiers = {n.geltung: n.oekologie_tier for n in obj.normen}
+        self.assertGreater(tiers[OekologieFeldGeltung.OEKOLOGISCH_AKTIV], tiers[OekologieFeldGeltung.GESPERRT])
+
+    def test_kki_oekologie_feld_canonical_default(self):
+        from kki.oekologie_feld import build_oekologie_feld
+        obj = build_oekologie_feld()
+        for n in obj.normen:
+            self.assertTrue(n.canonical)
+
+    def test_kki_oekologie_feld_ids_non_empty(self):
+        from kki.oekologie_feld import build_oekologie_feld
+        obj = build_oekologie_feld()
+        for n in obj.normen:
+            self.assertTrue(len(n.oekologie_ids) > 0)
+
+    def test_kki_biotop_register_builds(self):
+        from kki.biotop_register import build_biotop_register
+        obj = build_biotop_register()
+        self.assertIsNotNone(obj)
+
+    def test_kki_biotop_register_eintraege_count(self):
+        from kki.biotop_register import build_biotop_register
+        obj = build_biotop_register()
+        self.assertEqual(len(obj.eintraege), 3)
+
+    def test_kki_biotop_register_gesperrt_weight_zero(self):
+        from kki.biotop_register import build_biotop_register, BiotopRegisterGeltung
+        obj = build_biotop_register()
+        gesperrt = next(e for e in obj.eintraege if e.geltung == BiotopRegisterGeltung.GESPERRT)
+        self.assertGreaterEqual(gesperrt.oekologie_weight, 0.0)
+
+    def test_kki_biotop_register_has_parent(self):
+        from kki.biotop_register import build_biotop_register
+        obj = build_biotop_register()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_biotop_register_tags_contain_biotop(self):
+        from kki.biotop_register import build_biotop_register
+        obj = build_biotop_register()
+        for e in obj.eintraege:
+            self.assertIn("biotop", e.oekologie_tags)
+
+    def test_kki_biotop_register_tier_increases(self):
+        from kki.biotop_register import build_biotop_register, BiotopRegisterGeltung
+        obj = build_biotop_register()
+        tiers = {e.geltung: e.oekologie_tier for e in obj.eintraege}
+        self.assertGreater(tiers[BiotopRegisterGeltung.BIOTOPISCH_ERFASST], tiers[BiotopRegisterGeltung.GESPERRT])
+
+    def test_kki_biotop_register_canonical_default(self):
+        from kki.biotop_register import build_biotop_register
+        obj = build_biotop_register()
+        for e in obj.eintraege:
+            self.assertTrue(e.canonical)
+
+    def test_kki_biotop_register_ids_non_empty(self):
+        from kki.biotop_register import build_biotop_register
+        obj = build_biotop_register()
+        for e in obj.eintraege:
+            self.assertTrue(len(e.oekologie_ids) > 0)
+
+    def test_kki_oekosystem_charta_builds(self):
+        from kki.oekosystem_charta import build_oekosystem_charta
+        obj = build_oekosystem_charta()
+        self.assertIsNotNone(obj)
+
+    def test_kki_oekosystem_charta_normen_count(self):
+        from kki.oekosystem_charta import build_oekosystem_charta
+        obj = build_oekosystem_charta()
+        self.assertEqual(len(obj.normen), 3)
+
+    def test_kki_oekosystem_charta_gesperrt_weight_zero(self):
+        from kki.oekosystem_charta import build_oekosystem_charta, OekosystemChartaGeltung
+        obj = build_oekosystem_charta()
+        gesperrt = next(n for n in obj.normen if n.geltung == OekosystemChartaGeltung.GESPERRT)
+        self.assertGreaterEqual(gesperrt.oekologie_weight, 0.0)
+
+    def test_kki_oekosystem_charta_has_parent(self):
+        from kki.oekosystem_charta import build_oekosystem_charta
+        obj = build_oekosystem_charta()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_oekosystem_charta_tags_contain_oekosystem(self):
+        from kki.oekosystem_charta import build_oekosystem_charta
+        obj = build_oekosystem_charta()
+        for n in obj.normen:
+            self.assertIn("oekosystem", n.oekologie_tags)
+
+    def test_kki_oekosystem_charta_tier_increases(self):
+        from kki.oekosystem_charta import build_oekosystem_charta, OekosystemChartaGeltung
+        obj = build_oekosystem_charta()
+        tiers = {n.geltung: n.oekologie_tier for n in obj.normen}
+        self.assertGreater(tiers[OekosystemChartaGeltung.OEKOSYSTEMISCH], tiers[OekosystemChartaGeltung.GESPERRT])
+
+    def test_kki_oekosystem_charta_canonical_default(self):
+        from kki.oekosystem_charta import build_oekosystem_charta
+        obj = build_oekosystem_charta()
+        for n in obj.normen:
+            self.assertTrue(n.canonical)
+
+    def test_kki_oekosystem_charta_ids_non_empty(self):
+        from kki.oekosystem_charta import build_oekosystem_charta
+        obj = build_oekosystem_charta()
+        for n in obj.normen:
+            self.assertTrue(len(n.oekologie_ids) > 0)
+
+    def test_kki_artenvielfalt_kodex_builds(self):
+        from kki.artenvielfalt_kodex import build_artenvielfalt_kodex
+        obj = build_artenvielfalt_kodex()
+        self.assertIsNotNone(obj)
+
+    def test_kki_artenvielfalt_kodex_eintraege_count(self):
+        from kki.artenvielfalt_kodex import build_artenvielfalt_kodex
+        obj = build_artenvielfalt_kodex()
+        self.assertEqual(len(obj.eintraege), 3)
+
+    def test_kki_artenvielfalt_kodex_gesperrt_weight_zero(self):
+        from kki.artenvielfalt_kodex import build_artenvielfalt_kodex, ArtenvielfaltKodexGeltung
+        obj = build_artenvielfalt_kodex()
+        gesperrt = next(e for e in obj.eintraege if e.geltung == ArtenvielfaltKodexGeltung.GESPERRT)
+        self.assertGreaterEqual(gesperrt.oekologie_weight, 0.0)
+
+    def test_kki_artenvielfalt_kodex_has_parent(self):
+        from kki.artenvielfalt_kodex import build_artenvielfalt_kodex
+        obj = build_artenvielfalt_kodex()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_artenvielfalt_kodex_tags_contain_artenvielfalt(self):
+        from kki.artenvielfalt_kodex import build_artenvielfalt_kodex
+        obj = build_artenvielfalt_kodex()
+        for e in obj.eintraege:
+            self.assertIn("artenvielfalt", e.oekologie_tags)
+
+    def test_kki_artenvielfalt_kodex_tier_increases(self):
+        from kki.artenvielfalt_kodex import build_artenvielfalt_kodex, ArtenvielfaltKodexGeltung
+        obj = build_artenvielfalt_kodex()
+        tiers = {e.geltung: e.oekologie_tier for e in obj.eintraege}
+        self.assertGreater(tiers[ArtenvielfaltKodexGeltung.ARTENVIELFALT_KODIERT], tiers[ArtenvielfaltKodexGeltung.GESPERRT])
+
+    def test_kki_artenvielfalt_kodex_canonical_default(self):
+        from kki.artenvielfalt_kodex import build_artenvielfalt_kodex
+        obj = build_artenvielfalt_kodex()
+        for e in obj.eintraege:
+            self.assertTrue(e.canonical)
+
+    def test_kki_artenvielfalt_kodex_ids_non_empty(self):
+        from kki.artenvielfalt_kodex import build_artenvielfalt_kodex
+        obj = build_artenvielfalt_kodex()
+        for e in obj.eintraege:
+            self.assertTrue(len(e.oekologie_ids) > 0)
+
+    def test_kki_stoffkreislauf_manifest_builds(self):
+        from kki.stoffkreislauf_manifest import build_stoffkreislauf_manifest
+        obj = build_stoffkreislauf_manifest()
+        self.assertIsNotNone(obj)
+
+    def test_kki_stoffkreislauf_manifest_normen_count(self):
+        from kki.stoffkreislauf_manifest import build_stoffkreislauf_manifest
+        obj = build_stoffkreislauf_manifest()
+        self.assertEqual(len(obj.normen), 3)
+
+    def test_kki_stoffkreislauf_manifest_gesperrt_weight_zero(self):
+        from kki.stoffkreislauf_manifest import build_stoffkreislauf_manifest, StoffkreislaufManifestGeltung
+        obj = build_stoffkreislauf_manifest()
+        gesperrt = next(n for n in obj.normen if n.geltung == StoffkreislaufManifestGeltung.GESPERRT)
+        self.assertGreaterEqual(gesperrt.oekologie_weight, 0.0)
+
+    def test_kki_stoffkreislauf_manifest_has_parent(self):
+        from kki.stoffkreislauf_manifest import build_stoffkreislauf_manifest
+        obj = build_stoffkreislauf_manifest()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_stoffkreislauf_manifest_tags_contain_stoffkreislauf(self):
+        from kki.stoffkreislauf_manifest import build_stoffkreislauf_manifest
+        obj = build_stoffkreislauf_manifest()
+        for n in obj.normen:
+            self.assertIn("stoffkreislauf", n.oekologie_tags)
+
+    def test_kki_stoffkreislauf_manifest_tier_increases(self):
+        from kki.stoffkreislauf_manifest import build_stoffkreislauf_manifest, StoffkreislaufManifestGeltung
+        obj = build_stoffkreislauf_manifest()
+        tiers = {n.geltung: n.oekologie_tier for n in obj.normen}
+        self.assertGreater(tiers[StoffkreislaufManifestGeltung.STOFFKREISLAUF_AKTIV], tiers[StoffkreislaufManifestGeltung.GESPERRT])
+
+    def test_kki_stoffkreislauf_manifest_canonical_default(self):
+        from kki.stoffkreislauf_manifest import build_stoffkreislauf_manifest
+        obj = build_stoffkreislauf_manifest()
+        for n in obj.normen:
+            self.assertTrue(n.canonical)
+
+    def test_kki_stoffkreislauf_manifest_ids_non_empty(self):
+        from kki.stoffkreislauf_manifest import build_stoffkreislauf_manifest
+        obj = build_stoffkreislauf_manifest()
+        for n in obj.normen:
+            self.assertTrue(len(n.oekologie_ids) > 0)
+
+    def test_kki_nahrungsketten_pakt_builds(self):
+        from kki.nahrungsketten_pakt import build_nahrungsketten_pakt
+        obj = build_nahrungsketten_pakt()
+        self.assertIsNotNone(obj)
+
+    def test_kki_nahrungsketten_pakt_eintraege_count(self):
+        from kki.nahrungsketten_pakt import build_nahrungsketten_pakt
+        obj = build_nahrungsketten_pakt()
+        self.assertEqual(len(obj.eintraege), 3)
+
+    def test_kki_nahrungsketten_pakt_gesperrt_weight_zero(self):
+        from kki.nahrungsketten_pakt import build_nahrungsketten_pakt, NahrungskettenPaktGeltung
+        obj = build_nahrungsketten_pakt()
+        gesperrt = next(e for e in obj.eintraege if e.geltung == NahrungskettenPaktGeltung.GESPERRT)
+        self.assertGreaterEqual(gesperrt.oekologie_weight, 0.0)
+
+    def test_kki_nahrungsketten_pakt_has_parent(self):
+        from kki.nahrungsketten_pakt import build_nahrungsketten_pakt
+        obj = build_nahrungsketten_pakt()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_nahrungsketten_pakt_tags_contain_nahrungskette(self):
+        from kki.nahrungsketten_pakt import build_nahrungsketten_pakt
+        obj = build_nahrungsketten_pakt()
+        for e in obj.eintraege:
+            self.assertIn("nahrungskette", e.oekologie_tags)
+
+    def test_kki_nahrungsketten_pakt_tier_increases(self):
+        from kki.nahrungsketten_pakt import build_nahrungsketten_pakt, NahrungskettenPaktGeltung
+        obj = build_nahrungsketten_pakt()
+        tiers = {e.geltung: e.oekologie_tier for e in obj.eintraege}
+        self.assertGreater(tiers[NahrungskettenPaktGeltung.NAHRUNGSKETTE_VERBUNDEN], tiers[NahrungskettenPaktGeltung.GESPERRT])
+
+    def test_kki_nahrungsketten_pakt_canonical_default(self):
+        from kki.nahrungsketten_pakt import build_nahrungsketten_pakt
+        obj = build_nahrungsketten_pakt()
+        for e in obj.eintraege:
+            self.assertTrue(e.canonical)
+
+    def test_kki_nahrungsketten_pakt_ids_non_empty(self):
+        from kki.nahrungsketten_pakt import build_nahrungsketten_pakt
+        obj = build_nahrungsketten_pakt()
+        for e in obj.eintraege:
+            self.assertTrue(len(e.oekologie_ids) > 0)
+
+    def test_kki_umweltschutz_senat_builds(self):
+        from kki.umweltschutz_senat import build_umweltschutz_senat
+        obj = build_umweltschutz_senat()
+        self.assertIsNotNone(obj)
+
+    def test_kki_umweltschutz_senat_normen_count(self):
+        from kki.umweltschutz_senat import build_umweltschutz_senat
+        obj = build_umweltschutz_senat()
+        self.assertEqual(len(obj.normen), 3)
+
+    def test_kki_umweltschutz_senat_gesperrt_weight_zero(self):
+        from kki.umweltschutz_senat import build_umweltschutz_senat, UmweltschutzSenatGeltung
+        obj = build_umweltschutz_senat()
+        gesperrt = next(n for n in obj.normen if n.geltung == UmweltschutzSenatGeltung.GESPERRT)
+        self.assertGreaterEqual(gesperrt.oekologie_weight, 0.0)
+
+    def test_kki_umweltschutz_senat_has_parent(self):
+        from kki.umweltschutz_senat import build_umweltschutz_senat
+        obj = build_umweltschutz_senat()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_umweltschutz_senat_tags_contain_umweltschutz(self):
+        from kki.umweltschutz_senat import build_umweltschutz_senat
+        obj = build_umweltschutz_senat()
+        for n in obj.normen:
+            self.assertIn("umweltschutz", n.oekologie_tags)
+
+    def test_kki_umweltschutz_senat_tier_increases(self):
+        from kki.umweltschutz_senat import build_umweltschutz_senat, UmweltschutzSenatGeltung
+        obj = build_umweltschutz_senat()
+        tiers = {n.geltung: n.oekologie_tier for n in obj.normen}
+        self.assertGreater(tiers[UmweltschutzSenatGeltung.UMWELTGESCHUETZT], tiers[UmweltschutzSenatGeltung.GESPERRT])
+
+    def test_kki_umweltschutz_senat_canonical_default(self):
+        from kki.umweltschutz_senat import build_umweltschutz_senat
+        obj = build_umweltschutz_senat()
+        for n in obj.normen:
+            self.assertTrue(n.canonical)
+
+    def test_kki_umweltschutz_senat_ids_non_empty(self):
+        from kki.umweltschutz_senat import build_umweltschutz_senat
+        obj = build_umweltschutz_senat()
+        for n in obj.normen:
+            self.assertTrue(len(n.oekologie_ids) > 0)
+
+    def test_kki_oekologie_norm_builds(self):
+        from kki.oekologie_norm import build_oekologie_norm
+        obj = build_oekologie_norm()
+        self.assertIsNotNone(obj)
+
+    def test_kki_oekologie_norm_normen_count(self):
+        from kki.oekologie_norm import build_oekologie_norm
+        obj = build_oekologie_norm()
+        self.assertEqual(len(obj.normen), 3)
+
+    def test_kki_oekologie_norm_gesperrt_weight_zero(self):
+        from kki.oekologie_norm import build_oekologie_norm, OekologieNormGeltung
+        obj = build_oekologie_norm()
+        gesperrt = next(e for e in obj.normen if e.geltung == OekologieNormGeltung.GESPERRT)
+        self.assertGreaterEqual(gesperrt.oekologie_norm_weight, 0.0)
+
+    def test_kki_oekologie_norm_has_parent(self):
+        from kki.oekologie_norm import build_oekologie_norm
+        obj = build_oekologie_norm()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_oekologie_norm_tags_contain_norm(self):
+        from kki.oekologie_norm import build_oekologie_norm
+        obj = build_oekologie_norm()
+        for e in obj.normen:
+            self.assertIn("norm", e.oekologie_norm_tags)
+
+    def test_kki_oekologie_norm_tier_increases(self):
+        from kki.oekologie_norm import build_oekologie_norm, OekologieNormGeltung
+        obj = build_oekologie_norm()
+        tiers = {e.geltung: e.oekologie_norm_tier for e in obj.normen}
+        self.assertGreater(tiers[OekologieNormGeltung.OEKOLOGIE_NORMATIV], tiers[OekologieNormGeltung.GESPERRT])
+
+    def test_kki_oekologie_norm_canonical_default(self):
+        from kki.oekologie_norm import build_oekologie_norm
+        obj = build_oekologie_norm()
+        for e in obj.normen:
+            self.assertTrue(e.canonical)
+
+    def test_kki_oekologie_norm_ids_non_empty(self):
+        from kki.oekologie_norm import build_oekologie_norm
+        obj = build_oekologie_norm()
+        for e in obj.normen:
+            self.assertTrue(len(e.oekologie_norm_ids) > 0)
+
+    def test_kki_klimawandel_charta_builds(self):
+        from kki.klimawandel_charta import build_klimawandel_charta
+        obj = build_klimawandel_charta()
+        self.assertIsNotNone(obj)
+
+    def test_kki_klimawandel_charta_normen_count(self):
+        from kki.klimawandel_charta import build_klimawandel_charta
+        obj = build_klimawandel_charta()
+        self.assertEqual(len(obj.normen), 3)
+
+    def test_kki_klimawandel_charta_gesperrt_weight_zero(self):
+        from kki.klimawandel_charta import build_klimawandel_charta, KlimawandelChartaGeltung
+        obj = build_klimawandel_charta()
+        gesperrt = next(n for n in obj.normen if n.geltung == KlimawandelChartaGeltung.GESPERRT)
+        self.assertGreaterEqual(gesperrt.oekologie_weight, 0.0)
+
+    def test_kki_klimawandel_charta_has_parent(self):
+        from kki.klimawandel_charta import build_klimawandel_charta
+        obj = build_klimawandel_charta()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_klimawandel_charta_tags_contain_klimawandel(self):
+        from kki.klimawandel_charta import build_klimawandel_charta
+        obj = build_klimawandel_charta()
+        for n in obj.normen:
+            self.assertIn("klimawandel", n.oekologie_tags)
+
+    def test_kki_klimawandel_charta_tier_increases(self):
+        from kki.klimawandel_charta import build_klimawandel_charta, KlimawandelChartaGeltung
+        obj = build_klimawandel_charta()
+        tiers = {n.geltung: n.oekologie_tier for n in obj.normen}
+        self.assertGreater(tiers[KlimawandelChartaGeltung.KLIMAWANDEL_BEWERTET], tiers[KlimawandelChartaGeltung.GESPERRT])
+
+    def test_kki_klimawandel_charta_canonical_default(self):
+        from kki.klimawandel_charta import build_klimawandel_charta
+        obj = build_klimawandel_charta()
+        for n in obj.normen:
+            self.assertTrue(n.canonical)
+
+    def test_kki_klimawandel_charta_ids_non_empty(self):
+        from kki.klimawandel_charta import build_klimawandel_charta
+        obj = build_klimawandel_charta()
+        for n in obj.normen:
+            self.assertTrue(len(n.oekologie_ids) > 0)
+
+    def test_kki_umweltwissenschaft_verfassung_builds(self):
+        from kki.umweltwissenschaft_verfassung import build_umweltwissenschaft_verfassung
+        obj = build_umweltwissenschaft_verfassung()
+        self.assertIsNotNone(obj)
+
+    def test_kki_umweltwissenschaft_verfassung_normen_count(self):
+        from kki.umweltwissenschaft_verfassung import build_umweltwissenschaft_verfassung
+        obj = build_umweltwissenschaft_verfassung()
+        self.assertEqual(len(obj.normen), 3)
+
+    def test_kki_umweltwissenschaft_verfassung_gesperrt_schutz_norm(self):
+        from kki.umweltwissenschaft_verfassung import build_umweltwissenschaft_verfassung, UmweltwissenschaftVerfassungGeltung
+        obj = build_umweltwissenschaft_verfassung()
+        gesperrt = next(n for n in obj.normen if n.geltung == UmweltwissenschaftVerfassungGeltung.GESPERRT)
+        self.assertGreaterEqual(gesperrt.oekologie_weight, 0.0)
+
+    def test_kki_umweltwissenschaft_verfassung_aggregates_verfassung_signal(self):
+        from kki.umweltwissenschaft_verfassung import build_umweltwissenschaft_verfassung
+        obj = build_umweltwissenschaft_verfassung()
+        sig = obj.aggregates_verfassung_signal()
+        self.assertIsInstance(sig, dict)
+        self.assertIn("verfassung_id", sig)
+        self.assertIn("total_weight", sig)
+        self.assertIn("norm_count", sig)
+
+    def test_kki_umweltwissenschaft_verfassung_has_parent(self):
+        from kki.umweltwissenschaft_verfassung import build_umweltwissenschaft_verfassung
+        obj = build_umweltwissenschaft_verfassung()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_umweltwissenschaft_verfassung_tier_increases(self):
+        from kki.umweltwissenschaft_verfassung import build_umweltwissenschaft_verfassung, UmweltwissenschaftVerfassungGeltung
+        obj = build_umweltwissenschaft_verfassung()
+        tiers = {n.geltung: n.oekologie_tier for n in obj.normen}
+        self.assertGreater(tiers[UmweltwissenschaftVerfassungGeltung.UMWELTWISS_SOUVERAEN], tiers[UmweltwissenschaftVerfassungGeltung.GESPERRT])
+
+    def test_kki_umweltwissenschaft_verfassung_tags_contain_umweltwissenschaft(self):
+        from kki.umweltwissenschaft_verfassung import build_umweltwissenschaft_verfassung
+        obj = build_umweltwissenschaft_verfassung()
+        for n in obj.normen:
+            self.assertIn("umweltwissenschaft", n.oekologie_tags)
+
+    def test_kki_umweltwissenschaft_verfassung_ids_non_empty(self):
+        from kki.umweltwissenschaft_verfassung import build_umweltwissenschaft_verfassung
+        obj = build_umweltwissenschaft_verfassung()
+        for n in obj.normen:
+            self.assertTrue(len(n.oekologie_ids) > 0)

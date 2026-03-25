@@ -3038,6 +3038,46 @@ from .internetkapazitaet_verfassung import (
     InternetkapazitaetVerfassungGeltung, InternetkapazitaetVerfassungsNorm, InternetkapazitaetVerfassungTyp, InternetkapazitaetVerfassungProzedur,
     InternetkapazitaetVerfassung, build_internetkapazitaet_verfassung,
 )
+from .oekologie_feld import (
+    OekologieFeldGeltung, OekologieFeldNorm, OekologieFeldTyp, OekologieFeldProzedur,
+    OekologieFeld, build_oekologie_feld,
+)
+from .biotop_register import (
+    BiotopRegisterGeltung, BiotopRegisterEintrag, BiotopRegisterTyp, BiotopRegisterProzedur,
+    BiotopRegister, build_biotop_register,
+)
+from .oekosystem_charta import (
+    OekosystemChartaGeltung, OekosystemChartaNorm, OekosystemChartaTyp, OekosystemChartaProzedur,
+    OekosystemCharta, build_oekosystem_charta,
+)
+from .artenvielfalt_kodex import (
+    ArtenvielfaltKodexGeltung, ArtenvielfaltKodexEintrag, ArtenvielfaltKodexTyp, ArtenvielfaltKodexProzedur,
+    ArtenvielfaltKodex, build_artenvielfalt_kodex,
+)
+from .stoffkreislauf_manifest import (
+    StoffkreislaufManifestGeltung, StoffkreislaufManifestNorm, StoffkreislaufManifestTyp, StoffkreislaufManifestProzedur,
+    StoffkreislaufManifest, build_stoffkreislauf_manifest,
+)
+from .nahrungsketten_pakt import (
+    NahrungskettenPaktGeltung, NahrungskettenPaktEintrag, NahrungskettenPaktTyp, NahrungskettenPaktProzedur,
+    NahrungskettenPakt, build_nahrungsketten_pakt,
+)
+from .umweltschutz_senat import (
+    UmweltschutzSenatGeltung, UmweltschutzSenatNorm, UmweltschutzSenatTyp, UmweltschutzSenatProzedur,
+    UmweltschutzSenat, build_umweltschutz_senat,
+)
+from .oekologie_norm import (
+    OekologieNormGeltung, OekologieNormEintrag, OekologieNormTyp, OekologieNormProzedur,
+    OekologieNormSatz, build_oekologie_norm,
+)
+from .klimawandel_charta import (
+    KlimawandelChartaGeltung, KlimawandelChartaNorm, KlimawandelChartaTyp, KlimawandelChartaProzedur,
+    KlimawandelCharta, build_klimawandel_charta,
+)
+from .umweltwissenschaft_verfassung import (
+    UmweltwissenschaftVerfassungGeltung, UmweltwissenschaftVerfassungsNorm, UmweltwissenschaftVerfassungTyp, UmweltwissenschaftVerfassungProzedur,
+    UmweltwissenschaftVerfassung, build_umweltwissenschaft_verfassung,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -4929,4 +4969,24 @@ __all__ = [
     "AutonomeRechercheCharta", "build_autonome_recherche_charta",
     "InternetkapazitaetVerfassungGeltung", "InternetkapazitaetVerfassungsNorm", "InternetkapazitaetVerfassungTyp", "InternetkapazitaetVerfassungProzedur",
     "InternetkapazitaetVerfassung", "build_internetkapazitaet_verfassung",
+    "OekologieFeldGeltung", "OekologieFeldNorm", "OekologieFeldTyp", "OekologieFeldProzedur",
+    "OekologieFeld", "build_oekologie_feld",
+    "BiotopRegisterGeltung", "BiotopRegisterEintrag", "BiotopRegisterTyp", "BiotopRegisterProzedur",
+    "BiotopRegister", "build_biotop_register",
+    "OekosystemChartaGeltung", "OekosystemChartaNorm", "OekosystemChartaTyp", "OekosystemChartaProzedur",
+    "OekosystemCharta", "build_oekosystem_charta",
+    "ArtenvielfaltKodexGeltung", "ArtenvielfaltKodexEintrag", "ArtenvielfaltKodexTyp", "ArtenvielfaltKodexProzedur",
+    "ArtenvielfaltKodex", "build_artenvielfalt_kodex",
+    "StoffkreislaufManifestGeltung", "StoffkreislaufManifestNorm", "StoffkreislaufManifestTyp", "StoffkreislaufManifestProzedur",
+    "StoffkreislaufManifest", "build_stoffkreislauf_manifest",
+    "NahrungskettenPaktGeltung", "NahrungskettenPaktEintrag", "NahrungskettenPaktTyp", "NahrungskettenPaktProzedur",
+    "NahrungskettenPakt", "build_nahrungsketten_pakt",
+    "UmweltschutzSenatGeltung", "UmweltschutzSenatNorm", "UmweltschutzSenatTyp", "UmweltschutzSenatProzedur",
+    "UmweltschutzSenat", "build_umweltschutz_senat",
+    "OekologieNormGeltung", "OekologieNormEintrag", "OekologieNormTyp", "OekologieNormProzedur",
+    "OekologieNormSatz", "build_oekologie_norm",
+    "KlimawandelChartaGeltung", "KlimawandelChartaNorm", "KlimawandelChartaTyp", "KlimawandelChartaProzedur",
+    "KlimawandelCharta", "build_klimawandel_charta",
+    "UmweltwissenschaftVerfassungGeltung", "UmweltwissenschaftVerfassungsNorm", "UmweltwissenschaftVerfassungTyp", "UmweltwissenschaftVerfassungProzedur",
+    "UmweltwissenschaftVerfassung", "build_umweltwissenschaft_verfassung",
 ]

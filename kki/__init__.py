@@ -3319,6 +3319,47 @@ from .wirtschaft_verfassung import (
     WirtschaftVerfassungGeltung, WirtschaftVerfassungsNorm, WirtschaftVerfassungTyp, WirtschaftVerfassungProzedur,
     WirtschaftVerfassung, build_wirtschaft_verfassung,
 )
+# Block #731–740: Ingenieurwissenschaften & Technikwissenschaften
+from .ingenieur_feld import (
+    IngenieurFeldGeltung, IngenieurFeldNorm, IngenieurFeldTyp, IngenieurFeldProzedur,
+    IngenieurFeld, build_ingenieur_feld,
+)
+from .maschinenbau_register import (
+    MaschinenbauRegisterGeltung, MaschinenbauRegisterEintrag, MaschinenbauRegisterTyp, MaschinenbauRegisterProzedur,
+    MaschinenbauRegister, build_maschinenbau_register,
+)
+from .elektrotechnik_charta import (
+    ElektrotechnikChartaGeltung, ElektrotechnikChartaNorm, ElektrotechnikChartaTyp, ElektrotechnikChartaProzedur,
+    ElektrotechnikCharta, build_elektrotechnik_charta,
+)
+from .verfahrenstechnik_kodex import (
+    VerfahrenstechnikKodexGeltung, VerfahrenstechnikKodexEintrag, VerfahrenstechnikKodexTyp, VerfahrenstechnikKodexProzedur,
+    VerfahrenstechnikKodex, build_verfahrenstechnik_kodex,
+)
+from .strukturtechnik_manifest import (
+    StrukturtechnikManifestGeltung, StrukturtechnikManifestNorm, StrukturtechnikManifestTyp, StrukturtechnikManifestProzedur,
+    StrukturtechnikManifest, build_strukturtechnik_manifest,
+)
+from .steuerungstechnik_pakt import (
+    SteuerungstechnikPaktGeltung, SteuerungstechnikPaktEintrag, SteuerungstechnikPaktTyp, SteuerungstechnikPaktProzedur,
+    SteuerungstechnikPakt, build_steuerungstechnik_pakt,
+)
+from .nachhaltigkeitstechnik_senat import (
+    NachhaltigkeitstechnikSenatGeltung, NachhaltigkeitstechnikSenatNorm, NachhaltigkeitstechnikSenatTyp, NachhaltigkeitstechnikSenatProzedur,
+    NachhaltigkeitstechnikSenat, build_nachhaltigkeitstechnik_senat,
+)
+from .ingenieur_norm import (
+    IngenieurNormGeltung, IngenieurNormEintrag, IngenieurNormTyp, IngenieurNormProzedur,
+    IngenieurNormSatz, build_ingenieur_norm,
+)
+from .raumfahrttechnik_charta import (
+    RaumfahrttechnikChartaGeltung, RaumfahrttechnikChartaNorm, RaumfahrttechnikChartaTyp, RaumfahrttechnikChartaProzedur,
+    RaumfahrttechnikCharta, build_raumfahrttechnik_charta,
+)
+from .ingenieur_verfassung import (
+    IngenieurVerfassungGeltung, IngenieurVerfassungsNorm, IngenieurVerfassungTyp, IngenieurVerfassungProzedur,
+    IngenieurVerfassung, build_ingenieur_verfassung,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -5351,4 +5392,25 @@ __all__ = [
     "DigitaleWirtschaftCharta", "build_digitale_wirtschaft_charta",
     "WirtschaftVerfassungGeltung", "WirtschaftVerfassungsNorm", "WirtschaftVerfassungTyp", "WirtschaftVerfassungProzedur",
     "WirtschaftVerfassung", "build_wirtschaft_verfassung",
+    # Block #731–740: Ingenieurwissenschaften & Technikwissenschaften
+    "IngenieurFeldGeltung", "IngenieurFeldNorm", "IngenieurFeldTyp", "IngenieurFeldProzedur",
+    "IngenieurFeld", "build_ingenieur_feld",
+    "MaschinenbauRegisterGeltung", "MaschinenbauRegisterEintrag", "MaschinenbauRegisterTyp", "MaschinenbauRegisterProzedur",
+    "MaschinenbauRegister", "build_maschinenbau_register",
+    "ElektrotechnikChartaGeltung", "ElektrotechnikChartaNorm", "ElektrotechnikChartaTyp", "ElektrotechnikChartaProzedur",
+    "ElektrotechnikCharta", "build_elektrotechnik_charta",
+    "VerfahrenstechnikKodexGeltung", "VerfahrenstechnikKodexEintrag", "VerfahrenstechnikKodexTyp", "VerfahrenstechnikKodexProzedur",
+    "VerfahrenstechnikKodex", "build_verfahrenstechnik_kodex",
+    "StrukturtechnikManifestGeltung", "StrukturtechnikManifestNorm", "StrukturtechnikManifestTyp", "StrukturtechnikManifestProzedur",
+    "StrukturtechnikManifest", "build_strukturtechnik_manifest",
+    "SteuerungstechnikPaktGeltung", "SteuerungstechnikPaktEintrag", "SteuerungstechnikPaktTyp", "SteuerungstechnikPaktProzedur",
+    "SteuerungstechnikPakt", "build_steuerungstechnik_pakt",
+    "NachhaltigkeitstechnikSenatGeltung", "NachhaltigkeitstechnikSenatNorm", "NachhaltigkeitstechnikSenatTyp", "NachhaltigkeitstechnikSenatProzedur",
+    "NachhaltigkeitstechnikSenat", "build_nachhaltigkeitstechnik_senat",
+    "IngenieurNormGeltung", "IngenieurNormEintrag", "IngenieurNormTyp", "IngenieurNormProzedur",
+    "IngenieurNormSatz", "build_ingenieur_norm",
+    "RaumfahrttechnikChartaGeltung", "RaumfahrttechnikChartaNorm", "RaumfahrttechnikChartaTyp", "RaumfahrttechnikChartaProzedur",
+    "RaumfahrttechnikCharta", "build_raumfahrttechnik_charta",
+    "IngenieurVerfassungGeltung", "IngenieurVerfassungsNorm", "IngenieurVerfassungTyp", "IngenieurVerfassungProzedur",
+    "IngenieurVerfassung", "build_ingenieur_verfassung",
 ]

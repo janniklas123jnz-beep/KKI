@@ -27651,3 +27651,447 @@ class SmokeTests(unittest.TestCase):
         from kki.wirtschaft_verfassung import build_wirtschaft_verfassung
         obj = build_wirtschaft_verfassung()
         self.assertIsNotNone(obj.parent)
+
+    # #731 IngenieurFeld
+    def test_kki_ingenieur_feld_builds_normen_count(self):
+        from kki.ingenieur_feld import build_ingenieur_feld
+        obj = build_ingenieur_feld()
+        self.assertGreaterEqual(len(obj.normen), 1)
+
+    def test_kki_ingenieur_feld_builds_gesperrt_weight_zero(self):
+        from kki.ingenieur_feld import build_ingenieur_feld, IngenieurFeldGeltung
+        obj = build_ingenieur_feld()
+        w = next(n.ing_weight for n in obj.normen if n.geltung == IngenieurFeldGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_ingenieur_feld_builds_tags_contain_ing(self):
+        from kki.ingenieur_feld import build_ingenieur_feld
+        obj = build_ingenieur_feld()
+        self.assertTrue(any("ing" in n.ing_tags for n in obj.normen))
+
+    def test_kki_ingenieur_feld_builds_tier_increases(self):
+        from kki.ingenieur_feld import build_ingenieur_feld, IngenieurFeldGeltung
+        obj = build_ingenieur_feld()
+        t_g = next(n.ing_tier for n in obj.normen if n.geltung == IngenieurFeldGeltung.GESPERRT)
+        t_a = next(n.ing_tier for n in obj.normen if n.geltung == IngenieurFeldGeltung.GRUNDLEGEND_INGENIEURTECHNISCH)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_ingenieur_feld_builds_canonical_default(self):
+        from kki.ingenieur_feld import build_ingenieur_feld
+        obj = build_ingenieur_feld()
+        self.assertTrue(all(n.canonical for n in obj.normen))
+
+    def test_kki_ingenieur_feld_builds_ids_non_empty(self):
+        from kki.ingenieur_feld import build_ingenieur_feld
+        obj = build_ingenieur_feld()
+        self.assertTrue(all(len(n.ing_ids) > 0 for n in obj.normen))
+
+    def test_kki_ingenieur_feld_builds_ingenieurtechnisch_geltung(self):
+        from kki.ingenieur_feld import build_ingenieur_feld, IngenieurFeldGeltung
+        obj = build_ingenieur_feld()
+        self.assertIn(IngenieurFeldGeltung.INGENIEURTECHNISCH, [n.geltung for n in obj.normen])
+
+    def test_kki_ingenieur_feld_builds_parent_chain(self):
+        from kki.ingenieur_feld import build_ingenieur_feld
+        obj = build_ingenieur_feld()
+        self.assertIsNotNone(obj.parent)
+
+    # #732 MaschinenbauRegister
+    def test_kki_maschinenbau_register_builds_eintraege_count(self):
+        from kki.maschinenbau_register import build_maschinenbau_register
+        obj = build_maschinenbau_register()
+        self.assertGreaterEqual(len(obj.eintraege), 1)
+
+    def test_kki_maschinenbau_register_builds_gesperrt_weight_zero(self):
+        from kki.maschinenbau_register import build_maschinenbau_register, MaschinenbauRegisterGeltung
+        obj = build_maschinenbau_register()
+        w = next(e.ing_weight for e in obj.eintraege if e.geltung == MaschinenbauRegisterGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_maschinenbau_register_builds_tags_contain_maschinenbau(self):
+        from kki.maschinenbau_register import build_maschinenbau_register
+        obj = build_maschinenbau_register()
+        self.assertTrue(any("maschinenbau" in e.ing_tags for e in obj.eintraege))
+
+    def test_kki_maschinenbau_register_builds_tier_increases(self):
+        from kki.maschinenbau_register import build_maschinenbau_register, MaschinenbauRegisterGeltung
+        obj = build_maschinenbau_register()
+        t_g = next(e.ing_tier for e in obj.eintraege if e.geltung == MaschinenbauRegisterGeltung.GESPERRT)
+        t_a = next(e.ing_tier for e in obj.eintraege if e.geltung == MaschinenbauRegisterGeltung.GRUNDLEGEND_MASCHINENBAULICH)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_maschinenbau_register_builds_canonical_default(self):
+        from kki.maschinenbau_register import build_maschinenbau_register
+        obj = build_maschinenbau_register()
+        self.assertTrue(all(e.canonical for e in obj.eintraege))
+
+    def test_kki_maschinenbau_register_builds_ids_non_empty(self):
+        from kki.maschinenbau_register import build_maschinenbau_register
+        obj = build_maschinenbau_register()
+        self.assertTrue(all(len(e.ing_ids) > 0 for e in obj.eintraege))
+
+    def test_kki_maschinenbau_register_builds_maschinenbaulich_geltung(self):
+        from kki.maschinenbau_register import build_maschinenbau_register, MaschinenbauRegisterGeltung
+        obj = build_maschinenbau_register()
+        self.assertIn(MaschinenbauRegisterGeltung.MASCHINENBAULICH, [e.geltung for e in obj.eintraege])
+
+    def test_kki_maschinenbau_register_builds_parent_chain(self):
+        from kki.maschinenbau_register import build_maschinenbau_register
+        obj = build_maschinenbau_register()
+        self.assertIsNotNone(obj.parent)
+
+    # #733 ElektrotechnikCharta
+    def test_kki_elektrotechnik_charta_builds_normen_count(self):
+        from kki.elektrotechnik_charta import build_elektrotechnik_charta
+        obj = build_elektrotechnik_charta()
+        self.assertGreaterEqual(len(obj.normen), 1)
+
+    def test_kki_elektrotechnik_charta_builds_gesperrt_weight_zero(self):
+        from kki.elektrotechnik_charta import build_elektrotechnik_charta, ElektrotechnikChartaGeltung
+        obj = build_elektrotechnik_charta()
+        w = next(n.ing_weight for n in obj.normen if n.geltung == ElektrotechnikChartaGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_elektrotechnik_charta_builds_tags_contain_elektrotechnik(self):
+        from kki.elektrotechnik_charta import build_elektrotechnik_charta
+        obj = build_elektrotechnik_charta()
+        self.assertTrue(any("elektrotechnik" in n.ing_tags for n in obj.normen))
+
+    def test_kki_elektrotechnik_charta_builds_tier_increases(self):
+        from kki.elektrotechnik_charta import build_elektrotechnik_charta, ElektrotechnikChartaGeltung
+        obj = build_elektrotechnik_charta()
+        t_g = next(n.ing_tier for n in obj.normen if n.geltung == ElektrotechnikChartaGeltung.GESPERRT)
+        t_a = next(n.ing_tier for n in obj.normen if n.geltung == ElektrotechnikChartaGeltung.GRUNDLEGEND_ELEKTROTECHNISCH)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_elektrotechnik_charta_builds_canonical_default(self):
+        from kki.elektrotechnik_charta import build_elektrotechnik_charta
+        obj = build_elektrotechnik_charta()
+        self.assertTrue(all(n.canonical for n in obj.normen))
+
+    def test_kki_elektrotechnik_charta_builds_ids_non_empty(self):
+        from kki.elektrotechnik_charta import build_elektrotechnik_charta
+        obj = build_elektrotechnik_charta()
+        self.assertTrue(all(len(n.ing_ids) > 0 for n in obj.normen))
+
+    def test_kki_elektrotechnik_charta_builds_elektrotechnisch_geltung(self):
+        from kki.elektrotechnik_charta import build_elektrotechnik_charta, ElektrotechnikChartaGeltung
+        obj = build_elektrotechnik_charta()
+        self.assertIn(ElektrotechnikChartaGeltung.ELEKTROTECHNISCH, [n.geltung for n in obj.normen])
+
+    def test_kki_elektrotechnik_charta_builds_parent_chain(self):
+        from kki.elektrotechnik_charta import build_elektrotechnik_charta
+        obj = build_elektrotechnik_charta()
+        self.assertIsNotNone(obj.parent)
+
+    # #734 VerfahrenstechnikKodex
+    def test_kki_verfahrenstechnik_kodex_builds_eintraege_count(self):
+        from kki.verfahrenstechnik_kodex import build_verfahrenstechnik_kodex
+        obj = build_verfahrenstechnik_kodex()
+        self.assertGreaterEqual(len(obj.eintraege), 1)
+
+    def test_kki_verfahrenstechnik_kodex_builds_gesperrt_weight_zero(self):
+        from kki.verfahrenstechnik_kodex import build_verfahrenstechnik_kodex, VerfahrenstechnikKodexGeltung
+        obj = build_verfahrenstechnik_kodex()
+        w = next(e.ing_weight for e in obj.eintraege if e.geltung == VerfahrenstechnikKodexGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_verfahrenstechnik_kodex_builds_tags_contain_verfahrenstechnik(self):
+        from kki.verfahrenstechnik_kodex import build_verfahrenstechnik_kodex
+        obj = build_verfahrenstechnik_kodex()
+        self.assertTrue(any("verfahrenstechnik" in e.ing_tags for e in obj.eintraege))
+
+    def test_kki_verfahrenstechnik_kodex_builds_tier_increases(self):
+        from kki.verfahrenstechnik_kodex import build_verfahrenstechnik_kodex, VerfahrenstechnikKodexGeltung
+        obj = build_verfahrenstechnik_kodex()
+        t_g = next(e.ing_tier for e in obj.eintraege if e.geltung == VerfahrenstechnikKodexGeltung.GESPERRT)
+        t_a = next(e.ing_tier for e in obj.eintraege if e.geltung == VerfahrenstechnikKodexGeltung.GRUNDLEGEND_VERFAHRENSTECHNISCH)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_verfahrenstechnik_kodex_builds_canonical_default(self):
+        from kki.verfahrenstechnik_kodex import build_verfahrenstechnik_kodex
+        obj = build_verfahrenstechnik_kodex()
+        self.assertTrue(all(e.canonical for e in obj.eintraege))
+
+    def test_kki_verfahrenstechnik_kodex_builds_ids_non_empty(self):
+        from kki.verfahrenstechnik_kodex import build_verfahrenstechnik_kodex
+        obj = build_verfahrenstechnik_kodex()
+        self.assertTrue(all(len(e.ing_ids) > 0 for e in obj.eintraege))
+
+    def test_kki_verfahrenstechnik_kodex_builds_verfahrenstechnisch_geltung(self):
+        from kki.verfahrenstechnik_kodex import build_verfahrenstechnik_kodex, VerfahrenstechnikKodexGeltung
+        obj = build_verfahrenstechnik_kodex()
+        self.assertIn(VerfahrenstechnikKodexGeltung.VERFAHRENSTECHNISCH, [e.geltung for e in obj.eintraege])
+
+    def test_kki_verfahrenstechnik_kodex_builds_parent_chain(self):
+        from kki.verfahrenstechnik_kodex import build_verfahrenstechnik_kodex
+        obj = build_verfahrenstechnik_kodex()
+        self.assertIsNotNone(obj.parent)
+
+    # #735 StrukturtechnikManifest
+    def test_kki_strukturtechnik_manifest_builds_normen_count(self):
+        from kki.strukturtechnik_manifest import build_strukturtechnik_manifest
+        obj = build_strukturtechnik_manifest()
+        self.assertGreaterEqual(len(obj.normen), 1)
+
+    def test_kki_strukturtechnik_manifest_builds_gesperrt_weight_zero(self):
+        from kki.strukturtechnik_manifest import build_strukturtechnik_manifest, StrukturtechnikManifestGeltung
+        obj = build_strukturtechnik_manifest()
+        w = next(n.ing_weight for n in obj.normen if n.geltung == StrukturtechnikManifestGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_strukturtechnik_manifest_builds_tags_contain_strukturtechnik(self):
+        from kki.strukturtechnik_manifest import build_strukturtechnik_manifest
+        obj = build_strukturtechnik_manifest()
+        self.assertTrue(any("strukturtechnik" in n.ing_tags for n in obj.normen))
+
+    def test_kki_strukturtechnik_manifest_builds_tier_increases(self):
+        from kki.strukturtechnik_manifest import build_strukturtechnik_manifest, StrukturtechnikManifestGeltung
+        obj = build_strukturtechnik_manifest()
+        t_g = next(n.ing_tier for n in obj.normen if n.geltung == StrukturtechnikManifestGeltung.GESPERRT)
+        t_a = next(n.ing_tier for n in obj.normen if n.geltung == StrukturtechnikManifestGeltung.GRUNDLEGEND_STRUKTURTECHNISCH)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_strukturtechnik_manifest_builds_canonical_default(self):
+        from kki.strukturtechnik_manifest import build_strukturtechnik_manifest
+        obj = build_strukturtechnik_manifest()
+        self.assertTrue(all(n.canonical for n in obj.normen))
+
+    def test_kki_strukturtechnik_manifest_builds_ids_non_empty(self):
+        from kki.strukturtechnik_manifest import build_strukturtechnik_manifest
+        obj = build_strukturtechnik_manifest()
+        self.assertTrue(all(len(n.ing_ids) > 0 for n in obj.normen))
+
+    def test_kki_strukturtechnik_manifest_builds_strukturtechnisch_geltung(self):
+        from kki.strukturtechnik_manifest import build_strukturtechnik_manifest, StrukturtechnikManifestGeltung
+        obj = build_strukturtechnik_manifest()
+        self.assertIn(StrukturtechnikManifestGeltung.STRUKTURTECHNISCH, [n.geltung for n in obj.normen])
+
+    def test_kki_strukturtechnik_manifest_builds_parent_chain(self):
+        from kki.strukturtechnik_manifest import build_strukturtechnik_manifest
+        obj = build_strukturtechnik_manifest()
+        self.assertIsNotNone(obj.parent)
+
+    # #736 SteuerungstechnikPakt
+    def test_kki_steuerungstechnik_pakt_builds_eintraege_count(self):
+        from kki.steuerungstechnik_pakt import build_steuerungstechnik_pakt
+        obj = build_steuerungstechnik_pakt()
+        self.assertGreaterEqual(len(obj.eintraege), 1)
+
+    def test_kki_steuerungstechnik_pakt_builds_gesperrt_weight_zero(self):
+        from kki.steuerungstechnik_pakt import build_steuerungstechnik_pakt, SteuerungstechnikPaktGeltung
+        obj = build_steuerungstechnik_pakt()
+        w = next(e.ing_weight for e in obj.eintraege if e.geltung == SteuerungstechnikPaktGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_steuerungstechnik_pakt_builds_tags_contain_steuerungstechnik(self):
+        from kki.steuerungstechnik_pakt import build_steuerungstechnik_pakt
+        obj = build_steuerungstechnik_pakt()
+        self.assertTrue(any("steuerungstechnik" in e.ing_tags for e in obj.eintraege))
+
+    def test_kki_steuerungstechnik_pakt_builds_tier_increases(self):
+        from kki.steuerungstechnik_pakt import build_steuerungstechnik_pakt, SteuerungstechnikPaktGeltung
+        obj = build_steuerungstechnik_pakt()
+        t_g = next(e.ing_tier for e in obj.eintraege if e.geltung == SteuerungstechnikPaktGeltung.GESPERRT)
+        t_a = next(e.ing_tier for e in obj.eintraege if e.geltung == SteuerungstechnikPaktGeltung.GRUNDLEGEND_STEUERUNGSTECHNISCH)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_steuerungstechnik_pakt_builds_canonical_default(self):
+        from kki.steuerungstechnik_pakt import build_steuerungstechnik_pakt
+        obj = build_steuerungstechnik_pakt()
+        self.assertTrue(all(e.canonical for e in obj.eintraege))
+
+    def test_kki_steuerungstechnik_pakt_builds_ids_non_empty(self):
+        from kki.steuerungstechnik_pakt import build_steuerungstechnik_pakt
+        obj = build_steuerungstechnik_pakt()
+        self.assertTrue(all(len(e.ing_ids) > 0 for e in obj.eintraege))
+
+    def test_kki_steuerungstechnik_pakt_builds_steuerungstechnisch_geltung(self):
+        from kki.steuerungstechnik_pakt import build_steuerungstechnik_pakt, SteuerungstechnikPaktGeltung
+        obj = build_steuerungstechnik_pakt()
+        self.assertIn(SteuerungstechnikPaktGeltung.STEUERUNGSTECHNISCH, [e.geltung for e in obj.eintraege])
+
+    def test_kki_steuerungstechnik_pakt_builds_parent_chain(self):
+        from kki.steuerungstechnik_pakt import build_steuerungstechnik_pakt
+        obj = build_steuerungstechnik_pakt()
+        self.assertIsNotNone(obj.parent)
+
+    # #737 NachhaltigkeitstechnikSenat
+    def test_kki_nachhaltigkeitstechnik_senat_builds_normen_count(self):
+        from kki.nachhaltigkeitstechnik_senat import build_nachhaltigkeitstechnik_senat
+        obj = build_nachhaltigkeitstechnik_senat()
+        self.assertGreaterEqual(len(obj.normen), 1)
+
+    def test_kki_nachhaltigkeitstechnik_senat_builds_gesperrt_weight_zero(self):
+        from kki.nachhaltigkeitstechnik_senat import build_nachhaltigkeitstechnik_senat, NachhaltigkeitstechnikSenatGeltung
+        obj = build_nachhaltigkeitstechnik_senat()
+        w = next(n.ing_weight for n in obj.normen if n.geltung == NachhaltigkeitstechnikSenatGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_nachhaltigkeitstechnik_senat_builds_tags_contain_nachhaltigkeitstechnik(self):
+        from kki.nachhaltigkeitstechnik_senat import build_nachhaltigkeitstechnik_senat
+        obj = build_nachhaltigkeitstechnik_senat()
+        self.assertTrue(any("nachhaltigkeitstechnik" in n.ing_tags for n in obj.normen))
+
+    def test_kki_nachhaltigkeitstechnik_senat_builds_tier_increases(self):
+        from kki.nachhaltigkeitstechnik_senat import build_nachhaltigkeitstechnik_senat, NachhaltigkeitstechnikSenatGeltung
+        obj = build_nachhaltigkeitstechnik_senat()
+        t_g = next(n.ing_tier for n in obj.normen if n.geltung == NachhaltigkeitstechnikSenatGeltung.GESPERRT)
+        t_a = next(n.ing_tier for n in obj.normen if n.geltung == NachhaltigkeitstechnikSenatGeltung.GRUNDLEGEND_NACHHALTIGKEITSTECHNISCH)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_nachhaltigkeitstechnik_senat_builds_canonical_default(self):
+        from kki.nachhaltigkeitstechnik_senat import build_nachhaltigkeitstechnik_senat
+        obj = build_nachhaltigkeitstechnik_senat()
+        self.assertTrue(all(n.canonical for n in obj.normen))
+
+    def test_kki_nachhaltigkeitstechnik_senat_builds_ids_non_empty(self):
+        from kki.nachhaltigkeitstechnik_senat import build_nachhaltigkeitstechnik_senat
+        obj = build_nachhaltigkeitstechnik_senat()
+        self.assertTrue(all(len(n.ing_ids) > 0 for n in obj.normen))
+
+    def test_kki_nachhaltigkeitstechnik_senat_builds_nachhaltigkeitstechnisch_geltung(self):
+        from kki.nachhaltigkeitstechnik_senat import build_nachhaltigkeitstechnik_senat, NachhaltigkeitstechnikSenatGeltung
+        obj = build_nachhaltigkeitstechnik_senat()
+        self.assertIn(NachhaltigkeitstechnikSenatGeltung.NACHHALTIGKEITSTECHNISCH, [n.geltung for n in obj.normen])
+
+    def test_kki_nachhaltigkeitstechnik_senat_builds_parent_chain(self):
+        from kki.nachhaltigkeitstechnik_senat import build_nachhaltigkeitstechnik_senat
+        obj = build_nachhaltigkeitstechnik_senat()
+        self.assertIsNotNone(obj.parent)
+
+    # #738 IngenieurNorm
+    def test_kki_ingenieur_norm_builds_normen_count(self):
+        from kki.ingenieur_norm import build_ingenieur_norm
+        obj = build_ingenieur_norm()
+        self.assertGreaterEqual(len(obj.normen), 1)
+
+    def test_kki_ingenieur_norm_builds_gesperrt_weight_zero(self):
+        from kki.ingenieur_norm import build_ingenieur_norm, IngenieurNormGeltung
+        obj = build_ingenieur_norm()
+        w = next(e.ing_norm_weight for e in obj.normen if e.geltung == IngenieurNormGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_ingenieur_norm_builds_tags_contain_norm(self):
+        from kki.ingenieur_norm import build_ingenieur_norm
+        obj = build_ingenieur_norm()
+        self.assertTrue(any("norm" in e.ing_norm_tags for e in obj.normen))
+
+    def test_kki_ingenieur_norm_builds_tier_increases(self):
+        from kki.ingenieur_norm import build_ingenieur_norm, IngenieurNormGeltung
+        obj = build_ingenieur_norm()
+        t_g = next(e.ing_norm_tier for e in obj.normen if e.geltung == IngenieurNormGeltung.GESPERRT)
+        t_a = next(e.ing_norm_tier for e in obj.normen if e.geltung == IngenieurNormGeltung.GRUNDLEGEND_ING_NORMATIV)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_ingenieur_norm_builds_canonical_default(self):
+        from kki.ingenieur_norm import build_ingenieur_norm
+        obj = build_ingenieur_norm()
+        self.assertTrue(all(e.canonical for e in obj.normen))
+
+    def test_kki_ingenieur_norm_builds_ids_non_empty(self):
+        from kki.ingenieur_norm import build_ingenieur_norm
+        obj = build_ingenieur_norm()
+        self.assertTrue(all(len(e.ing_norm_ids) > 0 for e in obj.normen))
+
+    def test_kki_ingenieur_norm_builds_ing_normativ_geltung(self):
+        from kki.ingenieur_norm import build_ingenieur_norm, IngenieurNormGeltung
+        obj = build_ingenieur_norm()
+        self.assertIn(IngenieurNormGeltung.ING_NORMATIV, [e.geltung for e in obj.normen])
+
+    def test_kki_ingenieur_norm_builds_parent_chain(self):
+        from kki.ingenieur_norm import build_ingenieur_norm
+        obj = build_ingenieur_norm()
+        self.assertIsNotNone(obj.parent)
+
+    # #739 RaumfahrttechnikCharta
+    def test_kki_raumfahrttechnik_charta_builds_normen_count(self):
+        from kki.raumfahrttechnik_charta import build_raumfahrttechnik_charta
+        obj = build_raumfahrttechnik_charta()
+        self.assertGreaterEqual(len(obj.normen), 1)
+
+    def test_kki_raumfahrttechnik_charta_builds_gesperrt_weight_zero(self):
+        from kki.raumfahrttechnik_charta import build_raumfahrttechnik_charta, RaumfahrttechnikChartaGeltung
+        obj = build_raumfahrttechnik_charta()
+        w = next(n.ing_weight for n in obj.normen if n.geltung == RaumfahrttechnikChartaGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_raumfahrttechnik_charta_builds_tags_contain_raumfahrttechnik(self):
+        from kki.raumfahrttechnik_charta import build_raumfahrttechnik_charta
+        obj = build_raumfahrttechnik_charta()
+        self.assertTrue(any("raumfahrttechnik" in n.ing_tags for n in obj.normen))
+
+    def test_kki_raumfahrttechnik_charta_builds_tier_increases(self):
+        from kki.raumfahrttechnik_charta import build_raumfahrttechnik_charta, RaumfahrttechnikChartaGeltung
+        obj = build_raumfahrttechnik_charta()
+        t_g = next(n.ing_tier for n in obj.normen if n.geltung == RaumfahrttechnikChartaGeltung.GESPERRT)
+        t_a = next(n.ing_tier for n in obj.normen if n.geltung == RaumfahrttechnikChartaGeltung.GRUNDLEGEND_RAUMFAHRTTECHNISCH)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_raumfahrttechnik_charta_builds_canonical_default(self):
+        from kki.raumfahrttechnik_charta import build_raumfahrttechnik_charta
+        obj = build_raumfahrttechnik_charta()
+        self.assertTrue(all(n.canonical for n in obj.normen))
+
+    def test_kki_raumfahrttechnik_charta_builds_ids_non_empty(self):
+        from kki.raumfahrttechnik_charta import build_raumfahrttechnik_charta
+        obj = build_raumfahrttechnik_charta()
+        self.assertTrue(all(len(n.ing_ids) > 0 for n in obj.normen))
+
+    def test_kki_raumfahrttechnik_charta_builds_raumfahrttechnisch_geltung(self):
+        from kki.raumfahrttechnik_charta import build_raumfahrttechnik_charta, RaumfahrttechnikChartaGeltung
+        obj = build_raumfahrttechnik_charta()
+        self.assertIn(RaumfahrttechnikChartaGeltung.RAUMFAHRTTECHNISCH, [n.geltung for n in obj.normen])
+
+    def test_kki_raumfahrttechnik_charta_builds_parent_chain(self):
+        from kki.raumfahrttechnik_charta import build_raumfahrttechnik_charta
+        obj = build_raumfahrttechnik_charta()
+        self.assertIsNotNone(obj.parent)
+
+    # #740 IngenieurVerfassung ⭐
+    def test_kki_ingenieur_verfassung_builds_gesperrt_schutz_norm(self):
+        from kki.ingenieur_verfassung import build_ingenieur_verfassung, IngenieurVerfassungGeltung
+        obj = build_ingenieur_verfassung()
+        w = next(n.ing_weight for n in obj.normen if n.geltung == IngenieurVerfassungGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_ingenieur_verfassung_aggregates_verfassung_signal(self):
+        from kki.ingenieur_verfassung import build_ingenieur_verfassung
+        obj = build_ingenieur_verfassung()
+        sig = obj.aggregates_verfassung_signal()
+        self.assertIn("verfassung_id", sig)
+        self.assertIn("total_weight", sig)
+        self.assertIn("norm_count", sig)
+        self.assertGreater(sig["norm_count"], 0)
+
+    def test_kki_ingenieur_verfassung_builds_tags_contain_ingenieur(self):
+        from kki.ingenieur_verfassung import build_ingenieur_verfassung
+        obj = build_ingenieur_verfassung()
+        self.assertTrue(any("ingenieur" in n.ing_tags for n in obj.normen))
+
+    def test_kki_ingenieur_verfassung_builds_tier_increases(self):
+        from kki.ingenieur_verfassung import build_ingenieur_verfassung, IngenieurVerfassungGeltung
+        obj = build_ingenieur_verfassung()
+        t_g = next(n.ing_tier for n in obj.normen if n.geltung == IngenieurVerfassungGeltung.GESPERRT)
+        t_a = next(n.ing_tier for n in obj.normen if n.geltung == IngenieurVerfassungGeltung.GRUNDLEGEND_ING_SOUVERAEN)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_ingenieur_verfassung_builds_canonical_default(self):
+        from kki.ingenieur_verfassung import build_ingenieur_verfassung
+        obj = build_ingenieur_verfassung()
+        self.assertTrue(all(n.canonical for n in obj.normen))
+
+    def test_kki_ingenieur_verfassung_builds_ids_non_empty(self):
+        from kki.ingenieur_verfassung import build_ingenieur_verfassung
+        obj = build_ingenieur_verfassung()
+        self.assertTrue(all(len(n.ing_ids) > 0 for n in obj.normen))
+
+    def test_kki_ingenieur_verfassung_builds_ing_souveraen_geltung(self):
+        from kki.ingenieur_verfassung import build_ingenieur_verfassung, IngenieurVerfassungGeltung
+        obj = build_ingenieur_verfassung()
+        self.assertIn(IngenieurVerfassungGeltung.ING_SOUVERAEN, [n.geltung for n in obj.normen])
+
+    def test_kki_ingenieur_verfassung_builds_parent_chain(self):
+        from kki.ingenieur_verfassung import build_ingenieur_verfassung
+        obj = build_ingenieur_verfassung()
+        self.assertIsNotNone(obj.parent)

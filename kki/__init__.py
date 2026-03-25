@@ -3158,6 +3158,46 @@ from .materialwissenschaft_verfassung import (
     MaterialwissenschaftVerfassungGeltung, MaterialwissenschaftVerfassungsNorm, MaterialwissenschaftVerfassungTyp, MaterialwissenschaftVerfassungProzedur,
     MaterialwissenschaftVerfassung, build_materialwissenschaft_verfassung,
 )
+from .geowissenschaft_feld import (
+    GeowissenschaftFeldGeltung, GeowissenschaftFeldNorm, GeowissenschaftFeldTyp, GeowissenschaftFeldProzedur,
+    GeowissenschaftFeld, build_geowissenschaft_feld,
+)
+from .mineralogie_register import (
+    MineralogieRegisterGeltung, MineralogieRegisterEintrag, MineralogieRegisterTyp, MineralogieRegisterProzedur,
+    MineralogieRegister, build_mineralogie_register,
+)
+from .gesteins_charta import (
+    GesteinsChartaGeltung, GesteinsChartaNorm, GesteinsChartaTyp, GesteinsChartaProzedur,
+    GesteinsCharta, build_gesteins_charta,
+)
+from .tektonik_kodex import (
+    TektonikKodexGeltung, TektonikKodexEintrag, TektonikKodexTyp, TektonikKodexProzedur,
+    TektonikKodex, build_tektonik_kodex,
+)
+from .vulkanismus_manifest import (
+    VulkanismusManifestGeltung, VulkanismusManifestNorm, VulkanismusManifestTyp, VulkanismusManifestProzedur,
+    VulkanismusManifest, build_vulkanismus_manifest,
+)
+from .ozeanographie_pakt import (
+    OzeanographiePaktGeltung, OzeanographiePaktEintrag, OzeanographiePaktTyp, OzeanographiePaktProzedur,
+    OzeanographiePakt, build_ozeanographie_pakt,
+)
+from .atmosphaere_senat import (
+    AtmosphaereSenatGeltung, AtmosphaereSenatNorm, AtmosphaereSenatTyp, AtmosphaereSenatProzedur,
+    AtmosphaereSenat, build_atmosphaere_senat,
+)
+from .geowissenschaft_norm import (
+    GeowissenschaftNormGeltung, GeowissenschaftNormEintrag, GeowissenschaftNormTyp, GeowissenschaftNormProzedur,
+    GeowissenschaftNormSatz, build_geowissenschaft_norm,
+)
+from .planetologie_charta import (
+    PlanetologieChartaGeltung, PlanetologieChartaNorm, PlanetologieChartaTyp, PlanetologieChartaProzedur,
+    PlanetologieCharta, build_planetologie_charta,
+)
+from .geowissenschaft_verfassung import (
+    GeowissenschaftVerfassungGeltung, GeowissenschaftVerfassungsNorm, GeowissenschaftVerfassungTyp, GeowissenschaftVerfassungProzedur,
+    GeowissenschaftVerfassung, build_geowissenschaft_verfassung,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -5109,4 +5149,24 @@ __all__ = [
     "BioMaterialCharta", "build_bio_material_charta",
     "MaterialwissenschaftVerfassungGeltung", "MaterialwissenschaftVerfassungsNorm", "MaterialwissenschaftVerfassungTyp", "MaterialwissenschaftVerfassungProzedur",
     "MaterialwissenschaftVerfassung", "build_materialwissenschaft_verfassung",
+    "GeowissenschaftFeldGeltung", "GeowissenschaftFeldNorm", "GeowissenschaftFeldTyp", "GeowissenschaftFeldProzedur",
+    "GeowissenschaftFeld", "build_geowissenschaft_feld",
+    "MineralogieRegisterGeltung", "MineralogieRegisterEintrag", "MineralogieRegisterTyp", "MineralogieRegisterProzedur",
+    "MineralogieRegister", "build_mineralogie_register",
+    "GesteinsChartaGeltung", "GesteinsChartaNorm", "GesteinsChartaTyp", "GesteinsChartaProzedur",
+    "GesteinsCharta", "build_gesteins_charta",
+    "TektonikKodexGeltung", "TektonikKodexEintrag", "TektonikKodexTyp", "TektonikKodexProzedur",
+    "TektonikKodex", "build_tektonik_kodex",
+    "VulkanismusManifestGeltung", "VulkanismusManifestNorm", "VulkanismusManifestTyp", "VulkanismusManifestProzedur",
+    "VulkanismusManifest", "build_vulkanismus_manifest",
+    "OzeanographiePaktGeltung", "OzeanographiePaktEintrag", "OzeanographiePaktTyp", "OzeanographiePaktProzedur",
+    "OzeanographiePakt", "build_ozeanographie_pakt",
+    "AtmosphaereSenatGeltung", "AtmosphaereSenatNorm", "AtmosphaereSenatTyp", "AtmosphaereSenatProzedur",
+    "AtmosphaereSenat", "build_atmosphaere_senat",
+    "GeowissenschaftNormGeltung", "GeowissenschaftNormEintrag", "GeowissenschaftNormTyp", "GeowissenschaftNormProzedur",
+    "GeowissenschaftNormSatz", "build_geowissenschaft_norm",
+    "PlanetologieChartaGeltung", "PlanetologieChartaNorm", "PlanetologieChartaTyp", "PlanetologieChartaProzedur",
+    "PlanetologieCharta", "build_planetologie_charta",
+    "GeowissenschaftVerfassungGeltung", "GeowissenschaftVerfassungsNorm", "GeowissenschaftVerfassungTyp", "GeowissenschaftVerfassungProzedur",
+    "GeowissenschaftVerfassung", "build_geowissenschaft_verfassung",
 ]

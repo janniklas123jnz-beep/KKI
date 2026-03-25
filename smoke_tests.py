@@ -25851,3 +25851,457 @@ class SmokeTests(unittest.TestCase):
         obj = build_materialwissenschaft_verfassung()
         for n in obj.normen:
             self.assertTrue(len(n.material_ids) > 0)
+
+    # --- Block #691–700: Geowissenschaft & Planetologie ---
+    def test_kki_geowissenschaft_feld_builds(self):
+        from kki.geowissenschaft_feld import build_geowissenschaft_feld
+        obj = build_geowissenschaft_feld()
+        self.assertIsNotNone(obj)
+
+    def test_kki_geowissenschaft_feld_normen_count(self):
+        from kki.geowissenschaft_feld import build_geowissenschaft_feld
+        obj = build_geowissenschaft_feld()
+        self.assertEqual(len(obj.normen), 3)
+
+    def test_kki_geowissenschaft_feld_gesperrt_weight_zero(self):
+        from kki.geowissenschaft_feld import build_geowissenschaft_feld, GeowissenschaftFeldGeltung
+        obj = build_geowissenschaft_feld()
+        gesperrt = next(n for n in obj.normen if n.geltung == GeowissenschaftFeldGeltung.GESPERRT)
+        self.assertGreaterEqual(gesperrt.geo_weight, 0.0)
+
+    def test_kki_geowissenschaft_feld_has_parent(self):
+        from kki.geowissenschaft_feld import build_geowissenschaft_feld
+        obj = build_geowissenschaft_feld()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_geowissenschaft_feld_tags_contain_geo(self):
+        from kki.geowissenschaft_feld import build_geowissenschaft_feld
+        obj = build_geowissenschaft_feld()
+        for n in obj.normen:
+            self.assertIn("geo", n.geo_tags)
+
+    def test_kki_geowissenschaft_feld_tier_increases(self):
+        from kki.geowissenschaft_feld import build_geowissenschaft_feld, GeowissenschaftFeldGeltung
+        obj = build_geowissenschaft_feld()
+        tiers = {n.geltung: n.geo_tier for n in obj.normen}
+        self.assertGreater(tiers[GeowissenschaftFeldGeltung.GEO_AKTIV], tiers[GeowissenschaftFeldGeltung.GESPERRT])
+
+    def test_kki_geowissenschaft_feld_canonical_default(self):
+        from kki.geowissenschaft_feld import build_geowissenschaft_feld
+        obj = build_geowissenschaft_feld()
+        for n in obj.normen:
+            self.assertTrue(n.canonical)
+
+    def test_kki_geowissenschaft_feld_ids_non_empty(self):
+        from kki.geowissenschaft_feld import build_geowissenschaft_feld
+        obj = build_geowissenschaft_feld()
+        for n in obj.normen:
+            self.assertTrue(len(n.geo_ids) > 0)
+
+    def test_kki_mineralogie_register_builds(self):
+        from kki.mineralogie_register import build_mineralogie_register
+        obj = build_mineralogie_register()
+        self.assertIsNotNone(obj)
+
+    def test_kki_mineralogie_register_eintraege_count(self):
+        from kki.mineralogie_register import build_mineralogie_register
+        obj = build_mineralogie_register()
+        self.assertEqual(len(obj.eintraege), 3)
+
+    def test_kki_mineralogie_register_gesperrt_weight_zero(self):
+        from kki.mineralogie_register import build_mineralogie_register, MineralogieRegisterGeltung
+        obj = build_mineralogie_register()
+        gesperrt = next(e for e in obj.eintraege if e.geltung == MineralogieRegisterGeltung.GESPERRT)
+        self.assertGreaterEqual(gesperrt.geo_weight, 0.0)
+
+    def test_kki_mineralogie_register_has_parent(self):
+        from kki.mineralogie_register import build_mineralogie_register
+        obj = build_mineralogie_register()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_mineralogie_register_tags_contain_mineralogie(self):
+        from kki.mineralogie_register import build_mineralogie_register
+        obj = build_mineralogie_register()
+        for e in obj.eintraege:
+            self.assertIn("mineralogie", e.geo_tags)
+
+    def test_kki_mineralogie_register_tier_increases(self):
+        from kki.mineralogie_register import build_mineralogie_register, MineralogieRegisterGeltung
+        obj = build_mineralogie_register()
+        tiers = {e.geltung: e.geo_tier for e in obj.eintraege}
+        self.assertGreater(tiers[MineralogieRegisterGeltung.MINERALOGISCH], tiers[MineralogieRegisterGeltung.GESPERRT])
+
+    def test_kki_mineralogie_register_canonical_default(self):
+        from kki.mineralogie_register import build_mineralogie_register
+        obj = build_mineralogie_register()
+        for e in obj.eintraege:
+            self.assertTrue(e.canonical)
+
+    def test_kki_mineralogie_register_ids_non_empty(self):
+        from kki.mineralogie_register import build_mineralogie_register
+        obj = build_mineralogie_register()
+        for e in obj.eintraege:
+            self.assertTrue(len(e.geo_ids) > 0)
+
+    def test_kki_gesteins_charta_builds(self):
+        from kki.gesteins_charta import build_gesteins_charta
+        obj = build_gesteins_charta()
+        self.assertIsNotNone(obj)
+
+    def test_kki_gesteins_charta_normen_count(self):
+        from kki.gesteins_charta import build_gesteins_charta
+        obj = build_gesteins_charta()
+        self.assertEqual(len(obj.normen), 3)
+
+    def test_kki_gesteins_charta_gesperrt_weight_zero(self):
+        from kki.gesteins_charta import build_gesteins_charta, GesteinsChartaGeltung
+        obj = build_gesteins_charta()
+        gesperrt = next(n for n in obj.normen if n.geltung == GesteinsChartaGeltung.GESPERRT)
+        self.assertGreaterEqual(gesperrt.geo_weight, 0.0)
+
+    def test_kki_gesteins_charta_has_parent(self):
+        from kki.gesteins_charta import build_gesteins_charta
+        obj = build_gesteins_charta()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_gesteins_charta_tags_contain_gestein(self):
+        from kki.gesteins_charta import build_gesteins_charta
+        obj = build_gesteins_charta()
+        for n in obj.normen:
+            self.assertIn("gestein", n.geo_tags)
+
+    def test_kki_gesteins_charta_tier_increases(self):
+        from kki.gesteins_charta import build_gesteins_charta, GesteinsChartaGeltung
+        obj = build_gesteins_charta()
+        tiers = {n.geltung: n.geo_tier for n in obj.normen}
+        self.assertGreater(tiers[GesteinsChartaGeltung.GESTEINSFEST], tiers[GesteinsChartaGeltung.GESPERRT])
+
+    def test_kki_gesteins_charta_canonical_default(self):
+        from kki.gesteins_charta import build_gesteins_charta
+        obj = build_gesteins_charta()
+        for n in obj.normen:
+            self.assertTrue(n.canonical)
+
+    def test_kki_gesteins_charta_ids_non_empty(self):
+        from kki.gesteins_charta import build_gesteins_charta
+        obj = build_gesteins_charta()
+        for n in obj.normen:
+            self.assertTrue(len(n.geo_ids) > 0)
+
+    def test_kki_tektonik_kodex_builds(self):
+        from kki.tektonik_kodex import build_tektonik_kodex
+        obj = build_tektonik_kodex()
+        self.assertIsNotNone(obj)
+
+    def test_kki_tektonik_kodex_eintraege_count(self):
+        from kki.tektonik_kodex import build_tektonik_kodex
+        obj = build_tektonik_kodex()
+        self.assertEqual(len(obj.eintraege), 3)
+
+    def test_kki_tektonik_kodex_gesperrt_weight_zero(self):
+        from kki.tektonik_kodex import build_tektonik_kodex, TektonikKodexGeltung
+        obj = build_tektonik_kodex()
+        gesperrt = next(e for e in obj.eintraege if e.geltung == TektonikKodexGeltung.GESPERRT)
+        self.assertGreaterEqual(gesperrt.geo_weight, 0.0)
+
+    def test_kki_tektonik_kodex_has_parent(self):
+        from kki.tektonik_kodex import build_tektonik_kodex
+        obj = build_tektonik_kodex()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_tektonik_kodex_tags_contain_tektonik(self):
+        from kki.tektonik_kodex import build_tektonik_kodex
+        obj = build_tektonik_kodex()
+        for e in obj.eintraege:
+            self.assertIn("tektonik", e.geo_tags)
+
+    def test_kki_tektonik_kodex_tier_increases(self):
+        from kki.tektonik_kodex import build_tektonik_kodex, TektonikKodexGeltung
+        obj = build_tektonik_kodex()
+        tiers = {e.geltung: e.geo_tier for e in obj.eintraege}
+        self.assertGreater(tiers[TektonikKodexGeltung.TEKTONISCH_AKTIV], tiers[TektonikKodexGeltung.GESPERRT])
+
+    def test_kki_tektonik_kodex_canonical_default(self):
+        from kki.tektonik_kodex import build_tektonik_kodex
+        obj = build_tektonik_kodex()
+        for e in obj.eintraege:
+            self.assertTrue(e.canonical)
+
+    def test_kki_tektonik_kodex_ids_non_empty(self):
+        from kki.tektonik_kodex import build_tektonik_kodex
+        obj = build_tektonik_kodex()
+        for e in obj.eintraege:
+            self.assertTrue(len(e.geo_ids) > 0)
+
+    def test_kki_vulkanismus_manifest_builds(self):
+        from kki.vulkanismus_manifest import build_vulkanismus_manifest
+        obj = build_vulkanismus_manifest()
+        self.assertIsNotNone(obj)
+
+    def test_kki_vulkanismus_manifest_normen_count(self):
+        from kki.vulkanismus_manifest import build_vulkanismus_manifest
+        obj = build_vulkanismus_manifest()
+        self.assertEqual(len(obj.normen), 3)
+
+    def test_kki_vulkanismus_manifest_gesperrt_weight_zero(self):
+        from kki.vulkanismus_manifest import build_vulkanismus_manifest, VulkanismusManifestGeltung
+        obj = build_vulkanismus_manifest()
+        gesperrt = next(n for n in obj.normen if n.geltung == VulkanismusManifestGeltung.GESPERRT)
+        self.assertGreaterEqual(gesperrt.geo_weight, 0.0)
+
+    def test_kki_vulkanismus_manifest_has_parent(self):
+        from kki.vulkanismus_manifest import build_vulkanismus_manifest
+        obj = build_vulkanismus_manifest()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_vulkanismus_manifest_tags_contain_vulkanismus(self):
+        from kki.vulkanismus_manifest import build_vulkanismus_manifest
+        obj = build_vulkanismus_manifest()
+        for n in obj.normen:
+            self.assertIn("vulkanismus", n.geo_tags)
+
+    def test_kki_vulkanismus_manifest_tier_increases(self):
+        from kki.vulkanismus_manifest import build_vulkanismus_manifest, VulkanismusManifestGeltung
+        obj = build_vulkanismus_manifest()
+        tiers = {n.geltung: n.geo_tier for n in obj.normen}
+        self.assertGreater(tiers[VulkanismusManifestGeltung.VULKANISCH_AKTIV], tiers[VulkanismusManifestGeltung.GESPERRT])
+
+    def test_kki_vulkanismus_manifest_canonical_default(self):
+        from kki.vulkanismus_manifest import build_vulkanismus_manifest
+        obj = build_vulkanismus_manifest()
+        for n in obj.normen:
+            self.assertTrue(n.canonical)
+
+    def test_kki_vulkanismus_manifest_ids_non_empty(self):
+        from kki.vulkanismus_manifest import build_vulkanismus_manifest
+        obj = build_vulkanismus_manifest()
+        for n in obj.normen:
+            self.assertTrue(len(n.geo_ids) > 0)
+
+    def test_kki_ozeanographie_pakt_builds(self):
+        from kki.ozeanographie_pakt import build_ozeanographie_pakt
+        obj = build_ozeanographie_pakt()
+        self.assertIsNotNone(obj)
+
+    def test_kki_ozeanographie_pakt_eintraege_count(self):
+        from kki.ozeanographie_pakt import build_ozeanographie_pakt
+        obj = build_ozeanographie_pakt()
+        self.assertEqual(len(obj.eintraege), 3)
+
+    def test_kki_ozeanographie_pakt_gesperrt_weight_zero(self):
+        from kki.ozeanographie_pakt import build_ozeanographie_pakt, OzeanographiePaktGeltung
+        obj = build_ozeanographie_pakt()
+        gesperrt = next(e for e in obj.eintraege if e.geltung == OzeanographiePaktGeltung.GESPERRT)
+        self.assertGreaterEqual(gesperrt.geo_weight, 0.0)
+
+    def test_kki_ozeanographie_pakt_has_parent(self):
+        from kki.ozeanographie_pakt import build_ozeanographie_pakt
+        obj = build_ozeanographie_pakt()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_ozeanographie_pakt_tags_contain_ozeanographie(self):
+        from kki.ozeanographie_pakt import build_ozeanographie_pakt
+        obj = build_ozeanographie_pakt()
+        for e in obj.eintraege:
+            self.assertIn("ozeanographie", e.geo_tags)
+
+    def test_kki_ozeanographie_pakt_tier_increases(self):
+        from kki.ozeanographie_pakt import build_ozeanographie_pakt, OzeanographiePaktGeltung
+        obj = build_ozeanographie_pakt()
+        tiers = {e.geltung: e.geo_tier for e in obj.eintraege}
+        self.assertGreater(tiers[OzeanographiePaktGeltung.OZEANOGRAPHISCH], tiers[OzeanographiePaktGeltung.GESPERRT])
+
+    def test_kki_ozeanographie_pakt_canonical_default(self):
+        from kki.ozeanographie_pakt import build_ozeanographie_pakt
+        obj = build_ozeanographie_pakt()
+        for e in obj.eintraege:
+            self.assertTrue(e.canonical)
+
+    def test_kki_ozeanographie_pakt_ids_non_empty(self):
+        from kki.ozeanographie_pakt import build_ozeanographie_pakt
+        obj = build_ozeanographie_pakt()
+        for e in obj.eintraege:
+            self.assertTrue(len(e.geo_ids) > 0)
+
+    def test_kki_atmosphaere_senat_builds(self):
+        from kki.atmosphaere_senat import build_atmosphaere_senat
+        obj = build_atmosphaere_senat()
+        self.assertIsNotNone(obj)
+
+    def test_kki_atmosphaere_senat_normen_count(self):
+        from kki.atmosphaere_senat import build_atmosphaere_senat
+        obj = build_atmosphaere_senat()
+        self.assertEqual(len(obj.normen), 3)
+
+    def test_kki_atmosphaere_senat_gesperrt_weight_zero(self):
+        from kki.atmosphaere_senat import build_atmosphaere_senat, AtmosphaereSenatGeltung
+        obj = build_atmosphaere_senat()
+        gesperrt = next(n for n in obj.normen if n.geltung == AtmosphaereSenatGeltung.GESPERRT)
+        self.assertGreaterEqual(gesperrt.geo_weight, 0.0)
+
+    def test_kki_atmosphaere_senat_has_parent(self):
+        from kki.atmosphaere_senat import build_atmosphaere_senat
+        obj = build_atmosphaere_senat()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_atmosphaere_senat_tags_contain_atmosphaere(self):
+        from kki.atmosphaere_senat import build_atmosphaere_senat
+        obj = build_atmosphaere_senat()
+        for n in obj.normen:
+            self.assertIn("atmosphaere", n.geo_tags)
+
+    def test_kki_atmosphaere_senat_tier_increases(self):
+        from kki.atmosphaere_senat import build_atmosphaere_senat, AtmosphaereSenatGeltung
+        obj = build_atmosphaere_senat()
+        tiers = {n.geltung: n.geo_tier for n in obj.normen}
+        self.assertGreater(tiers[AtmosphaereSenatGeltung.ATMOSPHAERISCH_AKTIV], tiers[AtmosphaereSenatGeltung.GESPERRT])
+
+    def test_kki_atmosphaere_senat_canonical_default(self):
+        from kki.atmosphaere_senat import build_atmosphaere_senat
+        obj = build_atmosphaere_senat()
+        for n in obj.normen:
+            self.assertTrue(n.canonical)
+
+    def test_kki_atmosphaere_senat_ids_non_empty(self):
+        from kki.atmosphaere_senat import build_atmosphaere_senat
+        obj = build_atmosphaere_senat()
+        for n in obj.normen:
+            self.assertTrue(len(n.geo_ids) > 0)
+
+    def test_kki_geowissenschaft_norm_builds(self):
+        from kki.geowissenschaft_norm import build_geowissenschaft_norm
+        obj = build_geowissenschaft_norm()
+        self.assertIsNotNone(obj)
+
+    def test_kki_geowissenschaft_norm_normen_count(self):
+        from kki.geowissenschaft_norm import build_geowissenschaft_norm
+        obj = build_geowissenschaft_norm()
+        self.assertEqual(len(obj.normen), 3)
+
+    def test_kki_geowissenschaft_norm_gesperrt_weight_zero(self):
+        from kki.geowissenschaft_norm import build_geowissenschaft_norm, GeowissenschaftNormGeltung
+        obj = build_geowissenschaft_norm()
+        gesperrt = next(e for e in obj.normen if e.geltung == GeowissenschaftNormGeltung.GESPERRT)
+        self.assertGreaterEqual(gesperrt.geo_norm_weight, 0.0)
+
+    def test_kki_geowissenschaft_norm_has_parent(self):
+        from kki.geowissenschaft_norm import build_geowissenschaft_norm
+        obj = build_geowissenschaft_norm()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_geowissenschaft_norm_tags_contain_norm(self):
+        from kki.geowissenschaft_norm import build_geowissenschaft_norm
+        obj = build_geowissenschaft_norm()
+        for e in obj.normen:
+            self.assertIn("norm", e.geo_norm_tags)
+
+    def test_kki_geowissenschaft_norm_tier_increases(self):
+        from kki.geowissenschaft_norm import build_geowissenschaft_norm, GeowissenschaftNormGeltung
+        obj = build_geowissenschaft_norm()
+        tiers = {e.geltung: e.geo_norm_tier for e in obj.normen}
+        self.assertGreater(tiers[GeowissenschaftNormGeltung.GEO_NORMATIV], tiers[GeowissenschaftNormGeltung.GESPERRT])
+
+    def test_kki_geowissenschaft_norm_canonical_default(self):
+        from kki.geowissenschaft_norm import build_geowissenschaft_norm
+        obj = build_geowissenschaft_norm()
+        for e in obj.normen:
+            self.assertTrue(e.canonical)
+
+    def test_kki_geowissenschaft_norm_ids_non_empty(self):
+        from kki.geowissenschaft_norm import build_geowissenschaft_norm
+        obj = build_geowissenschaft_norm()
+        for e in obj.normen:
+            self.assertTrue(len(e.geo_norm_ids) > 0)
+
+    def test_kki_planetologie_charta_builds(self):
+        from kki.planetologie_charta import build_planetologie_charta
+        obj = build_planetologie_charta()
+        self.assertIsNotNone(obj)
+
+    def test_kki_planetologie_charta_normen_count(self):
+        from kki.planetologie_charta import build_planetologie_charta
+        obj = build_planetologie_charta()
+        self.assertEqual(len(obj.normen), 3)
+
+    def test_kki_planetologie_charta_gesperrt_weight_zero(self):
+        from kki.planetologie_charta import build_planetologie_charta, PlanetologieChartaGeltung
+        obj = build_planetologie_charta()
+        gesperrt = next(n for n in obj.normen if n.geltung == PlanetologieChartaGeltung.GESPERRT)
+        self.assertGreaterEqual(gesperrt.geo_weight, 0.0)
+
+    def test_kki_planetologie_charta_has_parent(self):
+        from kki.planetologie_charta import build_planetologie_charta
+        obj = build_planetologie_charta()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_planetologie_charta_tags_contain_planetologie(self):
+        from kki.planetologie_charta import build_planetologie_charta
+        obj = build_planetologie_charta()
+        for n in obj.normen:
+            self.assertIn("planetologie", n.geo_tags)
+
+    def test_kki_planetologie_charta_tier_increases(self):
+        from kki.planetologie_charta import build_planetologie_charta, PlanetologieChartaGeltung
+        obj = build_planetologie_charta()
+        tiers = {n.geltung: n.geo_tier for n in obj.normen}
+        self.assertGreater(tiers[PlanetologieChartaGeltung.PLANETOLOGISCH], tiers[PlanetologieChartaGeltung.GESPERRT])
+
+    def test_kki_planetologie_charta_canonical_default(self):
+        from kki.planetologie_charta import build_planetologie_charta
+        obj = build_planetologie_charta()
+        for n in obj.normen:
+            self.assertTrue(n.canonical)
+
+    def test_kki_planetologie_charta_ids_non_empty(self):
+        from kki.planetologie_charta import build_planetologie_charta
+        obj = build_planetologie_charta()
+        for n in obj.normen:
+            self.assertTrue(len(n.geo_ids) > 0)
+
+    def test_kki_geowissenschaft_verfassung_builds(self):
+        from kki.geowissenschaft_verfassung import build_geowissenschaft_verfassung
+        obj = build_geowissenschaft_verfassung()
+        self.assertIsNotNone(obj)
+
+    def test_kki_geowissenschaft_verfassung_normen_count(self):
+        from kki.geowissenschaft_verfassung import build_geowissenschaft_verfassung
+        obj = build_geowissenschaft_verfassung()
+        self.assertEqual(len(obj.normen), 3)
+
+    def test_kki_geowissenschaft_verfassung_gesperrt_schutz_norm(self):
+        from kki.geowissenschaft_verfassung import build_geowissenschaft_verfassung, GeowissenschaftVerfassungGeltung
+        obj = build_geowissenschaft_verfassung()
+        gesperrt = next(n for n in obj.normen if n.geltung == GeowissenschaftVerfassungGeltung.GESPERRT)
+        self.assertGreaterEqual(gesperrt.geo_weight, 0.0)
+
+    def test_kki_geowissenschaft_verfassung_aggregates_verfassung_signal(self):
+        from kki.geowissenschaft_verfassung import build_geowissenschaft_verfassung
+        obj = build_geowissenschaft_verfassung()
+        sig = obj.aggregates_verfassung_signal()
+        self.assertIsInstance(sig, dict)
+        self.assertIn("verfassung_id", sig)
+        self.assertIn("total_weight", sig)
+        self.assertIn("norm_count", sig)
+
+    def test_kki_geowissenschaft_verfassung_has_parent(self):
+        from kki.geowissenschaft_verfassung import build_geowissenschaft_verfassung
+        obj = build_geowissenschaft_verfassung()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_geowissenschaft_verfassung_tier_increases(self):
+        from kki.geowissenschaft_verfassung import build_geowissenschaft_verfassung, GeowissenschaftVerfassungGeltung
+        obj = build_geowissenschaft_verfassung()
+        tiers = {n.geltung: n.geo_tier for n in obj.normen}
+        self.assertGreater(tiers[GeowissenschaftVerfassungGeltung.GEOWISS_SOUVERAEN], tiers[GeowissenschaftVerfassungGeltung.GESPERRT])
+
+    def test_kki_geowissenschaft_verfassung_tags_contain_geowissenschaft(self):
+        from kki.geowissenschaft_verfassung import build_geowissenschaft_verfassung
+        obj = build_geowissenschaft_verfassung()
+        for n in obj.normen:
+            self.assertIn("geowissenschaft", n.geo_tags)
+
+    def test_kki_geowissenschaft_verfassung_ids_non_empty(self):
+        from kki.geowissenschaft_verfassung import build_geowissenschaft_verfassung
+        obj = build_geowissenschaft_verfassung()
+        for n in obj.normen:
+            self.assertTrue(len(n.geo_ids) > 0)

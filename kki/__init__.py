@@ -3360,6 +3360,47 @@ from .ingenieur_verfassung import (
     IngenieurVerfassungGeltung, IngenieurVerfassungsNorm, IngenieurVerfassungTyp, IngenieurVerfassungProzedur,
     IngenieurVerfassung, build_ingenieur_verfassung,
 )
+# Block #741–750: Klimawissenschaft & Meteorologie
+from .klima_feld import (
+    KlimaFeldGeltung, KlimaFeldNorm, KlimaFeldTyp, KlimaFeldProzedur,
+    KlimaFeld, build_klima_feld,
+)
+from .atmosphaere_register import (
+    AtmosphaereRegisterGeltung, AtmosphaereRegisterEintrag, AtmosphaereRegisterTyp, AtmosphaereRegisterProzedur,
+    AtmosphaereRegister, build_atmosphaere_register,
+)
+from .meteorologie_charta import (
+    MeteorologieChartaGeltung, MeteorologieChartaNorm, MeteorologieChartaTyp, MeteorologieChartaProzedur,
+    MeteorologieCharta, build_meteorologie_charta,
+)
+from .ozeanographie_kodex import (
+    OzeanographieKodexGeltung, OzeanographieKodexEintrag, OzeanographieKodexTyp, OzeanographieKodexProzedur,
+    OzeanographieKodex, build_ozeanographie_kodex,
+)
+from .klimamodell_manifest import (
+    KlimamodellManifestGeltung, KlimamodellManifestNorm, KlimamodellManifestTyp, KlimamodellManifestProzedur,
+    KlimamodellManifest, build_klimamodell_manifest,
+)
+from .klimawandel_pakt import (
+    KlimawandelPaktGeltung, KlimawandelPaktEintrag, KlimawandelPaktTyp, KlimawandelPaktProzedur,
+    KlimawandelPakt, build_klimawandel_pakt,
+)
+from .klimaanpassung_senat import (
+    KlimaanpassungSenatGeltung, KlimaanpassungSenatNorm, KlimaanpassungSenatTyp, KlimaanpassungSenatProzedur,
+    KlimaanpassungSenat, build_klimaanpassung_senat,
+)
+from .klima_norm import (
+    KlimaNormGeltung, KlimaNormEintrag, KlimaNormTyp, KlimaNormProzedur,
+    KlimaNormSatz, build_klima_norm,
+)
+from .klimaprognose_charta import (
+    KlimaprognoseChartaGeltung, KlimaprognoseChartaNorm, KlimaprognoseChartaTyp, KlimaprognoseChartaProzedur,
+    KlimaprognoseCharta, build_klimaprognose_charta,
+)
+from .klima_verfassung import (
+    KlimaVerfassungGeltung, KlimaVerfassungsNorm, KlimaVerfassungTyp, KlimaVerfassungProzedur,
+    KlimaVerfassung, build_klima_verfassung,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -5413,4 +5454,25 @@ __all__ = [
     "RaumfahrttechnikCharta", "build_raumfahrttechnik_charta",
     "IngenieurVerfassungGeltung", "IngenieurVerfassungsNorm", "IngenieurVerfassungTyp", "IngenieurVerfassungProzedur",
     "IngenieurVerfassung", "build_ingenieur_verfassung",
+    # Block #741–750: Klimawissenschaft & Meteorologie
+    "KlimaFeldGeltung", "KlimaFeldNorm", "KlimaFeldTyp", "KlimaFeldProzedur",
+    "KlimaFeld", "build_klima_feld",
+    "AtmosphaereRegisterGeltung", "AtmosphaereRegisterEintrag", "AtmosphaereRegisterTyp", "AtmosphaereRegisterProzedur",
+    "AtmosphaereRegister", "build_atmosphaere_register",
+    "MeteorologieChartaGeltung", "MeteorologieChartaNorm", "MeteorologieChartaTyp", "MeteorologieChartaProzedur",
+    "MeteorologieCharta", "build_meteorologie_charta",
+    "OzeanographieKodexGeltung", "OzeanographieKodexEintrag", "OzeanographieKodexTyp", "OzeanographieKodexProzedur",
+    "OzeanographieKodex", "build_ozeanographie_kodex",
+    "KlimamodellManifestGeltung", "KlimamodellManifestNorm", "KlimamodellManifestTyp", "KlimamodellManifestProzedur",
+    "KlimamodellManifest", "build_klimamodell_manifest",
+    "KlimawandelPaktGeltung", "KlimawandelPaktEintrag", "KlimawandelPaktTyp", "KlimawandelPaktProzedur",
+    "KlimawandelPakt", "build_klimawandel_pakt",
+    "KlimaanpassungSenatGeltung", "KlimaanpassungSenatNorm", "KlimaanpassungSenatTyp", "KlimaanpassungSenatProzedur",
+    "KlimaanpassungSenat", "build_klimaanpassung_senat",
+    "KlimaNormGeltung", "KlimaNormEintrag", "KlimaNormTyp", "KlimaNormProzedur",
+    "KlimaNormSatz", "build_klima_norm",
+    "KlimaprognoseChartaGeltung", "KlimaprognoseChartaNorm", "KlimaprognoseChartaTyp", "KlimaprognoseChartaProzedur",
+    "KlimaprognoseCharta", "build_klimaprognose_charta",
+    "KlimaVerfassungGeltung", "KlimaVerfassungsNorm", "KlimaVerfassungTyp", "KlimaVerfassungProzedur",
+    "KlimaVerfassung", "build_klima_verfassung",
 ]

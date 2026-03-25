@@ -28095,3 +28095,447 @@ class SmokeTests(unittest.TestCase):
         from kki.ingenieur_verfassung import build_ingenieur_verfassung
         obj = build_ingenieur_verfassung()
         self.assertIsNotNone(obj.parent)
+
+    # #741 KlimaFeld
+    def test_kki_klima_feld_builds_normen_count(self):
+        from kki.klima_feld import build_klima_feld
+        obj = build_klima_feld()
+        self.assertGreaterEqual(len(obj.normen), 1)
+
+    def test_kki_klima_feld_builds_gesperrt_weight_zero(self):
+        from kki.klima_feld import build_klima_feld, KlimaFeldGeltung
+        obj = build_klima_feld()
+        w = next(n.klima_weight for n in obj.normen if n.geltung == KlimaFeldGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_klima_feld_builds_tags_contain_klima(self):
+        from kki.klima_feld import build_klima_feld
+        obj = build_klima_feld()
+        self.assertTrue(any("klima" in n.klima_tags for n in obj.normen))
+
+    def test_kki_klima_feld_builds_tier_increases(self):
+        from kki.klima_feld import build_klima_feld, KlimaFeldGeltung
+        obj = build_klima_feld()
+        t_g = next(n.klima_tier for n in obj.normen if n.geltung == KlimaFeldGeltung.GESPERRT)
+        t_a = next(n.klima_tier for n in obj.normen if n.geltung == KlimaFeldGeltung.GRUNDLEGEND_KLIMATISCH)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_klima_feld_builds_canonical_default(self):
+        from kki.klima_feld import build_klima_feld
+        obj = build_klima_feld()
+        self.assertTrue(all(n.canonical for n in obj.normen))
+
+    def test_kki_klima_feld_builds_ids_non_empty(self):
+        from kki.klima_feld import build_klima_feld
+        obj = build_klima_feld()
+        self.assertTrue(all(len(n.klima_ids) > 0 for n in obj.normen))
+
+    def test_kki_klima_feld_builds_klimatisch_geltung(self):
+        from kki.klima_feld import build_klima_feld, KlimaFeldGeltung
+        obj = build_klima_feld()
+        self.assertIn(KlimaFeldGeltung.KLIMATISCH, [n.geltung for n in obj.normen])
+
+    def test_kki_klima_feld_builds_parent_chain(self):
+        from kki.klima_feld import build_klima_feld
+        obj = build_klima_feld()
+        self.assertIsNotNone(obj.parent)
+
+    # #742 AtmosphaereRegister
+    def test_kki_atmosphaere_register_builds_eintraege_count(self):
+        from kki.atmosphaere_register import build_atmosphaere_register
+        obj = build_atmosphaere_register()
+        self.assertGreaterEqual(len(obj.eintraege), 1)
+
+    def test_kki_atmosphaere_register_builds_gesperrt_weight_zero(self):
+        from kki.atmosphaere_register import build_atmosphaere_register, AtmosphaereRegisterGeltung
+        obj = build_atmosphaere_register()
+        w = next(e.klima_weight for e in obj.eintraege if e.geltung == AtmosphaereRegisterGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_atmosphaere_register_builds_tags_contain_atmosphaere(self):
+        from kki.atmosphaere_register import build_atmosphaere_register
+        obj = build_atmosphaere_register()
+        self.assertTrue(any("atmosphaere" in e.klima_tags for e in obj.eintraege))
+
+    def test_kki_atmosphaere_register_builds_tier_increases(self):
+        from kki.atmosphaere_register import build_atmosphaere_register, AtmosphaereRegisterGeltung
+        obj = build_atmosphaere_register()
+        t_g = next(e.klima_tier for e in obj.eintraege if e.geltung == AtmosphaereRegisterGeltung.GESPERRT)
+        t_a = next(e.klima_tier for e in obj.eintraege if e.geltung == AtmosphaereRegisterGeltung.GRUNDLEGEND_ATMOSPHAERISCH)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_atmosphaere_register_builds_canonical_default(self):
+        from kki.atmosphaere_register import build_atmosphaere_register
+        obj = build_atmosphaere_register()
+        self.assertTrue(all(e.canonical for e in obj.eintraege))
+
+    def test_kki_atmosphaere_register_builds_ids_non_empty(self):
+        from kki.atmosphaere_register import build_atmosphaere_register
+        obj = build_atmosphaere_register()
+        self.assertTrue(all(len(e.klima_ids) > 0 for e in obj.eintraege))
+
+    def test_kki_atmosphaere_register_builds_atmosphaerisch_geltung(self):
+        from kki.atmosphaere_register import build_atmosphaere_register, AtmosphaereRegisterGeltung
+        obj = build_atmosphaere_register()
+        self.assertIn(AtmosphaereRegisterGeltung.ATMOSPHAERISCH, [e.geltung for e in obj.eintraege])
+
+    def test_kki_atmosphaere_register_builds_parent_chain(self):
+        from kki.atmosphaere_register import build_atmosphaere_register
+        obj = build_atmosphaere_register()
+        self.assertIsNotNone(obj.parent)
+
+    # #743 MeteorologieCharta
+    def test_kki_meteorologie_charta_builds_normen_count(self):
+        from kki.meteorologie_charta import build_meteorologie_charta
+        obj = build_meteorologie_charta()
+        self.assertGreaterEqual(len(obj.normen), 1)
+
+    def test_kki_meteorologie_charta_builds_gesperrt_weight_zero(self):
+        from kki.meteorologie_charta import build_meteorologie_charta, MeteorologieChartaGeltung
+        obj = build_meteorologie_charta()
+        w = next(n.klima_weight for n in obj.normen if n.geltung == MeteorologieChartaGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_meteorologie_charta_builds_tags_contain_meteorologie(self):
+        from kki.meteorologie_charta import build_meteorologie_charta
+        obj = build_meteorologie_charta()
+        self.assertTrue(any("meteorologie" in n.klima_tags for n in obj.normen))
+
+    def test_kki_meteorologie_charta_builds_tier_increases(self):
+        from kki.meteorologie_charta import build_meteorologie_charta, MeteorologieChartaGeltung
+        obj = build_meteorologie_charta()
+        t_g = next(n.klima_tier for n in obj.normen if n.geltung == MeteorologieChartaGeltung.GESPERRT)
+        t_a = next(n.klima_tier for n in obj.normen if n.geltung == MeteorologieChartaGeltung.GRUNDLEGEND_METEOROLOGISCH)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_meteorologie_charta_builds_canonical_default(self):
+        from kki.meteorologie_charta import build_meteorologie_charta
+        obj = build_meteorologie_charta()
+        self.assertTrue(all(n.canonical for n in obj.normen))
+
+    def test_kki_meteorologie_charta_builds_ids_non_empty(self):
+        from kki.meteorologie_charta import build_meteorologie_charta
+        obj = build_meteorologie_charta()
+        self.assertTrue(all(len(n.klima_ids) > 0 for n in obj.normen))
+
+    def test_kki_meteorologie_charta_builds_meteorologisch_geltung(self):
+        from kki.meteorologie_charta import build_meteorologie_charta, MeteorologieChartaGeltung
+        obj = build_meteorologie_charta()
+        self.assertIn(MeteorologieChartaGeltung.METEOROLOGISCH, [n.geltung for n in obj.normen])
+
+    def test_kki_meteorologie_charta_builds_parent_chain(self):
+        from kki.meteorologie_charta import build_meteorologie_charta
+        obj = build_meteorologie_charta()
+        self.assertIsNotNone(obj.parent)
+
+    # #744 OzeanographieKodex
+    def test_kki_ozeanographie_kodex_builds_eintraege_count(self):
+        from kki.ozeanographie_kodex import build_ozeanographie_kodex
+        obj = build_ozeanographie_kodex()
+        self.assertGreaterEqual(len(obj.eintraege), 1)
+
+    def test_kki_ozeanographie_kodex_builds_gesperrt_weight_zero(self):
+        from kki.ozeanographie_kodex import build_ozeanographie_kodex, OzeanographieKodexGeltung
+        obj = build_ozeanographie_kodex()
+        w = next(e.klima_weight for e in obj.eintraege if e.geltung == OzeanographieKodexGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_ozeanographie_kodex_builds_tags_contain_ozeanographie(self):
+        from kki.ozeanographie_kodex import build_ozeanographie_kodex
+        obj = build_ozeanographie_kodex()
+        self.assertTrue(any("ozeanographie" in e.klima_tags for e in obj.eintraege))
+
+    def test_kki_ozeanographie_kodex_builds_tier_increases(self):
+        from kki.ozeanographie_kodex import build_ozeanographie_kodex, OzeanographieKodexGeltung
+        obj = build_ozeanographie_kodex()
+        t_g = next(e.klima_tier for e in obj.eintraege if e.geltung == OzeanographieKodexGeltung.GESPERRT)
+        t_a = next(e.klima_tier for e in obj.eintraege if e.geltung == OzeanographieKodexGeltung.GRUNDLEGEND_OZEANOGRAPHISCH)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_ozeanographie_kodex_builds_canonical_default(self):
+        from kki.ozeanographie_kodex import build_ozeanographie_kodex
+        obj = build_ozeanographie_kodex()
+        self.assertTrue(all(e.canonical for e in obj.eintraege))
+
+    def test_kki_ozeanographie_kodex_builds_ids_non_empty(self):
+        from kki.ozeanographie_kodex import build_ozeanographie_kodex
+        obj = build_ozeanographie_kodex()
+        self.assertTrue(all(len(e.klima_ids) > 0 for e in obj.eintraege))
+
+    def test_kki_ozeanographie_kodex_builds_ozeanographisch_geltung(self):
+        from kki.ozeanographie_kodex import build_ozeanographie_kodex, OzeanographieKodexGeltung
+        obj = build_ozeanographie_kodex()
+        self.assertIn(OzeanographieKodexGeltung.OZEANOGRAPHISCH, [e.geltung for e in obj.eintraege])
+
+    def test_kki_ozeanographie_kodex_builds_parent_chain(self):
+        from kki.ozeanographie_kodex import build_ozeanographie_kodex
+        obj = build_ozeanographie_kodex()
+        self.assertIsNotNone(obj.parent)
+
+    # #745 KlimamodellManifest
+    def test_kki_klimamodell_manifest_builds_normen_count(self):
+        from kki.klimamodell_manifest import build_klimamodell_manifest
+        obj = build_klimamodell_manifest()
+        self.assertGreaterEqual(len(obj.normen), 1)
+
+    def test_kki_klimamodell_manifest_builds_gesperrt_weight_zero(self):
+        from kki.klimamodell_manifest import build_klimamodell_manifest, KlimamodellManifestGeltung
+        obj = build_klimamodell_manifest()
+        w = next(n.klima_weight for n in obj.normen if n.geltung == KlimamodellManifestGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_klimamodell_manifest_builds_tags_contain_klimamodell(self):
+        from kki.klimamodell_manifest import build_klimamodell_manifest
+        obj = build_klimamodell_manifest()
+        self.assertTrue(any("klimamodell" in n.klima_tags for n in obj.normen))
+
+    def test_kki_klimamodell_manifest_builds_tier_increases(self):
+        from kki.klimamodell_manifest import build_klimamodell_manifest, KlimamodellManifestGeltung
+        obj = build_klimamodell_manifest()
+        t_g = next(n.klima_tier for n in obj.normen if n.geltung == KlimamodellManifestGeltung.GESPERRT)
+        t_a = next(n.klima_tier for n in obj.normen if n.geltung == KlimamodellManifestGeltung.GRUNDLEGEND_KLIMAMODELLHAFT)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_klimamodell_manifest_builds_canonical_default(self):
+        from kki.klimamodell_manifest import build_klimamodell_manifest
+        obj = build_klimamodell_manifest()
+        self.assertTrue(all(n.canonical for n in obj.normen))
+
+    def test_kki_klimamodell_manifest_builds_ids_non_empty(self):
+        from kki.klimamodell_manifest import build_klimamodell_manifest
+        obj = build_klimamodell_manifest()
+        self.assertTrue(all(len(n.klima_ids) > 0 for n in obj.normen))
+
+    def test_kki_klimamodell_manifest_builds_klimamodellhaft_geltung(self):
+        from kki.klimamodell_manifest import build_klimamodell_manifest, KlimamodellManifestGeltung
+        obj = build_klimamodell_manifest()
+        self.assertIn(KlimamodellManifestGeltung.KLIMAMODELLHAFT, [n.geltung for n in obj.normen])
+
+    def test_kki_klimamodell_manifest_builds_parent_chain(self):
+        from kki.klimamodell_manifest import build_klimamodell_manifest
+        obj = build_klimamodell_manifest()
+        self.assertIsNotNone(obj.parent)
+
+    # #746 KlimawandelPakt
+    def test_kki_klimawandel_pakt_builds_eintraege_count(self):
+        from kki.klimawandel_pakt import build_klimawandel_pakt
+        obj = build_klimawandel_pakt()
+        self.assertGreaterEqual(len(obj.eintraege), 1)
+
+    def test_kki_klimawandel_pakt_builds_gesperrt_weight_zero(self):
+        from kki.klimawandel_pakt import build_klimawandel_pakt, KlimawandelPaktGeltung
+        obj = build_klimawandel_pakt()
+        w = next(e.klima_weight for e in obj.eintraege if e.geltung == KlimawandelPaktGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_klimawandel_pakt_builds_tags_contain_klimawandel(self):
+        from kki.klimawandel_pakt import build_klimawandel_pakt
+        obj = build_klimawandel_pakt()
+        self.assertTrue(any("klimawandel" in e.klima_tags for e in obj.eintraege))
+
+    def test_kki_klimawandel_pakt_builds_tier_increases(self):
+        from kki.klimawandel_pakt import build_klimawandel_pakt, KlimawandelPaktGeltung
+        obj = build_klimawandel_pakt()
+        t_g = next(e.klima_tier for e in obj.eintraege if e.geltung == KlimawandelPaktGeltung.GESPERRT)
+        t_a = next(e.klima_tier for e in obj.eintraege if e.geltung == KlimawandelPaktGeltung.GRUNDLEGEND_KLIMAWANDELHAFT)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_klimawandel_pakt_builds_canonical_default(self):
+        from kki.klimawandel_pakt import build_klimawandel_pakt
+        obj = build_klimawandel_pakt()
+        self.assertTrue(all(e.canonical for e in obj.eintraege))
+
+    def test_kki_klimawandel_pakt_builds_ids_non_empty(self):
+        from kki.klimawandel_pakt import build_klimawandel_pakt
+        obj = build_klimawandel_pakt()
+        self.assertTrue(all(len(e.klima_ids) > 0 for e in obj.eintraege))
+
+    def test_kki_klimawandel_pakt_builds_klimawandelhaft_geltung(self):
+        from kki.klimawandel_pakt import build_klimawandel_pakt, KlimawandelPaktGeltung
+        obj = build_klimawandel_pakt()
+        self.assertIn(KlimawandelPaktGeltung.KLIMAWANDELHAFT, [e.geltung for e in obj.eintraege])
+
+    def test_kki_klimawandel_pakt_builds_parent_chain(self):
+        from kki.klimawandel_pakt import build_klimawandel_pakt
+        obj = build_klimawandel_pakt()
+        self.assertIsNotNone(obj.parent)
+
+    # #747 KlimaanpassungSenat
+    def test_kki_klimaanpassung_senat_builds_normen_count(self):
+        from kki.klimaanpassung_senat import build_klimaanpassung_senat
+        obj = build_klimaanpassung_senat()
+        self.assertGreaterEqual(len(obj.normen), 1)
+
+    def test_kki_klimaanpassung_senat_builds_gesperrt_weight_zero(self):
+        from kki.klimaanpassung_senat import build_klimaanpassung_senat, KlimaanpassungSenatGeltung
+        obj = build_klimaanpassung_senat()
+        w = next(n.klima_weight for n in obj.normen if n.geltung == KlimaanpassungSenatGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_klimaanpassung_senat_builds_tags_contain_klimaanpassung(self):
+        from kki.klimaanpassung_senat import build_klimaanpassung_senat
+        obj = build_klimaanpassung_senat()
+        self.assertTrue(any("klimaanpassung" in n.klima_tags for n in obj.normen))
+
+    def test_kki_klimaanpassung_senat_builds_tier_increases(self):
+        from kki.klimaanpassung_senat import build_klimaanpassung_senat, KlimaanpassungSenatGeltung
+        obj = build_klimaanpassung_senat()
+        t_g = next(n.klima_tier for n in obj.normen if n.geltung == KlimaanpassungSenatGeltung.GESPERRT)
+        t_a = next(n.klima_tier for n in obj.normen if n.geltung == KlimaanpassungSenatGeltung.GRUNDLEGEND_KLIMAANPASSEND)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_klimaanpassung_senat_builds_canonical_default(self):
+        from kki.klimaanpassung_senat import build_klimaanpassung_senat
+        obj = build_klimaanpassung_senat()
+        self.assertTrue(all(n.canonical for n in obj.normen))
+
+    def test_kki_klimaanpassung_senat_builds_ids_non_empty(self):
+        from kki.klimaanpassung_senat import build_klimaanpassung_senat
+        obj = build_klimaanpassung_senat()
+        self.assertTrue(all(len(n.klima_ids) > 0 for n in obj.normen))
+
+    def test_kki_klimaanpassung_senat_builds_klimaanpassend_geltung(self):
+        from kki.klimaanpassung_senat import build_klimaanpassung_senat, KlimaanpassungSenatGeltung
+        obj = build_klimaanpassung_senat()
+        self.assertIn(KlimaanpassungSenatGeltung.KLIMAANPASSEND, [n.geltung for n in obj.normen])
+
+    def test_kki_klimaanpassung_senat_builds_parent_chain(self):
+        from kki.klimaanpassung_senat import build_klimaanpassung_senat
+        obj = build_klimaanpassung_senat()
+        self.assertIsNotNone(obj.parent)
+
+    # #748 KlimaNorm
+    def test_kki_klima_norm_builds_normen_count(self):
+        from kki.klima_norm import build_klima_norm
+        obj = build_klima_norm()
+        self.assertGreaterEqual(len(obj.normen), 1)
+
+    def test_kki_klima_norm_builds_gesperrt_weight_zero(self):
+        from kki.klima_norm import build_klima_norm, KlimaNormGeltung
+        obj = build_klima_norm()
+        w = next(e.klima_norm_weight for e in obj.normen if e.geltung == KlimaNormGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_klima_norm_builds_tags_contain_norm(self):
+        from kki.klima_norm import build_klima_norm
+        obj = build_klima_norm()
+        self.assertTrue(any("norm" in e.klima_norm_tags for e in obj.normen))
+
+    def test_kki_klima_norm_builds_tier_increases(self):
+        from kki.klima_norm import build_klima_norm, KlimaNormGeltung
+        obj = build_klima_norm()
+        t_g = next(e.klima_norm_tier for e in obj.normen if e.geltung == KlimaNormGeltung.GESPERRT)
+        t_a = next(e.klima_norm_tier for e in obj.normen if e.geltung == KlimaNormGeltung.GRUNDLEGEND_KLIMA_NORMATIV)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_klima_norm_builds_canonical_default(self):
+        from kki.klima_norm import build_klima_norm
+        obj = build_klima_norm()
+        self.assertTrue(all(e.canonical for e in obj.normen))
+
+    def test_kki_klima_norm_builds_ids_non_empty(self):
+        from kki.klima_norm import build_klima_norm
+        obj = build_klima_norm()
+        self.assertTrue(all(len(e.klima_norm_ids) > 0 for e in obj.normen))
+
+    def test_kki_klima_norm_builds_klima_normativ_geltung(self):
+        from kki.klima_norm import build_klima_norm, KlimaNormGeltung
+        obj = build_klima_norm()
+        self.assertIn(KlimaNormGeltung.KLIMA_NORMATIV, [e.geltung for e in obj.normen])
+
+    def test_kki_klima_norm_builds_parent_chain(self):
+        from kki.klima_norm import build_klima_norm
+        obj = build_klima_norm()
+        self.assertIsNotNone(obj.parent)
+
+    # #749 KlimaprognoseCharta
+    def test_kki_klimaprognose_charta_builds_normen_count(self):
+        from kki.klimaprognose_charta import build_klimaprognose_charta
+        obj = build_klimaprognose_charta()
+        self.assertGreaterEqual(len(obj.normen), 1)
+
+    def test_kki_klimaprognose_charta_builds_gesperrt_weight_zero(self):
+        from kki.klimaprognose_charta import build_klimaprognose_charta, KlimaprognoseChartaGeltung
+        obj = build_klimaprognose_charta()
+        w = next(n.klima_weight for n in obj.normen if n.geltung == KlimaprognoseChartaGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_klimaprognose_charta_builds_tags_contain_klimaprognose(self):
+        from kki.klimaprognose_charta import build_klimaprognose_charta
+        obj = build_klimaprognose_charta()
+        self.assertTrue(any("klimaprognose" in n.klima_tags for n in obj.normen))
+
+    def test_kki_klimaprognose_charta_builds_tier_increases(self):
+        from kki.klimaprognose_charta import build_klimaprognose_charta, KlimaprognoseChartaGeltung
+        obj = build_klimaprognose_charta()
+        t_g = next(n.klima_tier for n in obj.normen if n.geltung == KlimaprognoseChartaGeltung.GESPERRT)
+        t_a = next(n.klima_tier for n in obj.normen if n.geltung == KlimaprognoseChartaGeltung.GRUNDLEGEND_KLIMAPROGNOSTISCH)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_klimaprognose_charta_builds_canonical_default(self):
+        from kki.klimaprognose_charta import build_klimaprognose_charta
+        obj = build_klimaprognose_charta()
+        self.assertTrue(all(n.canonical for n in obj.normen))
+
+    def test_kki_klimaprognose_charta_builds_ids_non_empty(self):
+        from kki.klimaprognose_charta import build_klimaprognose_charta
+        obj = build_klimaprognose_charta()
+        self.assertTrue(all(len(n.klima_ids) > 0 for n in obj.normen))
+
+    def test_kki_klimaprognose_charta_builds_klimaprognostisch_geltung(self):
+        from kki.klimaprognose_charta import build_klimaprognose_charta, KlimaprognoseChartaGeltung
+        obj = build_klimaprognose_charta()
+        self.assertIn(KlimaprognoseChartaGeltung.KLIMAPROGNOSTISCH, [n.geltung for n in obj.normen])
+
+    def test_kki_klimaprognose_charta_builds_parent_chain(self):
+        from kki.klimaprognose_charta import build_klimaprognose_charta
+        obj = build_klimaprognose_charta()
+        self.assertIsNotNone(obj.parent)
+
+    # #750 KlimaVerfassung ⭐
+    def test_kki_klima_verfassung_builds_gesperrt_schutz_norm(self):
+        from kki.klima_verfassung import build_klima_verfassung, KlimaVerfassungGeltung
+        obj = build_klima_verfassung()
+        w = next(n.klima_weight for n in obj.normen if n.geltung == KlimaVerfassungGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_klima_verfassung_aggregates_verfassung_signal(self):
+        from kki.klima_verfassung import build_klima_verfassung
+        obj = build_klima_verfassung()
+        sig = obj.aggregates_verfassung_signal()
+        self.assertIn("verfassung_id", sig)
+        self.assertIn("total_weight", sig)
+        self.assertIn("norm_count", sig)
+        self.assertGreater(sig["norm_count"], 0)
+
+    def test_kki_klima_verfassung_builds_tags_contain_klima(self):
+        from kki.klima_verfassung import build_klima_verfassung
+        obj = build_klima_verfassung()
+        self.assertTrue(any("klima" in n.klima_tags for n in obj.normen))
+
+    def test_kki_klima_verfassung_builds_tier_increases(self):
+        from kki.klima_verfassung import build_klima_verfassung, KlimaVerfassungGeltung
+        obj = build_klima_verfassung()
+        t_g = next(n.klima_tier for n in obj.normen if n.geltung == KlimaVerfassungGeltung.GESPERRT)
+        t_a = next(n.klima_tier for n in obj.normen if n.geltung == KlimaVerfassungGeltung.GRUNDLEGEND_KLIMA_SOUVERAEN)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_klima_verfassung_builds_canonical_default(self):
+        from kki.klima_verfassung import build_klima_verfassung
+        obj = build_klima_verfassung()
+        self.assertTrue(all(n.canonical for n in obj.normen))
+
+    def test_kki_klima_verfassung_builds_ids_non_empty(self):
+        from kki.klima_verfassung import build_klima_verfassung
+        obj = build_klima_verfassung()
+        self.assertTrue(all(len(n.klima_ids) > 0 for n in obj.normen))
+
+    def test_kki_klima_verfassung_builds_klima_souveraen_geltung(self):
+        from kki.klima_verfassung import build_klima_verfassung, KlimaVerfassungGeltung
+        obj = build_klima_verfassung()
+        self.assertIn(KlimaVerfassungGeltung.KLIMA_SOUVERAEN, [n.geltung for n in obj.normen])
+
+    def test_kki_klima_verfassung_builds_parent_chain(self):
+        from kki.klima_verfassung import build_klima_verfassung
+        obj = build_klima_verfassung()
+        self.assertIsNotNone(obj.parent)

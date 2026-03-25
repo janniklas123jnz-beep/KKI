@@ -3278,6 +3278,47 @@ from .informatik_verfassung import (
     InformatikVerfassungGeltung, InformatikVerfassungsNorm, InformatikVerfassungTyp, InformatikVerfassungProzedur,
     InformatikVerfassung, build_informatik_verfassung,
 )
+# Block #721–730: Wirtschaft & Ökonomik
+from .wirtschaft_feld import (
+    WirtschaftFeldGeltung, WirtschaftFeldNorm, WirtschaftFeldTyp, WirtschaftFeldProzedur,
+    WirtschaftFeld, build_wirtschaft_feld,
+)
+from .mikrooekonomie_register import (
+    MikrooekonomieRegisterGeltung, MikrooekonomieRegisterEintrag, MikrooekonomieRegisterTyp, MikrooekonomieRegisterProzedur,
+    MikrooekonomieRegister, build_mikrooekonomie_register,
+)
+from .makrooekonomie_charta import (
+    MakrooekonomieChartaGeltung, MakrooekonomieChartaNorm, MakrooekonomieChartaTyp, MakrooekonomieChartaProzedur,
+    MakrooekonomieCharta, build_makrooekonomie_charta,
+)
+from .finanztheorie_kodex import (
+    FinanztheorieKodexGeltung, FinanztheorieKodexEintrag, FinanztheorieKodexTyp, FinanztheorieKodexProzedur,
+    FinanztheorieKodex, build_finanztheorie_kodex,
+)
+from .markttheorie_manifest import (
+    MarkttheorieManifestGeltung, MarkttheorieManifestNorm, MarkttheorieManifestTyp, MarkttheorieManifestProzedur,
+    MarkttheorieManifest, build_markttheorie_manifest,
+)
+from .verhaltensoekonomie_pakt import (
+    VerhaltensoekonomiePaktGeltung, VerhaltensoekonomiePaktEintrag, VerhaltensoekonomiePaktTyp, VerhaltensoekonomiePaktProzedur,
+    VerhaltensoekonomiePakt, build_verhaltensoekonomie_pakt,
+)
+from .internationale_wirtschaft_senat import (
+    InternationaleWirtschaftSenatGeltung, InternationaleWirtschaftSenatNorm, InternationaleWirtschaftSenatTyp, InternationaleWirtschaftSenatProzedur,
+    InternationaleWirtschaftSenat, build_internationale_wirtschaft_senat,
+)
+from .wirtschaft_norm import (
+    WirtschaftNormGeltung, WirtschaftNormEintrag, WirtschaftNormTyp, WirtschaftNormProzedur,
+    WirtschaftNormSatz, build_wirtschaft_norm,
+)
+from .digitale_wirtschaft_charta import (
+    DigitaleWirtschaftChartaGeltung, DigitaleWirtschaftChartaNorm, DigitaleWirtschaftChartaTyp, DigitaleWirtschaftChartaProzedur,
+    DigitaleWirtschaftCharta, build_digitale_wirtschaft_charta,
+)
+from .wirtschaft_verfassung import (
+    WirtschaftVerfassungGeltung, WirtschaftVerfassungsNorm, WirtschaftVerfassungTyp, WirtschaftVerfassungProzedur,
+    WirtschaftVerfassung, build_wirtschaft_verfassung,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -5289,4 +5330,25 @@ __all__ = [
     "KuenstlicheIntelligenzCharta", "build_kuenstliche_intelligenz_charta",
     "InformatikVerfassungGeltung", "InformatikVerfassungsNorm", "InformatikVerfassungTyp", "InformatikVerfassungProzedur",
     "InformatikVerfassung", "build_informatik_verfassung",
+    # Block #721–730: Wirtschaft & Ökonomik
+    "WirtschaftFeldGeltung", "WirtschaftFeldNorm", "WirtschaftFeldTyp", "WirtschaftFeldProzedur",
+    "WirtschaftFeld", "build_wirtschaft_feld",
+    "MikrooekonomieRegisterGeltung", "MikrooekonomieRegisterEintrag", "MikrooekonomieRegisterTyp", "MikrooekonomieRegisterProzedur",
+    "MikrooekonomieRegister", "build_mikrooekonomie_register",
+    "MakrooekonomieChartaGeltung", "MakrooekonomieChartaNorm", "MakrooekonomieChartaTyp", "MakrooekonomieChartaProzedur",
+    "MakrooekonomieCharta", "build_makrooekonomie_charta",
+    "FinanztheorieKodexGeltung", "FinanztheorieKodexEintrag", "FinanztheorieKodexTyp", "FinanztheorieKodexProzedur",
+    "FinanztheorieKodex", "build_finanztheorie_kodex",
+    "MarkttheorieManifestGeltung", "MarkttheorieManifestNorm", "MarkttheorieManifestTyp", "MarkttheorieManifestProzedur",
+    "MarkttheorieManifest", "build_markttheorie_manifest",
+    "VerhaltensoekonomiePaktGeltung", "VerhaltensoekonomiePaktEintrag", "VerhaltensoekonomiePaktTyp", "VerhaltensoekonomiePaktProzedur",
+    "VerhaltensoekonomiePakt", "build_verhaltensoekonomie_pakt",
+    "InternationaleWirtschaftSenatGeltung", "InternationaleWirtschaftSenatNorm", "InternationaleWirtschaftSenatTyp", "InternationaleWirtschaftSenatProzedur",
+    "InternationaleWirtschaftSenat", "build_internationale_wirtschaft_senat",
+    "WirtschaftNormGeltung", "WirtschaftNormEintrag", "WirtschaftNormTyp", "WirtschaftNormProzedur",
+    "WirtschaftNormSatz", "build_wirtschaft_norm",
+    "DigitaleWirtschaftChartaGeltung", "DigitaleWirtschaftChartaNorm", "DigitaleWirtschaftChartaTyp", "DigitaleWirtschaftChartaProzedur",
+    "DigitaleWirtschaftCharta", "build_digitale_wirtschaft_charta",
+    "WirtschaftVerfassungGeltung", "WirtschaftVerfassungsNorm", "WirtschaftVerfassungTyp", "WirtschaftVerfassungProzedur",
+    "WirtschaftVerfassung", "build_wirtschaft_verfassung",
 ]

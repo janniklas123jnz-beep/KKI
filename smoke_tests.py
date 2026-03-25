@@ -27207,3 +27207,447 @@ class SmokeTests(unittest.TestCase):
         from kki.informatik_verfassung import build_informatik_verfassung
         obj = build_informatik_verfassung()
         self.assertIsNotNone(obj.parent)
+
+    # #721 WirtschaftFeld
+    def test_kki_wirtschaft_feld_builds_normen_count(self):
+        from kki.wirtschaft_feld import build_wirtschaft_feld
+        obj = build_wirtschaft_feld()
+        self.assertGreaterEqual(len(obj.normen), 1)
+
+    def test_kki_wirtschaft_feld_builds_gesperrt_weight_zero(self):
+        from kki.wirtschaft_feld import build_wirtschaft_feld, WirtschaftFeldGeltung
+        obj = build_wirtschaft_feld()
+        w = next(n.wirt_weight for n in obj.normen if n.geltung == WirtschaftFeldGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_wirtschaft_feld_builds_tags_contain_wirt(self):
+        from kki.wirtschaft_feld import build_wirtschaft_feld
+        obj = build_wirtschaft_feld()
+        self.assertTrue(any("wirt" in n.wirt_tags for n in obj.normen))
+
+    def test_kki_wirtschaft_feld_builds_tier_increases(self):
+        from kki.wirtschaft_feld import build_wirtschaft_feld, WirtschaftFeldGeltung
+        obj = build_wirtschaft_feld()
+        t_g = next(n.wirt_tier for n in obj.normen if n.geltung == WirtschaftFeldGeltung.GESPERRT)
+        t_a = next(n.wirt_tier for n in obj.normen if n.geltung == WirtschaftFeldGeltung.GRUNDLEGEND_WIRTSCHAFTLICH)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_wirtschaft_feld_builds_canonical_default(self):
+        from kki.wirtschaft_feld import build_wirtschaft_feld
+        obj = build_wirtschaft_feld()
+        self.assertTrue(all(n.canonical for n in obj.normen))
+
+    def test_kki_wirtschaft_feld_builds_ids_non_empty(self):
+        from kki.wirtschaft_feld import build_wirtschaft_feld
+        obj = build_wirtschaft_feld()
+        self.assertTrue(all(len(n.wirt_ids) > 0 for n in obj.normen))
+
+    def test_kki_wirtschaft_feld_builds_wirtschaftlich_geltung(self):
+        from kki.wirtschaft_feld import build_wirtschaft_feld, WirtschaftFeldGeltung
+        obj = build_wirtschaft_feld()
+        self.assertIn(WirtschaftFeldGeltung.WIRTSCHAFTLICH, [n.geltung for n in obj.normen])
+
+    def test_kki_wirtschaft_feld_builds_parent_chain(self):
+        from kki.wirtschaft_feld import build_wirtschaft_feld
+        obj = build_wirtschaft_feld()
+        self.assertIsNotNone(obj.parent)
+
+    # #722 MikrooekonomieRegister
+    def test_kki_mikrooekonomie_register_builds_eintraege_count(self):
+        from kki.mikrooekonomie_register import build_mikrooekonomie_register
+        obj = build_mikrooekonomie_register()
+        self.assertGreaterEqual(len(obj.eintraege), 1)
+
+    def test_kki_mikrooekonomie_register_builds_gesperrt_weight_zero(self):
+        from kki.mikrooekonomie_register import build_mikrooekonomie_register, MikrooekonomieRegisterGeltung
+        obj = build_mikrooekonomie_register()
+        w = next(e.wirt_weight for e in obj.eintraege if e.geltung == MikrooekonomieRegisterGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_mikrooekonomie_register_builds_tags_contain_mikrooekonomie(self):
+        from kki.mikrooekonomie_register import build_mikrooekonomie_register
+        obj = build_mikrooekonomie_register()
+        self.assertTrue(any("mikrooekonomie" in e.wirt_tags for e in obj.eintraege))
+
+    def test_kki_mikrooekonomie_register_builds_tier_increases(self):
+        from kki.mikrooekonomie_register import build_mikrooekonomie_register, MikrooekonomieRegisterGeltung
+        obj = build_mikrooekonomie_register()
+        t_g = next(e.wirt_tier for e in obj.eintraege if e.geltung == MikrooekonomieRegisterGeltung.GESPERRT)
+        t_a = next(e.wirt_tier for e in obj.eintraege if e.geltung == MikrooekonomieRegisterGeltung.GRUNDLEGEND_MIKROOEKONOMISCH)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_mikrooekonomie_register_builds_canonical_default(self):
+        from kki.mikrooekonomie_register import build_mikrooekonomie_register
+        obj = build_mikrooekonomie_register()
+        self.assertTrue(all(e.canonical for e in obj.eintraege))
+
+    def test_kki_mikrooekonomie_register_builds_ids_non_empty(self):
+        from kki.mikrooekonomie_register import build_mikrooekonomie_register
+        obj = build_mikrooekonomie_register()
+        self.assertTrue(all(len(e.wirt_ids) > 0 for e in obj.eintraege))
+
+    def test_kki_mikrooekonomie_register_builds_mikrooekonomisch_geltung(self):
+        from kki.mikrooekonomie_register import build_mikrooekonomie_register, MikrooekonomieRegisterGeltung
+        obj = build_mikrooekonomie_register()
+        self.assertIn(MikrooekonomieRegisterGeltung.MIKROOEKONOMISCH, [e.geltung for e in obj.eintraege])
+
+    def test_kki_mikrooekonomie_register_builds_parent_chain(self):
+        from kki.mikrooekonomie_register import build_mikrooekonomie_register
+        obj = build_mikrooekonomie_register()
+        self.assertIsNotNone(obj.parent)
+
+    # #723 MakrooekonomieCharta
+    def test_kki_makrooekonomie_charta_builds_normen_count(self):
+        from kki.makrooekonomie_charta import build_makrooekonomie_charta
+        obj = build_makrooekonomie_charta()
+        self.assertGreaterEqual(len(obj.normen), 1)
+
+    def test_kki_makrooekonomie_charta_builds_gesperrt_weight_zero(self):
+        from kki.makrooekonomie_charta import build_makrooekonomie_charta, MakrooekonomieChartaGeltung
+        obj = build_makrooekonomie_charta()
+        w = next(n.wirt_weight for n in obj.normen if n.geltung == MakrooekonomieChartaGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_makrooekonomie_charta_builds_tags_contain_makrooekonomie(self):
+        from kki.makrooekonomie_charta import build_makrooekonomie_charta
+        obj = build_makrooekonomie_charta()
+        self.assertTrue(any("makrooekonomie" in n.wirt_tags for n in obj.normen))
+
+    def test_kki_makrooekonomie_charta_builds_tier_increases(self):
+        from kki.makrooekonomie_charta import build_makrooekonomie_charta, MakrooekonomieChartaGeltung
+        obj = build_makrooekonomie_charta()
+        t_g = next(n.wirt_tier for n in obj.normen if n.geltung == MakrooekonomieChartaGeltung.GESPERRT)
+        t_a = next(n.wirt_tier for n in obj.normen if n.geltung == MakrooekonomieChartaGeltung.GRUNDLEGEND_MAKROOEKONOMISCH)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_makrooekonomie_charta_builds_canonical_default(self):
+        from kki.makrooekonomie_charta import build_makrooekonomie_charta
+        obj = build_makrooekonomie_charta()
+        self.assertTrue(all(n.canonical for n in obj.normen))
+
+    def test_kki_makrooekonomie_charta_builds_ids_non_empty(self):
+        from kki.makrooekonomie_charta import build_makrooekonomie_charta
+        obj = build_makrooekonomie_charta()
+        self.assertTrue(all(len(n.wirt_ids) > 0 for n in obj.normen))
+
+    def test_kki_makrooekonomie_charta_builds_makrooekonomisch_geltung(self):
+        from kki.makrooekonomie_charta import build_makrooekonomie_charta, MakrooekonomieChartaGeltung
+        obj = build_makrooekonomie_charta()
+        self.assertIn(MakrooekonomieChartaGeltung.MAKROOEKONOMISCH, [n.geltung for n in obj.normen])
+
+    def test_kki_makrooekonomie_charta_builds_parent_chain(self):
+        from kki.makrooekonomie_charta import build_makrooekonomie_charta
+        obj = build_makrooekonomie_charta()
+        self.assertIsNotNone(obj.parent)
+
+    # #724 FinanztheorieKodex
+    def test_kki_finanztheorie_kodex_builds_eintraege_count(self):
+        from kki.finanztheorie_kodex import build_finanztheorie_kodex
+        obj = build_finanztheorie_kodex()
+        self.assertGreaterEqual(len(obj.eintraege), 1)
+
+    def test_kki_finanztheorie_kodex_builds_gesperrt_weight_zero(self):
+        from kki.finanztheorie_kodex import build_finanztheorie_kodex, FinanztheorieKodexGeltung
+        obj = build_finanztheorie_kodex()
+        w = next(e.wirt_weight for e in obj.eintraege if e.geltung == FinanztheorieKodexGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_finanztheorie_kodex_builds_tags_contain_finanztheorie(self):
+        from kki.finanztheorie_kodex import build_finanztheorie_kodex
+        obj = build_finanztheorie_kodex()
+        self.assertTrue(any("finanztheorie" in e.wirt_tags for e in obj.eintraege))
+
+    def test_kki_finanztheorie_kodex_builds_tier_increases(self):
+        from kki.finanztheorie_kodex import build_finanztheorie_kodex, FinanztheorieKodexGeltung
+        obj = build_finanztheorie_kodex()
+        t_g = next(e.wirt_tier for e in obj.eintraege if e.geltung == FinanztheorieKodexGeltung.GESPERRT)
+        t_a = next(e.wirt_tier for e in obj.eintraege if e.geltung == FinanztheorieKodexGeltung.GRUNDLEGEND_FINANZTHEORETISCH)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_finanztheorie_kodex_builds_canonical_default(self):
+        from kki.finanztheorie_kodex import build_finanztheorie_kodex
+        obj = build_finanztheorie_kodex()
+        self.assertTrue(all(e.canonical for e in obj.eintraege))
+
+    def test_kki_finanztheorie_kodex_builds_ids_non_empty(self):
+        from kki.finanztheorie_kodex import build_finanztheorie_kodex
+        obj = build_finanztheorie_kodex()
+        self.assertTrue(all(len(e.wirt_ids) > 0 for e in obj.eintraege))
+
+    def test_kki_finanztheorie_kodex_builds_finanztheoretisch_geltung(self):
+        from kki.finanztheorie_kodex import build_finanztheorie_kodex, FinanztheorieKodexGeltung
+        obj = build_finanztheorie_kodex()
+        self.assertIn(FinanztheorieKodexGeltung.FINANZTHEORETISCH, [e.geltung for e in obj.eintraege])
+
+    def test_kki_finanztheorie_kodex_builds_parent_chain(self):
+        from kki.finanztheorie_kodex import build_finanztheorie_kodex
+        obj = build_finanztheorie_kodex()
+        self.assertIsNotNone(obj.parent)
+
+    # #725 MarkttheorieManifest
+    def test_kki_markttheorie_manifest_builds_normen_count(self):
+        from kki.markttheorie_manifest import build_markttheorie_manifest
+        obj = build_markttheorie_manifest()
+        self.assertGreaterEqual(len(obj.normen), 1)
+
+    def test_kki_markttheorie_manifest_builds_gesperrt_weight_zero(self):
+        from kki.markttheorie_manifest import build_markttheorie_manifest, MarkttheorieManifestGeltung
+        obj = build_markttheorie_manifest()
+        w = next(n.wirt_weight for n in obj.normen if n.geltung == MarkttheorieManifestGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_markttheorie_manifest_builds_tags_contain_markttheorie(self):
+        from kki.markttheorie_manifest import build_markttheorie_manifest
+        obj = build_markttheorie_manifest()
+        self.assertTrue(any("markttheorie" in n.wirt_tags for n in obj.normen))
+
+    def test_kki_markttheorie_manifest_builds_tier_increases(self):
+        from kki.markttheorie_manifest import build_markttheorie_manifest, MarkttheorieManifestGeltung
+        obj = build_markttheorie_manifest()
+        t_g = next(n.wirt_tier for n in obj.normen if n.geltung == MarkttheorieManifestGeltung.GESPERRT)
+        t_a = next(n.wirt_tier for n in obj.normen if n.geltung == MarkttheorieManifestGeltung.GRUNDLEGEND_MARKTTHEORETISCH)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_markttheorie_manifest_builds_canonical_default(self):
+        from kki.markttheorie_manifest import build_markttheorie_manifest
+        obj = build_markttheorie_manifest()
+        self.assertTrue(all(n.canonical for n in obj.normen))
+
+    def test_kki_markttheorie_manifest_builds_ids_non_empty(self):
+        from kki.markttheorie_manifest import build_markttheorie_manifest
+        obj = build_markttheorie_manifest()
+        self.assertTrue(all(len(n.wirt_ids) > 0 for n in obj.normen))
+
+    def test_kki_markttheorie_manifest_builds_markttheoretisch_geltung(self):
+        from kki.markttheorie_manifest import build_markttheorie_manifest, MarkttheorieManifestGeltung
+        obj = build_markttheorie_manifest()
+        self.assertIn(MarkttheorieManifestGeltung.MARKTTHEORETISCH, [n.geltung for n in obj.normen])
+
+    def test_kki_markttheorie_manifest_builds_parent_chain(self):
+        from kki.markttheorie_manifest import build_markttheorie_manifest
+        obj = build_markttheorie_manifest()
+        self.assertIsNotNone(obj.parent)
+
+    # #726 VerhaltensoekonomiePakt
+    def test_kki_verhaltensoekonomie_pakt_builds_eintraege_count(self):
+        from kki.verhaltensoekonomie_pakt import build_verhaltensoekonomie_pakt
+        obj = build_verhaltensoekonomie_pakt()
+        self.assertGreaterEqual(len(obj.eintraege), 1)
+
+    def test_kki_verhaltensoekonomie_pakt_builds_gesperrt_weight_zero(self):
+        from kki.verhaltensoekonomie_pakt import build_verhaltensoekonomie_pakt, VerhaltensoekonomiePaktGeltung
+        obj = build_verhaltensoekonomie_pakt()
+        w = next(e.wirt_weight for e in obj.eintraege if e.geltung == VerhaltensoekonomiePaktGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_verhaltensoekonomie_pakt_builds_tags_contain_verhaltensoekonomie(self):
+        from kki.verhaltensoekonomie_pakt import build_verhaltensoekonomie_pakt
+        obj = build_verhaltensoekonomie_pakt()
+        self.assertTrue(any("verhaltensoekonomie" in e.wirt_tags for e in obj.eintraege))
+
+    def test_kki_verhaltensoekonomie_pakt_builds_tier_increases(self):
+        from kki.verhaltensoekonomie_pakt import build_verhaltensoekonomie_pakt, VerhaltensoekonomiePaktGeltung
+        obj = build_verhaltensoekonomie_pakt()
+        t_g = next(e.wirt_tier for e in obj.eintraege if e.geltung == VerhaltensoekonomiePaktGeltung.GESPERRT)
+        t_a = next(e.wirt_tier for e in obj.eintraege if e.geltung == VerhaltensoekonomiePaktGeltung.GRUNDLEGEND_VERHALTENSOKONOMISCH)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_verhaltensoekonomie_pakt_builds_canonical_default(self):
+        from kki.verhaltensoekonomie_pakt import build_verhaltensoekonomie_pakt
+        obj = build_verhaltensoekonomie_pakt()
+        self.assertTrue(all(e.canonical for e in obj.eintraege))
+
+    def test_kki_verhaltensoekonomie_pakt_builds_ids_non_empty(self):
+        from kki.verhaltensoekonomie_pakt import build_verhaltensoekonomie_pakt
+        obj = build_verhaltensoekonomie_pakt()
+        self.assertTrue(all(len(e.wirt_ids) > 0 for e in obj.eintraege))
+
+    def test_kki_verhaltensoekonomie_pakt_builds_verhaltensokonomisch_geltung(self):
+        from kki.verhaltensoekonomie_pakt import build_verhaltensoekonomie_pakt, VerhaltensoekonomiePaktGeltung
+        obj = build_verhaltensoekonomie_pakt()
+        self.assertIn(VerhaltensoekonomiePaktGeltung.VERHALTENSOKONOMISCH, [e.geltung for e in obj.eintraege])
+
+    def test_kki_verhaltensoekonomie_pakt_builds_parent_chain(self):
+        from kki.verhaltensoekonomie_pakt import build_verhaltensoekonomie_pakt
+        obj = build_verhaltensoekonomie_pakt()
+        self.assertIsNotNone(obj.parent)
+
+    # #727 InternationaleWirtschaftSenat
+    def test_kki_internationale_wirtschaft_senat_builds_normen_count(self):
+        from kki.internationale_wirtschaft_senat import build_internationale_wirtschaft_senat
+        obj = build_internationale_wirtschaft_senat()
+        self.assertGreaterEqual(len(obj.normen), 1)
+
+    def test_kki_internationale_wirtschaft_senat_builds_gesperrt_weight_zero(self):
+        from kki.internationale_wirtschaft_senat import build_internationale_wirtschaft_senat, InternationaleWirtschaftSenatGeltung
+        obj = build_internationale_wirtschaft_senat()
+        w = next(n.wirt_weight for n in obj.normen if n.geltung == InternationaleWirtschaftSenatGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_internationale_wirtschaft_senat_builds_tags_contain_internationale_wirtschaft(self):
+        from kki.internationale_wirtschaft_senat import build_internationale_wirtschaft_senat
+        obj = build_internationale_wirtschaft_senat()
+        self.assertTrue(any("internationale-wirtschaft" in n.wirt_tags for n in obj.normen))
+
+    def test_kki_internationale_wirtschaft_senat_builds_tier_increases(self):
+        from kki.internationale_wirtschaft_senat import build_internationale_wirtschaft_senat, InternationaleWirtschaftSenatGeltung
+        obj = build_internationale_wirtschaft_senat()
+        t_g = next(n.wirt_tier for n in obj.normen if n.geltung == InternationaleWirtschaftSenatGeltung.GESPERRT)
+        t_a = next(n.wirt_tier for n in obj.normen if n.geltung == InternationaleWirtschaftSenatGeltung.GRUNDLEGEND_INTERNATIONAL_AKTIV)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_internationale_wirtschaft_senat_builds_canonical_default(self):
+        from kki.internationale_wirtschaft_senat import build_internationale_wirtschaft_senat
+        obj = build_internationale_wirtschaft_senat()
+        self.assertTrue(all(n.canonical for n in obj.normen))
+
+    def test_kki_internationale_wirtschaft_senat_builds_ids_non_empty(self):
+        from kki.internationale_wirtschaft_senat import build_internationale_wirtschaft_senat
+        obj = build_internationale_wirtschaft_senat()
+        self.assertTrue(all(len(n.wirt_ids) > 0 for n in obj.normen))
+
+    def test_kki_internationale_wirtschaft_senat_builds_international_aktiv_geltung(self):
+        from kki.internationale_wirtschaft_senat import build_internationale_wirtschaft_senat, InternationaleWirtschaftSenatGeltung
+        obj = build_internationale_wirtschaft_senat()
+        self.assertIn(InternationaleWirtschaftSenatGeltung.INTERNATIONAL_AKTIV, [n.geltung for n in obj.normen])
+
+    def test_kki_internationale_wirtschaft_senat_builds_parent_chain(self):
+        from kki.internationale_wirtschaft_senat import build_internationale_wirtschaft_senat
+        obj = build_internationale_wirtschaft_senat()
+        self.assertIsNotNone(obj.parent)
+
+    # #728 WirtschaftNorm
+    def test_kki_wirtschaft_norm_builds_normen_count(self):
+        from kki.wirtschaft_norm import build_wirtschaft_norm
+        obj = build_wirtschaft_norm()
+        self.assertGreaterEqual(len(obj.normen), 1)
+
+    def test_kki_wirtschaft_norm_builds_gesperrt_weight_zero(self):
+        from kki.wirtschaft_norm import build_wirtschaft_norm, WirtschaftNormGeltung
+        obj = build_wirtschaft_norm()
+        w = next(e.wirt_norm_weight for e in obj.normen if e.geltung == WirtschaftNormGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_wirtschaft_norm_builds_tags_contain_norm(self):
+        from kki.wirtschaft_norm import build_wirtschaft_norm
+        obj = build_wirtschaft_norm()
+        self.assertTrue(any("norm" in e.wirt_norm_tags for e in obj.normen))
+
+    def test_kki_wirtschaft_norm_builds_tier_increases(self):
+        from kki.wirtschaft_norm import build_wirtschaft_norm, WirtschaftNormGeltung
+        obj = build_wirtschaft_norm()
+        t_g = next(e.wirt_norm_tier for e in obj.normen if e.geltung == WirtschaftNormGeltung.GESPERRT)
+        t_a = next(e.wirt_norm_tier for e in obj.normen if e.geltung == WirtschaftNormGeltung.GRUNDLEGEND_WIRT_NORMATIV)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_wirtschaft_norm_builds_canonical_default(self):
+        from kki.wirtschaft_norm import build_wirtschaft_norm
+        obj = build_wirtschaft_norm()
+        self.assertTrue(all(e.canonical for e in obj.normen))
+
+    def test_kki_wirtschaft_norm_builds_ids_non_empty(self):
+        from kki.wirtschaft_norm import build_wirtschaft_norm
+        obj = build_wirtschaft_norm()
+        self.assertTrue(all(len(e.wirt_norm_ids) > 0 for e in obj.normen))
+
+    def test_kki_wirtschaft_norm_builds_wirt_normativ_geltung(self):
+        from kki.wirtschaft_norm import build_wirtschaft_norm, WirtschaftNormGeltung
+        obj = build_wirtschaft_norm()
+        self.assertIn(WirtschaftNormGeltung.WIRT_NORMATIV, [e.geltung for e in obj.normen])
+
+    def test_kki_wirtschaft_norm_builds_parent_chain(self):
+        from kki.wirtschaft_norm import build_wirtschaft_norm
+        obj = build_wirtschaft_norm()
+        self.assertIsNotNone(obj.parent)
+
+    # #729 DigitaleWirtschaftCharta
+    def test_kki_digitale_wirtschaft_charta_builds_normen_count(self):
+        from kki.digitale_wirtschaft_charta import build_digitale_wirtschaft_charta
+        obj = build_digitale_wirtschaft_charta()
+        self.assertGreaterEqual(len(obj.normen), 1)
+
+    def test_kki_digitale_wirtschaft_charta_builds_gesperrt_weight_zero(self):
+        from kki.digitale_wirtschaft_charta import build_digitale_wirtschaft_charta, DigitaleWirtschaftChartaGeltung
+        obj = build_digitale_wirtschaft_charta()
+        w = next(n.wirt_weight for n in obj.normen if n.geltung == DigitaleWirtschaftChartaGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_digitale_wirtschaft_charta_builds_tags_contain_digitale_wirtschaft(self):
+        from kki.digitale_wirtschaft_charta import build_digitale_wirtschaft_charta
+        obj = build_digitale_wirtschaft_charta()
+        self.assertTrue(any("digitale-wirtschaft" in n.wirt_tags for n in obj.normen))
+
+    def test_kki_digitale_wirtschaft_charta_builds_tier_increases(self):
+        from kki.digitale_wirtschaft_charta import build_digitale_wirtschaft_charta, DigitaleWirtschaftChartaGeltung
+        obj = build_digitale_wirtschaft_charta()
+        t_g = next(n.wirt_tier for n in obj.normen if n.geltung == DigitaleWirtschaftChartaGeltung.GESPERRT)
+        t_a = next(n.wirt_tier for n in obj.normen if n.geltung == DigitaleWirtschaftChartaGeltung.GRUNDLEGEND_DIGITAL_WIRTSCHAFTLICH)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_digitale_wirtschaft_charta_builds_canonical_default(self):
+        from kki.digitale_wirtschaft_charta import build_digitale_wirtschaft_charta
+        obj = build_digitale_wirtschaft_charta()
+        self.assertTrue(all(n.canonical for n in obj.normen))
+
+    def test_kki_digitale_wirtschaft_charta_builds_ids_non_empty(self):
+        from kki.digitale_wirtschaft_charta import build_digitale_wirtschaft_charta
+        obj = build_digitale_wirtschaft_charta()
+        self.assertTrue(all(len(n.wirt_ids) > 0 for n in obj.normen))
+
+    def test_kki_digitale_wirtschaft_charta_builds_digital_wirtschaftlich_geltung(self):
+        from kki.digitale_wirtschaft_charta import build_digitale_wirtschaft_charta, DigitaleWirtschaftChartaGeltung
+        obj = build_digitale_wirtschaft_charta()
+        self.assertIn(DigitaleWirtschaftChartaGeltung.DIGITAL_WIRTSCHAFTLICH, [n.geltung for n in obj.normen])
+
+    def test_kki_digitale_wirtschaft_charta_builds_parent_chain(self):
+        from kki.digitale_wirtschaft_charta import build_digitale_wirtschaft_charta
+        obj = build_digitale_wirtschaft_charta()
+        self.assertIsNotNone(obj.parent)
+
+    # #730 WirtschaftVerfassung ⭐
+    def test_kki_wirtschaft_verfassung_builds_gesperrt_schutz_norm(self):
+        from kki.wirtschaft_verfassung import build_wirtschaft_verfassung, WirtschaftVerfassungGeltung
+        obj = build_wirtschaft_verfassung()
+        w = next(n.wirt_weight for n in obj.normen if n.geltung == WirtschaftVerfassungGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_wirtschaft_verfassung_aggregates_verfassung_signal(self):
+        from kki.wirtschaft_verfassung import build_wirtschaft_verfassung
+        obj = build_wirtschaft_verfassung()
+        sig = obj.aggregates_verfassung_signal()
+        self.assertIn("verfassung_id", sig)
+        self.assertIn("total_weight", sig)
+        self.assertIn("norm_count", sig)
+        self.assertGreater(sig["norm_count"], 0)
+
+    def test_kki_wirtschaft_verfassung_builds_tags_contain_wirtschaft(self):
+        from kki.wirtschaft_verfassung import build_wirtschaft_verfassung
+        obj = build_wirtschaft_verfassung()
+        self.assertTrue(any("wirtschaft" in n.wirt_tags for n in obj.normen))
+
+    def test_kki_wirtschaft_verfassung_builds_tier_increases(self):
+        from kki.wirtschaft_verfassung import build_wirtschaft_verfassung, WirtschaftVerfassungGeltung
+        obj = build_wirtschaft_verfassung()
+        t_g = next(n.wirt_tier for n in obj.normen if n.geltung == WirtschaftVerfassungGeltung.GESPERRT)
+        t_a = next(n.wirt_tier for n in obj.normen if n.geltung == WirtschaftVerfassungGeltung.GRUNDLEGEND_WIRT_SOUVERAEN)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_wirtschaft_verfassung_builds_canonical_default(self):
+        from kki.wirtschaft_verfassung import build_wirtschaft_verfassung
+        obj = build_wirtschaft_verfassung()
+        self.assertTrue(all(n.canonical for n in obj.normen))
+
+    def test_kki_wirtschaft_verfassung_builds_ids_non_empty(self):
+        from kki.wirtschaft_verfassung import build_wirtschaft_verfassung
+        obj = build_wirtschaft_verfassung()
+        self.assertTrue(all(len(n.wirt_ids) > 0 for n in obj.normen))
+
+    def test_kki_wirtschaft_verfassung_builds_wirt_souveraen_geltung(self):
+        from kki.wirtschaft_verfassung import build_wirtschaft_verfassung, WirtschaftVerfassungGeltung
+        obj = build_wirtschaft_verfassung()
+        self.assertIn(WirtschaftVerfassungGeltung.WIRT_SOUVERAEN, [n.geltung for n in obj.normen])
+
+    def test_kki_wirtschaft_verfassung_builds_parent_chain(self):
+        from kki.wirtschaft_verfassung import build_wirtschaft_verfassung
+        obj = build_wirtschaft_verfassung()
+        self.assertIsNotNone(obj.parent)

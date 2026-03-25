@@ -26305,3 +26305,459 @@ class SmokeTests(unittest.TestCase):
         obj = build_geowissenschaft_verfassung()
         for n in obj.normen:
             self.assertTrue(len(n.geo_ids) > 0)
+
+    # ── Block #701–710: Biologie & Genetik ──────────────────────────────────
+
+    # #701 BiologieFeld
+    def test_kki_biologie_feld_builds_normen_count(self):
+        from kki.biologie_feld import build_biologie_feld
+        obj = build_biologie_feld()
+        self.assertGreaterEqual(len(obj.normen), 1)
+
+    def test_kki_biologie_feld_builds_gesperrt_weight_zero(self):
+        from kki.biologie_feld import build_biologie_feld, BiologieFeldGeltung
+        obj = build_biologie_feld()
+        w = next(n.bio_weight for n in obj.normen if n.geltung == BiologieFeldGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_biologie_feld_builds_tags_contain_bio(self):
+        from kki.biologie_feld import build_biologie_feld
+        obj = build_biologie_feld()
+        self.assertTrue(any("bio" in n.bio_tags for n in obj.normen))
+
+    def test_kki_biologie_feld_builds_tier_increases(self):
+        from kki.biologie_feld import build_biologie_feld, BiologieFeldGeltung
+        obj = build_biologie_feld()
+        t_g = next(n.bio_tier for n in obj.normen if n.geltung == BiologieFeldGeltung.GESPERRT)
+        t_a = next(n.bio_tier for n in obj.normen if n.geltung == BiologieFeldGeltung.GRUNDLEGEND_BIO_AKTIV)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_biologie_feld_builds_canonical_default(self):
+        from kki.biologie_feld import build_biologie_feld
+        obj = build_biologie_feld()
+        self.assertTrue(all(n.canonical for n in obj.normen))
+
+    def test_kki_biologie_feld_builds_ids_non_empty(self):
+        from kki.biologie_feld import build_biologie_feld
+        obj = build_biologie_feld()
+        self.assertTrue(all(len(n.bio_ids) > 0 for n in obj.normen))
+
+    def test_kki_biologie_feld_builds_bio_aktiv_geltung(self):
+        from kki.biologie_feld import build_biologie_feld, BiologieFeldGeltung
+        obj = build_biologie_feld()
+        geltungen = [n.geltung for n in obj.normen]
+        self.assertIn(BiologieFeldGeltung.BIO_AKTIV, geltungen)
+
+    def test_kki_biologie_feld_builds_parent_chain(self):
+        from kki.biologie_feld import build_biologie_feld
+        obj = build_biologie_feld()
+        self.assertIsNotNone(obj.parent)
+
+    # #702 ZellbiologieRegister
+    def test_kki_zellbiologie_register_builds_eintraege_count(self):
+        from kki.zellbiologie_register import build_zellbiologie_register
+        obj = build_zellbiologie_register()
+        self.assertGreaterEqual(len(obj.eintraege), 1)
+
+    def test_kki_zellbiologie_register_builds_gesperrt_weight_zero(self):
+        from kki.zellbiologie_register import build_zellbiologie_register, ZellbiologieRegisterGeltung
+        obj = build_zellbiologie_register()
+        w = next(e.bio_weight for e in obj.eintraege if e.geltung == ZellbiologieRegisterGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_zellbiologie_register_builds_tags_contain_zellbiologie(self):
+        from kki.zellbiologie_register import build_zellbiologie_register
+        obj = build_zellbiologie_register()
+        self.assertTrue(any("zellbiologie" in e.bio_tags for e in obj.eintraege))
+
+    def test_kki_zellbiologie_register_builds_tier_increases(self):
+        from kki.zellbiologie_register import build_zellbiologie_register, ZellbiologieRegisterGeltung
+        obj = build_zellbiologie_register()
+        t_g = next(e.bio_tier for e in obj.eintraege if e.geltung == ZellbiologieRegisterGeltung.GESPERRT)
+        t_a = next(e.bio_tier for e in obj.eintraege if e.geltung == ZellbiologieRegisterGeltung.GRUNDLEGEND_ZELLBIOLOGISCH)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_zellbiologie_register_builds_canonical_default(self):
+        from kki.zellbiologie_register import build_zellbiologie_register
+        obj = build_zellbiologie_register()
+        self.assertTrue(all(e.canonical for e in obj.eintraege))
+
+    def test_kki_zellbiologie_register_builds_ids_non_empty(self):
+        from kki.zellbiologie_register import build_zellbiologie_register
+        obj = build_zellbiologie_register()
+        self.assertTrue(all(len(e.bio_ids) > 0 for e in obj.eintraege))
+
+    def test_kki_zellbiologie_register_builds_zellbiologisch_geltung(self):
+        from kki.zellbiologie_register import build_zellbiologie_register, ZellbiologieRegisterGeltung
+        obj = build_zellbiologie_register()
+        geltungen = [e.geltung for e in obj.eintraege]
+        self.assertIn(ZellbiologieRegisterGeltung.ZELLBIOLOGISCH, geltungen)
+
+    def test_kki_zellbiologie_register_builds_parent_chain(self):
+        from kki.zellbiologie_register import build_zellbiologie_register
+        obj = build_zellbiologie_register()
+        self.assertIsNotNone(obj.parent)
+
+    # #703 GenetikCharta
+    def test_kki_genetik_charta_builds_normen_count(self):
+        from kki.genetik_charta import build_genetik_charta
+        obj = build_genetik_charta()
+        self.assertGreaterEqual(len(obj.normen), 1)
+
+    def test_kki_genetik_charta_builds_gesperrt_weight_zero(self):
+        from kki.genetik_charta import build_genetik_charta, GenetikChartaGeltung
+        obj = build_genetik_charta()
+        w = next(n.bio_weight for n in obj.normen if n.geltung == GenetikChartaGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_genetik_charta_builds_tags_contain_genetik(self):
+        from kki.genetik_charta import build_genetik_charta
+        obj = build_genetik_charta()
+        self.assertTrue(any("genetik" in n.bio_tags for n in obj.normen))
+
+    def test_kki_genetik_charta_builds_tier_increases(self):
+        from kki.genetik_charta import build_genetik_charta, GenetikChartaGeltung
+        obj = build_genetik_charta()
+        t_g = next(n.bio_tier for n in obj.normen if n.geltung == GenetikChartaGeltung.GESPERRT)
+        t_a = next(n.bio_tier for n in obj.normen if n.geltung == GenetikChartaGeltung.GRUNDLEGEND_GENETISCH_AKTIV)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_genetik_charta_builds_canonical_default(self):
+        from kki.genetik_charta import build_genetik_charta
+        obj = build_genetik_charta()
+        self.assertTrue(all(n.canonical for n in obj.normen))
+
+    def test_kki_genetik_charta_builds_ids_non_empty(self):
+        from kki.genetik_charta import build_genetik_charta
+        obj = build_genetik_charta()
+        self.assertTrue(all(len(n.bio_ids) > 0 for n in obj.normen))
+
+    def test_kki_genetik_charta_builds_genetisch_aktiv_geltung(self):
+        from kki.genetik_charta import build_genetik_charta, GenetikChartaGeltung
+        obj = build_genetik_charta()
+        geltungen = [n.geltung for n in obj.normen]
+        self.assertIn(GenetikChartaGeltung.GENETISCH_AKTIV, geltungen)
+
+    def test_kki_genetik_charta_builds_parent_chain(self):
+        from kki.genetik_charta import build_genetik_charta
+        obj = build_genetik_charta()
+        self.assertIsNotNone(obj.parent)
+
+    # #704 MolekularbiologieKodex
+    def test_kki_molekularbiologie_kodex_builds_eintraege_count(self):
+        from kki.molekularbiologie_kodex import build_molekularbiologie_kodex
+        obj = build_molekularbiologie_kodex()
+        self.assertGreaterEqual(len(obj.eintraege), 1)
+
+    def test_kki_molekularbiologie_kodex_builds_gesperrt_weight_zero(self):
+        from kki.molekularbiologie_kodex import build_molekularbiologie_kodex, MolekularbiologieKodexGeltung
+        obj = build_molekularbiologie_kodex()
+        w = next(e.bio_weight for e in obj.eintraege if e.geltung == MolekularbiologieKodexGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_molekularbiologie_kodex_builds_tags_contain_molekularbiologie(self):
+        from kki.molekularbiologie_kodex import build_molekularbiologie_kodex
+        obj = build_molekularbiologie_kodex()
+        self.assertTrue(any("molekularbiologie" in e.bio_tags for e in obj.eintraege))
+
+    def test_kki_molekularbiologie_kodex_builds_tier_increases(self):
+        from kki.molekularbiologie_kodex import build_molekularbiologie_kodex, MolekularbiologieKodexGeltung
+        obj = build_molekularbiologie_kodex()
+        t_g = next(e.bio_tier for e in obj.eintraege if e.geltung == MolekularbiologieKodexGeltung.GESPERRT)
+        t_a = next(e.bio_tier for e in obj.eintraege if e.geltung == MolekularbiologieKodexGeltung.GRUNDLEGEND_MOLEKULARBIOLOGISCH)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_molekularbiologie_kodex_builds_canonical_default(self):
+        from kki.molekularbiologie_kodex import build_molekularbiologie_kodex
+        obj = build_molekularbiologie_kodex()
+        self.assertTrue(all(e.canonical for e in obj.eintraege))
+
+    def test_kki_molekularbiologie_kodex_builds_ids_non_empty(self):
+        from kki.molekularbiologie_kodex import build_molekularbiologie_kodex
+        obj = build_molekularbiologie_kodex()
+        self.assertTrue(all(len(e.bio_ids) > 0 for e in obj.eintraege))
+
+    def test_kki_molekularbiologie_kodex_builds_molekularbiologisch_geltung(self):
+        from kki.molekularbiologie_kodex import build_molekularbiologie_kodex, MolekularbiologieKodexGeltung
+        obj = build_molekularbiologie_kodex()
+        geltungen = [e.geltung for e in obj.eintraege]
+        self.assertIn(MolekularbiologieKodexGeltung.MOLEKULARBIOLOGISCH, geltungen)
+
+    def test_kki_molekularbiologie_kodex_builds_parent_chain(self):
+        from kki.molekularbiologie_kodex import build_molekularbiologie_kodex
+        obj = build_molekularbiologie_kodex()
+        self.assertIsNotNone(obj.parent)
+
+    # #705 GenomikManifest
+    def test_kki_genomik_manifest_builds_normen_count(self):
+        from kki.genomik_manifest import build_genomik_manifest
+        obj = build_genomik_manifest()
+        self.assertGreaterEqual(len(obj.normen), 1)
+
+    def test_kki_genomik_manifest_builds_gesperrt_weight_zero(self):
+        from kki.genomik_manifest import build_genomik_manifest, GenomikManifestGeltung
+        obj = build_genomik_manifest()
+        w = next(n.bio_weight for n in obj.normen if n.geltung == GenomikManifestGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_genomik_manifest_builds_tags_contain_genomik(self):
+        from kki.genomik_manifest import build_genomik_manifest
+        obj = build_genomik_manifest()
+        self.assertTrue(any("genomik" in n.bio_tags for n in obj.normen))
+
+    def test_kki_genomik_manifest_builds_tier_increases(self):
+        from kki.genomik_manifest import build_genomik_manifest, GenomikManifestGeltung
+        obj = build_genomik_manifest()
+        t_g = next(n.bio_tier for n in obj.normen if n.geltung == GenomikManifestGeltung.GESPERRT)
+        t_a = next(n.bio_tier for n in obj.normen if n.geltung == GenomikManifestGeltung.GRUNDLEGEND_GENOMISCH_AKTIV)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_genomik_manifest_builds_canonical_default(self):
+        from kki.genomik_manifest import build_genomik_manifest
+        obj = build_genomik_manifest()
+        self.assertTrue(all(n.canonical for n in obj.normen))
+
+    def test_kki_genomik_manifest_builds_ids_non_empty(self):
+        from kki.genomik_manifest import build_genomik_manifest
+        obj = build_genomik_manifest()
+        self.assertTrue(all(len(n.bio_ids) > 0 for n in obj.normen))
+
+    def test_kki_genomik_manifest_builds_genomisch_aktiv_geltung(self):
+        from kki.genomik_manifest import build_genomik_manifest, GenomikManifestGeltung
+        obj = build_genomik_manifest()
+        geltungen = [n.geltung for n in obj.normen]
+        self.assertIn(GenomikManifestGeltung.GENOMISCH_AKTIV, geltungen)
+
+    def test_kki_genomik_manifest_builds_parent_chain(self):
+        from kki.genomik_manifest import build_genomik_manifest
+        obj = build_genomik_manifest()
+        self.assertIsNotNone(obj.parent)
+
+    # #706 EntwicklungsbiologiePakt
+    def test_kki_entwicklungsbiologie_pakt_builds_eintraege_count(self):
+        from kki.entwicklungsbiologie_pakt import build_entwicklungsbiologie_pakt
+        obj = build_entwicklungsbiologie_pakt()
+        self.assertGreaterEqual(len(obj.eintraege), 1)
+
+    def test_kki_entwicklungsbiologie_pakt_builds_gesperrt_weight_zero(self):
+        from kki.entwicklungsbiologie_pakt import build_entwicklungsbiologie_pakt, EntwicklungsbiologiePaktGeltung
+        obj = build_entwicklungsbiologie_pakt()
+        w = next(e.bio_weight for e in obj.eintraege if e.geltung == EntwicklungsbiologiePaktGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_entwicklungsbiologie_pakt_builds_tags_contain_entwicklungsbiologie(self):
+        from kki.entwicklungsbiologie_pakt import build_entwicklungsbiologie_pakt
+        obj = build_entwicklungsbiologie_pakt()
+        self.assertTrue(any("entwicklungsbiologie" in e.bio_tags for e in obj.eintraege))
+
+    def test_kki_entwicklungsbiologie_pakt_builds_tier_increases(self):
+        from kki.entwicklungsbiologie_pakt import build_entwicklungsbiologie_pakt, EntwicklungsbiologiePaktGeltung
+        obj = build_entwicklungsbiologie_pakt()
+        t_g = next(e.bio_tier for e in obj.eintraege if e.geltung == EntwicklungsbiologiePaktGeltung.GESPERRT)
+        t_a = next(e.bio_tier for e in obj.eintraege if e.geltung == EntwicklungsbiologiePaktGeltung.GRUNDLEGEND_ENTWICKLUNGSBIOLOGISCH)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_entwicklungsbiologie_pakt_builds_canonical_default(self):
+        from kki.entwicklungsbiologie_pakt import build_entwicklungsbiologie_pakt
+        obj = build_entwicklungsbiologie_pakt()
+        self.assertTrue(all(e.canonical for e in obj.eintraege))
+
+    def test_kki_entwicklungsbiologie_pakt_builds_ids_non_empty(self):
+        from kki.entwicklungsbiologie_pakt import build_entwicklungsbiologie_pakt
+        obj = build_entwicklungsbiologie_pakt()
+        self.assertTrue(all(len(e.bio_ids) > 0 for e in obj.eintraege))
+
+    def test_kki_entwicklungsbiologie_pakt_builds_entwicklungsbiologisch_geltung(self):
+        from kki.entwicklungsbiologie_pakt import build_entwicklungsbiologie_pakt, EntwicklungsbiologiePaktGeltung
+        obj = build_entwicklungsbiologie_pakt()
+        geltungen = [e.geltung for e in obj.eintraege]
+        self.assertIn(EntwicklungsbiologiePaktGeltung.ENTWICKLUNGSBIOLOGISCH, geltungen)
+
+    def test_kki_entwicklungsbiologie_pakt_builds_parent_chain(self):
+        from kki.entwicklungsbiologie_pakt import build_entwicklungsbiologie_pakt
+        obj = build_entwicklungsbiologie_pakt()
+        self.assertIsNotNone(obj.parent)
+
+    # #707 ImmunologieSenat
+    def test_kki_immunologie_senat_builds_normen_count(self):
+        from kki.immunologie_senat import build_immunologie_senat
+        obj = build_immunologie_senat()
+        self.assertGreaterEqual(len(obj.normen), 1)
+
+    def test_kki_immunologie_senat_builds_gesperrt_weight_zero(self):
+        from kki.immunologie_senat import build_immunologie_senat, ImmunologieSenatGeltung
+        obj = build_immunologie_senat()
+        w = next(n.bio_weight for n in obj.normen if n.geltung == ImmunologieSenatGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_immunologie_senat_builds_tags_contain_immunologie(self):
+        from kki.immunologie_senat import build_immunologie_senat
+        obj = build_immunologie_senat()
+        self.assertTrue(any("immunologie" in n.bio_tags for n in obj.normen))
+
+    def test_kki_immunologie_senat_builds_tier_increases(self):
+        from kki.immunologie_senat import build_immunologie_senat, ImmunologieSenatGeltung
+        obj = build_immunologie_senat()
+        t_g = next(n.bio_tier for n in obj.normen if n.geltung == ImmunologieSenatGeltung.GESPERRT)
+        t_a = next(n.bio_tier for n in obj.normen if n.geltung == ImmunologieSenatGeltung.GRUNDLEGEND_IMMUNOLOGISCH_AKTIV)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_immunologie_senat_builds_canonical_default(self):
+        from kki.immunologie_senat import build_immunologie_senat
+        obj = build_immunologie_senat()
+        self.assertTrue(all(n.canonical for n in obj.normen))
+
+    def test_kki_immunologie_senat_builds_ids_non_empty(self):
+        from kki.immunologie_senat import build_immunologie_senat
+        obj = build_immunologie_senat()
+        self.assertTrue(all(len(n.bio_ids) > 0 for n in obj.normen))
+
+    def test_kki_immunologie_senat_builds_immunologisch_aktiv_geltung(self):
+        from kki.immunologie_senat import build_immunologie_senat, ImmunologieSenatGeltung
+        obj = build_immunologie_senat()
+        geltungen = [n.geltung for n in obj.normen]
+        self.assertIn(ImmunologieSenatGeltung.IMMUNOLOGISCH_AKTIV, geltungen)
+
+    def test_kki_immunologie_senat_builds_parent_chain(self):
+        from kki.immunologie_senat import build_immunologie_senat
+        obj = build_immunologie_senat()
+        self.assertIsNotNone(obj.parent)
+
+    # #708 BiologieNorm (*_norm)
+    def test_kki_biologie_norm_builds_normen_count(self):
+        from kki.biologie_norm import build_biologie_norm
+        obj = build_biologie_norm()
+        self.assertGreaterEqual(len(obj.normen), 1)
+
+    def test_kki_biologie_norm_builds_gesperrt_weight_zero(self):
+        from kki.biologie_norm import build_biologie_norm, BiologieNormGeltung
+        obj = build_biologie_norm()
+        w = next(e.bio_norm_weight for e in obj.normen if e.geltung == BiologieNormGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_biologie_norm_builds_tags_contain_norm(self):
+        from kki.biologie_norm import build_biologie_norm
+        obj = build_biologie_norm()
+        self.assertTrue(any("norm" in e.bio_norm_tags for e in obj.normen))
+
+    def test_kki_biologie_norm_builds_tier_increases(self):
+        from kki.biologie_norm import build_biologie_norm, BiologieNormGeltung
+        obj = build_biologie_norm()
+        t_g = next(e.bio_norm_tier for e in obj.normen if e.geltung == BiologieNormGeltung.GESPERRT)
+        t_a = next(e.bio_norm_tier for e in obj.normen if e.geltung == BiologieNormGeltung.GRUNDLEGEND_BIO_NORMATIV)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_biologie_norm_builds_canonical_default(self):
+        from kki.biologie_norm import build_biologie_norm
+        obj = build_biologie_norm()
+        self.assertTrue(all(e.canonical for e in obj.normen))
+
+    def test_kki_biologie_norm_builds_ids_non_empty(self):
+        from kki.biologie_norm import build_biologie_norm
+        obj = build_biologie_norm()
+        self.assertTrue(all(len(e.bio_norm_ids) > 0 for e in obj.normen))
+
+    def test_kki_biologie_norm_builds_bio_normativ_geltung(self):
+        from kki.biologie_norm import build_biologie_norm, BiologieNormGeltung
+        obj = build_biologie_norm()
+        geltungen = [e.geltung for e in obj.normen]
+        self.assertIn(BiologieNormGeltung.BIO_NORMATIV, geltungen)
+
+    def test_kki_biologie_norm_builds_parent_chain(self):
+        from kki.biologie_norm import build_biologie_norm
+        obj = build_biologie_norm()
+        self.assertIsNotNone(obj.parent)
+
+    # #709 SynthetischeBiologieCharta
+    def test_kki_synthetische_biologie_charta_builds_normen_count(self):
+        from kki.synthetische_biologie_charta import build_synthetische_biologie_charta
+        obj = build_synthetische_biologie_charta()
+        self.assertGreaterEqual(len(obj.normen), 1)
+
+    def test_kki_synthetische_biologie_charta_builds_gesperrt_weight_zero(self):
+        from kki.synthetische_biologie_charta import build_synthetische_biologie_charta, SynthetischeBiologieChartaGeltung
+        obj = build_synthetische_biologie_charta()
+        w = next(n.bio_weight for n in obj.normen if n.geltung == SynthetischeBiologieChartaGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_synthetische_biologie_charta_builds_tags_contain_synthetische_biologie(self):
+        from kki.synthetische_biologie_charta import build_synthetische_biologie_charta
+        obj = build_synthetische_biologie_charta()
+        self.assertTrue(any("synthetische-biologie" in n.bio_tags for n in obj.normen))
+
+    def test_kki_synthetische_biologie_charta_builds_tier_increases(self):
+        from kki.synthetische_biologie_charta import build_synthetische_biologie_charta, SynthetischeBiologieChartaGeltung
+        obj = build_synthetische_biologie_charta()
+        t_g = next(n.bio_tier for n in obj.normen if n.geltung == SynthetischeBiologieChartaGeltung.GESPERRT)
+        t_a = next(n.bio_tier for n in obj.normen if n.geltung == SynthetischeBiologieChartaGeltung.GRUNDLEGEND_SYNTHETISCH_BIO_AKTIV)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_synthetische_biologie_charta_builds_canonical_default(self):
+        from kki.synthetische_biologie_charta import build_synthetische_biologie_charta
+        obj = build_synthetische_biologie_charta()
+        self.assertTrue(all(n.canonical for n in obj.normen))
+
+    def test_kki_synthetische_biologie_charta_builds_ids_non_empty(self):
+        from kki.synthetische_biologie_charta import build_synthetische_biologie_charta
+        obj = build_synthetische_biologie_charta()
+        self.assertTrue(all(len(n.bio_ids) > 0 for n in obj.normen))
+
+    def test_kki_synthetische_biologie_charta_builds_synthetisch_bio_aktiv_geltung(self):
+        from kki.synthetische_biologie_charta import build_synthetische_biologie_charta, SynthetischeBiologieChartaGeltung
+        obj = build_synthetische_biologie_charta()
+        geltungen = [n.geltung for n in obj.normen]
+        self.assertIn(SynthetischeBiologieChartaGeltung.SYNTHETISCH_BIO_AKTIV, geltungen)
+
+    def test_kki_synthetische_biologie_charta_builds_parent_chain(self):
+        from kki.synthetische_biologie_charta import build_synthetische_biologie_charta
+        obj = build_synthetische_biologie_charta()
+        self.assertIsNotNone(obj.parent)
+
+    # #710 BiologieVerfassung ⭐
+    def test_kki_biologie_verfassung_builds_gesperrt_schutz_norm(self):
+        from kki.biologie_verfassung import build_biologie_verfassung, BiologieVerfassungGeltung
+        obj = build_biologie_verfassung()
+        w = next(n.bio_weight for n in obj.normen if n.geltung == BiologieVerfassungGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_biologie_verfassung_aggregates_verfassung_signal(self):
+        from kki.biologie_verfassung import build_biologie_verfassung
+        obj = build_biologie_verfassung()
+        sig = obj.aggregates_verfassung_signal()
+        self.assertIn("verfassung_id", sig)
+        self.assertIn("total_weight", sig)
+        self.assertIn("norm_count", sig)
+        self.assertGreater(sig["norm_count"], 0)
+
+    def test_kki_biologie_verfassung_builds_tags_contain_biologie(self):
+        from kki.biologie_verfassung import build_biologie_verfassung
+        obj = build_biologie_verfassung()
+        self.assertTrue(any("biologie" in n.bio_tags for n in obj.normen))
+
+    def test_kki_biologie_verfassung_builds_tier_increases(self):
+        from kki.biologie_verfassung import build_biologie_verfassung, BiologieVerfassungGeltung
+        obj = build_biologie_verfassung()
+        t_g = next(n.bio_tier for n in obj.normen if n.geltung == BiologieVerfassungGeltung.GESPERRT)
+        t_a = next(n.bio_tier for n in obj.normen if n.geltung == BiologieVerfassungGeltung.GRUNDLEGEND_BIO_SOUVERAEN)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_biologie_verfassung_builds_canonical_default(self):
+        from kki.biologie_verfassung import build_biologie_verfassung
+        obj = build_biologie_verfassung()
+        self.assertTrue(all(n.canonical for n in obj.normen))
+
+    def test_kki_biologie_verfassung_builds_ids_non_empty(self):
+        from kki.biologie_verfassung import build_biologie_verfassung
+        obj = build_biologie_verfassung()
+        self.assertTrue(all(len(n.bio_ids) > 0 for n in obj.normen))
+
+    def test_kki_biologie_verfassung_builds_bio_souveraen_geltung(self):
+        from kki.biologie_verfassung import build_biologie_verfassung, BiologieVerfassungGeltung
+        obj = build_biologie_verfassung()
+        geltungen = [n.geltung for n in obj.normen]
+        self.assertIn(BiologieVerfassungGeltung.BIO_SOUVERAEN, geltungen)
+
+    def test_kki_biologie_verfassung_builds_parent_chain(self):
+        from kki.biologie_verfassung import build_biologie_verfassung
+        obj = build_biologie_verfassung()
+        self.assertIsNotNone(obj.parent)

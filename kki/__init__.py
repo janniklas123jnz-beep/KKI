@@ -3198,6 +3198,46 @@ from .geowissenschaft_verfassung import (
     GeowissenschaftVerfassungGeltung, GeowissenschaftVerfassungsNorm, GeowissenschaftVerfassungTyp, GeowissenschaftVerfassungProzedur,
     GeowissenschaftVerfassung, build_geowissenschaft_verfassung,
 )
+from .biologie_feld import (
+    BiologieFeldGeltung, BiologieFeldNorm, BiologieFeldTyp, BiologieFeldProzedur,
+    BiologieFeld, build_biologie_feld,
+)
+from .zellbiologie_register import (
+    ZellbiologieRegisterGeltung, ZellbiologieRegisterEintrag, ZellbiologieRegisterTyp, ZellbiologieRegisterProzedur,
+    ZellbiologieRegister, build_zellbiologie_register,
+)
+from .genetik_charta import (
+    GenetikChartaGeltung, GenetikChartaNorm, GenetikChartaTyp, GenetikChartaProzedur,
+    GenetikCharta, build_genetik_charta,
+)
+from .molekularbiologie_kodex import (
+    MolekularbiologieKodexGeltung, MolekularbiologieKodexEintrag, MolekularbiologieKodexTyp, MolekularbiologieKodexProzedur,
+    MolekularbiologieKodex, build_molekularbiologie_kodex,
+)
+from .genomik_manifest import (
+    GenomikManifestGeltung, GenomikManifestNorm, GenomikManifestTyp, GenomikManifestProzedur,
+    GenomikManifest, build_genomik_manifest,
+)
+from .entwicklungsbiologie_pakt import (
+    EntwicklungsbiologiePaktGeltung, EntwicklungsbiologiePaktEintrag, EntwicklungsbiologiePaktTyp, EntwicklungsbiologiePaktProzedur,
+    EntwicklungsbiologiePakt, build_entwicklungsbiologie_pakt,
+)
+from .immunologie_senat import (
+    ImmunologieSenatGeltung, ImmunologieSenatNorm, ImmunologieSenatTyp, ImmunologieSenatProzedur,
+    ImmunologieSenat, build_immunologie_senat,
+)
+from .biologie_norm import (
+    BiologieNormGeltung, BiologieNormEintrag, BiologieNormTyp, BiologieNormProzedur,
+    BiologieNormSatz, build_biologie_norm,
+)
+from .synthetische_biologie_charta import (
+    SynthetischeBiologieChartaGeltung, SynthetischeBiologieChartaNorm, SynthetischeBiologieChartaTyp, SynthetischeBiologieChartaProzedur,
+    SynthetischeBiologieCharta, build_synthetische_biologie_charta,
+)
+from .biologie_verfassung import (
+    BiologieVerfassungGeltung, BiologieVerfassungsNorm, BiologieVerfassungTyp, BiologieVerfassungProzedur,
+    BiologieVerfassung, build_biologie_verfassung,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -5169,4 +5209,24 @@ __all__ = [
     "PlanetologieCharta", "build_planetologie_charta",
     "GeowissenschaftVerfassungGeltung", "GeowissenschaftVerfassungsNorm", "GeowissenschaftVerfassungTyp", "GeowissenschaftVerfassungProzedur",
     "GeowissenschaftVerfassung", "build_geowissenschaft_verfassung",
+    "BiologieFeldGeltung", "BiologieFeldNorm", "BiologieFeldTyp", "BiologieFeldProzedur",
+    "BiologieFeld", "build_biologie_feld",
+    "ZellbiologieRegisterGeltung", "ZellbiologieRegisterEintrag", "ZellbiologieRegisterTyp", "ZellbiologieRegisterProzedur",
+    "ZellbiologieRegister", "build_zellbiologie_register",
+    "GenetikChartaGeltung", "GenetikChartaNorm", "GenetikChartaTyp", "GenetikChartaProzedur",
+    "GenetikCharta", "build_genetik_charta",
+    "MolekularbiologieKodexGeltung", "MolekularbiologieKodexEintrag", "MolekularbiologieKodexTyp", "MolekularbiologieKodexProzedur",
+    "MolekularbiologieKodex", "build_molekularbiologie_kodex",
+    "GenomikManifestGeltung", "GenomikManifestNorm", "GenomikManifestTyp", "GenomikManifestProzedur",
+    "GenomikManifest", "build_genomik_manifest",
+    "EntwicklungsbiologiePaktGeltung", "EntwicklungsbiologiePaktEintrag", "EntwicklungsbiologiePaktTyp", "EntwicklungsbiologiePaktProzedur",
+    "EntwicklungsbiologiePakt", "build_entwicklungsbiologie_pakt",
+    "ImmunologieSenatGeltung", "ImmunologieSenatNorm", "ImmunologieSenatTyp", "ImmunologieSenatProzedur",
+    "ImmunologieSenat", "build_immunologie_senat",
+    "BiologieNormGeltung", "BiologieNormEintrag", "BiologieNormTyp", "BiologieNormProzedur",
+    "BiologieNormSatz", "build_biologie_norm",
+    "SynthetischeBiologieChartaGeltung", "SynthetischeBiologieChartaNorm", "SynthetischeBiologieChartaTyp", "SynthetischeBiologieChartaProzedur",
+    "SynthetischeBiologieCharta", "build_synthetische_biologie_charta",
+    "BiologieVerfassungGeltung", "BiologieVerfassungsNorm", "BiologieVerfassungTyp", "BiologieVerfassungProzedur",
+    "BiologieVerfassung", "build_biologie_verfassung",
 ]

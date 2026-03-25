@@ -3565,6 +3565,47 @@ from .agrar_verfassung import (
     AgrarVerfassungGeltung, AgrarVerfassungsNorm, AgrarVerfassungTyp, AgrarVerfassungProzedur,
     AgrarVerfassung, build_agrar_verfassung,
 )
+# Block #791–800: Ozeanographie & Meeresforschung
+from .ozean_feld import (
+    OzeanFeldGeltung, OzeanFeldNorm, OzeanFeldTyp, OzeanFeldProzedur,
+    OzeanFeld, build_ozean_feld,
+)
+from .meeresstroemung_register import (
+    MeeresstroemungRegisterGeltung, MeeresstroemungRegisterEintrag, MeeresstroemungRegisterTyp, MeeresstroemungRegisterProzedur,
+    MeeresstroemungRegister, build_meeresstroemung_register,
+)
+from .tiefseekartierung_charta import (
+    TiefseekartierungChartaGeltung, TiefseekartierungChartaNorm, TiefseekartierungChartaTyp, TiefseekartierungChartaProzedur,
+    TiefseekartierungCharta, build_tiefseekartierung_charta,
+)
+from .marine_biologie_kodex import (
+    MarineBiologieKodexGeltung, MarineBiologieKodexEintrag, MarineBiologieKodexTyp, MarineBiologieKodexProzedur,
+    MarineBiologieKodex, build_marine_biologie_kodex,
+)
+from .ozeanchemie_manifest import (
+    OzeanchemieManifestGeltung, OzeanchemieManifestNorm, OzeanchemieManifestTyp, OzeanchemieManifestProzedur,
+    OzeanchemieManifest, build_ozeanchemie_manifest,
+)
+from .kuestenoekologie_pakt import (
+    KuestenoekologiePaktGeltung, KuestenoekologiePaktEintrag, KuestenoekologiePaktTyp, KuestenoekologiePaktProzedur,
+    KuestenoekologiePakt, build_kuestenoekologie_pakt,
+)
+from .ozeanographie_senat import (
+    OzeanographieSenatGeltung, OzeanographieSenatNorm, OzeanographieSenatTyp, OzeanographieSenatProzedur,
+    OzeanographieSenat, build_ozeanographie_senat,
+)
+from .ozean_norm import (
+    OzeanNormGeltung, OzeanNormEintrag, OzeanNormTyp, OzeanNormProzedur,
+    OzeanNormSatz, build_ozean_norm,
+)
+from .meeresforschung_charta import (
+    MeeresforschungChartaGeltung, MeeresforschungChartaNorm, MeeresforschungChartaTyp, MeeresforschungChartaProzedur,
+    MeeresforschungCharta, build_meeresforschung_charta,
+)
+from .ozean_verfassung import (
+    OzeanVerfassungGeltung, OzeanVerfassungsNorm, OzeanVerfassungTyp, OzeanVerfassungProzedur,
+    OzeanVerfassung, build_ozean_verfassung,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -5723,4 +5764,25 @@ __all__ = [
     "LebensmittelCharta", "build_lebensmittel_charta",
     "AgrarVerfassungGeltung", "AgrarVerfassungsNorm", "AgrarVerfassungTyp", "AgrarVerfassungProzedur",
     "AgrarVerfassung", "build_agrar_verfassung",
+    # Block #791–800: Ozeanographie & Meeresforschung
+    "OzeanFeldGeltung", "OzeanFeldNorm", "OzeanFeldTyp", "OzeanFeldProzedur",
+    "OzeanFeld", "build_ozean_feld",
+    "MeeresstroemungRegisterGeltung", "MeeresstroemungRegisterEintrag", "MeeresstroemungRegisterTyp", "MeeresstroemungRegisterProzedur",
+    "MeeresstroemungRegister", "build_meeresstroemung_register",
+    "TiefseekartierungChartaGeltung", "TiefseekartierungChartaNorm", "TiefseekartierungChartaTyp", "TiefseekartierungChartaProzedur",
+    "TiefseekartierungCharta", "build_tiefseekartierung_charta",
+    "MarineBiologieKodexGeltung", "MarineBiologieKodexEintrag", "MarineBiologieKodexTyp", "MarineBiologieKodexProzedur",
+    "MarineBiologieKodex", "build_marine_biologie_kodex",
+    "OzeanchemieManifestGeltung", "OzeanchemieManifestNorm", "OzeanchemieManifestTyp", "OzeanchemieManifestProzedur",
+    "OzeanchemieManifest", "build_ozeanchemie_manifest",
+    "KuestenoekologiePaktGeltung", "KuestenoekologiePaktEintrag", "KuestenoekologiePaktTyp", "KuestenoekologiePaktProzedur",
+    "KuestenoekologiePakt", "build_kuestenoekologie_pakt",
+    "OzeanographieSenatGeltung", "OzeanographieSenatNorm", "OzeanographieSenatTyp", "OzeanographieSenatProzedur",
+    "OzeanographieSenat", "build_ozeanographie_senat",
+    "OzeanNormGeltung", "OzeanNormEintrag", "OzeanNormTyp", "OzeanNormProzedur",
+    "OzeanNormSatz", "build_ozean_norm",
+    "MeeresforschungChartaGeltung", "MeeresforschungChartaNorm", "MeeresforschungChartaTyp", "MeeresforschungChartaProzedur",
+    "MeeresforschungCharta", "build_meeresforschung_charta",
+    "OzeanVerfassungGeltung", "OzeanVerfassungsNorm", "OzeanVerfassungTyp", "OzeanVerfassungProzedur",
+    "OzeanVerfassung", "build_ozean_verfassung",
 ]

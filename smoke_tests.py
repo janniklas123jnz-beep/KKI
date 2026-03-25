@@ -30016,3 +30016,367 @@ class SmokeTests(unittest.TestCase):
     def test_kki_agrar_verfassung_builds_parent_chain(self):
         from kki.agrar_verfassung import build_agrar_verfassung
         self.assertIsNotNone(build_agrar_verfassung().parent)
+
+    # ── Block #791–800: Ozeanographie & Meeresforschung ──────────────────────
+
+    def test_kki_ozean_feld_builds(self):
+        from kki.ozean_feld import build_ozean_feld
+        self.assertIsNotNone(build_ozean_feld())
+
+    def test_kki_ozean_feld_normen_count(self):
+        from kki.ozean_feld import build_ozean_feld
+        self.assertEqual(len(build_ozean_feld().normen), 5)
+
+    def test_kki_ozean_feld_weight_positive(self):
+        from kki.ozean_feld import build_ozean_feld
+        for n in build_ozean_feld().normen:
+            self.assertGreaterEqual(n.ozean_weight, 0.0)
+
+    def test_kki_ozean_feld_gesperrt_schutz_norm(self):
+        from kki.ozean_feld import build_ozean_feld, OzeanFeldGeltung
+        self.assertIn(OzeanFeldGeltung.GESPERRT, [n.geltung for n in build_ozean_feld().normen])
+
+    def test_kki_ozean_feld_tier_sequence(self):
+        from kki.ozean_feld import build_ozean_feld
+        tiers = [n.ozean_tier for n in build_ozean_feld().normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_ozean_feld_ids_not_empty(self):
+        from kki.ozean_feld import build_ozean_feld
+        for n in build_ozean_feld().normen:
+            self.assertTrue(len(n.ozean_ids) > 0)
+
+    def test_kki_ozean_feld_tags_contain_domain(self):
+        from kki.ozean_feld import build_ozean_feld
+        for n in build_ozean_feld().normen:
+            self.assertIn("ozean", n.ozean_tags)
+
+    def test_kki_ozean_feld_builds_parent_chain(self):
+        from kki.ozean_feld import build_ozean_feld
+        self.assertIsNotNone(build_ozean_feld().parent)
+
+    def test_kki_meeresstroemung_register_builds(self):
+        from kki.meeresstroemung_register import build_meeresstroemung_register
+        self.assertIsNotNone(build_meeresstroemung_register())
+
+    def test_kki_meeresstroemung_register_eintraege_count(self):
+        from kki.meeresstroemung_register import build_meeresstroemung_register
+        self.assertEqual(len(build_meeresstroemung_register().eintraege), 5)
+
+    def test_kki_meeresstroemung_register_weight_positive(self):
+        from kki.meeresstroemung_register import build_meeresstroemung_register
+        for e in build_meeresstroemung_register().eintraege:
+            self.assertGreaterEqual(e.ozean_weight, 0.0)
+
+    def test_kki_meeresstroemung_register_gesperrt_schutz_norm(self):
+        from kki.meeresstroemung_register import build_meeresstroemung_register, MeeresstroemungRegisterGeltung
+        self.assertIn(MeeresstroemungRegisterGeltung.GESPERRT, [e.geltung for e in build_meeresstroemung_register().eintraege])
+
+    def test_kki_meeresstroemung_register_tier_sequence(self):
+        from kki.meeresstroemung_register import build_meeresstroemung_register
+        tiers = [e.ozean_tier for e in build_meeresstroemung_register().eintraege]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_meeresstroemung_register_ids_not_empty(self):
+        from kki.meeresstroemung_register import build_meeresstroemung_register
+        for e in build_meeresstroemung_register().eintraege:
+            self.assertTrue(len(e.ozean_ids) > 0)
+
+    def test_kki_meeresstroemung_register_tags_contain_domain(self):
+        from kki.meeresstroemung_register import build_meeresstroemung_register
+        for e in build_meeresstroemung_register().eintraege:
+            self.assertIn("ozean", e.ozean_tags)
+
+    def test_kki_meeresstroemung_register_builds_parent_chain(self):
+        from kki.meeresstroemung_register import build_meeresstroemung_register
+        self.assertIsNotNone(build_meeresstroemung_register().parent)
+
+    def test_kki_tiefseekartierung_charta_builds(self):
+        from kki.tiefseekartierung_charta import build_tiefseekartierung_charta
+        self.assertIsNotNone(build_tiefseekartierung_charta())
+
+    def test_kki_tiefseekartierung_charta_normen_count(self):
+        from kki.tiefseekartierung_charta import build_tiefseekartierung_charta
+        self.assertEqual(len(build_tiefseekartierung_charta().normen), 5)
+
+    def test_kki_tiefseekartierung_charta_weight_positive(self):
+        from kki.tiefseekartierung_charta import build_tiefseekartierung_charta
+        for n in build_tiefseekartierung_charta().normen:
+            self.assertGreaterEqual(n.ozean_weight, 0.0)
+
+    def test_kki_tiefseekartierung_charta_gesperrt_schutz_norm(self):
+        from kki.tiefseekartierung_charta import build_tiefseekartierung_charta, TiefseekartierungChartaGeltung
+        self.assertIn(TiefseekartierungChartaGeltung.GESPERRT, [n.geltung for n in build_tiefseekartierung_charta().normen])
+
+    def test_kki_tiefseekartierung_charta_tier_sequence(self):
+        from kki.tiefseekartierung_charta import build_tiefseekartierung_charta
+        tiers = [n.ozean_tier for n in build_tiefseekartierung_charta().normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_tiefseekartierung_charta_ids_not_empty(self):
+        from kki.tiefseekartierung_charta import build_tiefseekartierung_charta
+        for n in build_tiefseekartierung_charta().normen:
+            self.assertTrue(len(n.ozean_ids) > 0)
+
+    def test_kki_tiefseekartierung_charta_tags_contain_domain(self):
+        from kki.tiefseekartierung_charta import build_tiefseekartierung_charta
+        for n in build_tiefseekartierung_charta().normen:
+            self.assertIn("ozean", n.ozean_tags)
+
+    def test_kki_tiefseekartierung_charta_builds_parent_chain(self):
+        from kki.tiefseekartierung_charta import build_tiefseekartierung_charta
+        self.assertIsNotNone(build_tiefseekartierung_charta().parent)
+
+    def test_kki_marine_biologie_kodex_builds(self):
+        from kki.marine_biologie_kodex import build_marine_biologie_kodex
+        self.assertIsNotNone(build_marine_biologie_kodex())
+
+    def test_kki_marine_biologie_kodex_eintraege_count(self):
+        from kki.marine_biologie_kodex import build_marine_biologie_kodex
+        self.assertEqual(len(build_marine_biologie_kodex().eintraege), 5)
+
+    def test_kki_marine_biologie_kodex_weight_positive(self):
+        from kki.marine_biologie_kodex import build_marine_biologie_kodex
+        for e in build_marine_biologie_kodex().eintraege:
+            self.assertGreaterEqual(e.ozean_weight, 0.0)
+
+    def test_kki_marine_biologie_kodex_gesperrt_schutz_norm(self):
+        from kki.marine_biologie_kodex import build_marine_biologie_kodex, MarineBiologieKodexGeltung
+        self.assertIn(MarineBiologieKodexGeltung.GESPERRT, [e.geltung for e in build_marine_biologie_kodex().eintraege])
+
+    def test_kki_marine_biologie_kodex_tier_sequence(self):
+        from kki.marine_biologie_kodex import build_marine_biologie_kodex
+        tiers = [e.ozean_tier for e in build_marine_biologie_kodex().eintraege]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_marine_biologie_kodex_ids_not_empty(self):
+        from kki.marine_biologie_kodex import build_marine_biologie_kodex
+        for e in build_marine_biologie_kodex().eintraege:
+            self.assertTrue(len(e.ozean_ids) > 0)
+
+    def test_kki_marine_biologie_kodex_tags_contain_domain(self):
+        from kki.marine_biologie_kodex import build_marine_biologie_kodex
+        for e in build_marine_biologie_kodex().eintraege:
+            self.assertIn("ozean", e.ozean_tags)
+
+    def test_kki_marine_biologie_kodex_builds_parent_chain(self):
+        from kki.marine_biologie_kodex import build_marine_biologie_kodex
+        self.assertIsNotNone(build_marine_biologie_kodex().parent)
+
+    def test_kki_ozeanchemie_manifest_builds(self):
+        from kki.ozeanchemie_manifest import build_ozeanchemie_manifest
+        self.assertIsNotNone(build_ozeanchemie_manifest())
+
+    def test_kki_ozeanchemie_manifest_normen_count(self):
+        from kki.ozeanchemie_manifest import build_ozeanchemie_manifest
+        self.assertEqual(len(build_ozeanchemie_manifest().normen), 5)
+
+    def test_kki_ozeanchemie_manifest_weight_positive(self):
+        from kki.ozeanchemie_manifest import build_ozeanchemie_manifest
+        for n in build_ozeanchemie_manifest().normen:
+            self.assertGreaterEqual(n.ozean_weight, 0.0)
+
+    def test_kki_ozeanchemie_manifest_gesperrt_schutz_norm(self):
+        from kki.ozeanchemie_manifest import build_ozeanchemie_manifest, OzeanchemieManifestGeltung
+        self.assertIn(OzeanchemieManifestGeltung.GESPERRT, [n.geltung for n in build_ozeanchemie_manifest().normen])
+
+    def test_kki_ozeanchemie_manifest_tier_sequence(self):
+        from kki.ozeanchemie_manifest import build_ozeanchemie_manifest
+        tiers = [n.ozean_tier for n in build_ozeanchemie_manifest().normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_ozeanchemie_manifest_ids_not_empty(self):
+        from kki.ozeanchemie_manifest import build_ozeanchemie_manifest
+        for n in build_ozeanchemie_manifest().normen:
+            self.assertTrue(len(n.ozean_ids) > 0)
+
+    def test_kki_ozeanchemie_manifest_tags_contain_domain(self):
+        from kki.ozeanchemie_manifest import build_ozeanchemie_manifest
+        for n in build_ozeanchemie_manifest().normen:
+            self.assertIn("ozean", n.ozean_tags)
+
+    def test_kki_ozeanchemie_manifest_builds_parent_chain(self):
+        from kki.ozeanchemie_manifest import build_ozeanchemie_manifest
+        self.assertIsNotNone(build_ozeanchemie_manifest().parent)
+
+    def test_kki_kuestenoekologie_pakt_builds(self):
+        from kki.kuestenoekologie_pakt import build_kuestenoekologie_pakt
+        self.assertIsNotNone(build_kuestenoekologie_pakt())
+
+    def test_kki_kuestenoekologie_pakt_eintraege_count(self):
+        from kki.kuestenoekologie_pakt import build_kuestenoekologie_pakt
+        self.assertEqual(len(build_kuestenoekologie_pakt().eintraege), 5)
+
+    def test_kki_kuestenoekologie_pakt_weight_positive(self):
+        from kki.kuestenoekologie_pakt import build_kuestenoekologie_pakt
+        for e in build_kuestenoekologie_pakt().eintraege:
+            self.assertGreaterEqual(e.ozean_weight, 0.0)
+
+    def test_kki_kuestenoekologie_pakt_gesperrt_schutz_norm(self):
+        from kki.kuestenoekologie_pakt import build_kuestenoekologie_pakt, KuestenoekologiePaktGeltung
+        self.assertIn(KuestenoekologiePaktGeltung.GESPERRT, [e.geltung for e in build_kuestenoekologie_pakt().eintraege])
+
+    def test_kki_kuestenoekologie_pakt_tier_sequence(self):
+        from kki.kuestenoekologie_pakt import build_kuestenoekologie_pakt
+        tiers = [e.ozean_tier for e in build_kuestenoekologie_pakt().eintraege]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_kuestenoekologie_pakt_ids_not_empty(self):
+        from kki.kuestenoekologie_pakt import build_kuestenoekologie_pakt
+        for e in build_kuestenoekologie_pakt().eintraege:
+            self.assertTrue(len(e.ozean_ids) > 0)
+
+    def test_kki_kuestenoekologie_pakt_tags_contain_domain(self):
+        from kki.kuestenoekologie_pakt import build_kuestenoekologie_pakt
+        for e in build_kuestenoekologie_pakt().eintraege:
+            self.assertIn("ozean", e.ozean_tags)
+
+    def test_kki_kuestenoekologie_pakt_builds_parent_chain(self):
+        from kki.kuestenoekologie_pakt import build_kuestenoekologie_pakt
+        self.assertIsNotNone(build_kuestenoekologie_pakt().parent)
+
+    def test_kki_ozeanographie_senat_builds(self):
+        from kki.ozeanographie_senat import build_ozeanographie_senat
+        self.assertIsNotNone(build_ozeanographie_senat())
+
+    def test_kki_ozeanographie_senat_normen_count(self):
+        from kki.ozeanographie_senat import build_ozeanographie_senat
+        self.assertEqual(len(build_ozeanographie_senat().normen), 5)
+
+    def test_kki_ozeanographie_senat_weight_positive(self):
+        from kki.ozeanographie_senat import build_ozeanographie_senat
+        for n in build_ozeanographie_senat().normen:
+            self.assertGreaterEqual(n.ozean_weight, 0.0)
+
+    def test_kki_ozeanographie_senat_gesperrt_schutz_norm(self):
+        from kki.ozeanographie_senat import build_ozeanographie_senat, OzeanographieSenatGeltung
+        self.assertIn(OzeanographieSenatGeltung.GESPERRT, [n.geltung for n in build_ozeanographie_senat().normen])
+
+    def test_kki_ozeanographie_senat_tier_sequence(self):
+        from kki.ozeanographie_senat import build_ozeanographie_senat
+        tiers = [n.ozean_tier for n in build_ozeanographie_senat().normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_ozeanographie_senat_ids_not_empty(self):
+        from kki.ozeanographie_senat import build_ozeanographie_senat
+        for n in build_ozeanographie_senat().normen:
+            self.assertTrue(len(n.ozean_ids) > 0)
+
+    def test_kki_ozeanographie_senat_tags_contain_domain(self):
+        from kki.ozeanographie_senat import build_ozeanographie_senat
+        for n in build_ozeanographie_senat().normen:
+            self.assertIn("ozean", n.ozean_tags)
+
+    def test_kki_ozeanographie_senat_builds_parent_chain(self):
+        from kki.ozeanographie_senat import build_ozeanographie_senat
+        self.assertIsNotNone(build_ozeanographie_senat().parent)
+
+    def test_kki_ozean_norm_builds(self):
+        from kki.ozean_norm import build_ozean_norm
+        self.assertIsNotNone(build_ozean_norm())
+
+    def test_kki_ozean_norm_normen_count(self):
+        from kki.ozean_norm import build_ozean_norm
+        self.assertEqual(len(build_ozean_norm().normen), 5)
+
+    def test_kki_ozean_norm_weight_positive(self):
+        from kki.ozean_norm import build_ozean_norm
+        for e in build_ozean_norm().normen:
+            self.assertGreaterEqual(e.ozean_norm_weight, 0.0)
+
+    def test_kki_ozean_norm_gesperrt_schutz_norm(self):
+        from kki.ozean_norm import build_ozean_norm, OzeanNormGeltung
+        self.assertIn(OzeanNormGeltung.GESPERRT, [e.geltung for e in build_ozean_norm().normen])
+
+    def test_kki_ozean_norm_tier_sequence(self):
+        from kki.ozean_norm import build_ozean_norm
+        tiers = [e.ozean_norm_tier for e in build_ozean_norm().normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_ozean_norm_ids_not_empty(self):
+        from kki.ozean_norm import build_ozean_norm
+        for e in build_ozean_norm().normen:
+            self.assertTrue(len(e.ozean_norm_ids) > 0)
+
+    def test_kki_ozean_norm_tags_contain_domain(self):
+        from kki.ozean_norm import build_ozean_norm
+        for e in build_ozean_norm().normen:
+            self.assertIn("ozean", e.ozean_norm_tags)
+
+    def test_kki_ozean_norm_builds_parent_chain(self):
+        from kki.ozean_norm import build_ozean_norm
+        self.assertIsNotNone(build_ozean_norm().parent)
+
+    def test_kki_meeresforschung_charta_builds(self):
+        from kki.meeresforschung_charta import build_meeresforschung_charta
+        self.assertIsNotNone(build_meeresforschung_charta())
+
+    def test_kki_meeresforschung_charta_normen_count(self):
+        from kki.meeresforschung_charta import build_meeresforschung_charta
+        self.assertEqual(len(build_meeresforschung_charta().normen), 5)
+
+    def test_kki_meeresforschung_charta_weight_positive(self):
+        from kki.meeresforschung_charta import build_meeresforschung_charta
+        for n in build_meeresforschung_charta().normen:
+            self.assertGreaterEqual(n.ozean_weight, 0.0)
+
+    def test_kki_meeresforschung_charta_gesperrt_schutz_norm(self):
+        from kki.meeresforschung_charta import build_meeresforschung_charta, MeeresforschungChartaGeltung
+        self.assertIn(MeeresforschungChartaGeltung.GESPERRT, [n.geltung for n in build_meeresforschung_charta().normen])
+
+    def test_kki_meeresforschung_charta_tier_sequence(self):
+        from kki.meeresforschung_charta import build_meeresforschung_charta
+        tiers = [n.ozean_tier for n in build_meeresforschung_charta().normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_meeresforschung_charta_ids_not_empty(self):
+        from kki.meeresforschung_charta import build_meeresforschung_charta
+        for n in build_meeresforschung_charta().normen:
+            self.assertTrue(len(n.ozean_ids) > 0)
+
+    def test_kki_meeresforschung_charta_tags_contain_domain(self):
+        from kki.meeresforschung_charta import build_meeresforschung_charta
+        for n in build_meeresforschung_charta().normen:
+            self.assertIn("ozean", n.ozean_tags)
+
+    def test_kki_meeresforschung_charta_builds_parent_chain(self):
+        from kki.meeresforschung_charta import build_meeresforschung_charta
+        self.assertIsNotNone(build_meeresforschung_charta().parent)
+
+    def test_kki_ozean_verfassung_builds(self):
+        from kki.ozean_verfassung import build_ozean_verfassung
+        self.assertIsNotNone(build_ozean_verfassung())
+
+    def test_kki_ozean_verfassung_normen_count(self):
+        from kki.ozean_verfassung import build_ozean_verfassung
+        self.assertEqual(len(build_ozean_verfassung().normen), 5)
+
+    def test_kki_ozean_verfassung_gesperrt_schutz_norm(self):
+        from kki.ozean_verfassung import build_ozean_verfassung, OzeanVerfassungGeltung
+        self.assertIn(OzeanVerfassungGeltung.GESPERRT, [n.geltung for n in build_ozean_verfassung().normen])
+
+    def test_kki_ozean_verfassung_aggregates_verfassung_signal(self):
+        from kki.ozean_verfassung import build_ozean_verfassung
+        sig = build_ozean_verfassung().aggregates_verfassung_signal()
+        self.assertEqual(sig["verfassung_id"], "ozean-verfassung-800")
+        self.assertGreater(sig["total_weight"], 0)
+        self.assertEqual(sig["norm_count"], 5)
+
+    def test_kki_ozean_verfassung_tier_sequence(self):
+        from kki.ozean_verfassung import build_ozean_verfassung
+        tiers = [n.ozean_tier for n in build_ozean_verfassung().normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_ozean_verfassung_ids_not_empty(self):
+        from kki.ozean_verfassung import build_ozean_verfassung
+        for n in build_ozean_verfassung().normen:
+            self.assertTrue(len(n.ozean_ids) > 0)
+
+    def test_kki_ozean_verfassung_tags_contain_domain(self):
+        from kki.ozean_verfassung import build_ozean_verfassung
+        for n in build_ozean_verfassung().normen:
+            self.assertIn("ozean", n.ozean_tags)
+
+    def test_kki_ozean_verfassung_builds_parent_chain(self):
+        from kki.ozean_verfassung import build_ozean_verfassung
+        self.assertIsNotNone(build_ozean_verfassung().parent)

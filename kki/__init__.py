@@ -3401,6 +3401,47 @@ from .klima_verfassung import (
     KlimaVerfassungGeltung, KlimaVerfassungsNorm, KlimaVerfassungTyp, KlimaVerfassungProzedur,
     KlimaVerfassung, build_klima_verfassung,
 )
+# Block #751–760: Statistik & Wahrscheinlichkeitstheorie
+from .statistik_feld import (
+    StatistikFeldGeltung, StatistikFeldNorm, StatistikFeldTyp, StatistikFeldProzedur,
+    StatistikFeld, build_statistik_feld,
+)
+from .wahrscheinlichkeit_register import (
+    WahrscheinlichkeitRegisterGeltung, WahrscheinlichkeitRegisterEintrag, WahrscheinlichkeitRegisterTyp, WahrscheinlichkeitRegisterProzedur,
+    WahrscheinlichkeitRegister, build_wahrscheinlichkeit_register,
+)
+from .bayes_charta import (
+    BayesChartaGeltung, BayesChartaNorm, BayesChartaTyp, BayesChartaProzedur,
+    BayesCharta, build_bayes_charta,
+)
+from .hypothesentest_kodex import (
+    HypothesentestKodexGeltung, HypothesentestKodexEintrag, HypothesentestKodexTyp, HypothesentestKodexProzedur,
+    HypothesentestKodex, build_hypothesentest_kodex,
+)
+from .regressions_manifest import (
+    RegressionsManifestGeltung, RegressionsManifestNorm, RegressionsManifestTyp, RegressionsManifestProzedur,
+    RegressionsManifest, build_regressions_manifest,
+)
+from .zeitreihen_pakt import (
+    ZeitreihenPaktGeltung, ZeitreihenPaktEintrag, ZeitreihenPaktTyp, ZeitreihenPaktProzedur,
+    ZeitreihenPakt, build_zeitreihen_pakt,
+)
+from .stochastik_senat import (
+    StochastikSenatGeltung, StochastikSenatNorm, StochastikSenatTyp, StochastikSenatProzedur,
+    StochastikSenat, build_stochastik_senat,
+)
+from .statistik_norm import (
+    StatistikNormGeltung, StatistikNormEintrag, StatistikNormTyp, StatistikNormProzedur,
+    StatistikNormSatz, build_statistik_norm,
+)
+from .inferenzstatistik_charta import (
+    InferenzstatistikChartaGeltung, InferenzstatistikChartaNorm, InferenzstatistikChartaTyp, InferenzstatistikChartaProzedur,
+    InferenzstatistikCharta, build_inferenzstatistik_charta,
+)
+from .statistik_verfassung import (
+    StatistikVerfassungGeltung, StatistikVerfassungsNorm, StatistikVerfassungTyp, StatistikVerfassungProzedur,
+    StatistikVerfassung, build_statistik_verfassung,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -5475,4 +5516,25 @@ __all__ = [
     "KlimaprognoseCharta", "build_klimaprognose_charta",
     "KlimaVerfassungGeltung", "KlimaVerfassungsNorm", "KlimaVerfassungTyp", "KlimaVerfassungProzedur",
     "KlimaVerfassung", "build_klima_verfassung",
+    # Block #751–760: Statistik & Wahrscheinlichkeitstheorie
+    "StatistikFeldGeltung", "StatistikFeldNorm", "StatistikFeldTyp", "StatistikFeldProzedur",
+    "StatistikFeld", "build_statistik_feld",
+    "WahrscheinlichkeitRegisterGeltung", "WahrscheinlichkeitRegisterEintrag", "WahrscheinlichkeitRegisterTyp", "WahrscheinlichkeitRegisterProzedur",
+    "WahrscheinlichkeitRegister", "build_wahrscheinlichkeit_register",
+    "BayesChartaGeltung", "BayesChartaNorm", "BayesChartaTyp", "BayesChartaProzedur",
+    "BayesCharta", "build_bayes_charta",
+    "HypothesentestKodexGeltung", "HypothesentestKodexEintrag", "HypothesentestKodexTyp", "HypothesentestKodexProzedur",
+    "HypothesentestKodex", "build_hypothesentest_kodex",
+    "RegressionsManifestGeltung", "RegressionsManifestNorm", "RegressionsManifestTyp", "RegressionsManifestProzedur",
+    "RegressionsManifest", "build_regressions_manifest",
+    "ZeitreihenPaktGeltung", "ZeitreihenPaktEintrag", "ZeitreihenPaktTyp", "ZeitreihenPaktProzedur",
+    "ZeitreihenPakt", "build_zeitreihen_pakt",
+    "StochastikSenatGeltung", "StochastikSenatNorm", "StochastikSenatTyp", "StochastikSenatProzedur",
+    "StochastikSenat", "build_stochastik_senat",
+    "StatistikNormGeltung", "StatistikNormEintrag", "StatistikNormTyp", "StatistikNormProzedur",
+    "StatistikNormSatz", "build_statistik_norm",
+    "InferenzstatistikChartaGeltung", "InferenzstatistikChartaNorm", "InferenzstatistikChartaTyp", "InferenzstatistikChartaProzedur",
+    "InferenzstatistikCharta", "build_inferenzstatistik_charta",
+    "StatistikVerfassungGeltung", "StatistikVerfassungsNorm", "StatistikVerfassungTyp", "StatistikVerfassungProzedur",
+    "StatistikVerfassung", "build_statistik_verfassung",
 ]

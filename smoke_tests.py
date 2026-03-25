@@ -28539,3 +28539,388 @@ class SmokeTests(unittest.TestCase):
         from kki.klima_verfassung import build_klima_verfassung
         obj = build_klima_verfassung()
         self.assertIsNotNone(obj.parent)
+
+    # #751 StatistikFeld
+    def test_kki_statistik_feld_builds_normen_count(self):
+        from kki.statistik_feld import build_statistik_feld
+        self.assertGreaterEqual(len(build_statistik_feld().normen), 1)
+
+    def test_kki_statistik_feld_builds_gesperrt_weight_zero(self):
+        from kki.statistik_feld import build_statistik_feld, StatistikFeldGeltung
+        obj = build_statistik_feld()
+        w = next(n.stat_weight for n in obj.normen if n.geltung == StatistikFeldGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_statistik_feld_builds_tags_contain_statistik(self):
+        from kki.statistik_feld import build_statistik_feld
+        self.assertTrue(any("statistik" in n.stat_tags for n in build_statistik_feld().normen))
+
+    def test_kki_statistik_feld_builds_tier_increases(self):
+        from kki.statistik_feld import build_statistik_feld, StatistikFeldGeltung
+        obj = build_statistik_feld()
+        t_g = next(n.stat_tier for n in obj.normen if n.geltung == StatistikFeldGeltung.GESPERRT)
+        t_a = next(n.stat_tier for n in obj.normen if n.geltung == StatistikFeldGeltung.GRUNDLEGEND_STATISTISCH)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_statistik_feld_builds_canonical_default(self):
+        from kki.statistik_feld import build_statistik_feld
+        self.assertTrue(all(n.canonical for n in build_statistik_feld().normen))
+
+    def test_kki_statistik_feld_builds_ids_non_empty(self):
+        from kki.statistik_feld import build_statistik_feld
+        self.assertTrue(all(len(n.stat_ids) > 0 for n in build_statistik_feld().normen))
+
+    def test_kki_statistik_feld_builds_statistisch_geltung(self):
+        from kki.statistik_feld import build_statistik_feld, StatistikFeldGeltung
+        self.assertIn(StatistikFeldGeltung.STATISTISCH, [n.geltung for n in build_statistik_feld().normen])
+
+    def test_kki_statistik_feld_builds_parent_chain(self):
+        from kki.statistik_feld import build_statistik_feld
+        self.assertIsNotNone(build_statistik_feld().parent)
+
+    # #752 WahrscheinlichkeitRegister
+    def test_kki_wahrscheinlichkeit_register_builds_eintraege_count(self):
+        from kki.wahrscheinlichkeit_register import build_wahrscheinlichkeit_register
+        self.assertGreaterEqual(len(build_wahrscheinlichkeit_register().eintraege), 1)
+
+    def test_kki_wahrscheinlichkeit_register_builds_gesperrt_weight_zero(self):
+        from kki.wahrscheinlichkeit_register import build_wahrscheinlichkeit_register, WahrscheinlichkeitRegisterGeltung
+        obj = build_wahrscheinlichkeit_register()
+        w = next(e.stat_weight for e in obj.eintraege if e.geltung == WahrscheinlichkeitRegisterGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_wahrscheinlichkeit_register_builds_tags_contain_wahrscheinlichkeit(self):
+        from kki.wahrscheinlichkeit_register import build_wahrscheinlichkeit_register
+        self.assertTrue(any("wahrscheinlichkeit" in e.stat_tags for e in build_wahrscheinlichkeit_register().eintraege))
+
+    def test_kki_wahrscheinlichkeit_register_builds_tier_increases(self):
+        from kki.wahrscheinlichkeit_register import build_wahrscheinlichkeit_register, WahrscheinlichkeitRegisterGeltung
+        obj = build_wahrscheinlichkeit_register()
+        t_g = next(e.stat_tier for e in obj.eintraege if e.geltung == WahrscheinlichkeitRegisterGeltung.GESPERRT)
+        t_a = next(e.stat_tier for e in obj.eintraege if e.geltung == WahrscheinlichkeitRegisterGeltung.GRUNDLEGEND_PROBABILISTISCH)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_wahrscheinlichkeit_register_builds_canonical_default(self):
+        from kki.wahrscheinlichkeit_register import build_wahrscheinlichkeit_register
+        self.assertTrue(all(e.canonical for e in build_wahrscheinlichkeit_register().eintraege))
+
+    def test_kki_wahrscheinlichkeit_register_builds_ids_non_empty(self):
+        from kki.wahrscheinlichkeit_register import build_wahrscheinlichkeit_register
+        self.assertTrue(all(len(e.stat_ids) > 0 for e in build_wahrscheinlichkeit_register().eintraege))
+
+    def test_kki_wahrscheinlichkeit_register_builds_probabilistisch_geltung(self):
+        from kki.wahrscheinlichkeit_register import build_wahrscheinlichkeit_register, WahrscheinlichkeitRegisterGeltung
+        self.assertIn(WahrscheinlichkeitRegisterGeltung.PROBABILISTISCH, [e.geltung for e in build_wahrscheinlichkeit_register().eintraege])
+
+    def test_kki_wahrscheinlichkeit_register_builds_parent_chain(self):
+        from kki.wahrscheinlichkeit_register import build_wahrscheinlichkeit_register
+        self.assertIsNotNone(build_wahrscheinlichkeit_register().parent)
+
+    # #753 BayesCharta
+    def test_kki_bayes_charta_builds_normen_count(self):
+        from kki.bayes_charta import build_bayes_charta
+        self.assertGreaterEqual(len(build_bayes_charta().normen), 1)
+
+    def test_kki_bayes_charta_builds_gesperrt_weight_zero(self):
+        from kki.bayes_charta import build_bayes_charta, BayesChartaGeltung
+        obj = build_bayes_charta()
+        w = next(n.stat_weight for n in obj.normen if n.geltung == BayesChartaGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_bayes_charta_builds_tags_contain_bayes(self):
+        from kki.bayes_charta import build_bayes_charta
+        self.assertTrue(any("bayes" in n.stat_tags for n in build_bayes_charta().normen))
+
+    def test_kki_bayes_charta_builds_tier_increases(self):
+        from kki.bayes_charta import build_bayes_charta, BayesChartaGeltung
+        obj = build_bayes_charta()
+        t_g = next(n.stat_tier for n in obj.normen if n.geltung == BayesChartaGeltung.GESPERRT)
+        t_a = next(n.stat_tier for n in obj.normen if n.geltung == BayesChartaGeltung.GRUNDLEGEND_BAYESIANISCH)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_bayes_charta_builds_canonical_default(self):
+        from kki.bayes_charta import build_bayes_charta
+        self.assertTrue(all(n.canonical for n in build_bayes_charta().normen))
+
+    def test_kki_bayes_charta_builds_ids_non_empty(self):
+        from kki.bayes_charta import build_bayes_charta
+        self.assertTrue(all(len(n.stat_ids) > 0 for n in build_bayes_charta().normen))
+
+    def test_kki_bayes_charta_builds_bayesianisch_geltung(self):
+        from kki.bayes_charta import build_bayes_charta, BayesChartaGeltung
+        self.assertIn(BayesChartaGeltung.BAYESIANISCH, [n.geltung for n in build_bayes_charta().normen])
+
+    def test_kki_bayes_charta_builds_parent_chain(self):
+        from kki.bayes_charta import build_bayes_charta
+        self.assertIsNotNone(build_bayes_charta().parent)
+
+    # #754 HypothesentestKodex
+    def test_kki_hypothesentest_kodex_builds_eintraege_count(self):
+        from kki.hypothesentest_kodex import build_hypothesentest_kodex
+        self.assertGreaterEqual(len(build_hypothesentest_kodex().eintraege), 1)
+
+    def test_kki_hypothesentest_kodex_builds_gesperrt_weight_zero(self):
+        from kki.hypothesentest_kodex import build_hypothesentest_kodex, HypothesentestKodexGeltung
+        obj = build_hypothesentest_kodex()
+        w = next(e.stat_weight for e in obj.eintraege if e.geltung == HypothesentestKodexGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_hypothesentest_kodex_builds_tags_contain_hypothesentest(self):
+        from kki.hypothesentest_kodex import build_hypothesentest_kodex
+        self.assertTrue(any("hypothesentest" in e.stat_tags for e in build_hypothesentest_kodex().eintraege))
+
+    def test_kki_hypothesentest_kodex_builds_tier_increases(self):
+        from kki.hypothesentest_kodex import build_hypothesentest_kodex, HypothesentestKodexGeltung
+        obj = build_hypothesentest_kodex()
+        t_g = next(e.stat_tier for e in obj.eintraege if e.geltung == HypothesentestKodexGeltung.GESPERRT)
+        t_a = next(e.stat_tier for e in obj.eintraege if e.geltung == HypothesentestKodexGeltung.GRUNDLEGEND_HYPOTHETISCH)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_hypothesentest_kodex_builds_canonical_default(self):
+        from kki.hypothesentest_kodex import build_hypothesentest_kodex
+        self.assertTrue(all(e.canonical for e in build_hypothesentest_kodex().eintraege))
+
+    def test_kki_hypothesentest_kodex_builds_ids_non_empty(self):
+        from kki.hypothesentest_kodex import build_hypothesentest_kodex
+        self.assertTrue(all(len(e.stat_ids) > 0 for e in build_hypothesentest_kodex().eintraege))
+
+    def test_kki_hypothesentest_kodex_builds_hypothetisch_geltung(self):
+        from kki.hypothesentest_kodex import build_hypothesentest_kodex, HypothesentestKodexGeltung
+        self.assertIn(HypothesentestKodexGeltung.HYPOTHETISCH, [e.geltung for e in build_hypothesentest_kodex().eintraege])
+
+    def test_kki_hypothesentest_kodex_builds_parent_chain(self):
+        from kki.hypothesentest_kodex import build_hypothesentest_kodex
+        self.assertIsNotNone(build_hypothesentest_kodex().parent)
+
+    # #755 RegressionsManifest
+    def test_kki_regressions_manifest_builds_normen_count(self):
+        from kki.regressions_manifest import build_regressions_manifest
+        self.assertGreaterEqual(len(build_regressions_manifest().normen), 1)
+
+    def test_kki_regressions_manifest_builds_gesperrt_weight_zero(self):
+        from kki.regressions_manifest import build_regressions_manifest, RegressionsManifestGeltung
+        obj = build_regressions_manifest()
+        w = next(n.stat_weight for n in obj.normen if n.geltung == RegressionsManifestGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_regressions_manifest_builds_tags_contain_regression(self):
+        from kki.regressions_manifest import build_regressions_manifest
+        self.assertTrue(any("regression" in n.stat_tags for n in build_regressions_manifest().normen))
+
+    def test_kki_regressions_manifest_builds_tier_increases(self):
+        from kki.regressions_manifest import build_regressions_manifest, RegressionsManifestGeltung
+        obj = build_regressions_manifest()
+        t_g = next(n.stat_tier for n in obj.normen if n.geltung == RegressionsManifestGeltung.GESPERRT)
+        t_a = next(n.stat_tier for n in obj.normen if n.geltung == RegressionsManifestGeltung.GRUNDLEGEND_REGRESSIV)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_regressions_manifest_builds_canonical_default(self):
+        from kki.regressions_manifest import build_regressions_manifest
+        self.assertTrue(all(n.canonical for n in build_regressions_manifest().normen))
+
+    def test_kki_regressions_manifest_builds_ids_non_empty(self):
+        from kki.regressions_manifest import build_regressions_manifest
+        self.assertTrue(all(len(n.stat_ids) > 0 for n in build_regressions_manifest().normen))
+
+    def test_kki_regressions_manifest_builds_regressiv_geltung(self):
+        from kki.regressions_manifest import build_regressions_manifest, RegressionsManifestGeltung
+        self.assertIn(RegressionsManifestGeltung.REGRESSIV, [n.geltung for n in build_regressions_manifest().normen])
+
+    def test_kki_regressions_manifest_builds_parent_chain(self):
+        from kki.regressions_manifest import build_regressions_manifest
+        self.assertIsNotNone(build_regressions_manifest().parent)
+
+    # #756 ZeitreihenPakt
+    def test_kki_zeitreihen_pakt_builds_eintraege_count(self):
+        from kki.zeitreihen_pakt import build_zeitreihen_pakt
+        self.assertGreaterEqual(len(build_zeitreihen_pakt().eintraege), 1)
+
+    def test_kki_zeitreihen_pakt_builds_gesperrt_weight_zero(self):
+        from kki.zeitreihen_pakt import build_zeitreihen_pakt, ZeitreihenPaktGeltung
+        obj = build_zeitreihen_pakt()
+        w = next(e.stat_weight for e in obj.eintraege if e.geltung == ZeitreihenPaktGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_zeitreihen_pakt_builds_tags_contain_zeitreihen(self):
+        from kki.zeitreihen_pakt import build_zeitreihen_pakt
+        self.assertTrue(any("zeitreihen" in e.stat_tags for e in build_zeitreihen_pakt().eintraege))
+
+    def test_kki_zeitreihen_pakt_builds_tier_increases(self):
+        from kki.zeitreihen_pakt import build_zeitreihen_pakt, ZeitreihenPaktGeltung
+        obj = build_zeitreihen_pakt()
+        t_g = next(e.stat_tier for e in obj.eintraege if e.geltung == ZeitreihenPaktGeltung.GESPERRT)
+        t_a = next(e.stat_tier for e in obj.eintraege if e.geltung == ZeitreihenPaktGeltung.GRUNDLEGEND_ZEITREIHENHAFT)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_zeitreihen_pakt_builds_canonical_default(self):
+        from kki.zeitreihen_pakt import build_zeitreihen_pakt
+        self.assertTrue(all(e.canonical for e in build_zeitreihen_pakt().eintraege))
+
+    def test_kki_zeitreihen_pakt_builds_ids_non_empty(self):
+        from kki.zeitreihen_pakt import build_zeitreihen_pakt
+        self.assertTrue(all(len(e.stat_ids) > 0 for e in build_zeitreihen_pakt().eintraege))
+
+    def test_kki_zeitreihen_pakt_builds_zeitreihenhaft_geltung(self):
+        from kki.zeitreihen_pakt import build_zeitreihen_pakt, ZeitreihenPaktGeltung
+        self.assertIn(ZeitreihenPaktGeltung.ZEITREIHENHAFT, [e.geltung for e in build_zeitreihen_pakt().eintraege])
+
+    def test_kki_zeitreihen_pakt_builds_parent_chain(self):
+        from kki.zeitreihen_pakt import build_zeitreihen_pakt
+        self.assertIsNotNone(build_zeitreihen_pakt().parent)
+
+    # #757 StochastikSenat
+    def test_kki_stochastik_senat_builds_normen_count(self):
+        from kki.stochastik_senat import build_stochastik_senat
+        self.assertGreaterEqual(len(build_stochastik_senat().normen), 1)
+
+    def test_kki_stochastik_senat_builds_gesperrt_weight_zero(self):
+        from kki.stochastik_senat import build_stochastik_senat, StochastikSenatGeltung
+        obj = build_stochastik_senat()
+        w = next(n.stat_weight for n in obj.normen if n.geltung == StochastikSenatGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_stochastik_senat_builds_tags_contain_stochastik(self):
+        from kki.stochastik_senat import build_stochastik_senat
+        self.assertTrue(any("stochastik" in n.stat_tags for n in build_stochastik_senat().normen))
+
+    def test_kki_stochastik_senat_builds_tier_increases(self):
+        from kki.stochastik_senat import build_stochastik_senat, StochastikSenatGeltung
+        obj = build_stochastik_senat()
+        t_g = next(n.stat_tier for n in obj.normen if n.geltung == StochastikSenatGeltung.GESPERRT)
+        t_a = next(n.stat_tier for n in obj.normen if n.geltung == StochastikSenatGeltung.GRUNDLEGEND_STOCHASTISCH)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_stochastik_senat_builds_canonical_default(self):
+        from kki.stochastik_senat import build_stochastik_senat
+        self.assertTrue(all(n.canonical for n in build_stochastik_senat().normen))
+
+    def test_kki_stochastik_senat_builds_ids_non_empty(self):
+        from kki.stochastik_senat import build_stochastik_senat
+        self.assertTrue(all(len(n.stat_ids) > 0 for n in build_stochastik_senat().normen))
+
+    def test_kki_stochastik_senat_builds_stochastisch_geltung(self):
+        from kki.stochastik_senat import build_stochastik_senat, StochastikSenatGeltung
+        self.assertIn(StochastikSenatGeltung.STOCHASTISCH, [n.geltung for n in build_stochastik_senat().normen])
+
+    def test_kki_stochastik_senat_builds_parent_chain(self):
+        from kki.stochastik_senat import build_stochastik_senat
+        self.assertIsNotNone(build_stochastik_senat().parent)
+
+    # #758 StatistikNorm
+    def test_kki_statistik_norm_builds_normen_count(self):
+        from kki.statistik_norm import build_statistik_norm
+        self.assertGreaterEqual(len(build_statistik_norm().normen), 1)
+
+    def test_kki_statistik_norm_builds_gesperrt_weight_zero(self):
+        from kki.statistik_norm import build_statistik_norm, StatistikNormGeltung
+        obj = build_statistik_norm()
+        w = next(e.stat_norm_weight for e in obj.normen if e.geltung == StatistikNormGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_statistik_norm_builds_tags_contain_norm(self):
+        from kki.statistik_norm import build_statistik_norm
+        self.assertTrue(any("norm" in e.stat_norm_tags for e in build_statistik_norm().normen))
+
+    def test_kki_statistik_norm_builds_tier_increases(self):
+        from kki.statistik_norm import build_statistik_norm, StatistikNormGeltung
+        obj = build_statistik_norm()
+        t_g = next(e.stat_norm_tier for e in obj.normen if e.geltung == StatistikNormGeltung.GESPERRT)
+        t_a = next(e.stat_norm_tier for e in obj.normen if e.geltung == StatistikNormGeltung.GRUNDLEGEND_STAT_NORMATIV)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_statistik_norm_builds_canonical_default(self):
+        from kki.statistik_norm import build_statistik_norm
+        self.assertTrue(all(e.canonical for e in build_statistik_norm().normen))
+
+    def test_kki_statistik_norm_builds_ids_non_empty(self):
+        from kki.statistik_norm import build_statistik_norm
+        self.assertTrue(all(len(e.stat_norm_ids) > 0 for e in build_statistik_norm().normen))
+
+    def test_kki_statistik_norm_builds_stat_normativ_geltung(self):
+        from kki.statistik_norm import build_statistik_norm, StatistikNormGeltung
+        self.assertIn(StatistikNormGeltung.STAT_NORMATIV, [e.geltung for e in build_statistik_norm().normen])
+
+    def test_kki_statistik_norm_builds_parent_chain(self):
+        from kki.statistik_norm import build_statistik_norm
+        self.assertIsNotNone(build_statistik_norm().parent)
+
+    # #759 InferenzstatistikCharta
+    def test_kki_inferenzstatistik_charta_builds_normen_count(self):
+        from kki.inferenzstatistik_charta import build_inferenzstatistik_charta
+        self.assertGreaterEqual(len(build_inferenzstatistik_charta().normen), 1)
+
+    def test_kki_inferenzstatistik_charta_builds_gesperrt_weight_zero(self):
+        from kki.inferenzstatistik_charta import build_inferenzstatistik_charta, InferenzstatistikChartaGeltung
+        obj = build_inferenzstatistik_charta()
+        w = next(n.stat_weight for n in obj.normen if n.geltung == InferenzstatistikChartaGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_inferenzstatistik_charta_builds_tags_contain_inferenzstatistik(self):
+        from kki.inferenzstatistik_charta import build_inferenzstatistik_charta
+        self.assertTrue(any("inferenzstatistik" in n.stat_tags for n in build_inferenzstatistik_charta().normen))
+
+    def test_kki_inferenzstatistik_charta_builds_tier_increases(self):
+        from kki.inferenzstatistik_charta import build_inferenzstatistik_charta, InferenzstatistikChartaGeltung
+        obj = build_inferenzstatistik_charta()
+        t_g = next(n.stat_tier for n in obj.normen if n.geltung == InferenzstatistikChartaGeltung.GESPERRT)
+        t_a = next(n.stat_tier for n in obj.normen if n.geltung == InferenzstatistikChartaGeltung.GRUNDLEGEND_INFERENZIELL)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_inferenzstatistik_charta_builds_canonical_default(self):
+        from kki.inferenzstatistik_charta import build_inferenzstatistik_charta
+        self.assertTrue(all(n.canonical for n in build_inferenzstatistik_charta().normen))
+
+    def test_kki_inferenzstatistik_charta_builds_ids_non_empty(self):
+        from kki.inferenzstatistik_charta import build_inferenzstatistik_charta
+        self.assertTrue(all(len(n.stat_ids) > 0 for n in build_inferenzstatistik_charta().normen))
+
+    def test_kki_inferenzstatistik_charta_builds_inferenziell_geltung(self):
+        from kki.inferenzstatistik_charta import build_inferenzstatistik_charta, InferenzstatistikChartaGeltung
+        self.assertIn(InferenzstatistikChartaGeltung.INFERENZIELL, [n.geltung for n in build_inferenzstatistik_charta().normen])
+
+    def test_kki_inferenzstatistik_charta_builds_parent_chain(self):
+        from kki.inferenzstatistik_charta import build_inferenzstatistik_charta
+        self.assertIsNotNone(build_inferenzstatistik_charta().parent)
+
+    # #760 StatistikVerfassung ⭐
+    def test_kki_statistik_verfassung_builds_gesperrt_schutz_norm(self):
+        from kki.statistik_verfassung import build_statistik_verfassung, StatistikVerfassungGeltung
+        obj = build_statistik_verfassung()
+        w = next(n.stat_weight for n in obj.normen if n.geltung == StatistikVerfassungGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_statistik_verfassung_aggregates_verfassung_signal(self):
+        from kki.statistik_verfassung import build_statistik_verfassung
+        obj = build_statistik_verfassung()
+        sig = obj.aggregates_verfassung_signal()
+        self.assertIn("verfassung_id", sig)
+        self.assertIn("total_weight", sig)
+        self.assertIn("norm_count", sig)
+        self.assertGreater(sig["norm_count"], 0)
+
+    def test_kki_statistik_verfassung_builds_tags_contain_statistik(self):
+        from kki.statistik_verfassung import build_statistik_verfassung
+        self.assertTrue(any("statistik" in n.stat_tags for n in build_statistik_verfassung().normen))
+
+    def test_kki_statistik_verfassung_builds_tier_increases(self):
+        from kki.statistik_verfassung import build_statistik_verfassung, StatistikVerfassungGeltung
+        obj = build_statistik_verfassung()
+        t_g = next(n.stat_tier for n in obj.normen if n.geltung == StatistikVerfassungGeltung.GESPERRT)
+        t_a = next(n.stat_tier for n in obj.normen if n.geltung == StatistikVerfassungGeltung.GRUNDLEGEND_STAT_SOUVERAEN)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_statistik_verfassung_builds_canonical_default(self):
+        from kki.statistik_verfassung import build_statistik_verfassung
+        self.assertTrue(all(n.canonical for n in build_statistik_verfassung().normen))
+
+    def test_kki_statistik_verfassung_builds_ids_non_empty(self):
+        from kki.statistik_verfassung import build_statistik_verfassung
+        self.assertTrue(all(len(n.stat_ids) > 0 for n in build_statistik_verfassung().normen))
+
+    def test_kki_statistik_verfassung_builds_stat_souveraen_geltung(self):
+        from kki.statistik_verfassung import build_statistik_verfassung, StatistikVerfassungGeltung
+        self.assertIn(StatistikVerfassungGeltung.STAT_SOUVERAEN, [n.geltung for n in build_statistik_verfassung().normen])
+
+    def test_kki_statistik_verfassung_builds_parent_chain(self):
+        from kki.statistik_verfassung import build_statistik_verfassung
+        self.assertIsNotNone(build_statistik_verfassung().parent)

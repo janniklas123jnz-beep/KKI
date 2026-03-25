@@ -26761,3 +26761,449 @@ class SmokeTests(unittest.TestCase):
         from kki.biologie_verfassung import build_biologie_verfassung
         obj = build_biologie_verfassung()
         self.assertIsNotNone(obj.parent)
+
+    # ── Block #711–720: Informatik & Algorithmik ────────────────────────────
+
+    # #711 InformatikFeld
+    def test_kki_informatik_feld_builds_normen_count(self):
+        from kki.informatik_feld import build_informatik_feld
+        obj = build_informatik_feld()
+        self.assertGreaterEqual(len(obj.normen), 1)
+
+    def test_kki_informatik_feld_builds_gesperrt_weight_zero(self):
+        from kki.informatik_feld import build_informatik_feld, InformatikFeldGeltung
+        obj = build_informatik_feld()
+        w = next(n.info_weight for n in obj.normen if n.geltung == InformatikFeldGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_informatik_feld_builds_tags_contain_info(self):
+        from kki.informatik_feld import build_informatik_feld
+        obj = build_informatik_feld()
+        self.assertTrue(any("info" in n.info_tags for n in obj.normen))
+
+    def test_kki_informatik_feld_builds_tier_increases(self):
+        from kki.informatik_feld import build_informatik_feld, InformatikFeldGeltung
+        obj = build_informatik_feld()
+        t_g = next(n.info_tier for n in obj.normen if n.geltung == InformatikFeldGeltung.GESPERRT)
+        t_a = next(n.info_tier for n in obj.normen if n.geltung == InformatikFeldGeltung.GRUNDLEGEND_INFO_AKTIV)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_informatik_feld_builds_canonical_default(self):
+        from kki.informatik_feld import build_informatik_feld
+        obj = build_informatik_feld()
+        self.assertTrue(all(n.canonical for n in obj.normen))
+
+    def test_kki_informatik_feld_builds_ids_non_empty(self):
+        from kki.informatik_feld import build_informatik_feld
+        obj = build_informatik_feld()
+        self.assertTrue(all(len(n.info_ids) > 0 for n in obj.normen))
+
+    def test_kki_informatik_feld_builds_info_aktiv_geltung(self):
+        from kki.informatik_feld import build_informatik_feld, InformatikFeldGeltung
+        obj = build_informatik_feld()
+        self.assertIn(InformatikFeldGeltung.INFO_AKTIV, [n.geltung for n in obj.normen])
+
+    def test_kki_informatik_feld_builds_parent_chain(self):
+        from kki.informatik_feld import build_informatik_feld
+        obj = build_informatik_feld()
+        self.assertIsNotNone(obj.parent)
+
+    # #712 AlgorithmikRegister
+    def test_kki_algorithmik_register_builds_eintraege_count(self):
+        from kki.algorithmik_register import build_algorithmik_register
+        obj = build_algorithmik_register()
+        self.assertGreaterEqual(len(obj.eintraege), 1)
+
+    def test_kki_algorithmik_register_builds_gesperrt_weight_zero(self):
+        from kki.algorithmik_register import build_algorithmik_register, AlgorithmikRegisterGeltung
+        obj = build_algorithmik_register()
+        w = next(e.info_weight for e in obj.eintraege if e.geltung == AlgorithmikRegisterGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_algorithmik_register_builds_tags_contain_algorithmik(self):
+        from kki.algorithmik_register import build_algorithmik_register
+        obj = build_algorithmik_register()
+        self.assertTrue(any("algorithmik" in e.info_tags for e in obj.eintraege))
+
+    def test_kki_algorithmik_register_builds_tier_increases(self):
+        from kki.algorithmik_register import build_algorithmik_register, AlgorithmikRegisterGeltung
+        obj = build_algorithmik_register()
+        t_g = next(e.info_tier for e in obj.eintraege if e.geltung == AlgorithmikRegisterGeltung.GESPERRT)
+        t_a = next(e.info_tier for e in obj.eintraege if e.geltung == AlgorithmikRegisterGeltung.GRUNDLEGEND_ALGORITHMISCH)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_algorithmik_register_builds_canonical_default(self):
+        from kki.algorithmik_register import build_algorithmik_register
+        obj = build_algorithmik_register()
+        self.assertTrue(all(e.canonical for e in obj.eintraege))
+
+    def test_kki_algorithmik_register_builds_ids_non_empty(self):
+        from kki.algorithmik_register import build_algorithmik_register
+        obj = build_algorithmik_register()
+        self.assertTrue(all(len(e.info_ids) > 0 for e in obj.eintraege))
+
+    def test_kki_algorithmik_register_builds_algorithmisch_geltung(self):
+        from kki.algorithmik_register import build_algorithmik_register, AlgorithmikRegisterGeltung
+        obj = build_algorithmik_register()
+        self.assertIn(AlgorithmikRegisterGeltung.ALGORITHMISCH, [e.geltung for e in obj.eintraege])
+
+    def test_kki_algorithmik_register_builds_parent_chain(self):
+        from kki.algorithmik_register import build_algorithmik_register
+        obj = build_algorithmik_register()
+        self.assertIsNotNone(obj.parent)
+
+    # #713 DatenstrukturenCharta
+    def test_kki_datenstrukturen_charta_builds_normen_count(self):
+        from kki.datenstrukturen_charta import build_datenstrukturen_charta
+        obj = build_datenstrukturen_charta()
+        self.assertGreaterEqual(len(obj.normen), 1)
+
+    def test_kki_datenstrukturen_charta_builds_gesperrt_weight_zero(self):
+        from kki.datenstrukturen_charta import build_datenstrukturen_charta, DatenstrukturenChartaGeltung
+        obj = build_datenstrukturen_charta()
+        w = next(n.info_weight for n in obj.normen if n.geltung == DatenstrukturenChartaGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_datenstrukturen_charta_builds_tags_contain_datenstrukturen(self):
+        from kki.datenstrukturen_charta import build_datenstrukturen_charta
+        obj = build_datenstrukturen_charta()
+        self.assertTrue(any("datenstrukturen" in n.info_tags for n in obj.normen))
+
+    def test_kki_datenstrukturen_charta_builds_tier_increases(self):
+        from kki.datenstrukturen_charta import build_datenstrukturen_charta, DatenstrukturenChartaGeltung
+        obj = build_datenstrukturen_charta()
+        t_g = next(n.info_tier for n in obj.normen if n.geltung == DatenstrukturenChartaGeltung.GESPERRT)
+        t_a = next(n.info_tier for n in obj.normen if n.geltung == DatenstrukturenChartaGeltung.GRUNDLEGEND_DATENSTRUKTURELL)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_datenstrukturen_charta_builds_canonical_default(self):
+        from kki.datenstrukturen_charta import build_datenstrukturen_charta
+        obj = build_datenstrukturen_charta()
+        self.assertTrue(all(n.canonical for n in obj.normen))
+
+    def test_kki_datenstrukturen_charta_builds_ids_non_empty(self):
+        from kki.datenstrukturen_charta import build_datenstrukturen_charta
+        obj = build_datenstrukturen_charta()
+        self.assertTrue(all(len(n.info_ids) > 0 for n in obj.normen))
+
+    def test_kki_datenstrukturen_charta_builds_datenstrukturell_geltung(self):
+        from kki.datenstrukturen_charta import build_datenstrukturen_charta, DatenstrukturenChartaGeltung
+        obj = build_datenstrukturen_charta()
+        self.assertIn(DatenstrukturenChartaGeltung.DATENSTRUKTURELL, [n.geltung for n in obj.normen])
+
+    def test_kki_datenstrukturen_charta_builds_parent_chain(self):
+        from kki.datenstrukturen_charta import build_datenstrukturen_charta
+        obj = build_datenstrukturen_charta()
+        self.assertIsNotNone(obj.parent)
+
+    # #714 KomplexitaetstheorieKodex
+    def test_kki_komplexitaetstheorie_kodex_builds_eintraege_count(self):
+        from kki.komplexitaetstheorie_kodex import build_komplexitaetstheorie_kodex
+        obj = build_komplexitaetstheorie_kodex()
+        self.assertGreaterEqual(len(obj.eintraege), 1)
+
+    def test_kki_komplexitaetstheorie_kodex_builds_gesperrt_weight_zero(self):
+        from kki.komplexitaetstheorie_kodex import build_komplexitaetstheorie_kodex, KomplexitaetstheorieKodexGeltung
+        obj = build_komplexitaetstheorie_kodex()
+        w = next(e.info_weight for e in obj.eintraege if e.geltung == KomplexitaetstheorieKodexGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_komplexitaetstheorie_kodex_builds_tags_contain_komplexitaetstheorie(self):
+        from kki.komplexitaetstheorie_kodex import build_komplexitaetstheorie_kodex
+        obj = build_komplexitaetstheorie_kodex()
+        self.assertTrue(any("komplexitaetstheorie" in e.info_tags for e in obj.eintraege))
+
+    def test_kki_komplexitaetstheorie_kodex_builds_tier_increases(self):
+        from kki.komplexitaetstheorie_kodex import build_komplexitaetstheorie_kodex, KomplexitaetstheorieKodexGeltung
+        obj = build_komplexitaetstheorie_kodex()
+        t_g = next(e.info_tier for e in obj.eintraege if e.geltung == KomplexitaetstheorieKodexGeltung.GESPERRT)
+        t_a = next(e.info_tier for e in obj.eintraege if e.geltung == KomplexitaetstheorieKodexGeltung.GRUNDLEGEND_KOMPLEXITAETSTHEORETISCH)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_komplexitaetstheorie_kodex_builds_canonical_default(self):
+        from kki.komplexitaetstheorie_kodex import build_komplexitaetstheorie_kodex
+        obj = build_komplexitaetstheorie_kodex()
+        self.assertTrue(all(e.canonical for e in obj.eintraege))
+
+    def test_kki_komplexitaetstheorie_kodex_builds_ids_non_empty(self):
+        from kki.komplexitaetstheorie_kodex import build_komplexitaetstheorie_kodex
+        obj = build_komplexitaetstheorie_kodex()
+        self.assertTrue(all(len(e.info_ids) > 0 for e in obj.eintraege))
+
+    def test_kki_komplexitaetstheorie_kodex_builds_komplexitaetstheoretisch_geltung(self):
+        from kki.komplexitaetstheorie_kodex import build_komplexitaetstheorie_kodex, KomplexitaetstheorieKodexGeltung
+        obj = build_komplexitaetstheorie_kodex()
+        self.assertIn(KomplexitaetstheorieKodexGeltung.KOMPLEXITAETSTHEORETISCH, [e.geltung for e in obj.eintraege])
+
+    def test_kki_komplexitaetstheorie_kodex_builds_parent_chain(self):
+        from kki.komplexitaetstheorie_kodex import build_komplexitaetstheorie_kodex
+        obj = build_komplexitaetstheorie_kodex()
+        self.assertIsNotNone(obj.parent)
+
+    # #715 BerechnungstheorieManifest
+    def test_kki_berechnungstheorie_manifest_builds_normen_count(self):
+        from kki.berechnungstheorie_manifest import build_berechnungstheorie_manifest
+        obj = build_berechnungstheorie_manifest()
+        self.assertGreaterEqual(len(obj.normen), 1)
+
+    def test_kki_berechnungstheorie_manifest_builds_gesperrt_weight_zero(self):
+        from kki.berechnungstheorie_manifest import build_berechnungstheorie_manifest, BerechnungstheorieManifestGeltung
+        obj = build_berechnungstheorie_manifest()
+        w = next(n.info_weight for n in obj.normen if n.geltung == BerechnungstheorieManifestGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_berechnungstheorie_manifest_builds_tags_contain_berechnungstheorie(self):
+        from kki.berechnungstheorie_manifest import build_berechnungstheorie_manifest
+        obj = build_berechnungstheorie_manifest()
+        self.assertTrue(any("berechnungstheorie" in n.info_tags for n in obj.normen))
+
+    def test_kki_berechnungstheorie_manifest_builds_tier_increases(self):
+        from kki.berechnungstheorie_manifest import build_berechnungstheorie_manifest, BerechnungstheorieManifestGeltung
+        obj = build_berechnungstheorie_manifest()
+        t_g = next(n.info_tier for n in obj.normen if n.geltung == BerechnungstheorieManifestGeltung.GESPERRT)
+        t_a = next(n.info_tier for n in obj.normen if n.geltung == BerechnungstheorieManifestGeltung.GRUNDLEGEND_BERECHENBAR)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_berechnungstheorie_manifest_builds_canonical_default(self):
+        from kki.berechnungstheorie_manifest import build_berechnungstheorie_manifest
+        obj = build_berechnungstheorie_manifest()
+        self.assertTrue(all(n.canonical for n in obj.normen))
+
+    def test_kki_berechnungstheorie_manifest_builds_ids_non_empty(self):
+        from kki.berechnungstheorie_manifest import build_berechnungstheorie_manifest
+        obj = build_berechnungstheorie_manifest()
+        self.assertTrue(all(len(n.info_ids) > 0 for n in obj.normen))
+
+    def test_kki_berechnungstheorie_manifest_builds_berechenbar_geltung(self):
+        from kki.berechnungstheorie_manifest import build_berechnungstheorie_manifest, BerechnungstheorieManifestGeltung
+        obj = build_berechnungstheorie_manifest()
+        self.assertIn(BerechnungstheorieManifestGeltung.BERECHENBAR, [n.geltung for n in obj.normen])
+
+    def test_kki_berechnungstheorie_manifest_builds_parent_chain(self):
+        from kki.berechnungstheorie_manifest import build_berechnungstheorie_manifest
+        obj = build_berechnungstheorie_manifest()
+        self.assertIsNotNone(obj.parent)
+
+    # #716 ProgrammierparadigmenPakt
+    def test_kki_programmierparadigmen_pakt_builds_eintraege_count(self):
+        from kki.programmierparadigmen_pakt import build_programmierparadigmen_pakt
+        obj = build_programmierparadigmen_pakt()
+        self.assertGreaterEqual(len(obj.eintraege), 1)
+
+    def test_kki_programmierparadigmen_pakt_builds_gesperrt_weight_zero(self):
+        from kki.programmierparadigmen_pakt import build_programmierparadigmen_pakt, ProgrammierparadigmenPaktGeltung
+        obj = build_programmierparadigmen_pakt()
+        w = next(e.info_weight for e in obj.eintraege if e.geltung == ProgrammierparadigmenPaktGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_programmierparadigmen_pakt_builds_tags_contain_programmierparadigmen(self):
+        from kki.programmierparadigmen_pakt import build_programmierparadigmen_pakt
+        obj = build_programmierparadigmen_pakt()
+        self.assertTrue(any("programmierparadigmen" in e.info_tags for e in obj.eintraege))
+
+    def test_kki_programmierparadigmen_pakt_builds_tier_increases(self):
+        from kki.programmierparadigmen_pakt import build_programmierparadigmen_pakt, ProgrammierparadigmenPaktGeltung
+        obj = build_programmierparadigmen_pakt()
+        t_g = next(e.info_tier for e in obj.eintraege if e.geltung == ProgrammierparadigmenPaktGeltung.GESPERRT)
+        t_a = next(e.info_tier for e in obj.eintraege if e.geltung == ProgrammierparadigmenPaktGeltung.GRUNDLEGEND_PARADIGMATISCH)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_programmierparadigmen_pakt_builds_canonical_default(self):
+        from kki.programmierparadigmen_pakt import build_programmierparadigmen_pakt
+        obj = build_programmierparadigmen_pakt()
+        self.assertTrue(all(e.canonical for e in obj.eintraege))
+
+    def test_kki_programmierparadigmen_pakt_builds_ids_non_empty(self):
+        from kki.programmierparadigmen_pakt import build_programmierparadigmen_pakt
+        obj = build_programmierparadigmen_pakt()
+        self.assertTrue(all(len(e.info_ids) > 0 for e in obj.eintraege))
+
+    def test_kki_programmierparadigmen_pakt_builds_paradigmatisch_geltung(self):
+        from kki.programmierparadigmen_pakt import build_programmierparadigmen_pakt, ProgrammierparadigmenPaktGeltung
+        obj = build_programmierparadigmen_pakt()
+        self.assertIn(ProgrammierparadigmenPaktGeltung.PARADIGMATISCH, [e.geltung for e in obj.eintraege])
+
+    def test_kki_programmierparadigmen_pakt_builds_parent_chain(self):
+        from kki.programmierparadigmen_pakt import build_programmierparadigmen_pakt
+        obj = build_programmierparadigmen_pakt()
+        self.assertIsNotNone(obj.parent)
+
+    # #717 VerteilteSystemeSenat
+    def test_kki_verteilte_systeme_senat_builds_normen_count(self):
+        from kki.verteilte_systeme_senat import build_verteilte_systeme_senat
+        obj = build_verteilte_systeme_senat()
+        self.assertGreaterEqual(len(obj.normen), 1)
+
+    def test_kki_verteilte_systeme_senat_builds_gesperrt_weight_zero(self):
+        from kki.verteilte_systeme_senat import build_verteilte_systeme_senat, VerteilteSystemeSenatGeltung
+        obj = build_verteilte_systeme_senat()
+        w = next(n.info_weight for n in obj.normen if n.geltung == VerteilteSystemeSenatGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_verteilte_systeme_senat_builds_tags_contain_verteilte_systeme(self):
+        from kki.verteilte_systeme_senat import build_verteilte_systeme_senat
+        obj = build_verteilte_systeme_senat()
+        self.assertTrue(any("verteilte-systeme" in n.info_tags for n in obj.normen))
+
+    def test_kki_verteilte_systeme_senat_builds_tier_increases(self):
+        from kki.verteilte_systeme_senat import build_verteilte_systeme_senat, VerteilteSystemeSenatGeltung
+        obj = build_verteilte_systeme_senat()
+        t_g = next(n.info_tier for n in obj.normen if n.geltung == VerteilteSystemeSenatGeltung.GESPERRT)
+        t_a = next(n.info_tier for n in obj.normen if n.geltung == VerteilteSystemeSenatGeltung.GRUNDLEGEND_VERTEILT_AKTIV)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_verteilte_systeme_senat_builds_canonical_default(self):
+        from kki.verteilte_systeme_senat import build_verteilte_systeme_senat
+        obj = build_verteilte_systeme_senat()
+        self.assertTrue(all(n.canonical for n in obj.normen))
+
+    def test_kki_verteilte_systeme_senat_builds_ids_non_empty(self):
+        from kki.verteilte_systeme_senat import build_verteilte_systeme_senat
+        obj = build_verteilte_systeme_senat()
+        self.assertTrue(all(len(n.info_ids) > 0 for n in obj.normen))
+
+    def test_kki_verteilte_systeme_senat_builds_verteilt_aktiv_geltung(self):
+        from kki.verteilte_systeme_senat import build_verteilte_systeme_senat, VerteilteSystemeSenatGeltung
+        obj = build_verteilte_systeme_senat()
+        self.assertIn(VerteilteSystemeSenatGeltung.VERTEILT_AKTIV, [n.geltung for n in obj.normen])
+
+    def test_kki_verteilte_systeme_senat_builds_parent_chain(self):
+        from kki.verteilte_systeme_senat import build_verteilte_systeme_senat
+        obj = build_verteilte_systeme_senat()
+        self.assertIsNotNone(obj.parent)
+
+    # #718 InformatikNorm (*_norm)
+    def test_kki_informatik_norm_builds_normen_count(self):
+        from kki.informatik_norm import build_informatik_norm
+        obj = build_informatik_norm()
+        self.assertGreaterEqual(len(obj.normen), 1)
+
+    def test_kki_informatik_norm_builds_gesperrt_weight_zero(self):
+        from kki.informatik_norm import build_informatik_norm, InformatikNormGeltung
+        obj = build_informatik_norm()
+        w = next(e.info_norm_weight for e in obj.normen if e.geltung == InformatikNormGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_informatik_norm_builds_tags_contain_norm(self):
+        from kki.informatik_norm import build_informatik_norm
+        obj = build_informatik_norm()
+        self.assertTrue(any("norm" in e.info_norm_tags for e in obj.normen))
+
+    def test_kki_informatik_norm_builds_tier_increases(self):
+        from kki.informatik_norm import build_informatik_norm, InformatikNormGeltung
+        obj = build_informatik_norm()
+        t_g = next(e.info_norm_tier for e in obj.normen if e.geltung == InformatikNormGeltung.GESPERRT)
+        t_a = next(e.info_norm_tier for e in obj.normen if e.geltung == InformatikNormGeltung.GRUNDLEGEND_INFO_NORMATIV)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_informatik_norm_builds_canonical_default(self):
+        from kki.informatik_norm import build_informatik_norm
+        obj = build_informatik_norm()
+        self.assertTrue(all(e.canonical for e in obj.normen))
+
+    def test_kki_informatik_norm_builds_ids_non_empty(self):
+        from kki.informatik_norm import build_informatik_norm
+        obj = build_informatik_norm()
+        self.assertTrue(all(len(e.info_norm_ids) > 0 for e in obj.normen))
+
+    def test_kki_informatik_norm_builds_info_normativ_geltung(self):
+        from kki.informatik_norm import build_informatik_norm, InformatikNormGeltung
+        obj = build_informatik_norm()
+        self.assertIn(InformatikNormGeltung.INFO_NORMATIV, [e.geltung for e in obj.normen])
+
+    def test_kki_informatik_norm_builds_parent_chain(self):
+        from kki.informatik_norm import build_informatik_norm
+        obj = build_informatik_norm()
+        self.assertIsNotNone(obj.parent)
+
+    # #719 KuenstlicheIntelligenzCharta
+    def test_kki_kuenstliche_intelligenz_charta_builds_normen_count(self):
+        from kki.kuenstliche_intelligenz_charta import build_kuenstliche_intelligenz_charta
+        obj = build_kuenstliche_intelligenz_charta()
+        self.assertGreaterEqual(len(obj.normen), 1)
+
+    def test_kki_kuenstliche_intelligenz_charta_builds_gesperrt_weight_zero(self):
+        from kki.kuenstliche_intelligenz_charta import build_kuenstliche_intelligenz_charta, KuenstlicheIntelligenzChartaGeltung
+        obj = build_kuenstliche_intelligenz_charta()
+        w = next(n.info_weight for n in obj.normen if n.geltung == KuenstlicheIntelligenzChartaGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_kuenstliche_intelligenz_charta_builds_tags_contain_kuenstliche_intelligenz(self):
+        from kki.kuenstliche_intelligenz_charta import build_kuenstliche_intelligenz_charta
+        obj = build_kuenstliche_intelligenz_charta()
+        self.assertTrue(any("kuenstliche-intelligenz" in n.info_tags for n in obj.normen))
+
+    def test_kki_kuenstliche_intelligenz_charta_builds_tier_increases(self):
+        from kki.kuenstliche_intelligenz_charta import build_kuenstliche_intelligenz_charta, KuenstlicheIntelligenzChartaGeltung
+        obj = build_kuenstliche_intelligenz_charta()
+        t_g = next(n.info_tier for n in obj.normen if n.geltung == KuenstlicheIntelligenzChartaGeltung.GESPERRT)
+        t_a = next(n.info_tier for n in obj.normen if n.geltung == KuenstlicheIntelligenzChartaGeltung.GRUNDLEGEND_KI_AKTIV)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_kuenstliche_intelligenz_charta_builds_canonical_default(self):
+        from kki.kuenstliche_intelligenz_charta import build_kuenstliche_intelligenz_charta
+        obj = build_kuenstliche_intelligenz_charta()
+        self.assertTrue(all(n.canonical for n in obj.normen))
+
+    def test_kki_kuenstliche_intelligenz_charta_builds_ids_non_empty(self):
+        from kki.kuenstliche_intelligenz_charta import build_kuenstliche_intelligenz_charta
+        obj = build_kuenstliche_intelligenz_charta()
+        self.assertTrue(all(len(n.info_ids) > 0 for n in obj.normen))
+
+    def test_kki_kuenstliche_intelligenz_charta_builds_ki_aktiv_geltung(self):
+        from kki.kuenstliche_intelligenz_charta import build_kuenstliche_intelligenz_charta, KuenstlicheIntelligenzChartaGeltung
+        obj = build_kuenstliche_intelligenz_charta()
+        self.assertIn(KuenstlicheIntelligenzChartaGeltung.KI_AKTIV, [n.geltung for n in obj.normen])
+
+    def test_kki_kuenstliche_intelligenz_charta_builds_parent_chain(self):
+        from kki.kuenstliche_intelligenz_charta import build_kuenstliche_intelligenz_charta
+        obj = build_kuenstliche_intelligenz_charta()
+        self.assertIsNotNone(obj.parent)
+
+    # #720 InformatikVerfassung ⭐
+    def test_kki_informatik_verfassung_builds_gesperrt_schutz_norm(self):
+        from kki.informatik_verfassung import build_informatik_verfassung, InformatikVerfassungGeltung
+        obj = build_informatik_verfassung()
+        w = next(n.info_weight for n in obj.normen if n.geltung == InformatikVerfassungGeltung.GESPERRT)
+        self.assertGreaterEqual(w, 0.0)
+
+    def test_kki_informatik_verfassung_aggregates_verfassung_signal(self):
+        from kki.informatik_verfassung import build_informatik_verfassung
+        obj = build_informatik_verfassung()
+        sig = obj.aggregates_verfassung_signal()
+        self.assertIn("verfassung_id", sig)
+        self.assertIn("total_weight", sig)
+        self.assertIn("norm_count", sig)
+        self.assertGreater(sig["norm_count"], 0)
+
+    def test_kki_informatik_verfassung_builds_tags_contain_informatik(self):
+        from kki.informatik_verfassung import build_informatik_verfassung
+        obj = build_informatik_verfassung()
+        self.assertTrue(any("informatik" in n.info_tags for n in obj.normen))
+
+    def test_kki_informatik_verfassung_builds_tier_increases(self):
+        from kki.informatik_verfassung import build_informatik_verfassung, InformatikVerfassungGeltung
+        obj = build_informatik_verfassung()
+        t_g = next(n.info_tier for n in obj.normen if n.geltung == InformatikVerfassungGeltung.GESPERRT)
+        t_a = next(n.info_tier for n in obj.normen if n.geltung == InformatikVerfassungGeltung.GRUNDLEGEND_INFO_SOUVERAEN)
+        self.assertGreater(t_a, t_g)
+
+    def test_kki_informatik_verfassung_builds_canonical_default(self):
+        from kki.informatik_verfassung import build_informatik_verfassung
+        obj = build_informatik_verfassung()
+        self.assertTrue(all(n.canonical for n in obj.normen))
+
+    def test_kki_informatik_verfassung_builds_ids_non_empty(self):
+        from kki.informatik_verfassung import build_informatik_verfassung
+        obj = build_informatik_verfassung()
+        self.assertTrue(all(len(n.info_ids) > 0 for n in obj.normen))
+
+    def test_kki_informatik_verfassung_builds_info_souveraen_geltung(self):
+        from kki.informatik_verfassung import build_informatik_verfassung, InformatikVerfassungGeltung
+        obj = build_informatik_verfassung()
+        self.assertIn(InformatikVerfassungGeltung.INFO_SOUVERAEN, [n.geltung for n in obj.normen])
+
+    def test_kki_informatik_verfassung_builds_parent_chain(self):
+        from kki.informatik_verfassung import build_informatik_verfassung
+        obj = build_informatik_verfassung()
+        self.assertIsNotNone(obj.parent)

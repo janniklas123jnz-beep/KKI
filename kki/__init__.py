@@ -3238,6 +3238,46 @@ from .biologie_verfassung import (
     BiologieVerfassungGeltung, BiologieVerfassungsNorm, BiologieVerfassungTyp, BiologieVerfassungProzedur,
     BiologieVerfassung, build_biologie_verfassung,
 )
+from .informatik_feld import (
+    InformatikFeldGeltung, InformatikFeldNorm, InformatikFeldTyp, InformatikFeldProzedur,
+    InformatikFeld, build_informatik_feld,
+)
+from .algorithmik_register import (
+    AlgorithmikRegisterGeltung, AlgorithmikRegisterEintrag, AlgorithmikRegisterTyp, AlgorithmikRegisterProzedur,
+    AlgorithmikRegister, build_algorithmik_register,
+)
+from .datenstrukturen_charta import (
+    DatenstrukturenChartaGeltung, DatenstrukturenChartaNorm, DatenstrukturenChartaTyp, DatenstrukturenChartaProzedur,
+    DatenstrukturenCharta, build_datenstrukturen_charta,
+)
+from .komplexitaetstheorie_kodex import (
+    KomplexitaetstheorieKodexGeltung, KomplexitaetstheorieKodexEintrag, KomplexitaetstheorieKodexTyp, KomplexitaetstheorieKodexProzedur,
+    KomplexitaetstheorieKodex, build_komplexitaetstheorie_kodex,
+)
+from .berechnungstheorie_manifest import (
+    BerechnungstheorieManifestGeltung, BerechnungstheorieManifestNorm, BerechnungstheorieManifestTyp, BerechnungstheorieManifestProzedur,
+    BerechnungstheorieManifest, build_berechnungstheorie_manifest,
+)
+from .programmierparadigmen_pakt import (
+    ProgrammierparadigmenPaktGeltung, ProgrammierparadigmenPaktEintrag, ProgrammierparadigmenPaktTyp, ProgrammierparadigmenPaktProzedur,
+    ProgrammierparadigmenPakt, build_programmierparadigmen_pakt,
+)
+from .verteilte_systeme_senat import (
+    VerteilteSystemeSenatGeltung, VerteilteSystemeSenatNorm, VerteilteSystemeSenatTyp, VerteilteSystemeSenatProzedur,
+    VerteilteSystemeSenat, build_verteilte_systeme_senat,
+)
+from .informatik_norm import (
+    InformatikNormGeltung, InformatikNormEintrag, InformatikNormTyp, InformatikNormProzedur,
+    InformatikNormSatz, build_informatik_norm,
+)
+from .kuenstliche_intelligenz_charta import (
+    KuenstlicheIntelligenzChartaGeltung, KuenstlicheIntelligenzChartaNorm, KuenstlicheIntelligenzChartaTyp, KuenstlicheIntelligenzChartaProzedur,
+    KuenstlicheIntelligenzCharta, build_kuenstliche_intelligenz_charta,
+)
+from .informatik_verfassung import (
+    InformatikVerfassungGeltung, InformatikVerfassungsNorm, InformatikVerfassungTyp, InformatikVerfassungProzedur,
+    InformatikVerfassung, build_informatik_verfassung,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -5229,4 +5269,24 @@ __all__ = [
     "SynthetischeBiologieCharta", "build_synthetische_biologie_charta",
     "BiologieVerfassungGeltung", "BiologieVerfassungsNorm", "BiologieVerfassungTyp", "BiologieVerfassungProzedur",
     "BiologieVerfassung", "build_biologie_verfassung",
+    "InformatikFeldGeltung", "InformatikFeldNorm", "InformatikFeldTyp", "InformatikFeldProzedur",
+    "InformatikFeld", "build_informatik_feld",
+    "AlgorithmikRegisterGeltung", "AlgorithmikRegisterEintrag", "AlgorithmikRegisterTyp", "AlgorithmikRegisterProzedur",
+    "AlgorithmikRegister", "build_algorithmik_register",
+    "DatenstrukturenChartaGeltung", "DatenstrukturenChartaNorm", "DatenstrukturenChartaTyp", "DatenstrukturenChartaProzedur",
+    "DatenstrukturenCharta", "build_datenstrukturen_charta",
+    "KomplexitaetstheorieKodexGeltung", "KomplexitaetstheorieKodexEintrag", "KomplexitaetstheorieKodexTyp", "KomplexitaetstheorieKodexProzedur",
+    "KomplexitaetstheorieKodex", "build_komplexitaetstheorie_kodex",
+    "BerechnungstheorieManifestGeltung", "BerechnungstheorieManifestNorm", "BerechnungstheorieManifestTyp", "BerechnungstheorieManifestProzedur",
+    "BerechnungstheorieManifest", "build_berechnungstheorie_manifest",
+    "ProgrammierparadigmenPaktGeltung", "ProgrammierparadigmenPaktEintrag", "ProgrammierparadigmenPaktTyp", "ProgrammierparadigmenPaktProzedur",
+    "ProgrammierparadigmenPakt", "build_programmierparadigmen_pakt",
+    "VerteilteSystemeSenatGeltung", "VerteilteSystemeSenatNorm", "VerteilteSystemeSenatTyp", "VerteilteSystemeSenatProzedur",
+    "VerteilteSystemeSenat", "build_verteilte_systeme_senat",
+    "InformatikNormGeltung", "InformatikNormEintrag", "InformatikNormTyp", "InformatikNormProzedur",
+    "InformatikNormSatz", "build_informatik_norm",
+    "KuenstlicheIntelligenzChartaGeltung", "KuenstlicheIntelligenzChartaNorm", "KuenstlicheIntelligenzChartaTyp", "KuenstlicheIntelligenzChartaProzedur",
+    "KuenstlicheIntelligenzCharta", "build_kuenstliche_intelligenz_charta",
+    "InformatikVerfassungGeltung", "InformatikVerfassungsNorm", "InformatikVerfassungTyp", "InformatikVerfassungProzedur",
+    "InformatikVerfassung", "build_informatik_verfassung",
 ]

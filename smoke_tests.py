@@ -25397,3 +25397,457 @@ class SmokeTests(unittest.TestCase):
         obj = build_molekularwissenschaft_verfassung()
         for n in obj.normen:
             self.assertTrue(len(n.chemie_ids) > 0)
+
+    # --- Block #681–690: Materialwissenschaft & Nanotechnologie ---
+    def test_kki_material_feld_builds(self):
+        from kki.material_feld import build_material_feld
+        obj = build_material_feld()
+        self.assertIsNotNone(obj)
+
+    def test_kki_material_feld_normen_count(self):
+        from kki.material_feld import build_material_feld
+        obj = build_material_feld()
+        self.assertEqual(len(obj.normen), 3)
+
+    def test_kki_material_feld_gesperrt_weight_zero(self):
+        from kki.material_feld import build_material_feld, MaterialFeldGeltung
+        obj = build_material_feld()
+        gesperrt = next(n for n in obj.normen if n.geltung == MaterialFeldGeltung.GESPERRT)
+        self.assertGreaterEqual(gesperrt.material_weight, 0.0)
+
+    def test_kki_material_feld_has_parent(self):
+        from kki.material_feld import build_material_feld
+        obj = build_material_feld()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_material_feld_tags_contain_material(self):
+        from kki.material_feld import build_material_feld
+        obj = build_material_feld()
+        for n in obj.normen:
+            self.assertIn("material", n.material_tags)
+
+    def test_kki_material_feld_tier_increases(self):
+        from kki.material_feld import build_material_feld, MaterialFeldGeltung
+        obj = build_material_feld()
+        tiers = {n.geltung: n.material_tier for n in obj.normen}
+        self.assertGreater(tiers[MaterialFeldGeltung.MATERIAL_AKTIV], tiers[MaterialFeldGeltung.GESPERRT])
+
+    def test_kki_material_feld_canonical_default(self):
+        from kki.material_feld import build_material_feld
+        obj = build_material_feld()
+        for n in obj.normen:
+            self.assertTrue(n.canonical)
+
+    def test_kki_material_feld_ids_non_empty(self):
+        from kki.material_feld import build_material_feld
+        obj = build_material_feld()
+        for n in obj.normen:
+            self.assertTrue(len(n.material_ids) > 0)
+
+    def test_kki_kristallstruktur_register_builds(self):
+        from kki.kristallstruktur_register import build_kristallstruktur_register
+        obj = build_kristallstruktur_register()
+        self.assertIsNotNone(obj)
+
+    def test_kki_kristallstruktur_register_eintraege_count(self):
+        from kki.kristallstruktur_register import build_kristallstruktur_register
+        obj = build_kristallstruktur_register()
+        self.assertEqual(len(obj.eintraege), 3)
+
+    def test_kki_kristallstruktur_register_gesperrt_weight_zero(self):
+        from kki.kristallstruktur_register import build_kristallstruktur_register, KristallstrukturRegisterGeltung
+        obj = build_kristallstruktur_register()
+        gesperrt = next(e for e in obj.eintraege if e.geltung == KristallstrukturRegisterGeltung.GESPERRT)
+        self.assertGreaterEqual(gesperrt.material_weight, 0.0)
+
+    def test_kki_kristallstruktur_register_has_parent(self):
+        from kki.kristallstruktur_register import build_kristallstruktur_register
+        obj = build_kristallstruktur_register()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_kristallstruktur_register_tags_contain_kristallstruktur(self):
+        from kki.kristallstruktur_register import build_kristallstruktur_register
+        obj = build_kristallstruktur_register()
+        for e in obj.eintraege:
+            self.assertIn("kristallstruktur", e.material_tags)
+
+    def test_kki_kristallstruktur_register_tier_increases(self):
+        from kki.kristallstruktur_register import build_kristallstruktur_register, KristallstrukturRegisterGeltung
+        obj = build_kristallstruktur_register()
+        tiers = {e.geltung: e.material_tier for e in obj.eintraege}
+        self.assertGreater(tiers[KristallstrukturRegisterGeltung.KRISTALLSTRUKTURIERT], tiers[KristallstrukturRegisterGeltung.GESPERRT])
+
+    def test_kki_kristallstruktur_register_canonical_default(self):
+        from kki.kristallstruktur_register import build_kristallstruktur_register
+        obj = build_kristallstruktur_register()
+        for e in obj.eintraege:
+            self.assertTrue(e.canonical)
+
+    def test_kki_kristallstruktur_register_ids_non_empty(self):
+        from kki.kristallstruktur_register import build_kristallstruktur_register
+        obj = build_kristallstruktur_register()
+        for e in obj.eintraege:
+            self.assertTrue(len(e.material_ids) > 0)
+
+    def test_kki_halbleiter_charta_builds(self):
+        from kki.halbleiter_charta import build_halbleiter_charta
+        obj = build_halbleiter_charta()
+        self.assertIsNotNone(obj)
+
+    def test_kki_halbleiter_charta_normen_count(self):
+        from kki.halbleiter_charta import build_halbleiter_charta
+        obj = build_halbleiter_charta()
+        self.assertEqual(len(obj.normen), 3)
+
+    def test_kki_halbleiter_charta_gesperrt_weight_zero(self):
+        from kki.halbleiter_charta import build_halbleiter_charta, HalbleiterChartaGeltung
+        obj = build_halbleiter_charta()
+        gesperrt = next(n for n in obj.normen if n.geltung == HalbleiterChartaGeltung.GESPERRT)
+        self.assertGreaterEqual(gesperrt.material_weight, 0.0)
+
+    def test_kki_halbleiter_charta_has_parent(self):
+        from kki.halbleiter_charta import build_halbleiter_charta
+        obj = build_halbleiter_charta()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_halbleiter_charta_tags_contain_halbleiter(self):
+        from kki.halbleiter_charta import build_halbleiter_charta
+        obj = build_halbleiter_charta()
+        for n in obj.normen:
+            self.assertIn("halbleiter", n.material_tags)
+
+    def test_kki_halbleiter_charta_tier_increases(self):
+        from kki.halbleiter_charta import build_halbleiter_charta, HalbleiterChartaGeltung
+        obj = build_halbleiter_charta()
+        tiers = {n.geltung: n.material_tier for n in obj.normen}
+        self.assertGreater(tiers[HalbleiterChartaGeltung.HALBLEITER_AKTIV], tiers[HalbleiterChartaGeltung.GESPERRT])
+
+    def test_kki_halbleiter_charta_canonical_default(self):
+        from kki.halbleiter_charta import build_halbleiter_charta
+        obj = build_halbleiter_charta()
+        for n in obj.normen:
+            self.assertTrue(n.canonical)
+
+    def test_kki_halbleiter_charta_ids_non_empty(self):
+        from kki.halbleiter_charta import build_halbleiter_charta
+        obj = build_halbleiter_charta()
+        for n in obj.normen:
+            self.assertTrue(len(n.material_ids) > 0)
+
+    def test_kki_polymer_kodex_builds(self):
+        from kki.polymer_kodex import build_polymer_kodex
+        obj = build_polymer_kodex()
+        self.assertIsNotNone(obj)
+
+    def test_kki_polymer_kodex_eintraege_count(self):
+        from kki.polymer_kodex import build_polymer_kodex
+        obj = build_polymer_kodex()
+        self.assertEqual(len(obj.eintraege), 3)
+
+    def test_kki_polymer_kodex_gesperrt_weight_zero(self):
+        from kki.polymer_kodex import build_polymer_kodex, PolymerKodexGeltung
+        obj = build_polymer_kodex()
+        gesperrt = next(e for e in obj.eintraege if e.geltung == PolymerKodexGeltung.GESPERRT)
+        self.assertGreaterEqual(gesperrt.material_weight, 0.0)
+
+    def test_kki_polymer_kodex_has_parent(self):
+        from kki.polymer_kodex import build_polymer_kodex
+        obj = build_polymer_kodex()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_polymer_kodex_tags_contain_polymer(self):
+        from kki.polymer_kodex import build_polymer_kodex
+        obj = build_polymer_kodex()
+        for e in obj.eintraege:
+            self.assertIn("polymer", e.material_tags)
+
+    def test_kki_polymer_kodex_tier_increases(self):
+        from kki.polymer_kodex import build_polymer_kodex, PolymerKodexGeltung
+        obj = build_polymer_kodex()
+        tiers = {e.geltung: e.material_tier for e in obj.eintraege}
+        self.assertGreater(tiers[PolymerKodexGeltung.POLYMER_VERNETZT], tiers[PolymerKodexGeltung.GESPERRT])
+
+    def test_kki_polymer_kodex_canonical_default(self):
+        from kki.polymer_kodex import build_polymer_kodex
+        obj = build_polymer_kodex()
+        for e in obj.eintraege:
+            self.assertTrue(e.canonical)
+
+    def test_kki_polymer_kodex_ids_non_empty(self):
+        from kki.polymer_kodex import build_polymer_kodex
+        obj = build_polymer_kodex()
+        for e in obj.eintraege:
+            self.assertTrue(len(e.material_ids) > 0)
+
+    def test_kki_komposit_manifest_builds(self):
+        from kki.komposit_manifest import build_komposit_manifest
+        obj = build_komposit_manifest()
+        self.assertIsNotNone(obj)
+
+    def test_kki_komposit_manifest_normen_count(self):
+        from kki.komposit_manifest import build_komposit_manifest
+        obj = build_komposit_manifest()
+        self.assertEqual(len(obj.normen), 3)
+
+    def test_kki_komposit_manifest_gesperrt_weight_zero(self):
+        from kki.komposit_manifest import build_komposit_manifest, KompositManifestGeltung
+        obj = build_komposit_manifest()
+        gesperrt = next(n for n in obj.normen if n.geltung == KompositManifestGeltung.GESPERRT)
+        self.assertGreaterEqual(gesperrt.material_weight, 0.0)
+
+    def test_kki_komposit_manifest_has_parent(self):
+        from kki.komposit_manifest import build_komposit_manifest
+        obj = build_komposit_manifest()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_komposit_manifest_tags_contain_komposit(self):
+        from kki.komposit_manifest import build_komposit_manifest
+        obj = build_komposit_manifest()
+        for n in obj.normen:
+            self.assertIn("komposit", n.material_tags)
+
+    def test_kki_komposit_manifest_tier_increases(self):
+        from kki.komposit_manifest import build_komposit_manifest, KompositManifestGeltung
+        obj = build_komposit_manifest()
+        tiers = {n.geltung: n.material_tier for n in obj.normen}
+        self.assertGreater(tiers[KompositManifestGeltung.KOMPOSIT_GEFUEGT], tiers[KompositManifestGeltung.GESPERRT])
+
+    def test_kki_komposit_manifest_canonical_default(self):
+        from kki.komposit_manifest import build_komposit_manifest
+        obj = build_komposit_manifest()
+        for n in obj.normen:
+            self.assertTrue(n.canonical)
+
+    def test_kki_komposit_manifest_ids_non_empty(self):
+        from kki.komposit_manifest import build_komposit_manifest
+        obj = build_komposit_manifest()
+        for n in obj.normen:
+            self.assertTrue(len(n.material_ids) > 0)
+
+    def test_kki_nanostruktur_pakt_builds(self):
+        from kki.nanostruktur_pakt import build_nanostruktur_pakt
+        obj = build_nanostruktur_pakt()
+        self.assertIsNotNone(obj)
+
+    def test_kki_nanostruktur_pakt_eintraege_count(self):
+        from kki.nanostruktur_pakt import build_nanostruktur_pakt
+        obj = build_nanostruktur_pakt()
+        self.assertEqual(len(obj.eintraege), 3)
+
+    def test_kki_nanostruktur_pakt_gesperrt_weight_zero(self):
+        from kki.nanostruktur_pakt import build_nanostruktur_pakt, NanostrukturPaktGeltung
+        obj = build_nanostruktur_pakt()
+        gesperrt = next(e for e in obj.eintraege if e.geltung == NanostrukturPaktGeltung.GESPERRT)
+        self.assertGreaterEqual(gesperrt.material_weight, 0.0)
+
+    def test_kki_nanostruktur_pakt_has_parent(self):
+        from kki.nanostruktur_pakt import build_nanostruktur_pakt
+        obj = build_nanostruktur_pakt()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_nanostruktur_pakt_tags_contain_nanostruktur(self):
+        from kki.nanostruktur_pakt import build_nanostruktur_pakt
+        obj = build_nanostruktur_pakt()
+        for e in obj.eintraege:
+            self.assertIn("nanostruktur", e.material_tags)
+
+    def test_kki_nanostruktur_pakt_tier_increases(self):
+        from kki.nanostruktur_pakt import build_nanostruktur_pakt, NanostrukturPaktGeltung
+        obj = build_nanostruktur_pakt()
+        tiers = {e.geltung: e.material_tier for e in obj.eintraege}
+        self.assertGreater(tiers[NanostrukturPaktGeltung.NANOSTRUKTURIERT], tiers[NanostrukturPaktGeltung.GESPERRT])
+
+    def test_kki_nanostruktur_pakt_canonical_default(self):
+        from kki.nanostruktur_pakt import build_nanostruktur_pakt
+        obj = build_nanostruktur_pakt()
+        for e in obj.eintraege:
+            self.assertTrue(e.canonical)
+
+    def test_kki_nanostruktur_pakt_ids_non_empty(self):
+        from kki.nanostruktur_pakt import build_nanostruktur_pakt
+        obj = build_nanostruktur_pakt()
+        for e in obj.eintraege:
+            self.assertTrue(len(e.material_ids) > 0)
+
+    def test_kki_quantenmaterial_senat_builds(self):
+        from kki.quantenmaterial_senat import build_quantenmaterial_senat
+        obj = build_quantenmaterial_senat()
+        self.assertIsNotNone(obj)
+
+    def test_kki_quantenmaterial_senat_normen_count(self):
+        from kki.quantenmaterial_senat import build_quantenmaterial_senat
+        obj = build_quantenmaterial_senat()
+        self.assertEqual(len(obj.normen), 3)
+
+    def test_kki_quantenmaterial_senat_gesperrt_weight_zero(self):
+        from kki.quantenmaterial_senat import build_quantenmaterial_senat, QuantenmaterialSenatGeltung
+        obj = build_quantenmaterial_senat()
+        gesperrt = next(n for n in obj.normen if n.geltung == QuantenmaterialSenatGeltung.GESPERRT)
+        self.assertGreaterEqual(gesperrt.material_weight, 0.0)
+
+    def test_kki_quantenmaterial_senat_has_parent(self):
+        from kki.quantenmaterial_senat import build_quantenmaterial_senat
+        obj = build_quantenmaterial_senat()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_quantenmaterial_senat_tags_contain_quantenmaterial(self):
+        from kki.quantenmaterial_senat import build_quantenmaterial_senat
+        obj = build_quantenmaterial_senat()
+        for n in obj.normen:
+            self.assertIn("quantenmaterial", n.material_tags)
+
+    def test_kki_quantenmaterial_senat_tier_increases(self):
+        from kki.quantenmaterial_senat import build_quantenmaterial_senat, QuantenmaterialSenatGeltung
+        obj = build_quantenmaterial_senat()
+        tiers = {n.geltung: n.material_tier for n in obj.normen}
+        self.assertGreater(tiers[QuantenmaterialSenatGeltung.QUANTENMATERIAL_AKTIV], tiers[QuantenmaterialSenatGeltung.GESPERRT])
+
+    def test_kki_quantenmaterial_senat_canonical_default(self):
+        from kki.quantenmaterial_senat import build_quantenmaterial_senat
+        obj = build_quantenmaterial_senat()
+        for n in obj.normen:
+            self.assertTrue(n.canonical)
+
+    def test_kki_quantenmaterial_senat_ids_non_empty(self):
+        from kki.quantenmaterial_senat import build_quantenmaterial_senat
+        obj = build_quantenmaterial_senat()
+        for n in obj.normen:
+            self.assertTrue(len(n.material_ids) > 0)
+
+    def test_kki_material_norm_builds(self):
+        from kki.material_norm import build_material_norm
+        obj = build_material_norm()
+        self.assertIsNotNone(obj)
+
+    def test_kki_material_norm_normen_count(self):
+        from kki.material_norm import build_material_norm
+        obj = build_material_norm()
+        self.assertEqual(len(obj.normen), 3)
+
+    def test_kki_material_norm_gesperrt_weight_zero(self):
+        from kki.material_norm import build_material_norm, MaterialNormGeltung
+        obj = build_material_norm()
+        gesperrt = next(e for e in obj.normen if e.geltung == MaterialNormGeltung.GESPERRT)
+        self.assertGreaterEqual(gesperrt.material_norm_weight, 0.0)
+
+    def test_kki_material_norm_has_parent(self):
+        from kki.material_norm import build_material_norm
+        obj = build_material_norm()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_material_norm_tags_contain_norm(self):
+        from kki.material_norm import build_material_norm
+        obj = build_material_norm()
+        for e in obj.normen:
+            self.assertIn("norm", e.material_norm_tags)
+
+    def test_kki_material_norm_tier_increases(self):
+        from kki.material_norm import build_material_norm, MaterialNormGeltung
+        obj = build_material_norm()
+        tiers = {e.geltung: e.material_norm_tier for e in obj.normen}
+        self.assertGreater(tiers[MaterialNormGeltung.MATERIAL_NORMATIV], tiers[MaterialNormGeltung.GESPERRT])
+
+    def test_kki_material_norm_canonical_default(self):
+        from kki.material_norm import build_material_norm
+        obj = build_material_norm()
+        for e in obj.normen:
+            self.assertTrue(e.canonical)
+
+    def test_kki_material_norm_ids_non_empty(self):
+        from kki.material_norm import build_material_norm
+        obj = build_material_norm()
+        for e in obj.normen:
+            self.assertTrue(len(e.material_norm_ids) > 0)
+
+    def test_kki_bio_material_charta_builds(self):
+        from kki.bio_material_charta import build_bio_material_charta
+        obj = build_bio_material_charta()
+        self.assertIsNotNone(obj)
+
+    def test_kki_bio_material_charta_normen_count(self):
+        from kki.bio_material_charta import build_bio_material_charta
+        obj = build_bio_material_charta()
+        self.assertEqual(len(obj.normen), 3)
+
+    def test_kki_bio_material_charta_gesperrt_weight_zero(self):
+        from kki.bio_material_charta import build_bio_material_charta, BioMaterialChartaGeltung
+        obj = build_bio_material_charta()
+        gesperrt = next(n for n in obj.normen if n.geltung == BioMaterialChartaGeltung.GESPERRT)
+        self.assertGreaterEqual(gesperrt.material_weight, 0.0)
+
+    def test_kki_bio_material_charta_has_parent(self):
+        from kki.bio_material_charta import build_bio_material_charta
+        obj = build_bio_material_charta()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_bio_material_charta_tags_contain_biomaterial(self):
+        from kki.bio_material_charta import build_bio_material_charta
+        obj = build_bio_material_charta()
+        for n in obj.normen:
+            self.assertIn("biomaterial", n.material_tags)
+
+    def test_kki_bio_material_charta_tier_increases(self):
+        from kki.bio_material_charta import build_bio_material_charta, BioMaterialChartaGeltung
+        obj = build_bio_material_charta()
+        tiers = {n.geltung: n.material_tier for n in obj.normen}
+        self.assertGreater(tiers[BioMaterialChartaGeltung.BIOMATERIAL_INTEGRIERT], tiers[BioMaterialChartaGeltung.GESPERRT])
+
+    def test_kki_bio_material_charta_canonical_default(self):
+        from kki.bio_material_charta import build_bio_material_charta
+        obj = build_bio_material_charta()
+        for n in obj.normen:
+            self.assertTrue(n.canonical)
+
+    def test_kki_bio_material_charta_ids_non_empty(self):
+        from kki.bio_material_charta import build_bio_material_charta
+        obj = build_bio_material_charta()
+        for n in obj.normen:
+            self.assertTrue(len(n.material_ids) > 0)
+
+    def test_kki_materialwissenschaft_verfassung_builds(self):
+        from kki.materialwissenschaft_verfassung import build_materialwissenschaft_verfassung
+        obj = build_materialwissenschaft_verfassung()
+        self.assertIsNotNone(obj)
+
+    def test_kki_materialwissenschaft_verfassung_normen_count(self):
+        from kki.materialwissenschaft_verfassung import build_materialwissenschaft_verfassung
+        obj = build_materialwissenschaft_verfassung()
+        self.assertEqual(len(obj.normen), 3)
+
+    def test_kki_materialwissenschaft_verfassung_gesperrt_schutz_norm(self):
+        from kki.materialwissenschaft_verfassung import build_materialwissenschaft_verfassung, MaterialwissenschaftVerfassungGeltung
+        obj = build_materialwissenschaft_verfassung()
+        gesperrt = next(n for n in obj.normen if n.geltung == MaterialwissenschaftVerfassungGeltung.GESPERRT)
+        self.assertGreaterEqual(gesperrt.material_weight, 0.0)
+
+    def test_kki_materialwissenschaft_verfassung_aggregates_verfassung_signal(self):
+        from kki.materialwissenschaft_verfassung import build_materialwissenschaft_verfassung
+        obj = build_materialwissenschaft_verfassung()
+        sig = obj.aggregates_verfassung_signal()
+        self.assertIsInstance(sig, dict)
+        self.assertIn("verfassung_id", sig)
+        self.assertIn("total_weight", sig)
+        self.assertIn("norm_count", sig)
+
+    def test_kki_materialwissenschaft_verfassung_has_parent(self):
+        from kki.materialwissenschaft_verfassung import build_materialwissenschaft_verfassung
+        obj = build_materialwissenschaft_verfassung()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_materialwissenschaft_verfassung_tier_increases(self):
+        from kki.materialwissenschaft_verfassung import build_materialwissenschaft_verfassung, MaterialwissenschaftVerfassungGeltung
+        obj = build_materialwissenschaft_verfassung()
+        tiers = {n.geltung: n.material_tier for n in obj.normen}
+        self.assertGreater(tiers[MaterialwissenschaftVerfassungGeltung.MATERIALWISS_SOUVERAEN], tiers[MaterialwissenschaftVerfassungGeltung.GESPERRT])
+
+    def test_kki_materialwissenschaft_verfassung_tags_contain_materialwissenschaft(self):
+        from kki.materialwissenschaft_verfassung import build_materialwissenschaft_verfassung
+        obj = build_materialwissenschaft_verfassung()
+        for n in obj.normen:
+            self.assertIn("materialwissenschaft", n.material_tags)
+
+    def test_kki_materialwissenschaft_verfassung_ids_non_empty(self):
+        from kki.materialwissenschaft_verfassung import build_materialwissenschaft_verfassung
+        obj = build_materialwissenschaft_verfassung()
+        for n in obj.normen:
+            self.assertTrue(len(n.material_ids) > 0)

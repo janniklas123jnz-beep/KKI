@@ -3118,6 +3118,46 @@ from .molekularwissenschaft_verfassung import (
     MolekularwissenschaftVerfassungGeltung, MolekularwissenschaftVerfassungsNorm, MolekularwissenschaftVerfassungTyp, MolekularwissenschaftVerfassungProzedur,
     MolekularwissenschaftVerfassung, build_molekularwissenschaft_verfassung,
 )
+from .material_feld import (
+    MaterialFeldGeltung, MaterialFeldNorm, MaterialFeldTyp, MaterialFeldProzedur,
+    MaterialFeld, build_material_feld,
+)
+from .kristallstruktur_register import (
+    KristallstrukturRegisterGeltung, KristallstrukturRegisterEintrag, KristallstrukturRegisterTyp, KristallstrukturRegisterProzedur,
+    KristallstrukturRegister, build_kristallstruktur_register,
+)
+from .halbleiter_charta import (
+    HalbleiterChartaGeltung, HalbleiterChartaNorm, HalbleiterChartaTyp, HalbleiterChartaProzedur,
+    HalbleiterCharta, build_halbleiter_charta,
+)
+from .polymer_kodex import (
+    PolymerKodexGeltung, PolymerKodexEintrag, PolymerKodexTyp, PolymerKodexProzedur,
+    PolymerKodex, build_polymer_kodex,
+)
+from .komposit_manifest import (
+    KompositManifestGeltung, KompositManifestNorm, KompositManifestTyp, KompositManifestProzedur,
+    KompositManifest, build_komposit_manifest,
+)
+from .nanostruktur_pakt import (
+    NanostrukturPaktGeltung, NanostrukturPaktEintrag, NanostrukturPaktTyp, NanostrukturPaktProzedur,
+    NanostrukturPakt, build_nanostruktur_pakt,
+)
+from .quantenmaterial_senat import (
+    QuantenmaterialSenatGeltung, QuantenmaterialSenatNorm, QuantenmaterialSenatTyp, QuantenmaterialSenatProzedur,
+    QuantenmaterialSenat, build_quantenmaterial_senat,
+)
+from .material_norm import (
+    MaterialNormGeltung, MaterialNormEintrag, MaterialNormTyp, MaterialNormProzedur,
+    MaterialNormSatz, build_material_norm,
+)
+from .bio_material_charta import (
+    BioMaterialChartaGeltung, BioMaterialChartaNorm, BioMaterialChartaTyp, BioMaterialChartaProzedur,
+    BioMaterialCharta, build_bio_material_charta,
+)
+from .materialwissenschaft_verfassung import (
+    MaterialwissenschaftVerfassungGeltung, MaterialwissenschaftVerfassungsNorm, MaterialwissenschaftVerfassungTyp, MaterialwissenschaftVerfassungProzedur,
+    MaterialwissenschaftVerfassung, build_materialwissenschaft_verfassung,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -5049,4 +5089,24 @@ __all__ = [
     "GreenChemistryCharta", "build_green_chemistry_charta",
     "MolekularwissenschaftVerfassungGeltung", "MolekularwissenschaftVerfassungsNorm", "MolekularwissenschaftVerfassungTyp", "MolekularwissenschaftVerfassungProzedur",
     "MolekularwissenschaftVerfassung", "build_molekularwissenschaft_verfassung",
+    "MaterialFeldGeltung", "MaterialFeldNorm", "MaterialFeldTyp", "MaterialFeldProzedur",
+    "MaterialFeld", "build_material_feld",
+    "KristallstrukturRegisterGeltung", "KristallstrukturRegisterEintrag", "KristallstrukturRegisterTyp", "KristallstrukturRegisterProzedur",
+    "KristallstrukturRegister", "build_kristallstruktur_register",
+    "HalbleiterChartaGeltung", "HalbleiterChartaNorm", "HalbleiterChartaTyp", "HalbleiterChartaProzedur",
+    "HalbleiterCharta", "build_halbleiter_charta",
+    "PolymerKodexGeltung", "PolymerKodexEintrag", "PolymerKodexTyp", "PolymerKodexProzedur",
+    "PolymerKodex", "build_polymer_kodex",
+    "KompositManifestGeltung", "KompositManifestNorm", "KompositManifestTyp", "KompositManifestProzedur",
+    "KompositManifest", "build_komposit_manifest",
+    "NanostrukturPaktGeltung", "NanostrukturPaktEintrag", "NanostrukturPaktTyp", "NanostrukturPaktProzedur",
+    "NanostrukturPakt", "build_nanostruktur_pakt",
+    "QuantenmaterialSenatGeltung", "QuantenmaterialSenatNorm", "QuantenmaterialSenatTyp", "QuantenmaterialSenatProzedur",
+    "QuantenmaterialSenat", "build_quantenmaterial_senat",
+    "MaterialNormGeltung", "MaterialNormEintrag", "MaterialNormTyp", "MaterialNormProzedur",
+    "MaterialNormSatz", "build_material_norm",
+    "BioMaterialChartaGeltung", "BioMaterialChartaNorm", "BioMaterialChartaTyp", "BioMaterialChartaProzedur",
+    "BioMaterialCharta", "build_bio_material_charta",
+    "MaterialwissenschaftVerfassungGeltung", "MaterialwissenschaftVerfassungsNorm", "MaterialwissenschaftVerfassungTyp", "MaterialwissenschaftVerfassungProzedur",
+    "MaterialwissenschaftVerfassung", "build_materialwissenschaft_verfassung",
 ]

@@ -3807,6 +3807,46 @@ from .palaeontologie_verfassung import (
     PalaeontologieVerfassungGeltung, PalaeontologieVerfassungsNorm, PalaeontologieVerfassungTyp, PalaeontologieVerfassungProzedur,
     PalaeontologieVerfassung, build_palaeontologie_verfassung,
 )
+from .geomorphologie_feld import (
+    GeomorphologieFeldGeltung, GeomorphologieFeldNorm, GeomorphologieFeldTyp, GeomorphologieFeldProzedur,
+    GeomorphologieFeld, build_geomorphologie_feld,
+)
+from .erosions_register import (
+    ErosionsRegisterGeltung, ErosionsRegisterEintrag, ErosionsRegisterTyp, ErosionsRegisterProzedur,
+    ErosionsRegister, build_erosions_register,
+)
+from .reliefentwicklung_charta import (
+    ReliefentwicklungChartaGeltung, ReliefentwicklungChartaNorm, ReliefentwicklungChartaTyp, ReliefentwicklungChartaProzedur,
+    ReliefentwicklungCharta, build_reliefentwicklung_charta,
+)
+from .denudations_kodex import (
+    DenudationsKodexGeltung, DenudationsKodexEintrag, DenudationsKodexTyp, DenudationsKodexProzedur,
+    DenudationsKodex, build_denudations_kodex,
+)
+from .periglazialmorphologie_manifest import (
+    PeriglazialmorphologieManifestGeltung, PeriglazialmorphologieManifestNorm, PeriglazialmorphologieManifestTyp, PeriglazialmorphologieManifestProzedur,
+    PeriglazialmorphologieManifest, build_periglazialmorphologie_manifest,
+)
+from .flussmorphologie_pakt import (
+    FlussmorphologiePaktGeltung, FlussmorphologiePaktEintrag, FlussmorphologiePaktTyp, FlussmorphologiePaktProzedur,
+    FlussmorphologiePakt, build_flussmorphologie_pakt,
+)
+from .geomorphologie_senat import (
+    GeomorphologieSenatGeltung, GeomorphologieSenatNorm, GeomorphologieSenatTyp, GeomorphologieSenatProzedur,
+    GeomorphologieSenat, build_geomorphologie_senat,
+)
+from .geomorphologie_norm import (
+    GeomorphologieNormGeltung, GeomorphologieNormEintrag, GeomorphologieNormTyp, GeomorphologieNormProzedur,
+    GeomorphologieNormSatz, build_geomorphologie_norm,
+)
+from .karstsystem_charta import (
+    KarstsystemChartaGeltung, KarstsystemChartaNorm, KarstsystemChartaTyp, KarstsystemChartaProzedur,
+    KarstsystemCharta, build_karstsystem_charta,
+)
+from .geomorphologie_verfassung import (
+    GeomorphologieVerfassungGeltung, GeomorphologieVerfassungsNorm, GeomorphologieVerfassungTyp, GeomorphologieVerfassungProzedur,
+    GeomorphologieVerfassung, build_geomorphologie_verfassung,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -6090,4 +6130,24 @@ __all__ = [
     "TaphonomieCharta", "build_taphonomie_charta",
     "PalaeontologieVerfassungGeltung", "PalaeontologieVerfassungsNorm", "PalaeontologieVerfassungTyp", "PalaeontologieVerfassungProzedur",
     "PalaeontologieVerfassung", "build_palaeontologie_verfassung",
+    "GeomorphologieFeldGeltung", "GeomorphologieFeldNorm", "GeomorphologieFeldTyp", "GeomorphologieFeldProzedur",
+    "GeomorphologieFeld", "build_geomorphologie_feld",
+    "ErosionsRegisterGeltung", "ErosionsRegisterEintrag", "ErosionsRegisterTyp", "ErosionsRegisterProzedur",
+    "ErosionsRegister", "build_erosions_register",
+    "ReliefentwicklungChartaGeltung", "ReliefentwicklungChartaNorm", "ReliefentwicklungChartaTyp", "ReliefentwicklungChartaProzedur",
+    "ReliefentwicklungCharta", "build_reliefentwicklung_charta",
+    "DenudationsKodexGeltung", "DenudationsKodexEintrag", "DenudationsKodexTyp", "DenudationsKodexProzedur",
+    "DenudationsKodex", "build_denudations_kodex",
+    "PeriglazialmorphologieManifestGeltung", "PeriglazialmorphologieManifestNorm", "PeriglazialmorphologieManifestTyp", "PeriglazialmorphologieManifestProzedur",
+    "PeriglazialmorphologieManifest", "build_periglazialmorphologie_manifest",
+    "FlussmorphologiePaktGeltung", "FlussmorphologiePaktEintrag", "FlussmorphologiePaktTyp", "FlussmorphologiePaktProzedur",
+    "FlussmorphologiePakt", "build_flussmorphologie_pakt",
+    "GeomorphologieSenatGeltung", "GeomorphologieSenatNorm", "GeomorphologieSenatTyp", "GeomorphologieSenatProzedur",
+    "GeomorphologieSenat", "build_geomorphologie_senat",
+    "GeomorphologieNormGeltung", "GeomorphologieNormEintrag", "GeomorphologieNormTyp", "GeomorphologieNormProzedur",
+    "GeomorphologieNormSatz", "build_geomorphologie_norm",
+    "KarstsystemChartaGeltung", "KarstsystemChartaNorm", "KarstsystemChartaTyp", "KarstsystemChartaProzedur",
+    "KarstsystemCharta", "build_karstsystem_charta",
+    "GeomorphologieVerfassungGeltung", "GeomorphologieVerfassungsNorm", "GeomorphologieVerfassungTyp", "GeomorphologieVerfassungProzedur",
+    "GeomorphologieVerfassung", "build_geomorphologie_verfassung",
 ]

@@ -32281,3 +32281,420 @@ class SmokeTests(unittest.TestCase):
         obj = build_palaeontologie_verfassung()
         with self.assertRaises(Exception):
             obj.normen = ()
+
+    # --- Block #851–860: Geomorphologie & Reliefentwicklung ---
+
+    def test_kki_geomorphologie_feld_builds(self):
+        from kki.geomorphologie_feld import build_geomorphologie_feld
+        obj = build_geomorphologie_feld()
+        self.assertEqual(len(obj.normen), 5)
+
+    def test_kki_geomorphologie_feld_weight_positive(self):
+        from kki.geomorphologie_feld import build_geomorphologie_feld
+        obj = build_geomorphologie_feld()
+        self.assertTrue(all(n.geomorphologie_weight > 0 for n in obj.normen if n.geltung.name != "GESPERRT"))
+
+    def test_kki_geomorphologie_feld_canonical(self):
+        from kki.geomorphologie_feld import build_geomorphologie_feld
+        obj = build_geomorphologie_feld()
+        self.assertTrue(all(n.canonical for n in obj.normen))
+
+    def test_kki_geomorphologie_feld_tier_sequence(self):
+        from kki.geomorphologie_feld import build_geomorphologie_feld
+        obj = build_geomorphologie_feld()
+        self.assertEqual([n.geomorphologie_tier for n in obj.normen], list(range(1, 6)))
+
+    def test_kki_geomorphologie_feld_ids_nonempty(self):
+        from kki.geomorphologie_feld import build_geomorphologie_feld
+        obj = build_geomorphologie_feld()
+        self.assertTrue(all(len(n.geomorphologie_ids) > 0 for n in obj.normen))
+
+    def test_kki_geomorphologie_feld_tags_contain_domain(self):
+        from kki.geomorphologie_feld import build_geomorphologie_feld
+        obj = build_geomorphologie_feld()
+        self.assertTrue(all("geomorphologie" in n.geomorphologie_tags for n in obj.normen))
+
+    def test_kki_geomorphologie_feld_parent_set(self):
+        from kki.geomorphologie_feld import build_geomorphologie_feld
+        obj = build_geomorphologie_feld()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_geomorphologie_feld_frozen(self):
+        from kki.geomorphologie_feld import build_geomorphologie_feld
+        obj = build_geomorphologie_feld()
+        with self.assertRaises(Exception):
+            obj.normen = ()
+
+    def test_kki_erosions_register_builds(self):
+        from kki.erosions_register import build_erosions_register
+        obj = build_erosions_register()
+        self.assertEqual(len(obj.eintraege), 5)
+
+    def test_kki_erosions_register_weight_positive(self):
+        from kki.erosions_register import build_erosions_register
+        obj = build_erosions_register()
+        self.assertTrue(all(e.geomorphologie_weight > 0 for e in obj.eintraege if e.geltung.name != "GESPERRT"))
+
+    def test_kki_erosions_register_canonical(self):
+        from kki.erosions_register import build_erosions_register
+        obj = build_erosions_register()
+        self.assertTrue(all(e.canonical for e in obj.eintraege))
+
+    def test_kki_erosions_register_tier_sequence(self):
+        from kki.erosions_register import build_erosions_register
+        obj = build_erosions_register()
+        self.assertEqual([e.geomorphologie_tier for e in obj.eintraege], list(range(1, 6)))
+
+    def test_kki_erosions_register_ids_nonempty(self):
+        from kki.erosions_register import build_erosions_register
+        obj = build_erosions_register()
+        self.assertTrue(all(len(e.geomorphologie_ids) > 0 for e in obj.eintraege))
+
+    def test_kki_erosions_register_tags_contain_domain(self):
+        from kki.erosions_register import build_erosions_register
+        obj = build_erosions_register()
+        self.assertTrue(all("geomorphologie" in e.geomorphologie_tags for e in obj.eintraege))
+
+    def test_kki_erosions_register_parent_set(self):
+        from kki.erosions_register import build_erosions_register
+        obj = build_erosions_register()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_erosions_register_frozen(self):
+        from kki.erosions_register import build_erosions_register
+        obj = build_erosions_register()
+        with self.assertRaises(Exception):
+            obj.eintraege = ()
+
+    def test_kki_reliefentwicklung_charta_builds(self):
+        from kki.reliefentwicklung_charta import build_reliefentwicklung_charta
+        obj = build_reliefentwicklung_charta()
+        self.assertEqual(len(obj.normen), 5)
+
+    def test_kki_reliefentwicklung_charta_weight_positive(self):
+        from kki.reliefentwicklung_charta import build_reliefentwicklung_charta
+        obj = build_reliefentwicklung_charta()
+        self.assertTrue(all(n.geomorphologie_weight > 0 for n in obj.normen if n.geltung.name != "GESPERRT"))
+
+    def test_kki_reliefentwicklung_charta_canonical(self):
+        from kki.reliefentwicklung_charta import build_reliefentwicklung_charta
+        obj = build_reliefentwicklung_charta()
+        self.assertTrue(all(n.canonical for n in obj.normen))
+
+    def test_kki_reliefentwicklung_charta_tier_sequence(self):
+        from kki.reliefentwicklung_charta import build_reliefentwicklung_charta
+        obj = build_reliefentwicklung_charta()
+        self.assertEqual([n.geomorphologie_tier for n in obj.normen], list(range(1, 6)))
+
+    def test_kki_reliefentwicklung_charta_ids_nonempty(self):
+        from kki.reliefentwicklung_charta import build_reliefentwicklung_charta
+        obj = build_reliefentwicklung_charta()
+        self.assertTrue(all(len(n.geomorphologie_ids) > 0 for n in obj.normen))
+
+    def test_kki_reliefentwicklung_charta_tags_contain_domain(self):
+        from kki.reliefentwicklung_charta import build_reliefentwicklung_charta
+        obj = build_reliefentwicklung_charta()
+        self.assertTrue(all("geomorphologie" in n.geomorphologie_tags for n in obj.normen))
+
+    def test_kki_reliefentwicklung_charta_parent_set(self):
+        from kki.reliefentwicklung_charta import build_reliefentwicklung_charta
+        obj = build_reliefentwicklung_charta()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_reliefentwicklung_charta_frozen(self):
+        from kki.reliefentwicklung_charta import build_reliefentwicklung_charta
+        obj = build_reliefentwicklung_charta()
+        with self.assertRaises(Exception):
+            obj.normen = ()
+
+    def test_kki_denudations_kodex_builds(self):
+        from kki.denudations_kodex import build_denudations_kodex
+        obj = build_denudations_kodex()
+        self.assertEqual(len(obj.eintraege), 5)
+
+    def test_kki_denudations_kodex_weight_positive(self):
+        from kki.denudations_kodex import build_denudations_kodex
+        obj = build_denudations_kodex()
+        self.assertTrue(all(e.geomorphologie_weight > 0 for e in obj.eintraege if e.geltung.name != "GESPERRT"))
+
+    def test_kki_denudations_kodex_canonical(self):
+        from kki.denudations_kodex import build_denudations_kodex
+        obj = build_denudations_kodex()
+        self.assertTrue(all(e.canonical for e in obj.eintraege))
+
+    def test_kki_denudations_kodex_tier_sequence(self):
+        from kki.denudations_kodex import build_denudations_kodex
+        obj = build_denudations_kodex()
+        self.assertEqual([e.geomorphologie_tier for e in obj.eintraege], list(range(1, 6)))
+
+    def test_kki_denudations_kodex_ids_nonempty(self):
+        from kki.denudations_kodex import build_denudations_kodex
+        obj = build_denudations_kodex()
+        self.assertTrue(all(len(e.geomorphologie_ids) > 0 for e in obj.eintraege))
+
+    def test_kki_denudations_kodex_tags_contain_domain(self):
+        from kki.denudations_kodex import build_denudations_kodex
+        obj = build_denudations_kodex()
+        self.assertTrue(all("geomorphologie" in e.geomorphologie_tags for e in obj.eintraege))
+
+    def test_kki_denudations_kodex_parent_set(self):
+        from kki.denudations_kodex import build_denudations_kodex
+        obj = build_denudations_kodex()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_denudations_kodex_frozen(self):
+        from kki.denudations_kodex import build_denudations_kodex
+        obj = build_denudations_kodex()
+        with self.assertRaises(Exception):
+            obj.eintraege = ()
+
+    def test_kki_periglazialmorphologie_manifest_builds(self):
+        from kki.periglazialmorphologie_manifest import build_periglazialmorphologie_manifest
+        obj = build_periglazialmorphologie_manifest()
+        self.assertEqual(len(obj.normen), 5)
+
+    def test_kki_periglazialmorphologie_manifest_weight_positive(self):
+        from kki.periglazialmorphologie_manifest import build_periglazialmorphologie_manifest
+        obj = build_periglazialmorphologie_manifest()
+        self.assertTrue(all(n.geomorphologie_weight > 0 for n in obj.normen if n.geltung.name != "GESPERRT"))
+
+    def test_kki_periglazialmorphologie_manifest_canonical(self):
+        from kki.periglazialmorphologie_manifest import build_periglazialmorphologie_manifest
+        obj = build_periglazialmorphologie_manifest()
+        self.assertTrue(all(n.canonical for n in obj.normen))
+
+    def test_kki_periglazialmorphologie_manifest_tier_sequence(self):
+        from kki.periglazialmorphologie_manifest import build_periglazialmorphologie_manifest
+        obj = build_periglazialmorphologie_manifest()
+        self.assertEqual([n.geomorphologie_tier for n in obj.normen], list(range(1, 6)))
+
+    def test_kki_periglazialmorphologie_manifest_ids_nonempty(self):
+        from kki.periglazialmorphologie_manifest import build_periglazialmorphologie_manifest
+        obj = build_periglazialmorphologie_manifest()
+        self.assertTrue(all(len(n.geomorphologie_ids) > 0 for n in obj.normen))
+
+    def test_kki_periglazialmorphologie_manifest_tags_contain_domain(self):
+        from kki.periglazialmorphologie_manifest import build_periglazialmorphologie_manifest
+        obj = build_periglazialmorphologie_manifest()
+        self.assertTrue(all("geomorphologie" in n.geomorphologie_tags for n in obj.normen))
+
+    def test_kki_periglazialmorphologie_manifest_parent_set(self):
+        from kki.periglazialmorphologie_manifest import build_periglazialmorphologie_manifest
+        obj = build_periglazialmorphologie_manifest()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_periglazialmorphologie_manifest_frozen(self):
+        from kki.periglazialmorphologie_manifest import build_periglazialmorphologie_manifest
+        obj = build_periglazialmorphologie_manifest()
+        with self.assertRaises(Exception):
+            obj.normen = ()
+
+    def test_kki_flussmorphologie_pakt_builds(self):
+        from kki.flussmorphologie_pakt import build_flussmorphologie_pakt
+        obj = build_flussmorphologie_pakt()
+        self.assertEqual(len(obj.eintraege), 5)
+
+    def test_kki_flussmorphologie_pakt_weight_positive(self):
+        from kki.flussmorphologie_pakt import build_flussmorphologie_pakt
+        obj = build_flussmorphologie_pakt()
+        self.assertTrue(all(e.geomorphologie_weight > 0 for e in obj.eintraege if e.geltung.name != "GESPERRT"))
+
+    def test_kki_flussmorphologie_pakt_canonical(self):
+        from kki.flussmorphologie_pakt import build_flussmorphologie_pakt
+        obj = build_flussmorphologie_pakt()
+        self.assertTrue(all(e.canonical for e in obj.eintraege))
+
+    def test_kki_flussmorphologie_pakt_tier_sequence(self):
+        from kki.flussmorphologie_pakt import build_flussmorphologie_pakt
+        obj = build_flussmorphologie_pakt()
+        self.assertEqual([e.geomorphologie_tier for e in obj.eintraege], list(range(1, 6)))
+
+    def test_kki_flussmorphologie_pakt_ids_nonempty(self):
+        from kki.flussmorphologie_pakt import build_flussmorphologie_pakt
+        obj = build_flussmorphologie_pakt()
+        self.assertTrue(all(len(e.geomorphologie_ids) > 0 for e in obj.eintraege))
+
+    def test_kki_flussmorphologie_pakt_tags_contain_domain(self):
+        from kki.flussmorphologie_pakt import build_flussmorphologie_pakt
+        obj = build_flussmorphologie_pakt()
+        self.assertTrue(all("geomorphologie" in e.geomorphologie_tags for e in obj.eintraege))
+
+    def test_kki_flussmorphologie_pakt_parent_set(self):
+        from kki.flussmorphologie_pakt import build_flussmorphologie_pakt
+        obj = build_flussmorphologie_pakt()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_flussmorphologie_pakt_frozen(self):
+        from kki.flussmorphologie_pakt import build_flussmorphologie_pakt
+        obj = build_flussmorphologie_pakt()
+        with self.assertRaises(Exception):
+            obj.eintraege = ()
+
+    def test_kki_geomorphologie_senat_builds(self):
+        from kki.geomorphologie_senat import build_geomorphologie_senat
+        obj = build_geomorphologie_senat()
+        self.assertEqual(len(obj.normen), 5)
+
+    def test_kki_geomorphologie_senat_weight_positive(self):
+        from kki.geomorphologie_senat import build_geomorphologie_senat
+        obj = build_geomorphologie_senat()
+        self.assertTrue(all(n.geomorphologie_weight > 0 for n in obj.normen if n.geltung.name != "GESPERRT"))
+
+    def test_kki_geomorphologie_senat_canonical(self):
+        from kki.geomorphologie_senat import build_geomorphologie_senat
+        obj = build_geomorphologie_senat()
+        self.assertTrue(all(n.canonical for n in obj.normen))
+
+    def test_kki_geomorphologie_senat_tier_sequence(self):
+        from kki.geomorphologie_senat import build_geomorphologie_senat
+        obj = build_geomorphologie_senat()
+        self.assertEqual([n.geomorphologie_tier for n in obj.normen], list(range(1, 6)))
+
+    def test_kki_geomorphologie_senat_ids_nonempty(self):
+        from kki.geomorphologie_senat import build_geomorphologie_senat
+        obj = build_geomorphologie_senat()
+        self.assertTrue(all(len(n.geomorphologie_ids) > 0 for n in obj.normen))
+
+    def test_kki_geomorphologie_senat_tags_contain_domain(self):
+        from kki.geomorphologie_senat import build_geomorphologie_senat
+        obj = build_geomorphologie_senat()
+        self.assertTrue(all("geomorphologie" in n.geomorphologie_tags for n in obj.normen))
+
+    def test_kki_geomorphologie_senat_parent_set(self):
+        from kki.geomorphologie_senat import build_geomorphologie_senat
+        obj = build_geomorphologie_senat()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_geomorphologie_senat_frozen(self):
+        from kki.geomorphologie_senat import build_geomorphologie_senat
+        obj = build_geomorphologie_senat()
+        with self.assertRaises(Exception):
+            obj.normen = ()
+
+    def test_kki_geomorphologie_norm_builds(self):
+        from kki.geomorphologie_norm import build_geomorphologie_norm
+        obj = build_geomorphologie_norm()
+        self.assertEqual(len(obj.normen), 5)
+
+    def test_kki_geomorphologie_norm_weight_positive(self):
+        from kki.geomorphologie_norm import build_geomorphologie_norm
+        obj = build_geomorphologie_norm()
+        self.assertTrue(all(e.geomorphologie_norm_weight > 0 for e in obj.normen if e.geltung.name != "GESPERRT"))
+
+    def test_kki_geomorphologie_norm_canonical(self):
+        from kki.geomorphologie_norm import build_geomorphologie_norm
+        obj = build_geomorphologie_norm()
+        self.assertTrue(all(e.canonical for e in obj.normen))
+
+    def test_kki_geomorphologie_norm_tier_sequence(self):
+        from kki.geomorphologie_norm import build_geomorphologie_norm
+        obj = build_geomorphologie_norm()
+        self.assertEqual([e.geomorphologie_norm_tier for e in obj.normen], list(range(1, 6)))
+
+    def test_kki_geomorphologie_norm_ids_nonempty(self):
+        from kki.geomorphologie_norm import build_geomorphologie_norm
+        obj = build_geomorphologie_norm()
+        self.assertTrue(all(len(e.geomorphologie_norm_ids) > 0 for e in obj.normen))
+
+    def test_kki_geomorphologie_norm_tags_contain_domain(self):
+        from kki.geomorphologie_norm import build_geomorphologie_norm
+        obj = build_geomorphologie_norm()
+        self.assertTrue(all("geomorphologie" in e.geomorphologie_norm_tags for e in obj.normen))
+
+    def test_kki_geomorphologie_norm_parent_set(self):
+        from kki.geomorphologie_norm import build_geomorphologie_norm
+        obj = build_geomorphologie_norm()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_geomorphologie_norm_frozen(self):
+        from kki.geomorphologie_norm import build_geomorphologie_norm
+        obj = build_geomorphologie_norm()
+        with self.assertRaises(Exception):
+            obj.normen = ()
+
+    def test_kki_karstsystem_charta_builds(self):
+        from kki.karstsystem_charta import build_karstsystem_charta
+        obj = build_karstsystem_charta()
+        self.assertEqual(len(obj.normen), 5)
+
+    def test_kki_karstsystem_charta_weight_positive(self):
+        from kki.karstsystem_charta import build_karstsystem_charta
+        obj = build_karstsystem_charta()
+        self.assertTrue(all(n.geomorphologie_weight > 0 for n in obj.normen if n.geltung.name != "GESPERRT"))
+
+    def test_kki_karstsystem_charta_canonical(self):
+        from kki.karstsystem_charta import build_karstsystem_charta
+        obj = build_karstsystem_charta()
+        self.assertTrue(all(n.canonical for n in obj.normen))
+
+    def test_kki_karstsystem_charta_tier_increases(self):
+        from kki.karstsystem_charta import build_karstsystem_charta
+        obj = build_karstsystem_charta()
+        tiers = [n.geomorphologie_tier for n in obj.normen]
+        self.assertTrue(all(tiers[i] < tiers[i+1] for i in range(len(tiers)-1)))
+
+    def test_kki_karstsystem_charta_ids_nonempty(self):
+        from kki.karstsystem_charta import build_karstsystem_charta
+        obj = build_karstsystem_charta()
+        self.assertTrue(all(len(n.geomorphologie_ids) > 0 for n in obj.normen))
+
+    def test_kki_karstsystem_charta_tags_contain_domain(self):
+        from kki.karstsystem_charta import build_karstsystem_charta
+        obj = build_karstsystem_charta()
+        self.assertTrue(all("geomorphologie" in n.geomorphologie_tags for n in obj.normen))
+
+    def test_kki_karstsystem_charta_parent_set(self):
+        from kki.karstsystem_charta import build_karstsystem_charta
+        obj = build_karstsystem_charta()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_karstsystem_charta_frozen(self):
+        from kki.karstsystem_charta import build_karstsystem_charta
+        obj = build_karstsystem_charta()
+        with self.assertRaises(Exception):
+            obj.normen = ()
+
+    def test_kki_geomorphologie_verfassung_builds(self):
+        from kki.geomorphologie_verfassung import build_geomorphologie_verfassung
+        obj = build_geomorphologie_verfassung()
+        self.assertEqual(len(obj.normen), 5)
+
+    def test_kki_geomorphologie_verfassung_weight_positive(self):
+        from kki.geomorphologie_verfassung import build_geomorphologie_verfassung
+        obj = build_geomorphologie_verfassung()
+        self.assertTrue(all(n.geomorphologie_weight > 0 for n in obj.normen if n.geltung.name != "GESPERRT"))
+
+    def test_kki_geomorphologie_verfassung_canonical(self):
+        from kki.geomorphologie_verfassung import build_geomorphologie_verfassung
+        obj = build_geomorphologie_verfassung()
+        self.assertTrue(all(n.canonical for n in obj.normen))
+
+    def test_kki_geomorphologie_verfassung_tier_increases(self):
+        from kki.geomorphologie_verfassung import build_geomorphologie_verfassung
+        obj = build_geomorphologie_verfassung()
+        tiers = [n.geomorphologie_tier for n in obj.normen]
+        self.assertTrue(all(tiers[i] < tiers[i+1] for i in range(len(tiers)-1)))
+
+    def test_kki_geomorphologie_verfassung_ids_nonempty(self):
+        from kki.geomorphologie_verfassung import build_geomorphologie_verfassung
+        obj = build_geomorphologie_verfassung()
+        self.assertTrue(all(len(n.geomorphologie_ids) > 0 for n in obj.normen))
+
+    def test_kki_geomorphologie_verfassung_tags_contain_domain(self):
+        from kki.geomorphologie_verfassung import build_geomorphologie_verfassung
+        obj = build_geomorphologie_verfassung()
+        self.assertTrue(all("geomorphologie" in n.geomorphologie_tags for n in obj.normen))
+
+    def test_kki_geomorphologie_verfassung_aggregates_verfassung_signal(self):
+        from kki.geomorphologie_verfassung import build_geomorphologie_verfassung
+        obj = build_geomorphologie_verfassung()
+        sig = obj.aggregates_verfassung_signal()
+        self.assertEqual(sig["verfassung_id"], "geomorphologie-verfassung-860")
+        self.assertIn("total_weight", sig)
+        self.assertEqual(sig["norm_count"], 5)
+
+    def test_kki_geomorphologie_verfassung_frozen(self):
+        from kki.geomorphologie_verfassung import build_geomorphologie_verfassung
+        obj = build_geomorphologie_verfassung()
+        with self.assertRaises(Exception):
+            obj.normen = ()

@@ -6718,3 +6718,75 @@ from .energie_verfassung import (
     EnergieVerfassung,
     build_energie_verfassung,
 )
+
+# === Block #961–970: Wirtschaft & Finanzmärkte ===
+from .wirtschaft_feld import (
+    WirtschaftFeldTyp,
+    WirtschaftFeldProzedur,
+    WirtschaftFeldNorm,
+    WirtschaftFeld,
+    build_wirtschaft_feld,
+)
+from .finanzmarkt_register import (
+    FinanzmarktRegisterTyp,
+    FinanzmarktRegisterProzedur,
+    FinanzmarktRegisterEintrag,
+    FinanzmarktRegister,
+    build_finanzmarkt_register,
+)
+from .portfolio_charta import (
+    PortfolioChartaTyp,
+    PortfolioChartaProzedur,
+    PortfolioChartaNorm,
+    PortfolioCharta,
+    build_portfolio_charta,
+)
+from .behavioral_finance_kodex import (
+    BehavioralFinanceKodexTyp,
+    BehavioralFinanceKodexProzedur,
+    BehavioralFinanceKodexEintrag,
+    BehavioralFinanceKodex,
+    build_behavioral_finance_kodex,
+)
+from .algorithmic_trading_manifest import (
+    AlgorithmicTradingManifestTyp,
+    AlgorithmicTradingManifestProzedur,
+    AlgorithmicTradingManifestNorm,
+    AlgorithmicTradingManifest,
+    build_algorithmic_trading_manifest,
+)
+from .risikomanagement_pakt import (
+    RisikomanagementPaktTyp,
+    RisikomanagementPaktProzedur,
+    RisikomanagementPaktEintrag,
+    RisikomanagementPakt,
+    build_risikomanagement_pakt,
+)
+from .finanzregulierung_senat import (
+    FinanzregulierungSenatTyp,
+    FinanzregulierungSenatProzedur,
+    FinanzregulierungSenatNorm,
+    FinanzregulierungSenat,
+    build_finanzregulierung_senat,
+)
+from .finanz_norm import (
+    FinanzNormTyp,
+    FinanzNormProzedur,
+    FinanzNormEintrag,
+    FinanzNorm,
+    build_finanz_norm,
+)
+from .fin_tech_charta import (
+    FinTechChartaTyp,
+    FinTechChartaProzedur,
+    FinTechChartaNorm,
+    FinTechCharta,
+    build_fin_tech_charta,
+)
+from .finanz_verfassung import (
+    FinanzVerfassungTyp,
+    FinanzVerfassungProzedur,
+    FinanzVerfassungNorm,
+    FinanzVerfassung,
+    build_finanz_verfassung,
+)

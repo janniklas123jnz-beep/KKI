@@ -5,6 +5,7 @@ from __future__ import annotations
 import os
 import subprocess
 import sys
+sys.setrecursionlimit(5000)
 import tempfile
 import unittest
 from unittest import mock
@@ -35545,6 +35546,171 @@ class SmokeTests(unittest.TestCase):
     def test_960_energie_verfassung_aggregates_signal(self):
         from kki.energie_verfassung import build_energie_verfassung
         v = build_energie_verfassung()
+        sig = v.aggregates_verfassung_signal()
+        self.assertIn("verfassung_id", sig)
+        self.assertIn("normen_count", sig)
+
+    # === Block #961–970: Wirtschaft & Finanzmärkte ===
+
+    def test_961_wirtschaft_feld_builds_instanz(self):
+        from kki.wirtschaft_feld import build_wirtschaft_feld
+        self.assertIsNotNone(build_wirtschaft_feld())
+
+    def test_961_wirtschaft_feld_count(self):
+        from kki.wirtschaft_feld import build_wirtschaft_feld
+        self.assertEqual(len(build_wirtschaft_feld().normen), 5)
+
+    def test_961_wirtschaft_feld_canonical(self):
+        from kki.wirtschaft_feld import build_wirtschaft_feld
+        self.assertIsInstance(build_wirtschaft_feld().canonical, str)
+
+    def test_961_wirtschaft_feld_weight_positive(self):
+        from kki.wirtschaft_feld import build_wirtschaft_feld
+        self.assertTrue(all(n.finanz_weight >= 0 for n in build_wirtschaft_feld().normen))
+
+    def test_962_finanzmarkt_register_builds_instanz(self):
+        from kki.finanzmarkt_register import build_finanzmarkt_register
+        self.assertIsNotNone(build_finanzmarkt_register())
+
+    def test_962_finanzmarkt_register_count(self):
+        from kki.finanzmarkt_register import build_finanzmarkt_register
+        self.assertEqual(len(build_finanzmarkt_register().eintraege), 5)
+
+    def test_962_finanzmarkt_register_canonical(self):
+        from kki.finanzmarkt_register import build_finanzmarkt_register
+        self.assertIsInstance(build_finanzmarkt_register().canonical, str)
+
+    def test_962_finanzmarkt_register_weight_positive(self):
+        from kki.finanzmarkt_register import build_finanzmarkt_register
+        self.assertTrue(all(e.finanz_weight >= 0 for e in build_finanzmarkt_register().eintraege))
+
+    def test_963_portfolio_charta_builds_instanz(self):
+        from kki.portfolio_charta import build_portfolio_charta
+        self.assertIsNotNone(build_portfolio_charta())
+
+    def test_963_portfolio_charta_count(self):
+        from kki.portfolio_charta import build_portfolio_charta
+        self.assertEqual(len(build_portfolio_charta().normen), 5)
+
+    def test_963_portfolio_charta_canonical(self):
+        from kki.portfolio_charta import build_portfolio_charta
+        self.assertIsInstance(build_portfolio_charta().canonical, str)
+
+    def test_963_portfolio_charta_weight_positive(self):
+        from kki.portfolio_charta import build_portfolio_charta
+        self.assertTrue(all(n.finanz_weight >= 0 for n in build_portfolio_charta().normen))
+
+    def test_964_behavioral_finance_kodex_builds_instanz(self):
+        from kki.behavioral_finance_kodex import build_behavioral_finance_kodex
+        self.assertIsNotNone(build_behavioral_finance_kodex())
+
+    def test_964_behavioral_finance_kodex_count(self):
+        from kki.behavioral_finance_kodex import build_behavioral_finance_kodex
+        self.assertEqual(len(build_behavioral_finance_kodex().eintraege), 5)
+
+    def test_964_behavioral_finance_kodex_canonical(self):
+        from kki.behavioral_finance_kodex import build_behavioral_finance_kodex
+        self.assertIsInstance(build_behavioral_finance_kodex().canonical, str)
+
+    def test_964_behavioral_finance_kodex_weight_positive(self):
+        from kki.behavioral_finance_kodex import build_behavioral_finance_kodex
+        self.assertTrue(all(e.finanz_weight >= 0 for e in build_behavioral_finance_kodex().eintraege))
+
+    def test_965_algorithmic_trading_manifest_builds_instanz(self):
+        from kki.algorithmic_trading_manifest import build_algorithmic_trading_manifest
+        self.assertIsNotNone(build_algorithmic_trading_manifest())
+
+    def test_965_algorithmic_trading_manifest_count(self):
+        from kki.algorithmic_trading_manifest import build_algorithmic_trading_manifest
+        self.assertEqual(len(build_algorithmic_trading_manifest().normen), 5)
+
+    def test_965_algorithmic_trading_manifest_canonical(self):
+        from kki.algorithmic_trading_manifest import build_algorithmic_trading_manifest
+        self.assertIsInstance(build_algorithmic_trading_manifest().canonical, str)
+
+    def test_965_algorithmic_trading_manifest_weight_positive(self):
+        from kki.algorithmic_trading_manifest import build_algorithmic_trading_manifest
+        self.assertTrue(all(n.finanz_weight >= 0 for n in build_algorithmic_trading_manifest().normen))
+
+    def test_966_risikomanagement_pakt_builds_instanz(self):
+        from kki.risikomanagement_pakt import build_risikomanagement_pakt
+        self.assertIsNotNone(build_risikomanagement_pakt())
+
+    def test_966_risikomanagement_pakt_count(self):
+        from kki.risikomanagement_pakt import build_risikomanagement_pakt
+        self.assertEqual(len(build_risikomanagement_pakt().eintraege), 5)
+
+    def test_966_risikomanagement_pakt_canonical(self):
+        from kki.risikomanagement_pakt import build_risikomanagement_pakt
+        self.assertIsInstance(build_risikomanagement_pakt().canonical, str)
+
+    def test_966_risikomanagement_pakt_weight_positive(self):
+        from kki.risikomanagement_pakt import build_risikomanagement_pakt
+        self.assertTrue(all(e.finanz_weight >= 0 for e in build_risikomanagement_pakt().eintraege))
+
+    def test_967_finanzregulierung_senat_builds_instanz(self):
+        from kki.finanzregulierung_senat import build_finanzregulierung_senat
+        self.assertIsNotNone(build_finanzregulierung_senat())
+
+    def test_967_finanzregulierung_senat_count(self):
+        from kki.finanzregulierung_senat import build_finanzregulierung_senat
+        self.assertEqual(len(build_finanzregulierung_senat().normen), 5)
+
+    def test_967_finanzregulierung_senat_canonical(self):
+        from kki.finanzregulierung_senat import build_finanzregulierung_senat
+        self.assertIsInstance(build_finanzregulierung_senat().canonical, str)
+
+    def test_967_finanzregulierung_senat_weight_positive(self):
+        from kki.finanzregulierung_senat import build_finanzregulierung_senat
+        self.assertTrue(all(n.finanz_weight >= 0 for n in build_finanzregulierung_senat().normen))
+
+    def test_968_finanz_norm_builds_instanz(self):
+        from kki.finanz_norm import build_finanz_norm
+        self.assertIsNotNone(build_finanz_norm())
+
+    def test_968_finanz_norm_count(self):
+        from kki.finanz_norm import build_finanz_norm
+        self.assertEqual(len(build_finanz_norm().normen), 5)
+
+    def test_968_finanz_norm_eintrag_has_norm_weight(self):
+        from kki.finanz_norm import build_finanz_norm
+        self.assertTrue(all(e.finanz_norm_weight >= 0 for e in build_finanz_norm().normen))
+
+    def test_968_finanz_norm_weight_positive(self):
+        from kki.finanz_norm import build_finanz_norm
+        self.assertTrue(all(e.finanz_norm_tier >= 1 for e in build_finanz_norm().normen))
+
+    def test_969_fin_tech_charta_builds_instanz(self):
+        from kki.fin_tech_charta import build_fin_tech_charta
+        self.assertIsNotNone(build_fin_tech_charta())
+
+    def test_969_fin_tech_charta_count(self):
+        from kki.fin_tech_charta import build_fin_tech_charta
+        self.assertEqual(len(build_fin_tech_charta().normen), 5)
+
+    def test_969_fin_tech_charta_canonical(self):
+        from kki.fin_tech_charta import build_fin_tech_charta
+        self.assertIsInstance(build_fin_tech_charta().canonical, str)
+
+    def test_969_fin_tech_charta_weight_positive(self):
+        from kki.fin_tech_charta import build_fin_tech_charta
+        self.assertTrue(all(n.finanz_weight >= 0 for n in build_fin_tech_charta().normen))
+
+    def test_970_finanz_verfassung_builds_instanz(self):
+        from kki.finanz_verfassung import build_finanz_verfassung
+        self.assertIsNotNone(build_finanz_verfassung())
+
+    def test_970_finanz_verfassung_count(self):
+        from kki.finanz_verfassung import build_finanz_verfassung
+        self.assertEqual(len(build_finanz_verfassung().normen), 5)
+
+    def test_970_finanz_verfassung_canonical(self):
+        from kki.finanz_verfassung import build_finanz_verfassung
+        self.assertIsInstance(build_finanz_verfassung().canonical, str)
+
+    def test_970_finanz_verfassung_aggregates_signal(self):
+        from kki.finanz_verfassung import build_finanz_verfassung
+        v = build_finanz_verfassung()
         sig = v.aggregates_verfassung_signal()
         self.assertIn("verfassung_id", sig)
         self.assertIn("normen_count", sig)

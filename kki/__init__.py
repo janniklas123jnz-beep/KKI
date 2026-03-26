@@ -3148,7 +3148,7 @@ from .quantenmaterial_senat import (
 )
 from .material_norm import (
     MaterialNormGeltung, MaterialNormEintrag, MaterialNormTyp, MaterialNormProzedur,
-    MaterialNormSatz, build_material_norm,
+    MaterialNormSatz, MaterialNorm, build_material_norm,
 )
 from .bio_material_charta import (
     BioMaterialChartaGeltung, BioMaterialChartaNorm, BioMaterialChartaTyp, BioMaterialChartaProzedur,
@@ -5953,7 +5953,7 @@ __all__ = [
     "QuantenmaterialSenatGeltung", "QuantenmaterialSenatNorm", "QuantenmaterialSenatTyp", "QuantenmaterialSenatProzedur",
     "QuantenmaterialSenat", "build_quantenmaterial_senat",
     "MaterialNormGeltung", "MaterialNormEintrag", "MaterialNormTyp", "MaterialNormProzedur",
-    "MaterialNormSatz", "build_material_norm",
+    "MaterialNormSatz", "MaterialNorm", "build_material_norm",
     "BioMaterialChartaGeltung", "BioMaterialChartaNorm", "BioMaterialChartaTyp", "BioMaterialChartaProzedur",
     "BioMaterialCharta", "build_bio_material_charta",
     "MaterialwissenschaftVerfassungGeltung", "MaterialwissenschaftVerfassungsNorm", "MaterialwissenschaftVerfassungTyp", "MaterialwissenschaftVerfassungProzedur",
@@ -6789,4 +6789,74 @@ from .finanz_verfassung import (
     FinanzVerfassungNorm,
     FinanzVerfassung,
     build_finanz_verfassung,
+)
+from .matwiss_feld import (
+    MatwissTyp,
+    MatwissProzedur,
+    MatwissNorm,
+    Matwiss,
+    build_matwiss,
+)
+from .nanomaterial_register import (
+    NanomaterialTyp,
+    NanomaterialProzedur,
+    NanomaterialEintrag,
+    NanomaterialRegister,
+    build_nanomaterial_register,
+)
+from .halbleiter_charta import (
+    HalbleiterTyp,
+    HalbleiterProzedur,
+    HalbleiterNorm,
+    Halbleiter,
+    build_halbleiter,
+)
+from .komposit_kodex import (
+    KompositTyp,
+    KompositProzedur,
+    KompositEintrag,
+    KompositKodex,
+    build_komposit_kodex,
+)
+from .biomaterial_manifest import (
+    BiomaterialTyp,
+    BiomaterialProzedur,
+    BiomaterialNorm,
+    Biomaterial,
+    build_biomaterial,
+)
+from .supraleiter_pakt import (
+    SupraleiterTyp,
+    SupraleiterProzedur,
+    SupraleiterEintrag,
+    SupraleiterPakt,
+    build_supraleiter_pakt,
+)
+from .metamaterial_senat import (
+    MetamaterialTyp,
+    MetamaterialProzedur,
+    MetamaterialNorm,
+    Metamaterial,
+    build_metamaterial,
+)
+from .material_norm import (
+    MaterialNormTyp,
+    MaterialNormProzedur,
+    MaterialNormEintrag,
+    MaterialNorm,
+    build_material_norm,
+)
+from .nanofabrik_charta import (
+    NanofabrikTyp,
+    NanofabrikProzedur,
+    NanofabrikNorm,
+    Nanofabrik,
+    build_nanofabrik,
+)
+from .matwiss_verfassung import (
+    MatwissVerfassungTyp,
+    MatwissVerfassungProzedur,
+    MatwissVerfassungNorm,
+    MatwissVerfassung,
+    build_matwiss_verfassung,
 )

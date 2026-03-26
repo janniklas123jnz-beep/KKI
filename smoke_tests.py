@@ -35714,3 +35714,188 @@ class SmokeTests(unittest.TestCase):
         sig = v.aggregates_verfassung_signal()
         self.assertIn("verfassung_id", sig)
         self.assertIn("normen_count", sig)
+
+# ---------------------------------------------------------------------------
+# Block #971–980 — Materialwissenschaften & Nanotechnologie 🔬
+# ---------------------------------------------------------------------------
+import sys as _sys_mat; _sys_mat.setrecursionlimit(5000)
+
+
+def test_971_matwiss_feld_builds_instanz():
+    from kki.matwiss_feld import build_matwiss
+    assert build_matwiss() is not None
+
+def test_971_matwiss_feld_count():
+    from kki.matwiss_feld import build_matwiss
+    assert len(build_matwiss().normen) == 5
+
+def test_971_matwiss_feld_canonical():
+    from kki.matwiss_feld import build_matwiss, MatwissTyp
+    m = build_matwiss()
+    assert any(MatwissTyp.GRUNDLAGEN.name in n.name or 'Grundlagen' in n.name for n in m.normen)
+
+def test_971_matwiss_feld_weight_positive():
+    from kki.matwiss_feld import build_matwiss
+    assert all(n.material_weight > 0 for n in build_matwiss().normen)
+
+
+def test_972_nanomaterial_register_builds_instanz():
+    from kki.nanomaterial_register import build_nanomaterial_register
+    assert build_nanomaterial_register() is not None
+
+def test_972_nanomaterial_register_count():
+    from kki.nanomaterial_register import build_nanomaterial_register
+    assert len(build_nanomaterial_register().eintraege) == 5
+
+def test_972_nanomaterial_register_canonical():
+    from kki.nanomaterial_register import build_nanomaterial_register
+    m = build_nanomaterial_register()
+    assert any('Graphen' in e.name for e in m.eintraege)
+
+def test_972_nanomaterial_register_weight_positive():
+    from kki.nanomaterial_register import build_nanomaterial_register
+    assert all(e.material_weight > 0 for e in build_nanomaterial_register().eintraege)
+
+
+def test_973_halbleiter_charta_builds_instanz():
+    from kki.halbleiter_charta import build_halbleiter
+    assert build_halbleiter() is not None
+
+def test_973_halbleiter_charta_count():
+    from kki.halbleiter_charta import build_halbleiter
+    assert len(build_halbleiter().normen) == 5
+
+def test_973_halbleiter_charta_canonical():
+    from kki.halbleiter_charta import build_halbleiter
+    m = build_halbleiter()
+    assert any('Silizium' in n.name or 'Halbleiter' in n.name for n in m.normen)
+
+def test_973_halbleiter_charta_weight_positive():
+    from kki.halbleiter_charta import build_halbleiter
+    assert all(n.material_weight > 0 for n in build_halbleiter().normen)
+
+
+def test_974_komposit_kodex_builds_instanz():
+    from kki.komposit_kodex import build_komposit_kodex
+    assert build_komposit_kodex() is not None
+
+def test_974_komposit_kodex_count():
+    from kki.komposit_kodex import build_komposit_kodex
+    assert len(build_komposit_kodex().eintraege) == 5
+
+def test_974_komposit_kodex_canonical():
+    from kki.komposit_kodex import build_komposit_kodex
+    m = build_komposit_kodex()
+    assert any('Komposit' in e.name or 'Faser' in e.name for e in m.eintraege)
+
+def test_974_komposit_kodex_weight_positive():
+    from kki.komposit_kodex import build_komposit_kodex
+    assert all(e.material_weight > 0 for e in build_komposit_kodex().eintraege)
+
+
+def test_975_biomaterial_manifest_builds_instanz():
+    from kki.biomaterial_manifest import build_biomaterial
+    assert build_biomaterial() is not None
+
+def test_975_biomaterial_manifest_count():
+    from kki.biomaterial_manifest import build_biomaterial
+    assert len(build_biomaterial().normen) == 5
+
+def test_975_biomaterial_manifest_canonical():
+    from kki.biomaterial_manifest import build_biomaterial
+    m = build_biomaterial()
+    assert any('Hydrogel' in n.name or 'Bio' in n.name or 'Kollagen' in n.name for n in m.normen)
+
+def test_975_biomaterial_manifest_weight_positive():
+    from kki.biomaterial_manifest import build_biomaterial
+    assert all(n.material_weight > 0 for n in build_biomaterial().normen)
+
+
+def test_976_supraleiter_pakt_builds_instanz():
+    from kki.supraleiter_pakt import build_supraleiter_pakt
+    assert build_supraleiter_pakt() is not None
+
+def test_976_supraleiter_pakt_count():
+    from kki.supraleiter_pakt import build_supraleiter_pakt
+    assert len(build_supraleiter_pakt().eintraege) == 5
+
+def test_976_supraleiter_pakt_canonical():
+    from kki.supraleiter_pakt import build_supraleiter_pakt
+    m = build_supraleiter_pakt()
+    assert any('Supraleiter' in e.name or 'Hochtemperatur' in e.name for e in m.eintraege)
+
+def test_976_supraleiter_pakt_weight_positive():
+    from kki.supraleiter_pakt import build_supraleiter_pakt
+    assert all(e.material_weight > 0 for e in build_supraleiter_pakt().eintraege)
+
+
+def test_977_metamaterial_senat_builds_instanz():
+    from kki.metamaterial_senat import build_metamaterial
+    assert build_metamaterial() is not None
+
+def test_977_metamaterial_senat_count():
+    from kki.metamaterial_senat import build_metamaterial
+    assert len(build_metamaterial().normen) == 5
+
+def test_977_metamaterial_senat_canonical():
+    from kki.metamaterial_senat import build_metamaterial
+    m = build_metamaterial()
+    assert any('Metamaterial' in n.name or 'Negativ' in n.name for n in m.normen)
+
+def test_977_metamaterial_senat_weight_positive():
+    from kki.metamaterial_senat import build_metamaterial
+    assert all(n.material_weight > 0 for n in build_metamaterial().normen)
+
+
+def test_978_material_norm_builds_instanz():
+    from kki.material_norm import build_material_norm
+    assert build_material_norm() is not None
+
+def test_978_material_norm_count():
+    from kki.material_norm import build_material_norm
+    assert len(build_material_norm().eintraege) == 5
+
+def test_978_material_norm_eintrag_has_norm_weight():
+    from kki.material_norm import build_material_norm
+    m = build_material_norm()
+    assert all(hasattr(e, 'material_norm_weight') for e in m.eintraege)
+
+def test_978_material_norm_weight_positive():
+    from kki.material_norm import build_material_norm
+    assert all(e.material_norm_weight > 0 for e in build_material_norm().eintraege)
+
+
+def test_979_nanofabrik_charta_builds_instanz():
+    from kki.nanofabrik_charta import build_nanofabrik
+    assert build_nanofabrik() is not None
+
+def test_979_nanofabrik_charta_count():
+    from kki.nanofabrik_charta import build_nanofabrik
+    assert len(build_nanofabrik().normen) == 5
+
+def test_979_nanofabrik_charta_canonical():
+    from kki.nanofabrik_charta import build_nanofabrik
+    m = build_nanofabrik()
+    assert any('Nano' in n.name or 'Atom' in n.name for n in m.normen)
+
+def test_979_nanofabrik_charta_weight_positive():
+    from kki.nanofabrik_charta import build_nanofabrik
+    assert all(n.material_weight > 0 for n in build_nanofabrik().normen)
+
+
+def test_980_matwiss_verfassung_builds_instanz():
+    from kki.matwiss_verfassung import build_matwiss_verfassung
+    assert build_matwiss_verfassung() is not None
+
+def test_980_matwiss_verfassung_count():
+    from kki.matwiss_verfassung import build_matwiss_verfassung
+    assert len(build_matwiss_verfassung().normen) == 5
+
+def test_980_matwiss_verfassung_aggregates_signal():
+    from kki.matwiss_verfassung import build_matwiss_verfassung
+    m = build_matwiss_verfassung()
+    assert sum(n.material_weight for n in m.normen) > 0
+
+def test_980_matwiss_verfassung_weight_positive():
+    from kki.matwiss_verfassung import build_matwiss_verfassung
+    assert all(n.material_weight > 0 for n in build_matwiss_verfassung().normen)

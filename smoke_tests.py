@@ -35053,3 +35053,168 @@ class SmokeTests(unittest.TestCase):
         sig = v.aggregates_verfassung_signal()
         self.assertIn("verfassung_id", sig)
         self.assertIn("normen_count", sig)
+
+    # === Block #931–940: Quantencomputing & Quanteninformatik ===
+
+    def test_931_quantencomputing_feld_builds_instanz(self):
+        from kki.quantencomputing_feld import build_quantencomputing_feld
+        self.assertIsNotNone(build_quantencomputing_feld())
+
+    def test_931_quantencomputing_feld_count(self):
+        from kki.quantencomputing_feld import build_quantencomputing_feld
+        self.assertEqual(len(build_quantencomputing_feld().normen), 5)
+
+    def test_931_quantencomputing_feld_canonical(self):
+        from kki.quantencomputing_feld import build_quantencomputing_feld
+        self.assertIsInstance(build_quantencomputing_feld().canonical, str)
+
+    def test_931_quantencomputing_feld_weight_positive(self):
+        from kki.quantencomputing_feld import build_quantencomputing_feld
+        self.assertTrue(all(n.quanten_weight >= 0 for n in build_quantencomputing_feld().normen))
+
+    def test_932_quantenalgorithmus_register_builds_instanz(self):
+        from kki.quantenalgorithmus_register import build_quantenalgorithmus_register
+        self.assertIsNotNone(build_quantenalgorithmus_register())
+
+    def test_932_quantenalgorithmus_register_count(self):
+        from kki.quantenalgorithmus_register import build_quantenalgorithmus_register
+        self.assertEqual(len(build_quantenalgorithmus_register().eintraege), 5)
+
+    def test_932_quantenalgorithmus_register_canonical(self):
+        from kki.quantenalgorithmus_register import build_quantenalgorithmus_register
+        self.assertIsInstance(build_quantenalgorithmus_register().canonical, str)
+
+    def test_932_quantenalgorithmus_register_weight_positive(self):
+        from kki.quantenalgorithmus_register import build_quantenalgorithmus_register
+        self.assertTrue(all(e.quanten_weight >= 0 for e in build_quantenalgorithmus_register().eintraege))
+
+    def test_933_quantenhardware_charta_builds_instanz(self):
+        from kki.quantenhardware_charta import build_quantenhardware_charta
+        self.assertIsNotNone(build_quantenhardware_charta())
+
+    def test_933_quantenhardware_charta_count(self):
+        from kki.quantenhardware_charta import build_quantenhardware_charta
+        self.assertEqual(len(build_quantenhardware_charta().normen), 5)
+
+    def test_933_quantenhardware_charta_canonical(self):
+        from kki.quantenhardware_charta import build_quantenhardware_charta
+        self.assertIsInstance(build_quantenhardware_charta().canonical, str)
+
+    def test_933_quantenhardware_charta_weight_positive(self):
+        from kki.quantenhardware_charta import build_quantenhardware_charta
+        self.assertTrue(all(n.quanten_weight >= 0 for n in build_quantenhardware_charta().normen))
+
+    def test_934_quantenfehler_kodex_builds_instanz(self):
+        from kki.quantenfehler_kodex import build_quantenfehler_kodex
+        self.assertIsNotNone(build_quantenfehler_kodex())
+
+    def test_934_quantenfehler_kodex_count(self):
+        from kki.quantenfehler_kodex import build_quantenfehler_kodex
+        self.assertEqual(len(build_quantenfehler_kodex().eintraege), 5)
+
+    def test_934_quantenfehler_kodex_canonical(self):
+        from kki.quantenfehler_kodex import build_quantenfehler_kodex
+        self.assertIsInstance(build_quantenfehler_kodex().canonical, str)
+
+    def test_934_quantenfehler_kodex_weight_positive(self):
+        from kki.quantenfehler_kodex import build_quantenfehler_kodex
+        self.assertTrue(all(e.quanten_weight >= 0 for e in build_quantenfehler_kodex().eintraege))
+
+    def test_935_quantensimulations_manifest_builds_instanz(self):
+        from kki.quantensimulations_manifest import build_quantensimulations_manifest
+        self.assertIsNotNone(build_quantensimulations_manifest())
+
+    def test_935_quantensimulations_manifest_count(self):
+        from kki.quantensimulations_manifest import build_quantensimulations_manifest
+        self.assertEqual(len(build_quantensimulations_manifest().normen), 5)
+
+    def test_935_quantensimulations_manifest_canonical(self):
+        from kki.quantensimulations_manifest import build_quantensimulations_manifest
+        self.assertIsInstance(build_quantensimulations_manifest().canonical, str)
+
+    def test_935_quantensimulations_manifest_weight_positive(self):
+        from kki.quantensimulations_manifest import build_quantensimulations_manifest
+        self.assertTrue(all(n.quanten_weight >= 0 for n in build_quantensimulations_manifest().normen))
+
+    def test_936_quantenkommunikation_pakt_builds_instanz(self):
+        from kki.quantenkommunikation_pakt import build_quantenkommunikation_pakt
+        self.assertIsNotNone(build_quantenkommunikation_pakt())
+
+    def test_936_quantenkommunikation_pakt_count(self):
+        from kki.quantenkommunikation_pakt import build_quantenkommunikation_pakt
+        self.assertEqual(len(build_quantenkommunikation_pakt().eintraege), 5)
+
+    def test_936_quantenkommunikation_pakt_canonical(self):
+        from kki.quantenkommunikation_pakt import build_quantenkommunikation_pakt
+        self.assertIsInstance(build_quantenkommunikation_pakt().canonical, str)
+
+    def test_936_quantenkommunikation_pakt_weight_positive(self):
+        from kki.quantenkommunikation_pakt import build_quantenkommunikation_pakt
+        self.assertTrue(all(e.quanten_weight >= 0 for e in build_quantenkommunikation_pakt().eintraege))
+
+    def test_937_quantencomputing_senat_builds_instanz(self):
+        from kki.quantencomputing_senat import build_quantencomputing_senat
+        self.assertIsNotNone(build_quantencomputing_senat())
+
+    def test_937_quantencomputing_senat_count(self):
+        from kki.quantencomputing_senat import build_quantencomputing_senat
+        self.assertEqual(len(build_quantencomputing_senat().normen), 5)
+
+    def test_937_quantencomputing_senat_canonical(self):
+        from kki.quantencomputing_senat import build_quantencomputing_senat
+        self.assertIsInstance(build_quantencomputing_senat().canonical, str)
+
+    def test_937_quantencomputing_senat_weight_positive(self):
+        from kki.quantencomputing_senat import build_quantencomputing_senat
+        self.assertTrue(all(n.quanten_weight >= 0 for n in build_quantencomputing_senat().normen))
+
+    def test_938_quanten_norm_builds_instanz(self):
+        from kki.quanten_norm import build_quanten_norm
+        self.assertIsNotNone(build_quanten_norm())
+
+    def test_938_quanten_norm_count(self):
+        from kki.quanten_norm import build_quanten_norm
+        self.assertEqual(len(build_quanten_norm().normen), 5)
+
+    def test_938_quanten_norm_eintrag_has_norm_weight(self):
+        from kki.quanten_norm import build_quanten_norm
+        self.assertTrue(all(e.quanten_norm_weight >= 0 for e in build_quanten_norm().normen))
+
+    def test_938_quanten_norm_weight_positive(self):
+        from kki.quanten_norm import build_quanten_norm
+        self.assertTrue(all(e.quanten_norm_tier >= 1 for e in build_quanten_norm().normen))
+
+    def test_939_quantenueberlegenheit_charta_builds_instanz(self):
+        from kki.quantenueberlegenheit_charta import build_quantenueberlegenheit_charta
+        self.assertIsNotNone(build_quantenueberlegenheit_charta())
+
+    def test_939_quantenueberlegenheit_charta_count(self):
+        from kki.quantenueberlegenheit_charta import build_quantenueberlegenheit_charta
+        self.assertEqual(len(build_quantenueberlegenheit_charta().normen), 5)
+
+    def test_939_quantenueberlegenheit_charta_canonical(self):
+        from kki.quantenueberlegenheit_charta import build_quantenueberlegenheit_charta
+        self.assertIsInstance(build_quantenueberlegenheit_charta().canonical, str)
+
+    def test_939_quantenueberlegenheit_charta_weight_positive(self):
+        from kki.quantenueberlegenheit_charta import build_quantenueberlegenheit_charta
+        self.assertTrue(all(n.quanten_weight >= 0 for n in build_quantenueberlegenheit_charta().normen))
+
+    def test_940_quanten_verfassung_builds_instanz(self):
+        from kki.quanten_verfassung import build_quanten_verfassung
+        self.assertIsNotNone(build_quanten_verfassung())
+
+    def test_940_quanten_verfassung_count(self):
+        from kki.quanten_verfassung import build_quanten_verfassung
+        self.assertEqual(len(build_quanten_verfassung().normen), 5)
+
+    def test_940_quanten_verfassung_canonical(self):
+        from kki.quanten_verfassung import build_quanten_verfassung
+        self.assertIsInstance(build_quanten_verfassung().canonical, str)
+
+    def test_940_quanten_verfassung_aggregates_signal(self):
+        from kki.quanten_verfassung import build_quanten_verfassung
+        v = build_quanten_verfassung()
+        sig = v.aggregates_verfassung_signal()
+        self.assertIn("verfassung_id", sig)
+        self.assertIn("normen_count", sig)

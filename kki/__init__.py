@@ -739,7 +739,7 @@ from .stringtheorie_charta import (
     StringtheorieTyp,
     build_stringtheorie_charta,
 )
-from .quanten_verfassung import (
+from .quantenfelder_verfassung import (
     QuantenVerfassung,
     QuantenVerfassungsGeltung,
     QuantenVerfassungsNorm,
@@ -6502,4 +6502,76 @@ from .cyber_verfassung import (
     CyberVerfassungNorm,
     CyberVerfassung,
     build_cyber_verfassung,
+)
+
+# === Block #931–940: Quantencomputing & Quanteninformatik ===
+from .quantencomputing_feld import (
+    QuantencomputingFeldTyp,
+    QuantencomputingFeldProzedur,
+    QuantencomputingFeldNorm,
+    QuantencomputingFeld,
+    build_quantencomputing_feld,
+)
+from .quantenalgorithmus_register import (
+    QuantenalgorithmusRegisterTyp,
+    QuantenalgorithmusRegisterProzedur,
+    QuantenalgorithmusRegisterEintrag,
+    QuantenalgorithmusRegister,
+    build_quantenalgorithmus_register,
+)
+from .quantenhardware_charta import (
+    QuantenhardwareChartaTyp,
+    QuantenhardwareChartaProzedur,
+    QuantenhardwareChartaNorm,
+    QuantenhardwareCharta,
+    build_quantenhardware_charta,
+)
+from .quantenfehler_kodex import (
+    QuantenfehlerKodexTyp,
+    QuantenfehlerKodexProzedur,
+    QuantenfehlerKodexEintrag,
+    QuantenfehlerKodex,
+    build_quantenfehler_kodex,
+)
+from .quantensimulations_manifest import (
+    QuantensimulationsManifestTyp,
+    QuantensimulationsManifestProzedur,
+    QuantensimulationsManifestNorm,
+    QuantensimulationsManifest,
+    build_quantensimulations_manifest,
+)
+from .quantenkommunikation_pakt import (
+    QuantenkommunikationPaktTyp,
+    QuantenkommunikationPaktProzedur,
+    QuantenkommunikationPaktEintrag,
+    QuantenkommunikationPakt,
+    build_quantenkommunikation_pakt,
+)
+from .quantencomputing_senat import (
+    QuantencomputingSenatTyp,
+    QuantencomputingSenatProzedur,
+    QuantencomputingSenatNorm,
+    QuantencomputingSenat,
+    build_quantencomputing_senat,
+)
+from .quanten_norm import (
+    QuantenNormTyp,
+    QuantenNormProzedur,
+    QuantenNormEintrag,
+    QuantenNorm,
+    build_quanten_norm,
+)
+from .quantenueberlegenheit_charta import (
+    QuantenueberlegenheitChartaTyp,
+    QuantenueberlegenheitChartaProzedur,
+    QuantenueberlegenheitChartaNorm,
+    QuantenueberlegenheitCharta,
+    build_quantenueberlegenheit_charta,
+)
+from .quanten_verfassung import (
+    QuantenVerfassungTyp,
+    QuantenVerfassungProzedur,
+    QuantenVerfassungNorm,
+    QuantenVerfassung,
+    build_quanten_verfassung,
 )

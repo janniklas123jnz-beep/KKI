@@ -6431,3 +6431,75 @@ __all__ = [
     "RobotikVerfassungTyp", "RobotikVerfassungProzedur",
     "RobotikVerfassungNorm", "RobotikVerfassung", "build_robotik_verfassung",
 ]
+
+# === Block #921–930: Cybersicherheit & Kryptographie ===
+from .cyber_sicherheit_feld import (
+    CyberSicherheitFeldTyp,
+    CyberSicherheitFeldProzedur,
+    CyberSicherheitFeldNorm,
+    CyberSicherheitFeld,
+    build_cyber_sicherheit_feld,
+)
+from .kryptographie_register import (
+    KryptographieRegisterTyp,
+    KryptographieRegisterProzedur,
+    KryptographieRegisterEintrag,
+    KryptographieRegister,
+    build_kryptographie_register,
+)
+from .netzwerksicherheit_charta import (
+    NetzwerksicherheitChartaTyp,
+    NetzwerksicherheitChartaProzedur,
+    NetzwerksicherheitChartaNorm,
+    NetzwerksicherheitCharta,
+    build_netzwerksicherheit_charta,
+)
+from .angriffsvektor_kodex import (
+    AngriffsvektorKodexTyp,
+    AngriffsvektorKodexProzedur,
+    AngriffsvektorKodexEintrag,
+    AngriffsvektorKodex,
+    build_angriffsvektor_kodex,
+)
+from .authentifizierungs_manifest import (
+    AuthentifizierungsManifestTyp,
+    AuthentifizierungsManifestProzedur,
+    AuthentifizierungsManifestNorm,
+    AuthentifizierungsManifest,
+    build_authentifizierungs_manifest,
+)
+from .blockchain_pakt import (
+    BlockchainPaktTyp,
+    BlockchainPaktProzedur,
+    BlockchainPaktEintrag,
+    BlockchainPakt,
+    build_blockchain_pakt,
+)
+from .cyber_abwehr_senat import (
+    CyberAbwehrSenatTyp,
+    CyberAbwehrSenatProzedur,
+    CyberAbwehrSenatNorm,
+    CyberAbwehrSenat,
+    build_cyber_abwehr_senat,
+)
+from .cyber_norm import (
+    CyberNormTyp,
+    CyberNormProzedur,
+    CyberNormEintrag,
+    CyberNorm,
+    build_cyber_norm,
+)
+from .privatsphaere_charta import (
+    PrivatsphareChartaTyp,
+    PrivatsphareChartaProzedur,
+    PrivatsphareChartaNorm,
+    PrivatsphareCharta,
+    build_privatsphaere_charta,
+)
+from .cyber_verfassung import (
+    CyberVerfassungTyp,
+    CyberVerfassungProzedur,
+    CyberVerfassungNorm,
+    CyberVerfassung,
+    build_cyber_verfassung,
+)

@@ -34888,3 +34888,168 @@ class SmokeTests(unittest.TestCase):
         from kki.robotik_verfassung import build_robotik_verfassung
         sig = build_robotik_verfassung().aggregates_verfassung_signal()
         self.assertEqual(sig["verfassung_id"], "robotik-verfassung-920")
+
+    # === Block #921–930: Cybersicherheit & Kryptographie ===
+
+    def test_921_cyber_sicherheit_feld_builds_instanz(self):
+        from kki.cyber_sicherheit_feld import build_cyber_sicherheit_feld
+        self.assertIsNotNone(build_cyber_sicherheit_feld())
+
+    def test_921_cyber_sicherheit_feld_count(self):
+        from kki.cyber_sicherheit_feld import build_cyber_sicherheit_feld
+        self.assertEqual(len(build_cyber_sicherheit_feld().normen), 5)
+
+    def test_921_cyber_sicherheit_feld_canonical(self):
+        from kki.cyber_sicherheit_feld import build_cyber_sicherheit_feld
+        self.assertIsInstance(build_cyber_sicherheit_feld().canonical, str)
+
+    def test_921_cyber_sicherheit_feld_weight_positive(self):
+        from kki.cyber_sicherheit_feld import build_cyber_sicherheit_feld
+        self.assertTrue(all(n.cyber_weight >= 0 for n in build_cyber_sicherheit_feld().normen))
+
+    def test_922_kryptographie_register_builds_instanz(self):
+        from kki.kryptographie_register import build_kryptographie_register
+        self.assertIsNotNone(build_kryptographie_register())
+
+    def test_922_kryptographie_register_count(self):
+        from kki.kryptographie_register import build_kryptographie_register
+        self.assertEqual(len(build_kryptographie_register().eintraege), 5)
+
+    def test_922_kryptographie_register_canonical(self):
+        from kki.kryptographie_register import build_kryptographie_register
+        self.assertIsInstance(build_kryptographie_register().canonical, str)
+
+    def test_922_kryptographie_register_weight_positive(self):
+        from kki.kryptographie_register import build_kryptographie_register
+        self.assertTrue(all(e.cyber_weight >= 0 for e in build_kryptographie_register().eintraege))
+
+    def test_923_netzwerksicherheit_charta_builds_instanz(self):
+        from kki.netzwerksicherheit_charta import build_netzwerksicherheit_charta
+        self.assertIsNotNone(build_netzwerksicherheit_charta())
+
+    def test_923_netzwerksicherheit_charta_count(self):
+        from kki.netzwerksicherheit_charta import build_netzwerksicherheit_charta
+        self.assertEqual(len(build_netzwerksicherheit_charta().normen), 5)
+
+    def test_923_netzwerksicherheit_charta_canonical(self):
+        from kki.netzwerksicherheit_charta import build_netzwerksicherheit_charta
+        self.assertIsInstance(build_netzwerksicherheit_charta().canonical, str)
+
+    def test_923_netzwerksicherheit_charta_weight_positive(self):
+        from kki.netzwerksicherheit_charta import build_netzwerksicherheit_charta
+        self.assertTrue(all(n.cyber_weight >= 0 for n in build_netzwerksicherheit_charta().normen))
+
+    def test_924_angriffsvektor_kodex_builds_instanz(self):
+        from kki.angriffsvektor_kodex import build_angriffsvektor_kodex
+        self.assertIsNotNone(build_angriffsvektor_kodex())
+
+    def test_924_angriffsvektor_kodex_count(self):
+        from kki.angriffsvektor_kodex import build_angriffsvektor_kodex
+        self.assertEqual(len(build_angriffsvektor_kodex().eintraege), 5)
+
+    def test_924_angriffsvektor_kodex_canonical(self):
+        from kki.angriffsvektor_kodex import build_angriffsvektor_kodex
+        self.assertIsInstance(build_angriffsvektor_kodex().canonical, str)
+
+    def test_924_angriffsvektor_kodex_weight_positive(self):
+        from kki.angriffsvektor_kodex import build_angriffsvektor_kodex
+        self.assertTrue(all(e.cyber_weight >= 0 for e in build_angriffsvektor_kodex().eintraege))
+
+    def test_925_authentifizierungs_manifest_builds_instanz(self):
+        from kki.authentifizierungs_manifest import build_authentifizierungs_manifest
+        self.assertIsNotNone(build_authentifizierungs_manifest())
+
+    def test_925_authentifizierungs_manifest_count(self):
+        from kki.authentifizierungs_manifest import build_authentifizierungs_manifest
+        self.assertEqual(len(build_authentifizierungs_manifest().normen), 5)
+
+    def test_925_authentifizierungs_manifest_canonical(self):
+        from kki.authentifizierungs_manifest import build_authentifizierungs_manifest
+        self.assertIsInstance(build_authentifizierungs_manifest().canonical, str)
+
+    def test_925_authentifizierungs_manifest_weight_positive(self):
+        from kki.authentifizierungs_manifest import build_authentifizierungs_manifest
+        self.assertTrue(all(n.cyber_weight >= 0 for n in build_authentifizierungs_manifest().normen))
+
+    def test_926_blockchain_pakt_builds_instanz(self):
+        from kki.blockchain_pakt import build_blockchain_pakt
+        self.assertIsNotNone(build_blockchain_pakt())
+
+    def test_926_blockchain_pakt_count(self):
+        from kki.blockchain_pakt import build_blockchain_pakt
+        self.assertEqual(len(build_blockchain_pakt().eintraege), 5)
+
+    def test_926_blockchain_pakt_canonical(self):
+        from kki.blockchain_pakt import build_blockchain_pakt
+        self.assertIsInstance(build_blockchain_pakt().canonical, str)
+
+    def test_926_blockchain_pakt_weight_positive(self):
+        from kki.blockchain_pakt import build_blockchain_pakt
+        self.assertTrue(all(e.cyber_weight >= 0 for e in build_blockchain_pakt().eintraege))
+
+    def test_927_cyber_abwehr_senat_builds_instanz(self):
+        from kki.cyber_abwehr_senat import build_cyber_abwehr_senat
+        self.assertIsNotNone(build_cyber_abwehr_senat())
+
+    def test_927_cyber_abwehr_senat_count(self):
+        from kki.cyber_abwehr_senat import build_cyber_abwehr_senat
+        self.assertEqual(len(build_cyber_abwehr_senat().normen), 5)
+
+    def test_927_cyber_abwehr_senat_canonical(self):
+        from kki.cyber_abwehr_senat import build_cyber_abwehr_senat
+        self.assertIsInstance(build_cyber_abwehr_senat().canonical, str)
+
+    def test_927_cyber_abwehr_senat_weight_positive(self):
+        from kki.cyber_abwehr_senat import build_cyber_abwehr_senat
+        self.assertTrue(all(n.cyber_weight >= 0 for n in build_cyber_abwehr_senat().normen))
+
+    def test_928_cyber_norm_builds_instanz(self):
+        from kki.cyber_norm import build_cyber_norm
+        self.assertIsNotNone(build_cyber_norm())
+
+    def test_928_cyber_norm_count(self):
+        from kki.cyber_norm import build_cyber_norm
+        self.assertEqual(len(build_cyber_norm().normen), 5)
+
+    def test_928_cyber_norm_eintrag_has_norm_weight(self):
+        from kki.cyber_norm import build_cyber_norm
+        self.assertTrue(all(e.cyber_norm_weight >= 0 for e in build_cyber_norm().normen))
+
+    def test_928_cyber_norm_weight_positive(self):
+        from kki.cyber_norm import build_cyber_norm
+        self.assertTrue(all(e.cyber_norm_tier >= 1 for e in build_cyber_norm().normen))
+
+    def test_929_privatsphaere_charta_builds_instanz(self):
+        from kki.privatsphaere_charta import build_privatsphaere_charta
+        self.assertIsNotNone(build_privatsphaere_charta())
+
+    def test_929_privatsphaere_charta_count(self):
+        from kki.privatsphaere_charta import build_privatsphaere_charta
+        self.assertEqual(len(build_privatsphaere_charta().normen), 5)
+
+    def test_929_privatsphaere_charta_canonical(self):
+        from kki.privatsphaere_charta import build_privatsphaere_charta
+        self.assertIsInstance(build_privatsphaere_charta().canonical, str)
+
+    def test_929_privatsphaere_charta_weight_positive(self):
+        from kki.privatsphaere_charta import build_privatsphaere_charta
+        self.assertTrue(all(n.cyber_weight >= 0 for n in build_privatsphaere_charta().normen))
+
+    def test_930_cyber_verfassung_builds_instanz(self):
+        from kki.cyber_verfassung import build_cyber_verfassung
+        self.assertIsNotNone(build_cyber_verfassung())
+
+    def test_930_cyber_verfassung_count(self):
+        from kki.cyber_verfassung import build_cyber_verfassung
+        self.assertEqual(len(build_cyber_verfassung().normen), 5)
+
+    def test_930_cyber_verfassung_canonical(self):
+        from kki.cyber_verfassung import build_cyber_verfassung
+        self.assertIsInstance(build_cyber_verfassung().canonical, str)
+
+    def test_930_cyber_verfassung_aggregates_signal(self):
+        from kki.cyber_verfassung import build_cyber_verfassung
+        v = build_cyber_verfassung()
+        sig = v.aggregates_verfassung_signal()
+        self.assertIn("verfassung_id", sig)
+        self.assertIn("normen_count", sig)

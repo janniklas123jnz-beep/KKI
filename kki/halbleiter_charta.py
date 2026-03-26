@@ -1,7 +1,7 @@
 """#683 — HalbleiterCharta: Leitfähigkeit, Dotierung & Bandstruktur."""
 from __future__ import annotations
 from dataclasses import dataclass
-from enum import Enum
+from enum import Enum, auto
 from typing import List
 from kki.kristallstruktur_register import KristallstrukturRegister, build_kristallstruktur_register
 
@@ -97,3 +97,68 @@ def build_halbleiter_charta(*, charta_id: str = "halbleiter-charta") -> Halbleit
             material_tags=["material", "halbleiter", g.value],
         ))
     return HalbleiterCharta(charta_id=charta_id, normen=normen, parent=parent)
+
+
+# ── #973 Halbleiter-Charta — Halbleitermaterialien im KKI-Schwarm ──────────────
+from .nanomaterial_register import NanomaterialRegister, build_nanomaterial_register  # noqa: E402
+
+
+class HalbleiterTyp(Enum):
+    SILIZIUM = auto()
+    GALLIUMNITRID = auto()
+    PEROWSKIT = auto()
+    ORGANISCH = auto()
+    ZWEI_DIMENSIONAL = auto()
+
+
+class HalbleiterProzedur(Enum):
+    DOTIERUNG = auto()
+    EPITAXIE = auto()
+    LITHOGRAPHIE = auto()
+    AETZUNG = auto()
+    PASSIVIERUNG = auto()
+
+
+_H973_WEIGHT_DELTA = {
+    HalbleiterTyp.SILIZIUM: 0.14,
+    HalbleiterTyp.GALLIUMNITRID: 0.19,
+    HalbleiterTyp.PEROWSKIT: 0.17,
+    HalbleiterTyp.ORGANISCH: 0.13,
+    HalbleiterTyp.ZWEI_DIMENSIONAL: 0.21,
+}
+_H973_TYP_MAP = {
+    HalbleiterTyp.SILIZIUM: "Silizium-Halbleiter",
+    HalbleiterTyp.GALLIUMNITRID: "Galliumnitrid-Halbleiter",
+    HalbleiterTyp.PEROWSKIT: "Perowskit-Halbleiter",
+    HalbleiterTyp.ORGANISCH: "Organischer Halbleiter",
+    HalbleiterTyp.ZWEI_DIMENSIONAL: "2D-Halbleiter",
+}
+_H973_PROZEDUR_MAP = {
+    HalbleiterProzedur.DOTIERUNG: "Dotierung",
+    HalbleiterProzedur.EPITAXIE: "Epitaxie",
+    HalbleiterProzedur.LITHOGRAPHIE: "Lithographie",
+    HalbleiterProzedur.AETZUNG: "Ätzung",
+    HalbleiterProzedur.PASSIVIERUNG: "Passivierung",
+}
+
+
+@dataclass(frozen=True)
+class HalbleiterNorm:
+    name: str
+    material_weight: float
+    material_tier: int
+
+
+@dataclass(frozen=True)
+class Halbleiter:
+    normen: tuple[HalbleiterNorm, ...]
+
+
+def build_halbleiter(parent=None) -> Halbleiter:
+    basis = parent.normen[-1].material_weight if parent and hasattr(parent, 'normen') else 0.0
+    tier_base = (max(n.material_tier for n in parent.normen) if parent and hasattr(parent, 'normen') else 0)
+    items = []
+    for i, t in enumerate(HalbleiterTyp):
+        delta = _H973_WEIGHT_DELTA.get(t, 0.0)
+        items.append(HalbleiterNorm(name=_H973_TYP_MAP[t], material_weight=round(basis + delta, 4), material_tier=tier_base + i + 1))
+    return Halbleiter(normen=tuple(items))

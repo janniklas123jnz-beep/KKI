@@ -3647,6 +3647,46 @@ from .geophysik_verfassung import (
     GeophysikVerfassungGeltung, GeophysikVerfassungsNorm, GeophysikVerfassungTyp, GeophysikVerfassungProzedur,
     GeophysikVerfassung, build_geophysik_verfassung,
 )
+from .hydrologie_feld import (
+    HydrologieFeldGeltung, HydrologieFeldNorm, HydrologieFeldTyp, HydrologieFeldProzedur,
+    HydrologieFeld, build_hydrologie_feld,
+)
+from .grundwasser_register import (
+    GrundwasserRegisterGeltung, GrundwasserRegisterEintrag, GrundwasserRegisterTyp, GrundwasserRegisterProzedur,
+    GrundwasserRegister, build_grundwasser_register,
+)
+from .flusshydrologie_charta import (
+    FlusshydrologieChartaGeltung, FlusshydrologieChartaNorm, FlusshydrologieChartaTyp, FlusshydrologieChartaProzedur,
+    FlusshydrologieCharta, build_flusshydrologie_charta,
+)
+from .gletscher_kodex import (
+    GletscherKodexGeltung, GletscherKodexEintrag, GletscherKodexTyp, GletscherKodexProzedur,
+    GletscherKodex, build_gletscher_kodex,
+)
+from .wasserkreislauf_manifest import (
+    WasserkreislaufManifestGeltung, WasserkreislaufManifestNorm, WasserkreislaufManifestTyp, WasserkreislaufManifestProzedur,
+    WasserkreislaufManifest, build_wasserkreislauf_manifest,
+)
+from .seehydrologie_pakt import (
+    SeehydrologiePaktGeltung, SeehydrologiePaktEintrag, SeehydrologiePaktTyp, SeehydrologiePaktProzedur,
+    SeehydrologiePakt, build_seehydrologie_pakt,
+)
+from .hydrologie_senat import (
+    HydrologieSenatGeltung, HydrologieSenatNorm, HydrologieSenatTyp, HydrologieSenatProzedur,
+    HydrologieSenat, build_hydrologie_senat,
+)
+from .hydrologie_norm import (
+    HydrologieNormGeltung, HydrologieNormEintrag, HydrologieNormTyp, HydrologieNormProzedur,
+    HydrologieNormSatz, build_hydrologie_norm,
+)
+from .wasserressourcen_charta import (
+    WasserressourcenChartaGeltung, WasserressourcenChartaNorm, WasserressourcenChartaTyp, WasserressourcenChartaProzedur,
+    WasserressourcenCharta, build_wasserressourcen_charta,
+)
+from .hydrologie_verfassung import (
+    HydrologieVerfassungGeltung, HydrologieVerfassungsNorm, HydrologieVerfassungTyp, HydrologieVerfassungProzedur,
+    HydrologieVerfassung, build_hydrologie_verfassung,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -5847,4 +5887,25 @@ __all__ = [
     "ErdkernCharta", "build_erdkern_charta",
     "GeophysikVerfassungGeltung", "GeophysikVerfassungsNorm", "GeophysikVerfassungTyp", "GeophysikVerfassungProzedur",
     "GeophysikVerfassung", "build_geophysik_verfassung",
+    # Block #811–820: Hydrologie & Wasserkreislauf
+    "HydrologieFeldGeltung", "HydrologieFeldNorm", "HydrologieFeldTyp", "HydrologieFeldProzedur",
+    "HydrologieFeld", "build_hydrologie_feld",
+    "GrundwasserRegisterGeltung", "GrundwasserRegisterEintrag", "GrundwasserRegisterTyp", "GrundwasserRegisterProzedur",
+    "GrundwasserRegister", "build_grundwasser_register",
+    "FlusshydrologieChartaGeltung", "FlusshydrologieChartaNorm", "FlusshydrologieChartaTyp", "FlusshydrologieChartaProzedur",
+    "FlusshydrologieCharta", "build_flusshydrologie_charta",
+    "GletscherKodexGeltung", "GletscherKodexEintrag", "GletscherKodexTyp", "GletscherKodexProzedur",
+    "GletscherKodex", "build_gletscher_kodex",
+    "WasserkreislaufManifestGeltung", "WasserkreislaufManifestNorm", "WasserkreislaufManifestTyp", "WasserkreislaufManifestProzedur",
+    "WasserkreislaufManifest", "build_wasserkreislauf_manifest",
+    "SeehydrologiePaktGeltung", "SeehydrologiePaktEintrag", "SeehydrologiePaktTyp", "SeehydrologiePaktProzedur",
+    "SeehydrologiePakt", "build_seehydrologie_pakt",
+    "HydrologieSenatGeltung", "HydrologieSenatNorm", "HydrologieSenatTyp", "HydrologieSenatProzedur",
+    "HydrologieSenat", "build_hydrologie_senat",
+    "HydrologieNormGeltung", "HydrologieNormEintrag", "HydrologieNormTyp", "HydrologieNormProzedur",
+    "HydrologieNormSatz", "build_hydrologie_norm",
+    "WasserressourcenChartaGeltung", "WasserressourcenChartaNorm", "WasserressourcenChartaTyp", "WasserressourcenChartaProzedur",
+    "WasserressourcenCharta", "build_wasserressourcen_charta",
+    "HydrologieVerfassungGeltung", "HydrologieVerfassungsNorm", "HydrologieVerfassungTyp", "HydrologieVerfassungProzedur",
+    "HydrologieVerfassung", "build_hydrologie_verfassung",
 ]

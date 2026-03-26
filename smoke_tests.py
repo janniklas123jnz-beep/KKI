@@ -30744,3 +30744,377 @@ class SmokeTests(unittest.TestCase):
     def test_kki_geophysik_verfassung_builds_parent_chain(self):
         from kki.geophysik_verfassung import build_geophysik_verfassung
         self.assertIsNotNone(build_geophysik_verfassung().parent)
+
+    # ── Block #811–820: Hydrologie & Wasserkreislauf ──────────────────────────
+
+    def test_kki_hydrologie_feld_builds(self):
+        from kki.hydrologie_feld import build_hydrologie_feld
+        self.assertIsNotNone(build_hydrologie_feld())
+
+    def test_kki_hydrologie_feld_normen_count(self):
+        from kki.hydrologie_feld import build_hydrologie_feld
+        self.assertEqual(len(build_hydrologie_feld().normen), 5)
+
+    def test_kki_hydrologie_feld_weight_positive(self):
+        from kki.hydrologie_feld import build_hydrologie_feld
+        for n in build_hydrologie_feld().normen:
+            self.assertGreaterEqual(n.hydrologie_weight, 0)
+
+    def test_kki_hydrologie_feld_gesperrt_schutz_norm(self):
+        from kki.hydrologie_feld import build_hydrologie_feld, HydrologieFeldGeltung
+        normen = build_hydrologie_feld().normen
+        self.assertEqual(normen[0].geltung, HydrologieFeldGeltung.GESPERRT)
+
+    def test_kki_hydrologie_feld_tier_sequence(self):
+        from kki.hydrologie_feld import build_hydrologie_feld
+        tiers = [n.hydrologie_tier for n in build_hydrologie_feld().normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_hydrologie_feld_ids_not_empty(self):
+        from kki.hydrologie_feld import build_hydrologie_feld
+        for n in build_hydrologie_feld().normen:
+            self.assertTrue(len(n.hydrologie_ids) > 0)
+
+    def test_kki_hydrologie_feld_tags_contain_domain(self):
+        from kki.hydrologie_feld import build_hydrologie_feld
+        for n in build_hydrologie_feld().normen:
+            self.assertIn("hydrologie", n.hydrologie_tags)
+
+    def test_kki_hydrologie_feld_builds_parent_chain(self):
+        from kki.hydrologie_feld import build_hydrologie_feld
+        self.assertIsNotNone(build_hydrologie_feld().parent)
+
+    def test_kki_grundwasser_register_builds(self):
+        from kki.grundwasser_register import build_grundwasser_register
+        self.assertIsNotNone(build_grundwasser_register())
+
+    def test_kki_grundwasser_register_eintraege_count(self):
+        from kki.grundwasser_register import build_grundwasser_register
+        self.assertEqual(len(build_grundwasser_register().eintraege), 5)
+
+    def test_kki_grundwasser_register_weight_positive(self):
+        from kki.grundwasser_register import build_grundwasser_register
+        for e in build_grundwasser_register().eintraege:
+            self.assertGreaterEqual(e.hydrologie_weight, 0)
+
+    def test_kki_grundwasser_register_gesperrt_schutz_norm(self):
+        from kki.grundwasser_register import build_grundwasser_register, GrundwasserRegisterGeltung
+        eintraege = build_grundwasser_register().eintraege
+        self.assertEqual(eintraege[0].geltung, GrundwasserRegisterGeltung.GESPERRT)
+
+    def test_kki_grundwasser_register_tier_sequence(self):
+        from kki.grundwasser_register import build_grundwasser_register
+        tiers = [e.hydrologie_tier for e in build_grundwasser_register().eintraege]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_grundwasser_register_ids_not_empty(self):
+        from kki.grundwasser_register import build_grundwasser_register
+        for e in build_grundwasser_register().eintraege:
+            self.assertTrue(len(e.hydrologie_ids) > 0)
+
+    def test_kki_grundwasser_register_tags_contain_domain(self):
+        from kki.grundwasser_register import build_grundwasser_register
+        for e in build_grundwasser_register().eintraege:
+            self.assertIn("hydrologie", e.hydrologie_tags)
+
+    def test_kki_grundwasser_register_builds_parent_chain(self):
+        from kki.grundwasser_register import build_grundwasser_register
+        self.assertIsNotNone(build_grundwasser_register().parent)
+
+    def test_kki_flusshydrologie_charta_builds(self):
+        from kki.flusshydrologie_charta import build_flusshydrologie_charta
+        self.assertIsNotNone(build_flusshydrologie_charta())
+
+    def test_kki_flusshydrologie_charta_normen_count(self):
+        from kki.flusshydrologie_charta import build_flusshydrologie_charta
+        self.assertEqual(len(build_flusshydrologie_charta().normen), 5)
+
+    def test_kki_flusshydrologie_charta_weight_positive(self):
+        from kki.flusshydrologie_charta import build_flusshydrologie_charta
+        for n in build_flusshydrologie_charta().normen:
+            self.assertGreaterEqual(n.hydrologie_weight, 0)
+
+    def test_kki_flusshydrologie_charta_gesperrt_schutz_norm(self):
+        from kki.flusshydrologie_charta import build_flusshydrologie_charta, FlusshydrologieChartaGeltung
+        normen = build_flusshydrologie_charta().normen
+        self.assertEqual(normen[0].geltung, FlusshydrologieChartaGeltung.GESPERRT)
+
+    def test_kki_flusshydrologie_charta_tier_sequence(self):
+        from kki.flusshydrologie_charta import build_flusshydrologie_charta
+        tiers = [n.hydrologie_tier for n in build_flusshydrologie_charta().normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_flusshydrologie_charta_ids_not_empty(self):
+        from kki.flusshydrologie_charta import build_flusshydrologie_charta
+        for n in build_flusshydrologie_charta().normen:
+            self.assertTrue(len(n.hydrologie_ids) > 0)
+
+    def test_kki_flusshydrologie_charta_tags_contain_domain(self):
+        from kki.flusshydrologie_charta import build_flusshydrologie_charta
+        for n in build_flusshydrologie_charta().normen:
+            self.assertIn("hydrologie", n.hydrologie_tags)
+
+    def test_kki_flusshydrologie_charta_builds_parent_chain(self):
+        from kki.flusshydrologie_charta import build_flusshydrologie_charta
+        self.assertIsNotNone(build_flusshydrologie_charta().parent)
+
+    def test_kki_gletscher_kodex_builds(self):
+        from kki.gletscher_kodex import build_gletscher_kodex
+        self.assertIsNotNone(build_gletscher_kodex())
+
+    def test_kki_gletscher_kodex_eintraege_count(self):
+        from kki.gletscher_kodex import build_gletscher_kodex
+        self.assertEqual(len(build_gletscher_kodex().eintraege), 5)
+
+    def test_kki_gletscher_kodex_weight_positive(self):
+        from kki.gletscher_kodex import build_gletscher_kodex
+        for e in build_gletscher_kodex().eintraege:
+            self.assertGreaterEqual(e.hydrologie_weight, 0)
+
+    def test_kki_gletscher_kodex_gesperrt_schutz_norm(self):
+        from kki.gletscher_kodex import build_gletscher_kodex, GletscherKodexGeltung
+        eintraege = build_gletscher_kodex().eintraege
+        self.assertEqual(eintraege[0].geltung, GletscherKodexGeltung.GESPERRT)
+
+    def test_kki_gletscher_kodex_tier_sequence(self):
+        from kki.gletscher_kodex import build_gletscher_kodex
+        tiers = [e.hydrologie_tier for e in build_gletscher_kodex().eintraege]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_gletscher_kodex_ids_not_empty(self):
+        from kki.gletscher_kodex import build_gletscher_kodex
+        for e in build_gletscher_kodex().eintraege:
+            self.assertTrue(len(e.hydrologie_ids) > 0)
+
+    def test_kki_gletscher_kodex_tags_contain_domain(self):
+        from kki.gletscher_kodex import build_gletscher_kodex
+        for e in build_gletscher_kodex().eintraege:
+            self.assertIn("hydrologie", e.hydrologie_tags)
+
+    def test_kki_gletscher_kodex_builds_parent_chain(self):
+        from kki.gletscher_kodex import build_gletscher_kodex
+        self.assertIsNotNone(build_gletscher_kodex().parent)
+
+    def test_kki_wasserkreislauf_manifest_builds(self):
+        from kki.wasserkreislauf_manifest import build_wasserkreislauf_manifest
+        self.assertIsNotNone(build_wasserkreislauf_manifest())
+
+    def test_kki_wasserkreislauf_manifest_normen_count(self):
+        from kki.wasserkreislauf_manifest import build_wasserkreislauf_manifest
+        self.assertEqual(len(build_wasserkreislauf_manifest().normen), 5)
+
+    def test_kki_wasserkreislauf_manifest_weight_positive(self):
+        from kki.wasserkreislauf_manifest import build_wasserkreislauf_manifest
+        for n in build_wasserkreislauf_manifest().normen:
+            self.assertGreaterEqual(n.hydrologie_weight, 0)
+
+    def test_kki_wasserkreislauf_manifest_gesperrt_schutz_norm(self):
+        from kki.wasserkreislauf_manifest import build_wasserkreislauf_manifest, WasserkreislaufManifestGeltung
+        normen = build_wasserkreislauf_manifest().normen
+        self.assertEqual(normen[0].geltung, WasserkreislaufManifestGeltung.GESPERRT)
+
+    def test_kki_wasserkreislauf_manifest_tier_sequence(self):
+        from kki.wasserkreislauf_manifest import build_wasserkreislauf_manifest
+        tiers = [n.hydrologie_tier for n in build_wasserkreislauf_manifest().normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_wasserkreislauf_manifest_ids_not_empty(self):
+        from kki.wasserkreislauf_manifest import build_wasserkreislauf_manifest
+        for n in build_wasserkreislauf_manifest().normen:
+            self.assertTrue(len(n.hydrologie_ids) > 0)
+
+    def test_kki_wasserkreislauf_manifest_tags_contain_domain(self):
+        from kki.wasserkreislauf_manifest import build_wasserkreislauf_manifest
+        for n in build_wasserkreislauf_manifest().normen:
+            self.assertIn("hydrologie", n.hydrologie_tags)
+
+    def test_kki_wasserkreislauf_manifest_builds_parent_chain(self):
+        from kki.wasserkreislauf_manifest import build_wasserkreislauf_manifest
+        self.assertIsNotNone(build_wasserkreislauf_manifest().parent)
+
+    def test_kki_seehydrologie_pakt_builds(self):
+        from kki.seehydrologie_pakt import build_seehydrologie_pakt
+        self.assertIsNotNone(build_seehydrologie_pakt())
+
+    def test_kki_seehydrologie_pakt_eintraege_count(self):
+        from kki.seehydrologie_pakt import build_seehydrologie_pakt
+        self.assertEqual(len(build_seehydrologie_pakt().eintraege), 5)
+
+    def test_kki_seehydrologie_pakt_weight_positive(self):
+        from kki.seehydrologie_pakt import build_seehydrologie_pakt
+        for e in build_seehydrologie_pakt().eintraege:
+            self.assertGreaterEqual(e.hydrologie_weight, 0)
+
+    def test_kki_seehydrologie_pakt_gesperrt_schutz_norm(self):
+        from kki.seehydrologie_pakt import build_seehydrologie_pakt, SeehydrologiePaktGeltung
+        eintraege = build_seehydrologie_pakt().eintraege
+        self.assertEqual(eintraege[0].geltung, SeehydrologiePaktGeltung.GESPERRT)
+
+    def test_kki_seehydrologie_pakt_tier_sequence(self):
+        from kki.seehydrologie_pakt import build_seehydrologie_pakt
+        tiers = [e.hydrologie_tier for e in build_seehydrologie_pakt().eintraege]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_seehydrologie_pakt_ids_not_empty(self):
+        from kki.seehydrologie_pakt import build_seehydrologie_pakt
+        for e in build_seehydrologie_pakt().eintraege:
+            self.assertTrue(len(e.hydrologie_ids) > 0)
+
+    def test_kki_seehydrologie_pakt_tags_contain_domain(self):
+        from kki.seehydrologie_pakt import build_seehydrologie_pakt
+        for e in build_seehydrologie_pakt().eintraege:
+            self.assertIn("hydrologie", e.hydrologie_tags)
+
+    def test_kki_seehydrologie_pakt_builds_parent_chain(self):
+        from kki.seehydrologie_pakt import build_seehydrologie_pakt
+        self.assertIsNotNone(build_seehydrologie_pakt().parent)
+
+    def test_kki_hydrologie_senat_builds(self):
+        from kki.hydrologie_senat import build_hydrologie_senat
+        self.assertIsNotNone(build_hydrologie_senat())
+
+    def test_kki_hydrologie_senat_normen_count(self):
+        from kki.hydrologie_senat import build_hydrologie_senat
+        self.assertEqual(len(build_hydrologie_senat().normen), 5)
+
+    def test_kki_hydrologie_senat_weight_positive(self):
+        from kki.hydrologie_senat import build_hydrologie_senat
+        for n in build_hydrologie_senat().normen:
+            self.assertGreaterEqual(n.hydrologie_weight, 0)
+
+    def test_kki_hydrologie_senat_gesperrt_schutz_norm(self):
+        from kki.hydrologie_senat import build_hydrologie_senat, HydrologieSenatGeltung
+        normen = build_hydrologie_senat().normen
+        self.assertEqual(normen[0].geltung, HydrologieSenatGeltung.GESPERRT)
+
+    def test_kki_hydrologie_senat_tier_sequence(self):
+        from kki.hydrologie_senat import build_hydrologie_senat
+        tiers = [n.hydrologie_tier for n in build_hydrologie_senat().normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_hydrologie_senat_ids_not_empty(self):
+        from kki.hydrologie_senat import build_hydrologie_senat
+        for n in build_hydrologie_senat().normen:
+            self.assertTrue(len(n.hydrologie_ids) > 0)
+
+    def test_kki_hydrologie_senat_tags_contain_domain(self):
+        from kki.hydrologie_senat import build_hydrologie_senat
+        for n in build_hydrologie_senat().normen:
+            self.assertIn("hydrologie", n.hydrologie_tags)
+
+    def test_kki_hydrologie_senat_builds_parent_chain(self):
+        from kki.hydrologie_senat import build_hydrologie_senat
+        self.assertIsNotNone(build_hydrologie_senat().parent)
+
+    def test_kki_hydrologie_norm_builds(self):
+        from kki.hydrologie_norm import build_hydrologie_norm
+        self.assertIsNotNone(build_hydrologie_norm())
+
+    def test_kki_hydrologie_norm_normen_count(self):
+        from kki.hydrologie_norm import build_hydrologie_norm
+        self.assertEqual(len(build_hydrologie_norm().normen), 5)
+
+    def test_kki_hydrologie_norm_weight_positive(self):
+        from kki.hydrologie_norm import build_hydrologie_norm
+        for e in build_hydrologie_norm().normen:
+            self.assertGreaterEqual(e.hydrologie_norm_weight, 0)
+
+    def test_kki_hydrologie_norm_gesperrt_schutz_norm(self):
+        from kki.hydrologie_norm import build_hydrologie_norm, HydrologieNormGeltung
+        normen = build_hydrologie_norm().normen
+        self.assertEqual(normen[0].geltung, HydrologieNormGeltung.GESPERRT)
+
+    def test_kki_hydrologie_norm_tier_sequence(self):
+        from kki.hydrologie_norm import build_hydrologie_norm
+        tiers = [e.hydrologie_norm_tier for e in build_hydrologie_norm().normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_hydrologie_norm_ids_not_empty(self):
+        from kki.hydrologie_norm import build_hydrologie_norm
+        for e in build_hydrologie_norm().normen:
+            self.assertTrue(len(e.hydrologie_norm_ids) > 0)
+
+    def test_kki_hydrologie_norm_tags_contain_domain(self):
+        from kki.hydrologie_norm import build_hydrologie_norm
+        for e in build_hydrologie_norm().normen:
+            self.assertIn("hydrologie", e.hydrologie_norm_tags)
+
+    def test_kki_hydrologie_norm_builds_parent_chain(self):
+        from kki.hydrologie_norm import build_hydrologie_norm
+        self.assertIsNotNone(build_hydrologie_norm().parent)
+
+    def test_kki_wasserressourcen_charta_builds(self):
+        from kki.wasserressourcen_charta import build_wasserressourcen_charta
+        self.assertIsNotNone(build_wasserressourcen_charta())
+
+    def test_kki_wasserressourcen_charta_normen_count(self):
+        from kki.wasserressourcen_charta import build_wasserressourcen_charta
+        self.assertEqual(len(build_wasserressourcen_charta().normen), 5)
+
+    def test_kki_wasserressourcen_charta_weight_positive(self):
+        from kki.wasserressourcen_charta import build_wasserressourcen_charta
+        for n in build_wasserressourcen_charta().normen:
+            self.assertGreaterEqual(n.hydrologie_weight, 0)
+
+    def test_kki_wasserressourcen_charta_gesperrt_schutz_norm(self):
+        from kki.wasserressourcen_charta import build_wasserressourcen_charta, WasserressourcenChartaGeltung
+        normen = build_wasserressourcen_charta().normen
+        self.assertEqual(normen[0].geltung, WasserressourcenChartaGeltung.GESPERRT)
+
+    def test_kki_wasserressourcen_charta_tier_sequence(self):
+        from kki.wasserressourcen_charta import build_wasserressourcen_charta
+        tiers = [n.hydrologie_tier for n in build_wasserressourcen_charta().normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_wasserressourcen_charta_ids_not_empty(self):
+        from kki.wasserressourcen_charta import build_wasserressourcen_charta
+        for n in build_wasserressourcen_charta().normen:
+            self.assertTrue(len(n.hydrologie_ids) > 0)
+
+    def test_kki_wasserressourcen_charta_tags_contain_domain(self):
+        from kki.wasserressourcen_charta import build_wasserressourcen_charta
+        for n in build_wasserressourcen_charta().normen:
+            self.assertIn("hydrologie", n.hydrologie_tags)
+
+    def test_kki_wasserressourcen_charta_builds_parent_chain(self):
+        from kki.wasserressourcen_charta import build_wasserressourcen_charta
+        self.assertIsNotNone(build_wasserressourcen_charta().parent)
+
+    def test_kki_hydrologie_verfassung_builds(self):
+        from kki.hydrologie_verfassung import build_hydrologie_verfassung
+        self.assertIsNotNone(build_hydrologie_verfassung())
+
+    def test_kki_hydrologie_verfassung_normen_count(self):
+        from kki.hydrologie_verfassung import build_hydrologie_verfassung
+        self.assertEqual(len(build_hydrologie_verfassung().normen), 5)
+
+    def test_kki_hydrologie_verfassung_gesperrt_schutz_norm(self):
+        from kki.hydrologie_verfassung import build_hydrologie_verfassung, HydrologieVerfassungGeltung
+        normen = build_hydrologie_verfassung().normen
+        self.assertEqual(normen[0].geltung, HydrologieVerfassungGeltung.GESPERRT)
+
+    def test_kki_hydrologie_verfassung_aggregates_verfassung_signal(self):
+        from kki.hydrologie_verfassung import build_hydrologie_verfassung
+        sig = build_hydrologie_verfassung().aggregates_verfassung_signal()
+        self.assertEqual(sig["verfassung_id"], "hydrologie-verfassung-820")
+        self.assertGreater(sig["total_weight"], 0)
+        self.assertEqual(sig["norm_count"], 5)
+
+    def test_kki_hydrologie_verfassung_tier_sequence(self):
+        from kki.hydrologie_verfassung import build_hydrologie_verfassung
+        tiers = [n.hydrologie_tier for n in build_hydrologie_verfassung().normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_hydrologie_verfassung_ids_not_empty(self):
+        from kki.hydrologie_verfassung import build_hydrologie_verfassung
+        for n in build_hydrologie_verfassung().normen:
+            self.assertTrue(len(n.hydrologie_ids) > 0)
+
+    def test_kki_hydrologie_verfassung_tags_contain_domain(self):
+        from kki.hydrologie_verfassung import build_hydrologie_verfassung
+        for n in build_hydrologie_verfassung().normen:
+            self.assertIn("hydrologie", n.hydrologie_tags)
+
+    def test_kki_hydrologie_verfassung_builds_parent_chain(self):
+        from kki.hydrologie_verfassung import build_hydrologie_verfassung
+        self.assertIsNotNone(build_hydrologie_verfassung().parent)

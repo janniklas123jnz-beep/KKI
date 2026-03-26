@@ -34492,3 +34492,224 @@ class SmokeTests(unittest.TestCase):
         obj = build_glaziologie_verfassung()
         normen = obj.normen
         self.assertGreater(len(normen), 0)
+
+    # ═══════════════════════════════════════════════════════
+    # Block #901–#910 — Maschinelles Lernen & Künstliche Intelligenz
+    # ═══════════════════════════════════════════════════════
+
+    # --- #901 MaschinenlernenFeld ---
+    def test_kki_maschinenlernen_feld_builds_instanz(self):
+        from kki.maschinenlernen_feld import build_maschinenlernen_feld, MaschinenlernenFeld
+        obj = build_maschinenlernen_feld()
+        self.assertIsInstance(obj, MaschinenlernenFeld)
+
+    def test_kki_maschinenlernen_feld_normen_count(self):
+        from kki.maschinenlernen_feld import build_maschinenlernen_feld
+        obj = build_maschinenlernen_feld()
+        self.assertEqual(len(obj.normen), 5)
+
+    def test_kki_maschinenlernen_feld_canonical(self):
+        from kki.maschinenlernen_feld import build_maschinenlernen_feld
+        obj = build_maschinenlernen_feld()
+        self.assertTrue(obj.canonical)
+
+    def test_kki_maschinenlernen_feld_weight_positive(self):
+        from kki.maschinenlernen_feld import build_maschinenlernen_feld
+        obj = build_maschinenlernen_feld()
+        self.assertGreater(obj.normen[0].maschinenlernen_weight, 0)
+
+    # --- #902 NeuronalesNetzRegister ---
+    def test_kki_neuronales_netz_register_builds_instanz(self):
+        from kki.neuronales_netz_register import build_neuronales_netz_register, NeuronalesNetzRegister
+        obj = build_neuronales_netz_register()
+        self.assertIsInstance(obj, NeuronalesNetzRegister)
+
+    def test_kki_neuronales_netz_register_eintraege_count(self):
+        from kki.neuronales_netz_register import build_neuronales_netz_register
+        obj = build_neuronales_netz_register()
+        self.assertEqual(len(obj.eintraege), 5)
+
+    def test_kki_neuronales_netz_register_canonical(self):
+        from kki.neuronales_netz_register import build_neuronales_netz_register
+        obj = build_neuronales_netz_register()
+        self.assertTrue(obj.canonical)
+
+    def test_kki_neuronales_netz_register_weight_positive(self):
+        from kki.neuronales_netz_register import build_neuronales_netz_register
+        obj = build_neuronales_netz_register()
+        self.assertGreater(obj.eintraege[0].maschinenlernen_weight, 0)
+
+    # --- #903 DeepLearningCharta ---
+    def test_kki_deep_learning_charta_builds_instanz(self):
+        from kki.deep_learning_charta import build_deep_learning_charta, DeepLearningCharta
+        obj = build_deep_learning_charta()
+        self.assertIsInstance(obj, DeepLearningCharta)
+
+    def test_kki_deep_learning_charta_normen_count(self):
+        from kki.deep_learning_charta import build_deep_learning_charta
+        obj = build_deep_learning_charta()
+        self.assertEqual(len(obj.normen), 5)
+
+    def test_kki_deep_learning_charta_canonical(self):
+        from kki.deep_learning_charta import build_deep_learning_charta
+        obj = build_deep_learning_charta()
+        self.assertTrue(obj.canonical)
+
+    def test_kki_deep_learning_charta_weight_positive(self):
+        from kki.deep_learning_charta import build_deep_learning_charta
+        obj = build_deep_learning_charta()
+        self.assertGreater(obj.normen[0].maschinenlernen_weight, 0)
+
+    # --- #904 VerstaerkungslernenKodex ---
+    def test_kki_verstaerkungslernen_kodex_builds_instanz(self):
+        from kki.verstaerkungslernen_kodex import build_verstaerkungslernen_kodex, VerstaerkungslernenKodex
+        obj = build_verstaerkungslernen_kodex()
+        self.assertIsInstance(obj, VerstaerkungslernenKodex)
+
+    def test_kki_verstaerkungslernen_kodex_eintraege_count(self):
+        from kki.verstaerkungslernen_kodex import build_verstaerkungslernen_kodex
+        obj = build_verstaerkungslernen_kodex()
+        self.assertEqual(len(obj.eintraege), 5)
+
+    def test_kki_verstaerkungslernen_kodex_canonical(self):
+        from kki.verstaerkungslernen_kodex import build_verstaerkungslernen_kodex
+        obj = build_verstaerkungslernen_kodex()
+        self.assertTrue(obj.canonical)
+
+    def test_kki_verstaerkungslernen_kodex_weight_positive(self):
+        from kki.verstaerkungslernen_kodex import build_verstaerkungslernen_kodex
+        obj = build_verstaerkungslernen_kodex()
+        self.assertGreater(obj.eintraege[0].maschinenlernen_weight, 0)
+
+    # --- #905 NaturalLanguageManifest ---
+    def test_kki_natural_language_manifest_builds_instanz(self):
+        from kki.natural_language_manifest import build_natural_language_manifest, NaturalLanguageManifest
+        obj = build_natural_language_manifest()
+        self.assertIsInstance(obj, NaturalLanguageManifest)
+
+    def test_kki_natural_language_manifest_normen_count(self):
+        from kki.natural_language_manifest import build_natural_language_manifest
+        obj = build_natural_language_manifest()
+        self.assertEqual(len(obj.normen), 5)
+
+    def test_kki_natural_language_manifest_canonical(self):
+        from kki.natural_language_manifest import build_natural_language_manifest
+        obj = build_natural_language_manifest()
+        self.assertTrue(obj.canonical)
+
+    def test_kki_natural_language_manifest_weight_positive(self):
+        from kki.natural_language_manifest import build_natural_language_manifest
+        obj = build_natural_language_manifest()
+        self.assertGreater(obj.normen[0].maschinenlernen_weight, 0)
+
+    # --- #906 ComputerVisionPakt ---
+    def test_kki_computer_vision_pakt_builds_instanz(self):
+        from kki.computer_vision_pakt import build_computer_vision_pakt, ComputerVisionPakt
+        obj = build_computer_vision_pakt()
+        self.assertIsInstance(obj, ComputerVisionPakt)
+
+    def test_kki_computer_vision_pakt_eintraege_count(self):
+        from kki.computer_vision_pakt import build_computer_vision_pakt
+        obj = build_computer_vision_pakt()
+        self.assertEqual(len(obj.eintraege), 5)
+
+    def test_kki_computer_vision_pakt_canonical(self):
+        from kki.computer_vision_pakt import build_computer_vision_pakt
+        obj = build_computer_vision_pakt()
+        self.assertTrue(obj.canonical)
+
+    def test_kki_computer_vision_pakt_weight_positive(self):
+        from kki.computer_vision_pakt import build_computer_vision_pakt
+        obj = build_computer_vision_pakt()
+        self.assertGreater(obj.eintraege[0].maschinenlernen_weight, 0)
+
+    # --- #907 MaschinenlernenSenat ---
+    def test_kki_maschinenlernen_senat_builds_instanz(self):
+        from kki.maschinenlernen_senat import build_maschinenlernen_senat, MaschinenlernenSenat
+        obj = build_maschinenlernen_senat()
+        self.assertIsInstance(obj, MaschinenlernenSenat)
+
+    def test_kki_maschinenlernen_senat_normen_count(self):
+        from kki.maschinenlernen_senat import build_maschinenlernen_senat
+        obj = build_maschinenlernen_senat()
+        self.assertEqual(len(obj.normen), 5)
+
+    def test_kki_maschinenlernen_senat_canonical(self):
+        from kki.maschinenlernen_senat import build_maschinenlernen_senat
+        obj = build_maschinenlernen_senat()
+        self.assertTrue(obj.canonical)
+
+    def test_kki_maschinenlernen_senat_weight_positive(self):
+        from kki.maschinenlernen_senat import build_maschinenlernen_senat
+        obj = build_maschinenlernen_senat()
+        self.assertGreater(obj.normen[0].maschinenlernen_weight, 0)
+
+    # --- #908 MaschinenlernenNorm ---
+    def test_kki_maschinenlernen_norm_builds_instanz(self):
+        from kki.maschinenlernen_norm import build_maschinenlernen_norm, MaschinenlernenNorm
+        obj = build_maschinenlernen_norm()
+        self.assertIsInstance(obj, MaschinenlernenNorm)
+
+    def test_kki_maschinenlernen_norm_normen_count(self):
+        from kki.maschinenlernen_norm import build_maschinenlernen_norm
+        obj = build_maschinenlernen_norm()
+        self.assertEqual(len(obj.normen), 5)
+
+    def test_kki_maschinenlernen_norm_canonical(self):
+        from kki.maschinenlernen_norm import build_maschinenlernen_norm
+        obj = build_maschinenlernen_norm()
+        self.assertTrue(obj.canonical)
+
+    def test_kki_maschinenlernen_norm_eintrag_has_norm_weight(self):
+        from kki.maschinenlernen_norm import build_maschinenlernen_norm
+        obj = build_maschinenlernen_norm()
+        self.assertGreater(obj.normen[0].maschinenlernen_norm_weight, 0)
+
+    # --- #909 KiEthikCharta ---
+    def test_kki_ki_ethik_charta_builds_instanz(self):
+        from kki.ki_ethik_charta import build_ki_ethik_charta, KiEthikCharta
+        obj = build_ki_ethik_charta()
+        self.assertIsInstance(obj, KiEthikCharta)
+
+    def test_kki_ki_ethik_charta_normen_count(self):
+        from kki.ki_ethik_charta import build_ki_ethik_charta
+        obj = build_ki_ethik_charta()
+        self.assertEqual(len(obj.normen), 5)
+
+    def test_kki_ki_ethik_charta_canonical(self):
+        from kki.ki_ethik_charta import build_ki_ethik_charta
+        obj = build_ki_ethik_charta()
+        self.assertTrue(obj.canonical)
+
+    def test_kki_ki_ethik_charta_weight_positive(self):
+        from kki.ki_ethik_charta import build_ki_ethik_charta
+        obj = build_ki_ethik_charta()
+        self.assertGreater(obj.normen[0].maschinenlernen_weight, 0)
+
+    # --- #910 MaschinenlernenVerfassung ⭐ ---
+    def test_kki_maschinenlernen_verfassung_builds_instanz(self):
+        from kki.maschinenlernen_verfassung import build_maschinenlernen_verfassung, MaschinenlernenVerfassung
+        obj = build_maschinenlernen_verfassung()
+        self.assertIsInstance(obj, MaschinenlernenVerfassung)
+
+    def test_kki_maschinenlernen_verfassung_normen_count(self):
+        from kki.maschinenlernen_verfassung import build_maschinenlernen_verfassung
+        obj = build_maschinenlernen_verfassung()
+        self.assertEqual(len(obj.normen), 5)
+
+    def test_kki_maschinenlernen_verfassung_canonical(self):
+        from kki.maschinenlernen_verfassung import build_maschinenlernen_verfassung
+        obj = build_maschinenlernen_verfassung()
+        self.assertTrue(obj.canonical)
+
+    def test_kki_maschinenlernen_verfassung_weight_positive(self):
+        from kki.maschinenlernen_verfassung import build_maschinenlernen_verfassung
+        obj = build_maschinenlernen_verfassung()
+        self.assertGreater(obj.normen[0].maschinenlernen_weight, 0)
+
+    def test_kki_maschinenlernen_verfassung_aggregates_signal(self):
+        from kki.maschinenlernen_verfassung import build_maschinenlernen_verfassung
+        obj = build_maschinenlernen_verfassung()
+        sig = obj.aggregates_verfassung_signal()
+        self.assertIn("verfassung_id", sig)
+        self.assertEqual(sig["verfassung_id"], "maschinenlernen-verfassung-910")

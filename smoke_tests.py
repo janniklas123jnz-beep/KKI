@@ -35218,3 +35218,168 @@ class SmokeTests(unittest.TestCase):
         sig = v.aggregates_verfassung_signal()
         self.assertIn("verfassung_id", sig)
         self.assertIn("normen_count", sig)
+
+    # === Block #941–950: Biotechnologie & Gentechnik ===
+
+    def test_941_biotechnologie_feld_builds_instanz(self):
+        from kki.biotechnologie_feld import build_biotechnologie_feld
+        self.assertIsNotNone(build_biotechnologie_feld())
+
+    def test_941_biotechnologie_feld_count(self):
+        from kki.biotechnologie_feld import build_biotechnologie_feld
+        self.assertEqual(len(build_biotechnologie_feld().normen), 5)
+
+    def test_941_biotechnologie_feld_canonical(self):
+        from kki.biotechnologie_feld import build_biotechnologie_feld
+        self.assertIsInstance(build_biotechnologie_feld().canonical, str)
+
+    def test_941_biotechnologie_feld_weight_positive(self):
+        from kki.biotechnologie_feld import build_biotechnologie_feld
+        self.assertTrue(all(n.biotech_weight >= 0 for n in build_biotechnologie_feld().normen))
+
+    def test_942_genomik_register_builds_instanz(self):
+        from kki.genomik_register import build_genomik_register
+        self.assertIsNotNone(build_genomik_register())
+
+    def test_942_genomik_register_count(self):
+        from kki.genomik_register import build_genomik_register
+        self.assertEqual(len(build_genomik_register().eintraege), 5)
+
+    def test_942_genomik_register_canonical(self):
+        from kki.genomik_register import build_genomik_register
+        self.assertIsInstance(build_genomik_register().canonical, str)
+
+    def test_942_genomik_register_weight_positive(self):
+        from kki.genomik_register import build_genomik_register
+        self.assertTrue(all(e.biotech_weight >= 0 for e in build_genomik_register().eintraege))
+
+    def test_943_crispr_charta_builds_instanz(self):
+        from kki.crispr_charta import build_crispr_charta
+        self.assertIsNotNone(build_crispr_charta())
+
+    def test_943_crispr_charta_count(self):
+        from kki.crispr_charta import build_crispr_charta
+        self.assertEqual(len(build_crispr_charta().normen), 5)
+
+    def test_943_crispr_charta_canonical(self):
+        from kki.crispr_charta import build_crispr_charta
+        self.assertIsInstance(build_crispr_charta().canonical, str)
+
+    def test_943_crispr_charta_weight_positive(self):
+        from kki.crispr_charta import build_crispr_charta
+        self.assertTrue(all(n.biotech_weight >= 0 for n in build_crispr_charta().normen))
+
+    def test_944_synthetische_biologie_kodex_builds_instanz(self):
+        from kki.synthetische_biologie_kodex import build_synthetische_biologie_kodex
+        self.assertIsNotNone(build_synthetische_biologie_kodex())
+
+    def test_944_synthetische_biologie_kodex_count(self):
+        from kki.synthetische_biologie_kodex import build_synthetische_biologie_kodex
+        self.assertEqual(len(build_synthetische_biologie_kodex().eintraege), 5)
+
+    def test_944_synthetische_biologie_kodex_canonical(self):
+        from kki.synthetische_biologie_kodex import build_synthetische_biologie_kodex
+        self.assertIsInstance(build_synthetische_biologie_kodex().canonical, str)
+
+    def test_944_synthetische_biologie_kodex_weight_positive(self):
+        from kki.synthetische_biologie_kodex import build_synthetische_biologie_kodex
+        self.assertTrue(all(e.biotech_weight >= 0 for e in build_synthetische_biologie_kodex().eintraege))
+
+    def test_945_mrna_manifest_builds_instanz(self):
+        from kki.mrna_manifest import build_mrna_manifest
+        self.assertIsNotNone(build_mrna_manifest())
+
+    def test_945_mrna_manifest_count(self):
+        from kki.mrna_manifest import build_mrna_manifest
+        self.assertEqual(len(build_mrna_manifest().normen), 5)
+
+    def test_945_mrna_manifest_canonical(self):
+        from kki.mrna_manifest import build_mrna_manifest
+        self.assertIsInstance(build_mrna_manifest().canonical, str)
+
+    def test_945_mrna_manifest_weight_positive(self):
+        from kki.mrna_manifest import build_mrna_manifest
+        self.assertTrue(all(n.biotech_weight >= 0 for n in build_mrna_manifest().normen))
+
+    def test_946_bioprozesstechnik_pakt_builds_instanz(self):
+        from kki.bioprozesstechnik_pakt import build_bioprozesstechnik_pakt
+        self.assertIsNotNone(build_bioprozesstechnik_pakt())
+
+    def test_946_bioprozesstechnik_pakt_count(self):
+        from kki.bioprozesstechnik_pakt import build_bioprozesstechnik_pakt
+        self.assertEqual(len(build_bioprozesstechnik_pakt().eintraege), 5)
+
+    def test_946_bioprozesstechnik_pakt_canonical(self):
+        from kki.bioprozesstechnik_pakt import build_bioprozesstechnik_pakt
+        self.assertIsInstance(build_bioprozesstechnik_pakt().canonical, str)
+
+    def test_946_bioprozesstechnik_pakt_weight_positive(self):
+        from kki.bioprozesstechnik_pakt import build_bioprozesstechnik_pakt
+        self.assertTrue(all(e.biotech_weight >= 0 for e in build_bioprozesstechnik_pakt().eintraege))
+
+    def test_947_bioinformatik_senat_builds_instanz(self):
+        from kki.bioinformatik_senat import build_bioinformatik_senat
+        self.assertIsNotNone(build_bioinformatik_senat())
+
+    def test_947_bioinformatik_senat_count(self):
+        from kki.bioinformatik_senat import build_bioinformatik_senat
+        self.assertEqual(len(build_bioinformatik_senat().normen), 5)
+
+    def test_947_bioinformatik_senat_canonical(self):
+        from kki.bioinformatik_senat import build_bioinformatik_senat
+        self.assertIsInstance(build_bioinformatik_senat().canonical, str)
+
+    def test_947_bioinformatik_senat_weight_positive(self):
+        from kki.bioinformatik_senat import build_bioinformatik_senat
+        self.assertTrue(all(n.biotech_weight >= 0 for n in build_bioinformatik_senat().normen))
+
+    def test_948_biotechnologie_norm_builds_instanz(self):
+        from kki.biotechnologie_norm import build_biotechnologie_norm
+        self.assertIsNotNone(build_biotechnologie_norm())
+
+    def test_948_biotechnologie_norm_count(self):
+        from kki.biotechnologie_norm import build_biotechnologie_norm
+        self.assertEqual(len(build_biotechnologie_norm().normen), 5)
+
+    def test_948_biotechnologie_norm_eintrag_has_norm_weight(self):
+        from kki.biotechnologie_norm import build_biotechnologie_norm
+        self.assertTrue(all(e.biotech_norm_weight >= 0 for e in build_biotechnologie_norm().normen))
+
+    def test_948_biotechnologie_norm_weight_positive(self):
+        from kki.biotechnologie_norm import build_biotechnologie_norm
+        self.assertTrue(all(e.biotech_norm_tier >= 1 for e in build_biotechnologie_norm().normen))
+
+    def test_949_pharmakogenomik_charta_builds_instanz(self):
+        from kki.pharmakogenomik_charta import build_pharmakogenomik_charta
+        self.assertIsNotNone(build_pharmakogenomik_charta())
+
+    def test_949_pharmakogenomik_charta_count(self):
+        from kki.pharmakogenomik_charta import build_pharmakogenomik_charta
+        self.assertEqual(len(build_pharmakogenomik_charta().normen), 5)
+
+    def test_949_pharmakogenomik_charta_canonical(self):
+        from kki.pharmakogenomik_charta import build_pharmakogenomik_charta
+        self.assertIsInstance(build_pharmakogenomik_charta().canonical, str)
+
+    def test_949_pharmakogenomik_charta_weight_positive(self):
+        from kki.pharmakogenomik_charta import build_pharmakogenomik_charta
+        self.assertTrue(all(n.biotech_weight >= 0 for n in build_pharmakogenomik_charta().normen))
+
+    def test_950_biotechnologie_verfassung_builds_instanz(self):
+        from kki.biotechnologie_verfassung import build_biotechnologie_verfassung
+        self.assertIsNotNone(build_biotechnologie_verfassung())
+
+    def test_950_biotechnologie_verfassung_count(self):
+        from kki.biotechnologie_verfassung import build_biotechnologie_verfassung
+        self.assertEqual(len(build_biotechnologie_verfassung().normen), 5)
+
+    def test_950_biotechnologie_verfassung_canonical(self):
+        from kki.biotechnologie_verfassung import build_biotechnologie_verfassung
+        self.assertIsInstance(build_biotechnologie_verfassung().canonical, str)
+
+    def test_950_biotechnologie_verfassung_aggregates_signal(self):
+        from kki.biotechnologie_verfassung import build_biotechnologie_verfassung
+        v = build_biotechnologie_verfassung()
+        sig = v.aggregates_verfassung_signal()
+        self.assertIn("verfassung_id", sig)
+        self.assertIn("normen_count", sig)

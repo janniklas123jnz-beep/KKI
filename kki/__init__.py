@@ -6575,3 +6575,74 @@ from .quanten_verfassung import (
     QuantenVerfassung,
     build_quanten_verfassung,
 )
+# === Block #941–950: Biotechnologie & Gentechnik ===
+from .biotechnologie_feld import (
+    BiotechnologieFeldTyp,
+    BiotechnologieFeldProzedur,
+    BiotechnologieFeldNorm,
+    BiotechnologieFeld,
+    build_biotechnologie_feld,
+)
+from .genomik_register import (
+    GenomikRegisterTyp,
+    GenomikRegisterProzedur,
+    GenomikRegisterEintrag,
+    GenomikRegister,
+    build_genomik_register,
+)
+from .crispr_charta import (
+    CRISPRChartaTyp,
+    CRISPRChartaProzedur,
+    CRISPRChartaNorm,
+    CRISPRCharta,
+    build_crispr_charta,
+)
+from .synthetische_biologie_kodex import (
+    SynthetischeBiologieKodexTyp,
+    SynthetischeBiologieKodexProzedur,
+    SynthetischeBiologieKodexEintrag,
+    SynthetischeBiologieKodex,
+    build_synthetische_biologie_kodex,
+)
+from .mrna_manifest import (
+    mRNAManifestTyp,
+    mRNAManifestProzedur,
+    mRNAManifestNorm,
+    mRNAManifest,
+    build_mrna_manifest,
+)
+from .bioprozesstechnik_pakt import (
+    BioprozesstechnikPaktTyp,
+    BioprozesstechnikPaktProzedur,
+    BioprozesstechnikPaktEintrag,
+    BioprozesstechnikPakt,
+    build_bioprozesstechnik_pakt,
+)
+from .bioinformatik_senat import (
+    BioinformatikSenatTyp,
+    BioinformatikSenatProzedur,
+    BioinformatikSenatNorm,
+    BioinformatikSenat,
+    build_bioinformatik_senat,
+)
+from .biotechnologie_norm import (
+    BiotechnologieNormTyp,
+    BiotechnologieNormProzedur,
+    BiotechnologieNormEintrag,
+    BiotechnologieNorm,
+    build_biotechnologie_norm,
+)
+from .pharmakogenomik_charta import (
+    PharmakogenomikChartaTyp,
+    PharmakogenomikChartaProzedur,
+    PharmakogenomikChartaNorm,
+    PharmakogenomikCharta,
+    build_pharmakogenomik_charta,
+)
+from .biotechnologie_verfassung import (
+    BiotechnologieVerfassungTyp,
+    BiotechnologieVerfassungProzedur,
+    BiotechnologieVerfassungNorm,
+    BiotechnologieVerfassung,
+    build_biotechnologie_verfassung,
+)

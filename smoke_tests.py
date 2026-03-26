@@ -31118,3 +31118,377 @@ class SmokeTests(unittest.TestCase):
     def test_kki_hydrologie_verfassung_builds_parent_chain(self):
         from kki.hydrologie_verfassung import build_hydrologie_verfassung
         self.assertIsNotNone(build_hydrologie_verfassung().parent)
+
+    # ── Block #821–830: Mineralogie & Kristallographie ────────────────────────
+
+    def test_kki_mineralogie_feld_builds(self):
+        from kki.mineralogie_feld import build_mineralogie_feld
+        self.assertIsNotNone(build_mineralogie_feld())
+
+    def test_kki_mineralogie_feld_normen_count(self):
+        from kki.mineralogie_feld import build_mineralogie_feld
+        self.assertEqual(len(build_mineralogie_feld().normen), 5)
+
+    def test_kki_mineralogie_feld_weight_positive(self):
+        from kki.mineralogie_feld import build_mineralogie_feld
+        for n in build_mineralogie_feld().normen:
+            self.assertGreaterEqual(n.mineralogie_weight, 0)
+
+    def test_kki_mineralogie_feld_gesperrt_schutz_norm(self):
+        from kki.mineralogie_feld import build_mineralogie_feld, MineralogieFeldGeltung
+        normen = build_mineralogie_feld().normen
+        self.assertEqual(normen[0].geltung, MineralogieFeldGeltung.GESPERRT)
+
+    def test_kki_mineralogie_feld_tier_sequence(self):
+        from kki.mineralogie_feld import build_mineralogie_feld
+        tiers = [n.mineralogie_tier for n in build_mineralogie_feld().normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_mineralogie_feld_ids_not_empty(self):
+        from kki.mineralogie_feld import build_mineralogie_feld
+        for n in build_mineralogie_feld().normen:
+            self.assertTrue(len(n.mineralogie_ids) > 0)
+
+    def test_kki_mineralogie_feld_tags_contain_domain(self):
+        from kki.mineralogie_feld import build_mineralogie_feld
+        for n in build_mineralogie_feld().normen:
+            self.assertIn("mineralogie", n.mineralogie_tags)
+
+    def test_kki_mineralogie_feld_builds_parent_chain(self):
+        from kki.mineralogie_feld import build_mineralogie_feld
+        self.assertIsNotNone(build_mineralogie_feld().parent)
+
+    def test_kki_kristallographie_register_builds(self):
+        from kki.kristallographie_register import build_kristallographie_register
+        self.assertIsNotNone(build_kristallographie_register())
+
+    def test_kki_kristallographie_register_eintraege_count(self):
+        from kki.kristallographie_register import build_kristallographie_register
+        self.assertEqual(len(build_kristallographie_register().eintraege), 5)
+
+    def test_kki_kristallographie_register_weight_positive(self):
+        from kki.kristallographie_register import build_kristallographie_register
+        for e in build_kristallographie_register().eintraege:
+            self.assertGreaterEqual(e.mineralogie_weight, 0)
+
+    def test_kki_kristallographie_register_gesperrt_schutz_norm(self):
+        from kki.kristallographie_register import build_kristallographie_register, KristallographieRegisterGeltung
+        eintraege = build_kristallographie_register().eintraege
+        self.assertEqual(eintraege[0].geltung, KristallographieRegisterGeltung.GESPERRT)
+
+    def test_kki_kristallographie_register_tier_sequence(self):
+        from kki.kristallographie_register import build_kristallographie_register
+        tiers = [e.mineralogie_tier for e in build_kristallographie_register().eintraege]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_kristallographie_register_ids_not_empty(self):
+        from kki.kristallographie_register import build_kristallographie_register
+        for e in build_kristallographie_register().eintraege:
+            self.assertTrue(len(e.mineralogie_ids) > 0)
+
+    def test_kki_kristallographie_register_tags_contain_domain(self):
+        from kki.kristallographie_register import build_kristallographie_register
+        for e in build_kristallographie_register().eintraege:
+            self.assertIn("mineralogie", e.mineralogie_tags)
+
+    def test_kki_kristallographie_register_builds_parent_chain(self):
+        from kki.kristallographie_register import build_kristallographie_register
+        self.assertIsNotNone(build_kristallographie_register().parent)
+
+    def test_kki_gesteinskunde_charta_builds(self):
+        from kki.gesteinskunde_charta import build_gesteinskunde_charta
+        self.assertIsNotNone(build_gesteinskunde_charta())
+
+    def test_kki_gesteinskunde_charta_normen_count(self):
+        from kki.gesteinskunde_charta import build_gesteinskunde_charta
+        self.assertEqual(len(build_gesteinskunde_charta().normen), 5)
+
+    def test_kki_gesteinskunde_charta_weight_positive(self):
+        from kki.gesteinskunde_charta import build_gesteinskunde_charta
+        for n in build_gesteinskunde_charta().normen:
+            self.assertGreaterEqual(n.mineralogie_weight, 0)
+
+    def test_kki_gesteinskunde_charta_gesperrt_schutz_norm(self):
+        from kki.gesteinskunde_charta import build_gesteinskunde_charta, GesteinskundeChartaGeltung
+        normen = build_gesteinskunde_charta().normen
+        self.assertEqual(normen[0].geltung, GesteinskundeChartaGeltung.GESPERRT)
+
+    def test_kki_gesteinskunde_charta_tier_sequence(self):
+        from kki.gesteinskunde_charta import build_gesteinskunde_charta
+        tiers = [n.mineralogie_tier for n in build_gesteinskunde_charta().normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_gesteinskunde_charta_ids_not_empty(self):
+        from kki.gesteinskunde_charta import build_gesteinskunde_charta
+        for n in build_gesteinskunde_charta().normen:
+            self.assertTrue(len(n.mineralogie_ids) > 0)
+
+    def test_kki_gesteinskunde_charta_tags_contain_domain(self):
+        from kki.gesteinskunde_charta import build_gesteinskunde_charta
+        for n in build_gesteinskunde_charta().normen:
+            self.assertIn("mineralogie", n.mineralogie_tags)
+
+    def test_kki_gesteinskunde_charta_builds_parent_chain(self):
+        from kki.gesteinskunde_charta import build_gesteinskunde_charta
+        self.assertIsNotNone(build_gesteinskunde_charta().parent)
+
+    def test_kki_mineralchemie_kodex_builds(self):
+        from kki.mineralchemie_kodex import build_mineralchemie_kodex
+        self.assertIsNotNone(build_mineralchemie_kodex())
+
+    def test_kki_mineralchemie_kodex_eintraege_count(self):
+        from kki.mineralchemie_kodex import build_mineralchemie_kodex
+        self.assertEqual(len(build_mineralchemie_kodex().eintraege), 5)
+
+    def test_kki_mineralchemie_kodex_weight_positive(self):
+        from kki.mineralchemie_kodex import build_mineralchemie_kodex
+        for e in build_mineralchemie_kodex().eintraege:
+            self.assertGreaterEqual(e.mineralogie_weight, 0)
+
+    def test_kki_mineralchemie_kodex_gesperrt_schutz_norm(self):
+        from kki.mineralchemie_kodex import build_mineralchemie_kodex, MineralchemieKodexGeltung
+        eintraege = build_mineralchemie_kodex().eintraege
+        self.assertEqual(eintraege[0].geltung, MineralchemieKodexGeltung.GESPERRT)
+
+    def test_kki_mineralchemie_kodex_tier_sequence(self):
+        from kki.mineralchemie_kodex import build_mineralchemie_kodex
+        tiers = [e.mineralogie_tier for e in build_mineralchemie_kodex().eintraege]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_mineralchemie_kodex_ids_not_empty(self):
+        from kki.mineralchemie_kodex import build_mineralchemie_kodex
+        for e in build_mineralchemie_kodex().eintraege:
+            self.assertTrue(len(e.mineralogie_ids) > 0)
+
+    def test_kki_mineralchemie_kodex_tags_contain_domain(self):
+        from kki.mineralchemie_kodex import build_mineralchemie_kodex
+        for e in build_mineralchemie_kodex().eintraege:
+            self.assertIn("mineralogie", e.mineralogie_tags)
+
+    def test_kki_mineralchemie_kodex_builds_parent_chain(self):
+        from kki.mineralchemie_kodex import build_mineralchemie_kodex
+        self.assertIsNotNone(build_mineralchemie_kodex().parent)
+
+    def test_kki_petrologie_manifest_builds(self):
+        from kki.petrologie_manifest import build_petrologie_manifest
+        self.assertIsNotNone(build_petrologie_manifest())
+
+    def test_kki_petrologie_manifest_normen_count(self):
+        from kki.petrologie_manifest import build_petrologie_manifest
+        self.assertEqual(len(build_petrologie_manifest().normen), 5)
+
+    def test_kki_petrologie_manifest_weight_positive(self):
+        from kki.petrologie_manifest import build_petrologie_manifest
+        for n in build_petrologie_manifest().normen:
+            self.assertGreaterEqual(n.mineralogie_weight, 0)
+
+    def test_kki_petrologie_manifest_gesperrt_schutz_norm(self):
+        from kki.petrologie_manifest import build_petrologie_manifest, PetrologieManifestGeltung
+        normen = build_petrologie_manifest().normen
+        self.assertEqual(normen[0].geltung, PetrologieManifestGeltung.GESPERRT)
+
+    def test_kki_petrologie_manifest_tier_sequence(self):
+        from kki.petrologie_manifest import build_petrologie_manifest
+        tiers = [n.mineralogie_tier for n in build_petrologie_manifest().normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_petrologie_manifest_ids_not_empty(self):
+        from kki.petrologie_manifest import build_petrologie_manifest
+        for n in build_petrologie_manifest().normen:
+            self.assertTrue(len(n.mineralogie_ids) > 0)
+
+    def test_kki_petrologie_manifest_tags_contain_domain(self):
+        from kki.petrologie_manifest import build_petrologie_manifest
+        for n in build_petrologie_manifest().normen:
+            self.assertIn("mineralogie", n.mineralogie_tags)
+
+    def test_kki_petrologie_manifest_builds_parent_chain(self):
+        from kki.petrologie_manifest import build_petrologie_manifest
+        self.assertIsNotNone(build_petrologie_manifest().parent)
+
+    def test_kki_lagerstaettenkunde_pakt_builds(self):
+        from kki.lagerstaettenkunde_pakt import build_lagerstaettenkunde_pakt
+        self.assertIsNotNone(build_lagerstaettenkunde_pakt())
+
+    def test_kki_lagerstaettenkunde_pakt_eintraege_count(self):
+        from kki.lagerstaettenkunde_pakt import build_lagerstaettenkunde_pakt
+        self.assertEqual(len(build_lagerstaettenkunde_pakt().eintraege), 5)
+
+    def test_kki_lagerstaettenkunde_pakt_weight_positive(self):
+        from kki.lagerstaettenkunde_pakt import build_lagerstaettenkunde_pakt
+        for e in build_lagerstaettenkunde_pakt().eintraege:
+            self.assertGreaterEqual(e.mineralogie_weight, 0)
+
+    def test_kki_lagerstaettenkunde_pakt_gesperrt_schutz_norm(self):
+        from kki.lagerstaettenkunde_pakt import build_lagerstaettenkunde_pakt, LagerstättenkundePaktGeltung
+        eintraege = build_lagerstaettenkunde_pakt().eintraege
+        self.assertEqual(eintraege[0].geltung, LagerstättenkundePaktGeltung.GESPERRT)
+
+    def test_kki_lagerstaettenkunde_pakt_tier_sequence(self):
+        from kki.lagerstaettenkunde_pakt import build_lagerstaettenkunde_pakt
+        tiers = [e.mineralogie_tier for e in build_lagerstaettenkunde_pakt().eintraege]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_lagerstaettenkunde_pakt_ids_not_empty(self):
+        from kki.lagerstaettenkunde_pakt import build_lagerstaettenkunde_pakt
+        for e in build_lagerstaettenkunde_pakt().eintraege:
+            self.assertTrue(len(e.mineralogie_ids) > 0)
+
+    def test_kki_lagerstaettenkunde_pakt_tags_contain_domain(self):
+        from kki.lagerstaettenkunde_pakt import build_lagerstaettenkunde_pakt
+        for e in build_lagerstaettenkunde_pakt().eintraege:
+            self.assertIn("mineralogie", e.mineralogie_tags)
+
+    def test_kki_lagerstaettenkunde_pakt_builds_parent_chain(self):
+        from kki.lagerstaettenkunde_pakt import build_lagerstaettenkunde_pakt
+        self.assertIsNotNone(build_lagerstaettenkunde_pakt().parent)
+
+    def test_kki_mineralogie_senat_builds(self):
+        from kki.mineralogie_senat import build_mineralogie_senat
+        self.assertIsNotNone(build_mineralogie_senat())
+
+    def test_kki_mineralogie_senat_normen_count(self):
+        from kki.mineralogie_senat import build_mineralogie_senat
+        self.assertEqual(len(build_mineralogie_senat().normen), 5)
+
+    def test_kki_mineralogie_senat_weight_positive(self):
+        from kki.mineralogie_senat import build_mineralogie_senat
+        for n in build_mineralogie_senat().normen:
+            self.assertGreaterEqual(n.mineralogie_weight, 0)
+
+    def test_kki_mineralogie_senat_gesperrt_schutz_norm(self):
+        from kki.mineralogie_senat import build_mineralogie_senat, MineralogieSenatGeltung
+        normen = build_mineralogie_senat().normen
+        self.assertEqual(normen[0].geltung, MineralogieSenatGeltung.GESPERRT)
+
+    def test_kki_mineralogie_senat_tier_sequence(self):
+        from kki.mineralogie_senat import build_mineralogie_senat
+        tiers = [n.mineralogie_tier for n in build_mineralogie_senat().normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_mineralogie_senat_ids_not_empty(self):
+        from kki.mineralogie_senat import build_mineralogie_senat
+        for n in build_mineralogie_senat().normen:
+            self.assertTrue(len(n.mineralogie_ids) > 0)
+
+    def test_kki_mineralogie_senat_tags_contain_domain(self):
+        from kki.mineralogie_senat import build_mineralogie_senat
+        for n in build_mineralogie_senat().normen:
+            self.assertIn("mineralogie", n.mineralogie_tags)
+
+    def test_kki_mineralogie_senat_builds_parent_chain(self):
+        from kki.mineralogie_senat import build_mineralogie_senat
+        self.assertIsNotNone(build_mineralogie_senat().parent)
+
+    def test_kki_mineralogie_norm_builds(self):
+        from kki.mineralogie_norm import build_mineralogie_norm
+        self.assertIsNotNone(build_mineralogie_norm())
+
+    def test_kki_mineralogie_norm_normen_count(self):
+        from kki.mineralogie_norm import build_mineralogie_norm
+        self.assertEqual(len(build_mineralogie_norm().normen), 5)
+
+    def test_kki_mineralogie_norm_weight_positive(self):
+        from kki.mineralogie_norm import build_mineralogie_norm
+        for e in build_mineralogie_norm().normen:
+            self.assertGreaterEqual(e.mineralogie_norm_weight, 0)
+
+    def test_kki_mineralogie_norm_gesperrt_schutz_norm(self):
+        from kki.mineralogie_norm import build_mineralogie_norm, MineralogieNormGeltung
+        normen = build_mineralogie_norm().normen
+        self.assertEqual(normen[0].geltung, MineralogieNormGeltung.GESPERRT)
+
+    def test_kki_mineralogie_norm_tier_sequence(self):
+        from kki.mineralogie_norm import build_mineralogie_norm
+        tiers = [e.mineralogie_norm_tier for e in build_mineralogie_norm().normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_mineralogie_norm_ids_not_empty(self):
+        from kki.mineralogie_norm import build_mineralogie_norm
+        for e in build_mineralogie_norm().normen:
+            self.assertTrue(len(e.mineralogie_norm_ids) > 0)
+
+    def test_kki_mineralogie_norm_tags_contain_domain(self):
+        from kki.mineralogie_norm import build_mineralogie_norm
+        for e in build_mineralogie_norm().normen:
+            self.assertIn("mineralogie", e.mineralogie_norm_tags)
+
+    def test_kki_mineralogie_norm_builds_parent_chain(self):
+        from kki.mineralogie_norm import build_mineralogie_norm
+        self.assertIsNotNone(build_mineralogie_norm().parent)
+
+    def test_kki_edelmineral_charta_builds(self):
+        from kki.edelmineral_charta import build_edelmineral_charta
+        self.assertIsNotNone(build_edelmineral_charta())
+
+    def test_kki_edelmineral_charta_normen_count(self):
+        from kki.edelmineral_charta import build_edelmineral_charta
+        self.assertEqual(len(build_edelmineral_charta().normen), 5)
+
+    def test_kki_edelmineral_charta_weight_positive(self):
+        from kki.edelmineral_charta import build_edelmineral_charta
+        for n in build_edelmineral_charta().normen:
+            self.assertGreaterEqual(n.mineralogie_weight, 0)
+
+    def test_kki_edelmineral_charta_gesperrt_schutz_norm(self):
+        from kki.edelmineral_charta import build_edelmineral_charta, EdelmineralChartaGeltung
+        normen = build_edelmineral_charta().normen
+        self.assertEqual(normen[0].geltung, EdelmineralChartaGeltung.GESPERRT)
+
+    def test_kki_edelmineral_charta_tier_sequence(self):
+        from kki.edelmineral_charta import build_edelmineral_charta
+        tiers = [n.mineralogie_tier for n in build_edelmineral_charta().normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_edelmineral_charta_ids_not_empty(self):
+        from kki.edelmineral_charta import build_edelmineral_charta
+        for n in build_edelmineral_charta().normen:
+            self.assertTrue(len(n.mineralogie_ids) > 0)
+
+    def test_kki_edelmineral_charta_tags_contain_domain(self):
+        from kki.edelmineral_charta import build_edelmineral_charta
+        for n in build_edelmineral_charta().normen:
+            self.assertIn("mineralogie", n.mineralogie_tags)
+
+    def test_kki_edelmineral_charta_builds_parent_chain(self):
+        from kki.edelmineral_charta import build_edelmineral_charta
+        self.assertIsNotNone(build_edelmineral_charta().parent)
+
+    def test_kki_mineralogie_verfassung_builds(self):
+        from kki.mineralogie_verfassung import build_mineralogie_verfassung
+        self.assertIsNotNone(build_mineralogie_verfassung())
+
+    def test_kki_mineralogie_verfassung_normen_count(self):
+        from kki.mineralogie_verfassung import build_mineralogie_verfassung
+        self.assertEqual(len(build_mineralogie_verfassung().normen), 5)
+
+    def test_kki_mineralogie_verfassung_gesperrt_schutz_norm(self):
+        from kki.mineralogie_verfassung import build_mineralogie_verfassung, MineralogieVerfassungGeltung
+        normen = build_mineralogie_verfassung().normen
+        self.assertEqual(normen[0].geltung, MineralogieVerfassungGeltung.GESPERRT)
+
+    def test_kki_mineralogie_verfassung_aggregates_verfassung_signal(self):
+        from kki.mineralogie_verfassung import build_mineralogie_verfassung
+        sig = build_mineralogie_verfassung().aggregates_verfassung_signal()
+        self.assertEqual(sig["verfassung_id"], "mineralogie-verfassung-830")
+        self.assertGreater(sig["total_weight"], 0)
+        self.assertEqual(sig["norm_count"], 5)
+
+    def test_kki_mineralogie_verfassung_tier_sequence(self):
+        from kki.mineralogie_verfassung import build_mineralogie_verfassung
+        tiers = [n.mineralogie_tier for n in build_mineralogie_verfassung().normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_mineralogie_verfassung_ids_not_empty(self):
+        from kki.mineralogie_verfassung import build_mineralogie_verfassung
+        for n in build_mineralogie_verfassung().normen:
+            self.assertTrue(len(n.mineralogie_ids) > 0)
+
+    def test_kki_mineralogie_verfassung_tags_contain_domain(self):
+        from kki.mineralogie_verfassung import build_mineralogie_verfassung
+        for n in build_mineralogie_verfassung().normen:
+            self.assertIn("mineralogie", n.mineralogie_tags)
+
+    def test_kki_mineralogie_verfassung_builds_parent_chain(self):
+        from kki.mineralogie_verfassung import build_mineralogie_verfassung
+        self.assertIsNotNone(build_mineralogie_verfassung().parent)

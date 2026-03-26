@@ -3687,6 +3687,46 @@ from .hydrologie_verfassung import (
     HydrologieVerfassungGeltung, HydrologieVerfassungsNorm, HydrologieVerfassungTyp, HydrologieVerfassungProzedur,
     HydrologieVerfassung, build_hydrologie_verfassung,
 )
+from .mineralogie_feld import (
+    MineralogieFeldGeltung, MineralogieFeldNorm, MineralogieFeldTyp, MineralogieFeldProzedur,
+    MineralogieFeld, build_mineralogie_feld,
+)
+from .kristallographie_register import (
+    KristallographieRegisterGeltung, KristallographieRegisterEintrag, KristallographieRegisterTyp, KristallographieRegisterProzedur,
+    KristallographieRegister, build_kristallographie_register,
+)
+from .gesteinskunde_charta import (
+    GesteinskundeChartaGeltung, GesteinskundeChartaNorm, GesteinskundeChartaTyp, GesteinskundeChartaProzedur,
+    GesteinskundeCharta, build_gesteinskunde_charta,
+)
+from .mineralchemie_kodex import (
+    MineralchemieKodexGeltung, MineralchemieKodexEintrag, MineralchemieKodexTyp, MineralchemieKodexProzedur,
+    MineralchemieKodex, build_mineralchemie_kodex,
+)
+from .petrologie_manifest import (
+    PetrologieManifestGeltung, PetrologieManifestNorm, PetrologieManifestTyp, PetrologieManifestProzedur,
+    PetrologieManifest, build_petrologie_manifest,
+)
+from .lagerstaettenkunde_pakt import (
+    LagerstättenkundePaktGeltung, LagerstättenkundePaktEintrag, LagerstättenkundePaktTyp, LagerstättenkundePaktProzedur,
+    LagerstättenkundePakt, build_lagerstaettenkunde_pakt,
+)
+from .mineralogie_senat import (
+    MineralogieSenatGeltung, MineralogieSenatNorm, MineralogieSenatTyp, MineralogieSenatProzedur,
+    MineralogieSenat, build_mineralogie_senat,
+)
+from .mineralogie_norm import (
+    MineralogieNormGeltung, MineralogieNormEintrag, MineralogieNormTyp, MineralogieNormProzedur,
+    MineralogieNormSatz, build_mineralogie_norm,
+)
+from .edelmineral_charta import (
+    EdelmineralChartaGeltung, EdelmineralChartaNorm, EdelmineralChartaTyp, EdelmineralChartaProzedur,
+    EdelmineralCharta, build_edelmineral_charta,
+)
+from .mineralogie_verfassung import (
+    MineralogieVerfassungGeltung, MineralogieVerfassungsNorm, MineralogieVerfassungTyp, MineralogieVerfassungProzedur,
+    MineralogieVerfassung, build_mineralogie_verfassung,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -5908,4 +5948,25 @@ __all__ = [
     "WasserressourcenCharta", "build_wasserressourcen_charta",
     "HydrologieVerfassungGeltung", "HydrologieVerfassungsNorm", "HydrologieVerfassungTyp", "HydrologieVerfassungProzedur",
     "HydrologieVerfassung", "build_hydrologie_verfassung",
+    # Block #821–830: Mineralogie & Kristallographie
+    "MineralogieFeldGeltung", "MineralogieFeldNorm", "MineralogieFeldTyp", "MineralogieFeldProzedur",
+    "MineralogieFeld", "build_mineralogie_feld",
+    "KristallographieRegisterGeltung", "KristallographieRegisterEintrag", "KristallographieRegisterTyp", "KristallographieRegisterProzedur",
+    "KristallographieRegister", "build_kristallographie_register",
+    "GesteinskundeChartaGeltung", "GesteinskundeChartaNorm", "GesteinskundeChartaTyp", "GesteinskundeChartaProzedur",
+    "GesteinskundeCharta", "build_gesteinskunde_charta",
+    "MineralchemieKodexGeltung", "MineralchemieKodexEintrag", "MineralchemieKodexTyp", "MineralchemieKodexProzedur",
+    "MineralchemieKodex", "build_mineralchemie_kodex",
+    "PetrologieManifestGeltung", "PetrologieManifestNorm", "PetrologieManifestTyp", "PetrologieManifestProzedur",
+    "PetrologieManifest", "build_petrologie_manifest",
+    "LagerstättenkundePaktGeltung", "LagerstättenkundePaktEintrag", "LagerstättenkundePaktTyp", "LagerstättenkundePaktProzedur",
+    "LagerstättenkundePakt", "build_lagerstaettenkunde_pakt",
+    "MineralogieSenatGeltung", "MineralogieSenatNorm", "MineralogieSenatTyp", "MineralogieSenatProzedur",
+    "MineralogieSenat", "build_mineralogie_senat",
+    "MineralogieNormGeltung", "MineralogieNormEintrag", "MineralogieNormTyp", "MineralogieNormProzedur",
+    "MineralogieNormSatz", "build_mineralogie_norm",
+    "EdelmineralChartaGeltung", "EdelmineralChartaNorm", "EdelmineralChartaTyp", "EdelmineralChartaProzedur",
+    "EdelmineralCharta", "build_edelmineral_charta",
+    "MineralogieVerfassungGeltung", "MineralogieVerfassungsNorm", "MineralogieVerfassungTyp", "MineralogieVerfassungProzedur",
+    "MineralogieVerfassung", "build_mineralogie_verfassung",
 ]

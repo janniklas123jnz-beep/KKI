@@ -32698,3 +32698,905 @@ class SmokeTests(unittest.TestCase):
         obj = build_geomorphologie_verfassung()
         with self.assertRaises(Exception):
             obj.normen = ()
+
+    # --- Block #861–870: Sedimentologie & Ablagerungskunde ---
+
+    def test_kki_sedimentologie_feld_builds_instanz(self):
+        from kki.sedimentologie_feld import SedimentologieFeld, build_sedimentologie_feld
+        obj = build_sedimentologie_feld()
+        self.assertIsInstance(obj, SedimentologieFeld)
+
+    def test_kki_sedimentologie_feld_normen_count(self):
+        from kki.sedimentologie_feld import build_sedimentologie_feld
+        obj = build_sedimentologie_feld()
+        self.assertEqual(len(obj.normen), 5)
+
+    def test_kki_sedimentologie_feld_canonical(self):
+        from kki.sedimentologie_feld import build_sedimentologie_feld
+        obj = build_sedimentologie_feld()
+        self.assertTrue(obj.canonical)
+
+    def test_kki_sedimentologie_feld_weight_positive(self):
+        from kki.sedimentologie_feld import build_sedimentologie_feld
+        obj = build_sedimentologie_feld()
+        self.assertGreater(obj.normen[0].sedimentologie_weight, 0)
+
+    def test_kki_sedimentologie_feld_tier_valid(self):
+        from kki.sedimentologie_feld import build_sedimentologie_feld
+        obj = build_sedimentologie_feld()
+        self.assertGreater(obj.normen[0].tier, 0)
+
+    def test_kki_sedimentologie_feld_aggregates_signal(self):
+        from kki.sedimentologie_feld import build_sedimentologie_feld
+        obj = build_sedimentologie_feld()
+        sig = obj.aggregates_feld_signal()
+        self.assertIn("feld_id", sig)
+
+    def test_kki_sedimentologie_feld_frozen_protection(self):
+        from kki.sedimentologie_feld import build_sedimentologie_feld
+        from dataclasses import FrozenInstanceError
+        obj = build_sedimentologie_feld()
+        with self.assertRaises(FrozenInstanceError):
+            obj.normen = ()
+
+    def test_kki_sedimentologie_feld_gesperrt_schutz_norm(self):
+        from kki.sedimentologie_feld import build_sedimentologie_feld
+        obj = build_sedimentologie_feld()
+        normen = obj.normen
+        self.assertGreater(len(normen), 0)
+
+    def test_kki_ablagerungs_register_builds_instanz(self):
+        from kki.ablagerungs_register import AblagerungsRegister, build_ablagerungs_register
+        obj = build_ablagerungs_register()
+        self.assertIsInstance(obj, AblagerungsRegister)
+
+    def test_kki_ablagerungs_register_eintraege_count(self):
+        from kki.ablagerungs_register import build_ablagerungs_register
+        obj = build_ablagerungs_register()
+        self.assertEqual(len(obj.eintraege), 5)
+
+    def test_kki_ablagerungs_register_canonical(self):
+        from kki.ablagerungs_register import build_ablagerungs_register
+        obj = build_ablagerungs_register()
+        self.assertTrue(obj.canonical)
+
+    def test_kki_ablagerungs_register_weight_positive(self):
+        from kki.ablagerungs_register import build_ablagerungs_register
+        obj = build_ablagerungs_register()
+        self.assertGreater(obj.eintraege[0].sedimentologie_weight, 0)
+
+    def test_kki_ablagerungs_register_tier_valid(self):
+        from kki.ablagerungs_register import build_ablagerungs_register
+        obj = build_ablagerungs_register()
+        self.assertGreater(obj.eintraege[0].tier, 0)
+
+    def test_kki_ablagerungs_register_aggregates_signal(self):
+        from kki.ablagerungs_register import build_ablagerungs_register
+        obj = build_ablagerungs_register()
+        sig = obj.aggregates_register_signal()
+        self.assertIn("register_id", sig)
+
+    def test_kki_ablagerungs_register_frozen_protection(self):
+        from kki.ablagerungs_register import build_ablagerungs_register
+        from dataclasses import FrozenInstanceError
+        obj = build_ablagerungs_register()
+        with self.assertRaises(FrozenInstanceError):
+            obj.eintraege = ()
+
+    def test_kki_ablagerungs_register_gesperrt_schutz_norm(self):
+        from kki.ablagerungs_register import build_ablagerungs_register
+        obj = build_ablagerungs_register()
+        eintraege = obj.eintraege
+        self.assertGreater(len(eintraege), 0)
+
+    def test_kki_fazies_charta_builds_instanz(self):
+        from kki.fazies_charta import FaziesCharta, build_fazies_charta
+        obj = build_fazies_charta()
+        self.assertIsInstance(obj, FaziesCharta)
+
+    def test_kki_fazies_charta_normen_count(self):
+        from kki.fazies_charta import build_fazies_charta
+        obj = build_fazies_charta()
+        self.assertEqual(len(obj.normen), 5)
+
+    def test_kki_fazies_charta_canonical(self):
+        from kki.fazies_charta import build_fazies_charta
+        obj = build_fazies_charta()
+        self.assertTrue(obj.canonical)
+
+    def test_kki_fazies_charta_weight_positive(self):
+        from kki.fazies_charta import build_fazies_charta
+        obj = build_fazies_charta()
+        self.assertGreater(obj.normen[0].sedimentologie_weight, 0)
+
+    def test_kki_fazies_charta_tier_valid(self):
+        from kki.fazies_charta import build_fazies_charta
+        obj = build_fazies_charta()
+        self.assertGreater(obj.normen[0].tier, 0)
+
+    def test_kki_fazies_charta_aggregates_signal(self):
+        from kki.fazies_charta import build_fazies_charta
+        obj = build_fazies_charta()
+        sig = obj.aggregates_charta_signal()
+        self.assertIn("charta_id", sig)
+
+    def test_kki_fazies_charta_frozen_protection(self):
+        from kki.fazies_charta import build_fazies_charta
+        from dataclasses import FrozenInstanceError
+        obj = build_fazies_charta()
+        with self.assertRaises(FrozenInstanceError):
+            obj.normen = ()
+
+    def test_kki_fazies_charta_gesperrt_schutz_norm(self):
+        from kki.fazies_charta import build_fazies_charta
+        obj = build_fazies_charta()
+        normen = obj.normen
+        self.assertGreater(len(normen), 0)
+
+    def test_kki_diagenese_kodex_builds_instanz(self):
+        from kki.diagenese_kodex import DiageneseKodex, build_diagenese_kodex
+        obj = build_diagenese_kodex()
+        self.assertIsInstance(obj, DiageneseKodex)
+
+    def test_kki_diagenese_kodex_eintraege_count(self):
+        from kki.diagenese_kodex import build_diagenese_kodex
+        obj = build_diagenese_kodex()
+        self.assertEqual(len(obj.eintraege), 5)
+
+    def test_kki_diagenese_kodex_canonical(self):
+        from kki.diagenese_kodex import build_diagenese_kodex
+        obj = build_diagenese_kodex()
+        self.assertTrue(obj.canonical)
+
+    def test_kki_diagenese_kodex_weight_positive(self):
+        from kki.diagenese_kodex import build_diagenese_kodex
+        obj = build_diagenese_kodex()
+        self.assertGreater(obj.eintraege[0].sedimentologie_weight, 0)
+
+    def test_kki_diagenese_kodex_tier_valid(self):
+        from kki.diagenese_kodex import build_diagenese_kodex
+        obj = build_diagenese_kodex()
+        self.assertGreater(obj.eintraege[0].tier, 0)
+
+    def test_kki_diagenese_kodex_aggregates_signal(self):
+        from kki.diagenese_kodex import build_diagenese_kodex
+        obj = build_diagenese_kodex()
+        sig = obj.aggregates_kodex_signal()
+        self.assertIn("kodex_id", sig)
+
+    def test_kki_diagenese_kodex_frozen_protection(self):
+        from kki.diagenese_kodex import build_diagenese_kodex
+        from dataclasses import FrozenInstanceError
+        obj = build_diagenese_kodex()
+        with self.assertRaises(FrozenInstanceError):
+            obj.eintraege = ()
+
+    def test_kki_diagenese_kodex_gesperrt_schutz_norm(self):
+        from kki.diagenese_kodex import build_diagenese_kodex
+        obj = build_diagenese_kodex()
+        eintraege = obj.eintraege
+        self.assertGreater(len(eintraege), 0)
+
+    def test_kki_turbidite_manifest_builds_instanz(self):
+        from kki.turbidite_manifest import TurbiditeManifest, build_turbidite_manifest
+        obj = build_turbidite_manifest()
+        self.assertIsInstance(obj, TurbiditeManifest)
+
+    def test_kki_turbidite_manifest_normen_count(self):
+        from kki.turbidite_manifest import build_turbidite_manifest
+        obj = build_turbidite_manifest()
+        self.assertEqual(len(obj.normen), 5)
+
+    def test_kki_turbidite_manifest_canonical(self):
+        from kki.turbidite_manifest import build_turbidite_manifest
+        obj = build_turbidite_manifest()
+        self.assertTrue(obj.canonical)
+
+    def test_kki_turbidite_manifest_weight_positive(self):
+        from kki.turbidite_manifest import build_turbidite_manifest
+        obj = build_turbidite_manifest()
+        self.assertGreater(obj.normen[0].sedimentologie_weight, 0)
+
+    def test_kki_turbidite_manifest_tier_valid(self):
+        from kki.turbidite_manifest import build_turbidite_manifest
+        obj = build_turbidite_manifest()
+        self.assertGreater(obj.normen[0].tier, 0)
+
+    def test_kki_turbidite_manifest_aggregates_signal(self):
+        from kki.turbidite_manifest import build_turbidite_manifest
+        obj = build_turbidite_manifest()
+        sig = obj.aggregates_manifest_signal()
+        self.assertIn("manifest_id", sig)
+
+    def test_kki_turbidite_manifest_frozen_protection(self):
+        from kki.turbidite_manifest import build_turbidite_manifest
+        from dataclasses import FrozenInstanceError
+        obj = build_turbidite_manifest()
+        with self.assertRaises(FrozenInstanceError):
+            obj.normen = ()
+
+    def test_kki_turbidite_manifest_gesperrt_schutz_norm(self):
+        from kki.turbidite_manifest import build_turbidite_manifest
+        obj = build_turbidite_manifest()
+        normen = obj.normen
+        self.assertGreater(len(normen), 0)
+
+    def test_kki_delta_pakt_builds_instanz(self):
+        from kki.delta_pakt import DeltaPakt, build_delta_pakt
+        obj = build_delta_pakt()
+        self.assertIsInstance(obj, DeltaPakt)
+
+    def test_kki_delta_pakt_eintraege_count(self):
+        from kki.delta_pakt import build_delta_pakt
+        obj = build_delta_pakt()
+        self.assertEqual(len(obj.eintraege), 5)
+
+    def test_kki_delta_pakt_canonical(self):
+        from kki.delta_pakt import build_delta_pakt
+        obj = build_delta_pakt()
+        self.assertTrue(obj.canonical)
+
+    def test_kki_delta_pakt_weight_positive(self):
+        from kki.delta_pakt import build_delta_pakt
+        obj = build_delta_pakt()
+        self.assertGreater(obj.eintraege[0].sedimentologie_weight, 0)
+
+    def test_kki_delta_pakt_tier_valid(self):
+        from kki.delta_pakt import build_delta_pakt
+        obj = build_delta_pakt()
+        self.assertGreater(obj.eintraege[0].tier, 0)
+
+    def test_kki_delta_pakt_aggregates_signal(self):
+        from kki.delta_pakt import build_delta_pakt
+        obj = build_delta_pakt()
+        sig = obj.aggregates_pakt_signal()
+        self.assertIn("pakt_id", sig)
+
+    def test_kki_delta_pakt_frozen_protection(self):
+        from kki.delta_pakt import build_delta_pakt
+        from dataclasses import FrozenInstanceError
+        obj = build_delta_pakt()
+        with self.assertRaises(FrozenInstanceError):
+            obj.eintraege = ()
+
+    def test_kki_delta_pakt_gesperrt_schutz_norm(self):
+        from kki.delta_pakt import build_delta_pakt
+        obj = build_delta_pakt()
+        eintraege = obj.eintraege
+        self.assertGreater(len(eintraege), 0)
+
+    def test_kki_sedimentologie_senat_builds_instanz(self):
+        from kki.sedimentologie_senat import SedimentologieSenat, build_sedimentologie_senat
+        obj = build_sedimentologie_senat()
+        self.assertIsInstance(obj, SedimentologieSenat)
+
+    def test_kki_sedimentologie_senat_normen_count(self):
+        from kki.sedimentologie_senat import build_sedimentologie_senat
+        obj = build_sedimentologie_senat()
+        self.assertEqual(len(obj.normen), 5)
+
+    def test_kki_sedimentologie_senat_canonical(self):
+        from kki.sedimentologie_senat import build_sedimentologie_senat
+        obj = build_sedimentologie_senat()
+        self.assertTrue(obj.canonical)
+
+    def test_kki_sedimentologie_senat_weight_positive(self):
+        from kki.sedimentologie_senat import build_sedimentologie_senat
+        obj = build_sedimentologie_senat()
+        self.assertGreater(obj.normen[0].sedimentologie_weight, 0)
+
+    def test_kki_sedimentologie_senat_tier_valid(self):
+        from kki.sedimentologie_senat import build_sedimentologie_senat
+        obj = build_sedimentologie_senat()
+        self.assertGreater(obj.normen[0].tier, 0)
+
+    def test_kki_sedimentologie_senat_aggregates_signal(self):
+        from kki.sedimentologie_senat import build_sedimentologie_senat
+        obj = build_sedimentologie_senat()
+        sig = obj.aggregates_senat_signal()
+        self.assertIn("senat_id", sig)
+
+    def test_kki_sedimentologie_senat_frozen_protection(self):
+        from kki.sedimentologie_senat import build_sedimentologie_senat
+        from dataclasses import FrozenInstanceError
+        obj = build_sedimentologie_senat()
+        with self.assertRaises(FrozenInstanceError):
+            obj.normen = ()
+
+    def test_kki_sedimentologie_senat_gesperrt_schutz_norm(self):
+        from kki.sedimentologie_senat import build_sedimentologie_senat
+        obj = build_sedimentologie_senat()
+        normen = obj.normen
+        self.assertGreater(len(normen), 0)
+
+    def test_kki_sedimentologie_norm_builds_instanz(self):
+        from kki.sedimentologie_norm import SedimentologieNorm, build_sedimentologie_norm
+        obj = build_sedimentologie_norm()
+        self.assertIsInstance(obj, SedimentologieNorm)
+
+    def test_kki_sedimentologie_norm_normen_count(self):
+        from kki.sedimentologie_norm import build_sedimentologie_norm
+        obj = build_sedimentologie_norm()
+        self.assertEqual(len(obj.normen), 5)
+
+    def test_kki_sedimentologie_norm_canonical(self):
+        from kki.sedimentologie_norm import build_sedimentologie_norm
+        obj = build_sedimentologie_norm()
+        self.assertTrue(obj.canonical)
+
+    def test_kki_sedimentologie_norm_weight_positive(self):
+        from kki.sedimentologie_norm import build_sedimentologie_norm
+        obj = build_sedimentologie_norm()
+        self.assertGreater(obj.normen[0].sedimentologie_norm_weight, 0)
+
+    def test_kki_sedimentologie_norm_tier_valid(self):
+        from kki.sedimentologie_norm import build_sedimentologie_norm
+        obj = build_sedimentologie_norm()
+        self.assertGreater(obj.normen[0].sedimentologie_norm_tier, 0)
+
+    def test_kki_sedimentologie_norm_aggregates_signal(self):
+        from kki.sedimentologie_norm import build_sedimentologie_norm
+        obj = build_sedimentologie_norm()
+        sig = obj.aggregates_norm_signal()
+        self.assertIn("norm_id", sig)
+
+    def test_kki_sedimentologie_norm_frozen_protection(self):
+        from kki.sedimentologie_norm import build_sedimentologie_norm
+        from dataclasses import FrozenInstanceError
+        obj = build_sedimentologie_norm()
+        with self.assertRaises(FrozenInstanceError):
+            obj.normen = ()
+
+    def test_kki_sedimentologie_norm_gesperrt_schutz_norm(self):
+        from kki.sedimentologie_norm import build_sedimentologie_norm
+        obj = build_sedimentologie_norm()
+        normen = obj.normen
+        self.assertGreater(len(normen), 0)
+
+    def test_kki_alluvial_charta_builds_instanz(self):
+        from kki.alluvial_charta import AlluvialCharta, build_alluvial_charta
+        obj = build_alluvial_charta()
+        self.assertIsInstance(obj, AlluvialCharta)
+
+    def test_kki_alluvial_charta_normen_count(self):
+        from kki.alluvial_charta import build_alluvial_charta
+        obj = build_alluvial_charta()
+        self.assertEqual(len(obj.normen), 5)
+
+    def test_kki_alluvial_charta_canonical(self):
+        from kki.alluvial_charta import build_alluvial_charta
+        obj = build_alluvial_charta()
+        self.assertTrue(obj.canonical)
+
+    def test_kki_alluvial_charta_weight_positive(self):
+        from kki.alluvial_charta import build_alluvial_charta
+        obj = build_alluvial_charta()
+        self.assertGreater(obj.normen[0].sedimentologie_weight, 0)
+
+    def test_kki_alluvial_charta_tier_valid(self):
+        from kki.alluvial_charta import build_alluvial_charta
+        obj = build_alluvial_charta()
+        self.assertGreater(obj.normen[0].tier, 0)
+
+    def test_kki_alluvial_charta_aggregates_signal(self):
+        from kki.alluvial_charta import build_alluvial_charta
+        obj = build_alluvial_charta()
+        sig = obj.aggregates_charta_signal()
+        self.assertIn("charta_id", sig)
+
+    def test_kki_alluvial_charta_frozen_protection(self):
+        from kki.alluvial_charta import build_alluvial_charta
+        from dataclasses import FrozenInstanceError
+        obj = build_alluvial_charta()
+        with self.assertRaises(FrozenInstanceError):
+            obj.normen = ()
+
+    def test_kki_alluvial_charta_gesperrt_schutz_norm(self):
+        from kki.alluvial_charta import build_alluvial_charta
+        obj = build_alluvial_charta()
+        normen = obj.normen
+        self.assertGreater(len(normen), 0)
+
+    def test_kki_sedimentologie_verfassung_builds_instanz(self):
+        from kki.sedimentologie_verfassung import SedimentologieVerfassung, build_sedimentologie_verfassung
+        obj = build_sedimentologie_verfassung()
+        self.assertIsInstance(obj, SedimentologieVerfassung)
+
+    def test_kki_sedimentologie_verfassung_normen_count(self):
+        from kki.sedimentologie_verfassung import build_sedimentologie_verfassung
+        obj = build_sedimentologie_verfassung()
+        self.assertEqual(len(obj.normen), 5)
+
+    def test_kki_sedimentologie_verfassung_canonical(self):
+        from kki.sedimentologie_verfassung import build_sedimentologie_verfassung
+        obj = build_sedimentologie_verfassung()
+        self.assertTrue(obj.canonical)
+
+    def test_kki_sedimentologie_verfassung_weight_positive(self):
+        from kki.sedimentologie_verfassung import build_sedimentologie_verfassung
+        obj = build_sedimentologie_verfassung()
+        self.assertGreater(obj.normen[0].sedimentologie_weight, 0)
+
+    def test_kki_sedimentologie_verfassung_tier_valid(self):
+        from kki.sedimentologie_verfassung import build_sedimentologie_verfassung
+        obj = build_sedimentologie_verfassung()
+        self.assertGreater(obj.normen[0].sedimentologie_tier, 0)
+
+    def test_kki_sedimentologie_verfassung_aggregates_signal(self):
+        from kki.sedimentologie_verfassung import build_sedimentologie_verfassung
+        obj = build_sedimentologie_verfassung()
+        sig = obj.aggregates_verfassung_signal()
+        self.assertIn("verfassung_id", sig)
+
+    def test_kki_sedimentologie_verfassung_frozen_protection(self):
+        from kki.sedimentologie_verfassung import build_sedimentologie_verfassung
+        from dataclasses import FrozenInstanceError
+        obj = build_sedimentologie_verfassung()
+        with self.assertRaises(FrozenInstanceError):
+            obj.normen = ()
+
+    def test_kki_sedimentologie_verfassung_gesperrt_schutz_norm(self):
+        from kki.sedimentologie_verfassung import build_sedimentologie_verfassung
+        obj = build_sedimentologie_verfassung()
+        normen = obj.normen
+        self.assertGreater(len(normen), 0)
+
+    # --- Block #871: GeochronologieFeld ---
+
+    def test_kki_geochronologie_feld_builds_instanz(self):
+        from kki.geochronologie_feld import build_geochronologie_feld, GeochronologieFeld
+        obj = build_geochronologie_feld()
+        self.assertIsInstance(obj, GeochronologieFeld)
+
+    def test_kki_geochronologie_feld_normen_count(self):
+        from kki.geochronologie_feld import build_geochronologie_feld
+        obj = build_geochronologie_feld()
+        self.assertEqual(len(obj.normen), 5)
+
+    def test_kki_geochronologie_feld_canonical(self):
+        from kki.geochronologie_feld import build_geochronologie_feld
+        obj = build_geochronologie_feld()
+        self.assertTrue(obj.canonical)
+
+    def test_kki_geochronologie_feld_weight_positive(self):
+        from kki.geochronologie_feld import build_geochronologie_feld
+        obj = build_geochronologie_feld()
+        self.assertGreater(obj.normen[0].geochronologie_weight, 0)
+
+    def test_kki_geochronologie_feld_tier_valid(self):
+        from kki.geochronologie_feld import build_geochronologie_feld
+        obj = build_geochronologie_feld()
+        self.assertGreater(obj.normen[0].tier, 0)
+
+    def test_kki_geochronologie_feld_aggregates_signal(self):
+        from kki.geochronologie_feld import build_geochronologie_feld
+        obj = build_geochronologie_feld()
+        sig = obj.aggregates_feld_signal()
+        self.assertIn("feld_id", sig)
+
+    def test_kki_geochronologie_feld_frozen_protection(self):
+        from kki.geochronologie_feld import build_geochronologie_feld
+        from dataclasses import FrozenInstanceError
+        obj = build_geochronologie_feld()
+        with self.assertRaises(FrozenInstanceError):
+            obj.normen = ()
+
+    def test_kki_geochronologie_feld_gesperrt_schutz_norm(self):
+        from kki.geochronologie_feld import build_geochronologie_feld
+        obj = build_geochronologie_feld()
+        normen = obj.normen
+        self.assertGreater(len(normen), 0)
+
+    # --- Block #872: IsotopenRegister ---
+
+    def test_kki_isotopen_register_builds_instanz(self):
+        from kki.isotopen_register import build_isotopen_register, IsotopenRegister
+        obj = build_isotopen_register()
+        self.assertIsInstance(obj, IsotopenRegister)
+
+    def test_kki_isotopen_register_eintraege_count(self):
+        from kki.isotopen_register import build_isotopen_register
+        obj = build_isotopen_register()
+        self.assertEqual(len(obj.eintraege), 5)
+
+    def test_kki_isotopen_register_canonical(self):
+        from kki.isotopen_register import build_isotopen_register
+        obj = build_isotopen_register()
+        self.assertTrue(obj.canonical)
+
+    def test_kki_isotopen_register_weight_positive(self):
+        from kki.isotopen_register import build_isotopen_register
+        obj = build_isotopen_register()
+        self.assertGreater(obj.eintraege[0].geochronologie_weight, 0)
+
+    def test_kki_isotopen_register_tier_valid(self):
+        from kki.isotopen_register import build_isotopen_register
+        obj = build_isotopen_register()
+        self.assertGreater(obj.eintraege[0].tier, 0)
+
+    def test_kki_isotopen_register_aggregates_signal(self):
+        from kki.isotopen_register import build_isotopen_register
+        obj = build_isotopen_register()
+        sig = obj.aggregates_register_signal()
+        self.assertIn("register_id", sig)
+
+    def test_kki_isotopen_register_frozen_protection(self):
+        from kki.isotopen_register import build_isotopen_register
+        from dataclasses import FrozenInstanceError
+        obj = build_isotopen_register()
+        with self.assertRaises(FrozenInstanceError):
+            obj.eintraege = ()
+
+    def test_kki_isotopen_register_gesperrt_schutz_eintrag(self):
+        from kki.isotopen_register import build_isotopen_register
+        obj = build_isotopen_register()
+        eintraege = obj.eintraege
+        self.assertGreater(len(eintraege), 0)
+
+    # --- Block #873: RadiometrieCharta ---
+
+    def test_kki_radiometrie_charta_builds_instanz(self):
+        from kki.radiometrie_charta import build_radiometrie_charta, RadiometrieCharta
+        obj = build_radiometrie_charta()
+        self.assertIsInstance(obj, RadiometrieCharta)
+
+    def test_kki_radiometrie_charta_normen_count(self):
+        from kki.radiometrie_charta import build_radiometrie_charta
+        obj = build_radiometrie_charta()
+        self.assertEqual(len(obj.normen), 5)
+
+    def test_kki_radiometrie_charta_canonical(self):
+        from kki.radiometrie_charta import build_radiometrie_charta
+        obj = build_radiometrie_charta()
+        self.assertTrue(obj.canonical)
+
+    def test_kki_radiometrie_charta_weight_positive(self):
+        from kki.radiometrie_charta import build_radiometrie_charta
+        obj = build_radiometrie_charta()
+        self.assertGreater(obj.normen[0].geochronologie_weight, 0)
+
+    def test_kki_radiometrie_charta_tier_valid(self):
+        from kki.radiometrie_charta import build_radiometrie_charta
+        obj = build_radiometrie_charta()
+        self.assertGreater(obj.normen[0].tier, 0)
+
+    def test_kki_radiometrie_charta_aggregates_signal(self):
+        from kki.radiometrie_charta import build_radiometrie_charta
+        obj = build_radiometrie_charta()
+        sig = obj.aggregates_charta_signal()
+        self.assertIn("charta_id", sig)
+
+    def test_kki_radiometrie_charta_frozen_protection(self):
+        from kki.radiometrie_charta import build_radiometrie_charta
+        from dataclasses import FrozenInstanceError
+        obj = build_radiometrie_charta()
+        with self.assertRaises(FrozenInstanceError):
+            obj.normen = ()
+
+    def test_kki_radiometrie_charta_gesperrt_schutz_norm(self):
+        from kki.radiometrie_charta import build_radiometrie_charta
+        obj = build_radiometrie_charta()
+        normen = obj.normen
+        self.assertGreater(len(normen), 0)
+
+    # --- Block #874: StartigraphieKodex ---
+
+    def test_kki_stratigraphie_kodex_builds_instanz(self):
+        from kki.stratigraphie_kodex import build_stratigraphie_kodex, StartigraphieKodex
+        obj = build_stratigraphie_kodex()
+        self.assertIsInstance(obj, StartigraphieKodex)
+
+    def test_kki_stratigraphie_kodex_eintraege_count(self):
+        from kki.stratigraphie_kodex import build_stratigraphie_kodex
+        obj = build_stratigraphie_kodex()
+        self.assertEqual(len(obj.eintraege), 5)
+
+    def test_kki_stratigraphie_kodex_canonical(self):
+        from kki.stratigraphie_kodex import build_stratigraphie_kodex
+        obj = build_stratigraphie_kodex()
+        self.assertTrue(obj.canonical)
+
+    def test_kki_stratigraphie_kodex_weight_positive(self):
+        from kki.stratigraphie_kodex import build_stratigraphie_kodex
+        obj = build_stratigraphie_kodex()
+        self.assertGreater(obj.eintraege[0].geochronologie_weight, 0)
+
+    def test_kki_stratigraphie_kodex_tier_valid(self):
+        from kki.stratigraphie_kodex import build_stratigraphie_kodex
+        obj = build_stratigraphie_kodex()
+        self.assertGreater(obj.eintraege[0].tier, 0)
+
+    def test_kki_stratigraphie_kodex_aggregates_signal(self):
+        from kki.stratigraphie_kodex import build_stratigraphie_kodex
+        obj = build_stratigraphie_kodex()
+        sig = obj.aggregates_kodex_signal()
+        self.assertIn("kodex_id", sig)
+
+    def test_kki_stratigraphie_kodex_frozen_protection(self):
+        from kki.stratigraphie_kodex import build_stratigraphie_kodex
+        from dataclasses import FrozenInstanceError
+        obj = build_stratigraphie_kodex()
+        with self.assertRaises(FrozenInstanceError):
+            obj.eintraege = ()
+
+    def test_kki_stratigraphie_kodex_gesperrt_schutz_eintrag(self):
+        from kki.stratigraphie_kodex import build_stratigraphie_kodex
+        obj = build_stratigraphie_kodex()
+        eintraege = obj.eintraege
+        self.assertGreater(len(eintraege), 0)
+
+    # --- Block #875: BiostratigraphieManifest ---
+
+    def test_kki_biostratigraphie_manifest_builds_instanz(self):
+        from kki.biostratigraphie_manifest import build_biostratigraphie_manifest, BiostratigraphieManifest
+        obj = build_biostratigraphie_manifest()
+        self.assertIsInstance(obj, BiostratigraphieManifest)
+
+    def test_kki_biostratigraphie_manifest_normen_count(self):
+        from kki.biostratigraphie_manifest import build_biostratigraphie_manifest
+        obj = build_biostratigraphie_manifest()
+        self.assertEqual(len(obj.normen), 5)
+
+    def test_kki_biostratigraphie_manifest_canonical(self):
+        from kki.biostratigraphie_manifest import build_biostratigraphie_manifest
+        obj = build_biostratigraphie_manifest()
+        self.assertTrue(obj.canonical)
+
+    def test_kki_biostratigraphie_manifest_weight_positive(self):
+        from kki.biostratigraphie_manifest import build_biostratigraphie_manifest
+        obj = build_biostratigraphie_manifest()
+        self.assertGreater(obj.normen[0].geochronologie_weight, 0)
+
+    def test_kki_biostratigraphie_manifest_tier_valid(self):
+        from kki.biostratigraphie_manifest import build_biostratigraphie_manifest
+        obj = build_biostratigraphie_manifest()
+        self.assertGreater(obj.normen[0].tier, 0)
+
+    def test_kki_biostratigraphie_manifest_aggregates_signal(self):
+        from kki.biostratigraphie_manifest import build_biostratigraphie_manifest
+        obj = build_biostratigraphie_manifest()
+        sig = obj.aggregates_manifest_signal()
+        self.assertIn("manifest_id", sig)
+
+    def test_kki_biostratigraphie_manifest_frozen_protection(self):
+        from kki.biostratigraphie_manifest import build_biostratigraphie_manifest
+        from dataclasses import FrozenInstanceError
+        obj = build_biostratigraphie_manifest()
+        with self.assertRaises(FrozenInstanceError):
+            obj.normen = ()
+
+    def test_kki_biostratigraphie_manifest_gesperrt_schutz_norm(self):
+        from kki.biostratigraphie_manifest import build_biostratigraphie_manifest
+        obj = build_biostratigraphie_manifest()
+        normen = obj.normen
+        self.assertGreater(len(normen), 0)
+
+    # --- Block #876: MagnetostratigraphiePakt ---
+
+    def test_kki_magnetostratigraphie_pakt_builds_instanz(self):
+        from kki.magnetostratigraphie_pakt import build_magnetostratigraphie_pakt, MagnetostratigraphiePakt
+        obj = build_magnetostratigraphie_pakt()
+        self.assertIsInstance(obj, MagnetostratigraphiePakt)
+
+    def test_kki_magnetostratigraphie_pakt_eintraege_count(self):
+        from kki.magnetostratigraphie_pakt import build_magnetostratigraphie_pakt
+        obj = build_magnetostratigraphie_pakt()
+        self.assertEqual(len(obj.eintraege), 5)
+
+    def test_kki_magnetostratigraphie_pakt_canonical(self):
+        from kki.magnetostratigraphie_pakt import build_magnetostratigraphie_pakt
+        obj = build_magnetostratigraphie_pakt()
+        self.assertTrue(obj.canonical)
+
+    def test_kki_magnetostratigraphie_pakt_weight_positive(self):
+        from kki.magnetostratigraphie_pakt import build_magnetostratigraphie_pakt
+        obj = build_magnetostratigraphie_pakt()
+        self.assertGreater(obj.eintraege[0].geochronologie_weight, 0)
+
+    def test_kki_magnetostratigraphie_pakt_tier_valid(self):
+        from kki.magnetostratigraphie_pakt import build_magnetostratigraphie_pakt
+        obj = build_magnetostratigraphie_pakt()
+        self.assertGreater(obj.eintraege[0].tier, 0)
+
+    def test_kki_magnetostratigraphie_pakt_aggregates_signal(self):
+        from kki.magnetostratigraphie_pakt import build_magnetostratigraphie_pakt
+        obj = build_magnetostratigraphie_pakt()
+        sig = obj.aggregates_pakt_signal()
+        self.assertIn("pakt_id", sig)
+
+    def test_kki_magnetostratigraphie_pakt_frozen_protection(self):
+        from kki.magnetostratigraphie_pakt import build_magnetostratigraphie_pakt
+        from dataclasses import FrozenInstanceError
+        obj = build_magnetostratigraphie_pakt()
+        with self.assertRaises(FrozenInstanceError):
+            obj.eintraege = ()
+
+    def test_kki_magnetostratigraphie_pakt_gesperrt_schutz_eintrag(self):
+        from kki.magnetostratigraphie_pakt import build_magnetostratigraphie_pakt
+        obj = build_magnetostratigraphie_pakt()
+        eintraege = obj.eintraege
+        self.assertGreater(len(eintraege), 0)
+
+    # --- Block #877: GeochronologieSenat ---
+
+    def test_kki_geochronologie_senat_builds_instanz(self):
+        from kki.geochronologie_senat import build_geochronologie_senat, GeochronologieSenat
+        obj = build_geochronologie_senat()
+        self.assertIsInstance(obj, GeochronologieSenat)
+
+    def test_kki_geochronologie_senat_normen_count(self):
+        from kki.geochronologie_senat import build_geochronologie_senat
+        obj = build_geochronologie_senat()
+        self.assertEqual(len(obj.normen), 5)
+
+    def test_kki_geochronologie_senat_canonical(self):
+        from kki.geochronologie_senat import build_geochronologie_senat
+        obj = build_geochronologie_senat()
+        self.assertTrue(obj.canonical)
+
+    def test_kki_geochronologie_senat_weight_positive(self):
+        from kki.geochronologie_senat import build_geochronologie_senat
+        obj = build_geochronologie_senat()
+        self.assertGreater(obj.normen[0].geochronologie_weight, 0)
+
+    def test_kki_geochronologie_senat_tier_valid(self):
+        from kki.geochronologie_senat import build_geochronologie_senat
+        obj = build_geochronologie_senat()
+        self.assertGreater(obj.normen[0].tier, 0)
+
+    def test_kki_geochronologie_senat_aggregates_signal(self):
+        from kki.geochronologie_senat import build_geochronologie_senat
+        obj = build_geochronologie_senat()
+        sig = obj.aggregates_senat_signal()
+        self.assertIn("senat_id", sig)
+
+    def test_kki_geochronologie_senat_frozen_protection(self):
+        from kki.geochronologie_senat import build_geochronologie_senat
+        from dataclasses import FrozenInstanceError
+        obj = build_geochronologie_senat()
+        with self.assertRaises(FrozenInstanceError):
+            obj.normen = ()
+
+    def test_kki_geochronologie_senat_gesperrt_schutz_norm(self):
+        from kki.geochronologie_senat import build_geochronologie_senat
+        obj = build_geochronologie_senat()
+        normen = obj.normen
+        self.assertGreater(len(normen), 0)
+
+    # --- Block #878: GeochronologieNorm ---
+
+    def test_kki_geochronologie_norm_builds_instanz(self):
+        from kki.geochronologie_norm import build_geochronologie_norm, GeochronologieNorm
+        obj = build_geochronologie_norm()
+        self.assertIsInstance(obj, GeochronologieNorm)
+
+    def test_kki_geochronologie_norm_normen_count(self):
+        from kki.geochronologie_norm import build_geochronologie_norm
+        obj = build_geochronologie_norm()
+        self.assertEqual(len(obj.normen), 5)
+
+    def test_kki_geochronologie_norm_canonical(self):
+        from kki.geochronologie_norm import build_geochronologie_norm
+        obj = build_geochronologie_norm()
+        self.assertTrue(obj.canonical)
+
+    def test_kki_geochronologie_norm_weight_positive(self):
+        from kki.geochronologie_norm import build_geochronologie_norm
+        obj = build_geochronologie_norm()
+        self.assertGreater(obj.normen[0].geochronologie_norm_weight, 0)
+
+    def test_kki_geochronologie_norm_tier_valid(self):
+        from kki.geochronologie_norm import build_geochronologie_norm
+        obj = build_geochronologie_norm()
+        self.assertGreater(obj.normen[0].geochronologie_norm_tier, 0)
+
+    def test_kki_geochronologie_norm_aggregates_signal(self):
+        from kki.geochronologie_norm import build_geochronologie_norm
+        obj = build_geochronologie_norm()
+        sig = obj.aggregates_norm_signal()
+        self.assertIn("norm_id", sig)
+
+    def test_kki_geochronologie_norm_frozen_protection(self):
+        from kki.geochronologie_norm import build_geochronologie_norm
+        from dataclasses import FrozenInstanceError
+        obj = build_geochronologie_norm()
+        with self.assertRaises(FrozenInstanceError):
+            obj.normen = ()
+
+    def test_kki_geochronologie_norm_gesperrt_schutz_norm(self):
+        from kki.geochronologie_norm import build_geochronologie_norm
+        obj = build_geochronologie_norm()
+        normen = obj.normen
+        self.assertGreater(len(normen), 0)
+
+    # --- Block #879: AltersbestimmungCharta ---
+
+    def test_kki_altersbestimmung_charta_builds_instanz(self):
+        from kki.altersbestimmung_charta import build_altersbestimmung_charta, AltersbestimmungCharta
+        obj = build_altersbestimmung_charta()
+        self.assertIsInstance(obj, AltersbestimmungCharta)
+
+    def test_kki_altersbestimmung_charta_normen_count(self):
+        from kki.altersbestimmung_charta import build_altersbestimmung_charta
+        obj = build_altersbestimmung_charta()
+        self.assertEqual(len(obj.normen), 5)
+
+    def test_kki_altersbestimmung_charta_canonical(self):
+        from kki.altersbestimmung_charta import build_altersbestimmung_charta
+        obj = build_altersbestimmung_charta()
+        self.assertTrue(obj.canonical)
+
+    def test_kki_altersbestimmung_charta_weight_positive(self):
+        from kki.altersbestimmung_charta import build_altersbestimmung_charta
+        obj = build_altersbestimmung_charta()
+        self.assertGreater(obj.normen[0].geochronologie_weight, 0)
+
+    def test_kki_altersbestimmung_charta_tier_valid(self):
+        from kki.altersbestimmung_charta import build_altersbestimmung_charta
+        obj = build_altersbestimmung_charta()
+        self.assertGreater(obj.normen[0].tier, 0)
+
+    def test_kki_altersbestimmung_charta_aggregates_signal(self):
+        from kki.altersbestimmung_charta import build_altersbestimmung_charta
+        obj = build_altersbestimmung_charta()
+        sig = obj.aggregates_charta_signal()
+        self.assertIn("charta_id", sig)
+
+    def test_kki_altersbestimmung_charta_frozen_protection(self):
+        from kki.altersbestimmung_charta import build_altersbestimmung_charta
+        from dataclasses import FrozenInstanceError
+        obj = build_altersbestimmung_charta()
+        with self.assertRaises(FrozenInstanceError):
+            obj.normen = ()
+
+    def test_kki_altersbestimmung_charta_gesperrt_schutz_norm(self):
+        from kki.altersbestimmung_charta import build_altersbestimmung_charta
+        obj = build_altersbestimmung_charta()
+        normen = obj.normen
+        self.assertGreater(len(normen), 0)
+
+    # --- Block #880: GeochronologieVerfassung ---
+
+    def test_kki_geochronologie_verfassung_builds_instanz(self):
+        from kki.geochronologie_verfassung import build_geochronologie_verfassung, GeochronologieVerfassung
+        obj = build_geochronologie_verfassung()
+        self.assertIsInstance(obj, GeochronologieVerfassung)
+
+    def test_kki_geochronologie_verfassung_normen_count(self):
+        from kki.geochronologie_verfassung import build_geochronologie_verfassung
+        obj = build_geochronologie_verfassung()
+        self.assertEqual(len(obj.normen), 5)
+
+    def test_kki_geochronologie_verfassung_canonical(self):
+        from kki.geochronologie_verfassung import build_geochronologie_verfassung
+        obj = build_geochronologie_verfassung()
+        self.assertTrue(obj.canonical)
+
+    def test_kki_geochronologie_verfassung_weight_positive(self):
+        from kki.geochronologie_verfassung import build_geochronologie_verfassung
+        obj = build_geochronologie_verfassung()
+        self.assertGreater(obj.normen[0].geochronologie_weight, 0)
+
+    def test_kki_geochronologie_verfassung_tier_valid(self):
+        from kki.geochronologie_verfassung import build_geochronologie_verfassung
+        obj = build_geochronologie_verfassung()
+        self.assertGreater(obj.normen[0].geochronologie_tier, 0)
+
+    def test_kki_geochronologie_verfassung_aggregates_signal(self):
+        from kki.geochronologie_verfassung import build_geochronologie_verfassung
+        obj = build_geochronologie_verfassung()
+        sig = obj.aggregates_verfassung_signal()
+        self.assertIn("verfassung_id", sig)
+
+    def test_kki_geochronologie_verfassung_frozen_protection(self):
+        from kki.geochronologie_verfassung import build_geochronologie_verfassung
+        from dataclasses import FrozenInstanceError
+        obj = build_geochronologie_verfassung()
+        with self.assertRaises(FrozenInstanceError):
+            obj.normen = ()
+
+    def test_kki_geochronologie_verfassung_gesperrt_schutz_norm(self):
+        from kki.geochronologie_verfassung import build_geochronologie_verfassung
+        obj = build_geochronologie_verfassung()
+        normen = obj.normen
+        self.assertGreater(len(normen), 0)

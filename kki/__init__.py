@@ -3847,6 +3847,86 @@ from .geomorphologie_verfassung import (
     GeomorphologieVerfassungGeltung, GeomorphologieVerfassungsNorm, GeomorphologieVerfassungTyp, GeomorphologieVerfassungProzedur,
     GeomorphologieVerfassung, build_geomorphologie_verfassung,
 )
+from .sedimentologie_feld import (
+    SedimentologieFeldTyp, SedimentologieFeldProzedur,
+    SedimentologieFeldNorm, SedimentologieFeld, build_sedimentologie_feld,
+)
+from .ablagerungs_register import (
+    AblagerungsRegisterTyp, AblagerungsRegisterProzedur,
+    AblagerungsRegisterEintrag, AblagerungsRegister, build_ablagerungs_register,
+)
+from .fazies_charta import (
+    FaziesChartaTyp, FaziesChartaProzedur,
+    FaziesChartaNorm, FaziesCharta, build_fazies_charta,
+)
+from .diagenese_kodex import (
+    DiageneseKodexTyp, DiageneseKodexProzedur,
+    DiageneseKodexEintrag, DiageneseKodex, build_diagenese_kodex,
+)
+from .turbidite_manifest import (
+    TurbiditeManifestTyp, TurbiditeManifestProzedur,
+    TurbiditeManifestNorm, TurbiditeManifest, build_turbidite_manifest,
+)
+from .delta_pakt import (
+    DeltaPaktTyp, DeltaPaktProzedur,
+    DeltaPaktEintrag, DeltaPakt, build_delta_pakt,
+)
+from .sedimentologie_senat import (
+    SedimentologieSenatTyp, SedimentologieSenatProzedur,
+    SedimentologieSenatNorm, SedimentologieSenat, build_sedimentologie_senat,
+)
+from .sedimentologie_norm import (
+    SedimentologieNormTyp, SedimentologieNormProzedur,
+    SedimentologieNormEintrag, SedimentologieNorm, build_sedimentologie_norm,
+)
+from .alluvial_charta import (
+    AlluvialChartaTyp, AlluvialChartaProzedur,
+    AlluvialChartaNorm, AlluvialCharta, build_alluvial_charta,
+)
+from .sedimentologie_verfassung import (
+    SedimentologieVerfassungTyp, SedimentologieVerfassungProzedur,
+    SedimentologieVerfassungNorm, SedimentologieVerfassung, build_sedimentologie_verfassung,
+)
+from .geochronologie_feld import (
+    GeochronologieFeldTyp, GeochronologieFeldProzedur,
+    GeochronologieFeldNorm, GeochronologieFeld, build_geochronologie_feld,
+)
+from .isotopen_register import (
+    IsotopenRegisterTyp, IsotopenRegisterProzedur,
+    IsotopenRegisterEintrag, IsotopenRegister, build_isotopen_register,
+)
+from .radiometrie_charta import (
+    RadiometrieChartaTyp, RadiometrieChartaProzedur,
+    RadiometrieChartaNorm, RadiometrieCharta, build_radiometrie_charta,
+)
+from .stratigraphie_kodex import (
+    StartigraphieKodexTyp, StartigraphieKodexProzedur,
+    StartigraphieKodexEintrag, StartigraphieKodex, build_stratigraphie_kodex,
+)
+from .biostratigraphie_manifest import (
+    BiostratigraphieManifestTyp, BiostratigraphieManifestProzedur,
+    BiostratigraphieManifestNorm, BiostratigraphieManifest, build_biostratigraphie_manifest,
+)
+from .magnetostratigraphie_pakt import (
+    MagnetostratigraphiePaktTyp, MagnetostratigraphiePaktProzedur,
+    MagnetostratigraphiePaktEintrag, MagnetostratigraphiePakt, build_magnetostratigraphie_pakt,
+)
+from .geochronologie_senat import (
+    GeochronologieSenatTyp, GeochronologieSenatProzedur,
+    GeochronologieSenatNorm, GeochronologieSenat, build_geochronologie_senat,
+)
+from .geochronologie_norm import (
+    GeochronologieNormTyp, GeochronologieNormProzedur,
+    GeochronologieNormEintrag, GeochronologieNorm, build_geochronologie_norm,
+)
+from .altersbestimmung_charta import (
+    AltersbestimmungChartaTyp, AltersbestimmungChartaProzedur,
+    AltersbestimmungChartaNorm, AltersbestimmungCharta, build_altersbestimmung_charta,
+)
+from .geochronologie_verfassung import (
+    GeochronologieVerfassungTyp, GeochronologieVerfassungProzedur,
+    GeochronologieVerfassungNorm, GeochronologieVerfassung, build_geochronologie_verfassung,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -6150,4 +6230,44 @@ __all__ = [
     "KarstsystemCharta", "build_karstsystem_charta",
     "GeomorphologieVerfassungGeltung", "GeomorphologieVerfassungsNorm", "GeomorphologieVerfassungTyp", "GeomorphologieVerfassungProzedur",
     "GeomorphologieVerfassung", "build_geomorphologie_verfassung",
+    "SedimentologieFeldTyp", "SedimentologieFeldProzedur",
+    "SedimentologieFeldNorm", "SedimentologieFeld", "build_sedimentologie_feld",
+    "AblagerungsRegisterTyp", "AblagerungsRegisterProzedur",
+    "AblagerungsRegisterEintrag", "AblagerungsRegister", "build_ablagerungs_register",
+    "FaziesChartaTyp", "FaziesChartaProzedur",
+    "FaziesChartaNorm", "FaziesCharta", "build_fazies_charta",
+    "DiageneseKodexTyp", "DiageneseKodexProzedur",
+    "DiageneseKodexEintrag", "DiageneseKodex", "build_diagenese_kodex",
+    "TurbiditeManifestTyp", "TurbiditeManifestProzedur",
+    "TurbiditeManifestNorm", "TurbiditeManifest", "build_turbidite_manifest",
+    "DeltaPaktTyp", "DeltaPaktProzedur",
+    "DeltaPaktEintrag", "DeltaPakt", "build_delta_pakt",
+    "SedimentologieSenatTyp", "SedimentologieSenatProzedur",
+    "SedimentologieSenatNorm", "SedimentologieSenat", "build_sedimentologie_senat",
+    "SedimentologieNormTyp", "SedimentologieNormProzedur",
+    "SedimentologieNormEintrag", "SedimentologieNorm", "build_sedimentologie_norm",
+    "AlluvialChartaTyp", "AlluvialChartaProzedur",
+    "AlluvialChartaNorm", "AlluvialCharta", "build_alluvial_charta",
+    "SedimentologieVerfassungTyp", "SedimentologieVerfassungProzedur",
+    "SedimentologieVerfassungNorm", "SedimentologieVerfassung", "build_sedimentologie_verfassung",
+    "GeochronologieFeldTyp", "GeochronologieFeldProzedur",
+    "GeochronologieFeldNorm", "GeochronologieFeld", "build_geochronologie_feld",
+    "IsotopenRegisterTyp", "IsotopenRegisterProzedur",
+    "IsotopenRegisterEintrag", "IsotopenRegister", "build_isotopen_register",
+    "RadiometrieChartaTyp", "RadiometrieChartaProzedur",
+    "RadiometrieChartaNorm", "RadiometrieCharta", "build_radiometrie_charta",
+    "StartigraphieKodexTyp", "StartigraphieKodexProzedur",
+    "StartigraphieKodexEintrag", "StartigraphieKodex", "build_stratigraphie_kodex",
+    "BiostratigraphieManifestTyp", "BiostratigraphieManifestProzedur",
+    "BiostratigraphieManifestNorm", "BiostratigraphieManifest", "build_biostratigraphie_manifest",
+    "MagnetostratigraphiePaktTyp", "MagnetostratigraphiePaktProzedur",
+    "MagnetostratigraphiePaktEintrag", "MagnetostratigraphiePakt", "build_magnetostratigraphie_pakt",
+    "GeochronologieSenatTyp", "GeochronologieSenatProzedur",
+    "GeochronologieSenatNorm", "GeochronologieSenat", "build_geochronologie_senat",
+    "GeochronologieNormTyp", "GeochronologieNormProzedur",
+    "GeochronologieNormEintrag", "GeochronologieNorm", "build_geochronologie_norm",
+    "AltersbestimmungChartaTyp", "AltersbestimmungChartaProzedur",
+    "AltersbestimmungChartaNorm", "AltersbestimmungCharta", "build_altersbestimmung_charta",
+    "GeochronologieVerfassungTyp", "GeochronologieVerfassungProzedur",
+    "GeochronologieVerfassungNorm", "GeochronologieVerfassung", "build_geochronologie_verfassung",
 ]

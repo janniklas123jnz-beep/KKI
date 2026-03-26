@@ -30380,3 +30380,367 @@ class SmokeTests(unittest.TestCase):
     def test_kki_ozean_verfassung_builds_parent_chain(self):
         from kki.ozean_verfassung import build_ozean_verfassung
         self.assertIsNotNone(build_ozean_verfassung().parent)
+
+    # ── Block #801–810: Geophysik & Seismologie ───────────────────────────────
+
+    def test_kki_geophysik_feld_builds(self):
+        from kki.geophysik_feld import build_geophysik_feld
+        self.assertIsNotNone(build_geophysik_feld())
+
+    def test_kki_geophysik_feld_normen_count(self):
+        from kki.geophysik_feld import build_geophysik_feld
+        self.assertEqual(len(build_geophysik_feld().normen), 5)
+
+    def test_kki_geophysik_feld_weight_positive(self):
+        from kki.geophysik_feld import build_geophysik_feld
+        for n in build_geophysik_feld().normen:
+            self.assertGreaterEqual(n.geophysik_weight, 0.0)
+
+    def test_kki_geophysik_feld_gesperrt_schutz_norm(self):
+        from kki.geophysik_feld import build_geophysik_feld, GeophysikFeldGeltung
+        self.assertIn(GeophysikFeldGeltung.GESPERRT, [n.geltung for n in build_geophysik_feld().normen])
+
+    def test_kki_geophysik_feld_tier_sequence(self):
+        from kki.geophysik_feld import build_geophysik_feld
+        tiers = [n.geophysik_tier for n in build_geophysik_feld().normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_geophysik_feld_ids_not_empty(self):
+        from kki.geophysik_feld import build_geophysik_feld
+        for n in build_geophysik_feld().normen:
+            self.assertTrue(len(n.geophysik_ids) > 0)
+
+    def test_kki_geophysik_feld_tags_contain_domain(self):
+        from kki.geophysik_feld import build_geophysik_feld
+        for n in build_geophysik_feld().normen:
+            self.assertIn("geophysik", n.geophysik_tags)
+
+    def test_kki_geophysik_feld_builds_parent_chain(self):
+        from kki.geophysik_feld import build_geophysik_feld
+        self.assertIsNotNone(build_geophysik_feld().parent)
+
+    def test_kki_seismologie_register_builds(self):
+        from kki.seismologie_register import build_seismologie_register
+        self.assertIsNotNone(build_seismologie_register())
+
+    def test_kki_seismologie_register_eintraege_count(self):
+        from kki.seismologie_register import build_seismologie_register
+        self.assertEqual(len(build_seismologie_register().eintraege), 5)
+
+    def test_kki_seismologie_register_weight_positive(self):
+        from kki.seismologie_register import build_seismologie_register
+        for e in build_seismologie_register().eintraege:
+            self.assertGreaterEqual(e.geophysik_weight, 0.0)
+
+    def test_kki_seismologie_register_gesperrt_schutz_norm(self):
+        from kki.seismologie_register import build_seismologie_register, SeismologieRegisterGeltung
+        self.assertIn(SeismologieRegisterGeltung.GESPERRT, [e.geltung for e in build_seismologie_register().eintraege])
+
+    def test_kki_seismologie_register_tier_sequence(self):
+        from kki.seismologie_register import build_seismologie_register
+        tiers = [e.geophysik_tier for e in build_seismologie_register().eintraege]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_seismologie_register_ids_not_empty(self):
+        from kki.seismologie_register import build_seismologie_register
+        for e in build_seismologie_register().eintraege:
+            self.assertTrue(len(e.geophysik_ids) > 0)
+
+    def test_kki_seismologie_register_tags_contain_domain(self):
+        from kki.seismologie_register import build_seismologie_register
+        for e in build_seismologie_register().eintraege:
+            self.assertIn("geophysik", e.geophysik_tags)
+
+    def test_kki_seismologie_register_builds_parent_chain(self):
+        from kki.seismologie_register import build_seismologie_register
+        self.assertIsNotNone(build_seismologie_register().parent)
+
+    def test_kki_tektonik_charta_builds(self):
+        from kki.tektonik_charta import build_tektonik_charta
+        self.assertIsNotNone(build_tektonik_charta())
+
+    def test_kki_tektonik_charta_normen_count(self):
+        from kki.tektonik_charta import build_tektonik_charta
+        self.assertEqual(len(build_tektonik_charta().normen), 5)
+
+    def test_kki_tektonik_charta_weight_positive(self):
+        from kki.tektonik_charta import build_tektonik_charta
+        for n in build_tektonik_charta().normen:
+            self.assertGreaterEqual(n.geophysik_weight, 0.0)
+
+    def test_kki_tektonik_charta_gesperrt_schutz_norm(self):
+        from kki.tektonik_charta import build_tektonik_charta, TektonikChartaGeltung
+        self.assertIn(TektonikChartaGeltung.GESPERRT, [n.geltung for n in build_tektonik_charta().normen])
+
+    def test_kki_tektonik_charta_tier_sequence(self):
+        from kki.tektonik_charta import build_tektonik_charta
+        tiers = [n.geophysik_tier for n in build_tektonik_charta().normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_tektonik_charta_ids_not_empty(self):
+        from kki.tektonik_charta import build_tektonik_charta
+        for n in build_tektonik_charta().normen:
+            self.assertTrue(len(n.geophysik_ids) > 0)
+
+    def test_kki_tektonik_charta_tags_contain_domain(self):
+        from kki.tektonik_charta import build_tektonik_charta
+        for n in build_tektonik_charta().normen:
+            self.assertIn("geophysik", n.geophysik_tags)
+
+    def test_kki_tektonik_charta_builds_parent_chain(self):
+        from kki.tektonik_charta import build_tektonik_charta
+        self.assertIsNotNone(build_tektonik_charta().parent)
+
+    def test_kki_gravitationsfeld_kodex_builds(self):
+        from kki.gravitationsfeld_kodex import build_gravitationsfeld_kodex
+        self.assertIsNotNone(build_gravitationsfeld_kodex())
+
+    def test_kki_gravitationsfeld_kodex_eintraege_count(self):
+        from kki.gravitationsfeld_kodex import build_gravitationsfeld_kodex
+        self.assertEqual(len(build_gravitationsfeld_kodex().eintraege), 5)
+
+    def test_kki_gravitationsfeld_kodex_weight_positive(self):
+        from kki.gravitationsfeld_kodex import build_gravitationsfeld_kodex
+        for e in build_gravitationsfeld_kodex().eintraege:
+            self.assertGreaterEqual(e.geophysik_weight, 0.0)
+
+    def test_kki_gravitationsfeld_kodex_gesperrt_schutz_norm(self):
+        from kki.gravitationsfeld_kodex import build_gravitationsfeld_kodex, GravitationsfeldKodexGeltung
+        self.assertIn(GravitationsfeldKodexGeltung.GESPERRT, [e.geltung for e in build_gravitationsfeld_kodex().eintraege])
+
+    def test_kki_gravitationsfeld_kodex_tier_sequence(self):
+        from kki.gravitationsfeld_kodex import build_gravitationsfeld_kodex
+        tiers = [e.geophysik_tier for e in build_gravitationsfeld_kodex().eintraege]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_gravitationsfeld_kodex_ids_not_empty(self):
+        from kki.gravitationsfeld_kodex import build_gravitationsfeld_kodex
+        for e in build_gravitationsfeld_kodex().eintraege:
+            self.assertTrue(len(e.geophysik_ids) > 0)
+
+    def test_kki_gravitationsfeld_kodex_tags_contain_domain(self):
+        from kki.gravitationsfeld_kodex import build_gravitationsfeld_kodex
+        for e in build_gravitationsfeld_kodex().eintraege:
+            self.assertIn("geophysik", e.geophysik_tags)
+
+    def test_kki_gravitationsfeld_kodex_builds_parent_chain(self):
+        from kki.gravitationsfeld_kodex import build_gravitationsfeld_kodex
+        self.assertIsNotNone(build_gravitationsfeld_kodex().parent)
+
+    def test_kki_geomagnetismus_manifest_builds(self):
+        from kki.geomagnetismus_manifest import build_geomagnetismus_manifest
+        self.assertIsNotNone(build_geomagnetismus_manifest())
+
+    def test_kki_geomagnetismus_manifest_normen_count(self):
+        from kki.geomagnetismus_manifest import build_geomagnetismus_manifest
+        self.assertEqual(len(build_geomagnetismus_manifest().normen), 5)
+
+    def test_kki_geomagnetismus_manifest_weight_positive(self):
+        from kki.geomagnetismus_manifest import build_geomagnetismus_manifest
+        for n in build_geomagnetismus_manifest().normen:
+            self.assertGreaterEqual(n.geophysik_weight, 0.0)
+
+    def test_kki_geomagnetismus_manifest_gesperrt_schutz_norm(self):
+        from kki.geomagnetismus_manifest import build_geomagnetismus_manifest, GeomagnetismusManifestGeltung
+        self.assertIn(GeomagnetismusManifestGeltung.GESPERRT, [n.geltung for n in build_geomagnetismus_manifest().normen])
+
+    def test_kki_geomagnetismus_manifest_tier_sequence(self):
+        from kki.geomagnetismus_manifest import build_geomagnetismus_manifest
+        tiers = [n.geophysik_tier for n in build_geomagnetismus_manifest().normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_geomagnetismus_manifest_ids_not_empty(self):
+        from kki.geomagnetismus_manifest import build_geomagnetismus_manifest
+        for n in build_geomagnetismus_manifest().normen:
+            self.assertTrue(len(n.geophysik_ids) > 0)
+
+    def test_kki_geomagnetismus_manifest_tags_contain_domain(self):
+        from kki.geomagnetismus_manifest import build_geomagnetismus_manifest
+        for n in build_geomagnetismus_manifest().normen:
+            self.assertIn("geophysik", n.geophysik_tags)
+
+    def test_kki_geomagnetismus_manifest_builds_parent_chain(self):
+        from kki.geomagnetismus_manifest import build_geomagnetismus_manifest
+        self.assertIsNotNone(build_geomagnetismus_manifest().parent)
+
+    def test_kki_vulkanismus_pakt_builds(self):
+        from kki.vulkanismus_pakt import build_vulkanismus_pakt
+        self.assertIsNotNone(build_vulkanismus_pakt())
+
+    def test_kki_vulkanismus_pakt_eintraege_count(self):
+        from kki.vulkanismus_pakt import build_vulkanismus_pakt
+        self.assertEqual(len(build_vulkanismus_pakt().eintraege), 5)
+
+    def test_kki_vulkanismus_pakt_weight_positive(self):
+        from kki.vulkanismus_pakt import build_vulkanismus_pakt
+        for e in build_vulkanismus_pakt().eintraege:
+            self.assertGreaterEqual(e.geophysik_weight, 0.0)
+
+    def test_kki_vulkanismus_pakt_gesperrt_schutz_norm(self):
+        from kki.vulkanismus_pakt import build_vulkanismus_pakt, VulkanismusPaktGeltung
+        self.assertIn(VulkanismusPaktGeltung.GESPERRT, [e.geltung for e in build_vulkanismus_pakt().eintraege])
+
+    def test_kki_vulkanismus_pakt_tier_sequence(self):
+        from kki.vulkanismus_pakt import build_vulkanismus_pakt
+        tiers = [e.geophysik_tier for e in build_vulkanismus_pakt().eintraege]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_vulkanismus_pakt_ids_not_empty(self):
+        from kki.vulkanismus_pakt import build_vulkanismus_pakt
+        for e in build_vulkanismus_pakt().eintraege:
+            self.assertTrue(len(e.geophysik_ids) > 0)
+
+    def test_kki_vulkanismus_pakt_tags_contain_domain(self):
+        from kki.vulkanismus_pakt import build_vulkanismus_pakt
+        for e in build_vulkanismus_pakt().eintraege:
+            self.assertIn("geophysik", e.geophysik_tags)
+
+    def test_kki_vulkanismus_pakt_builds_parent_chain(self):
+        from kki.vulkanismus_pakt import build_vulkanismus_pakt
+        self.assertIsNotNone(build_vulkanismus_pakt().parent)
+
+    def test_kki_geophysik_senat_builds(self):
+        from kki.geophysik_senat import build_geophysik_senat
+        self.assertIsNotNone(build_geophysik_senat())
+
+    def test_kki_geophysik_senat_normen_count(self):
+        from kki.geophysik_senat import build_geophysik_senat
+        self.assertEqual(len(build_geophysik_senat().normen), 5)
+
+    def test_kki_geophysik_senat_weight_positive(self):
+        from kki.geophysik_senat import build_geophysik_senat
+        for n in build_geophysik_senat().normen:
+            self.assertGreaterEqual(n.geophysik_weight, 0.0)
+
+    def test_kki_geophysik_senat_gesperrt_schutz_norm(self):
+        from kki.geophysik_senat import build_geophysik_senat, GeophysikSenatGeltung
+        self.assertIn(GeophysikSenatGeltung.GESPERRT, [n.geltung for n in build_geophysik_senat().normen])
+
+    def test_kki_geophysik_senat_tier_sequence(self):
+        from kki.geophysik_senat import build_geophysik_senat
+        tiers = [n.geophysik_tier for n in build_geophysik_senat().normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_geophysik_senat_ids_not_empty(self):
+        from kki.geophysik_senat import build_geophysik_senat
+        for n in build_geophysik_senat().normen:
+            self.assertTrue(len(n.geophysik_ids) > 0)
+
+    def test_kki_geophysik_senat_tags_contain_domain(self):
+        from kki.geophysik_senat import build_geophysik_senat
+        for n in build_geophysik_senat().normen:
+            self.assertIn("geophysik", n.geophysik_tags)
+
+    def test_kki_geophysik_senat_builds_parent_chain(self):
+        from kki.geophysik_senat import build_geophysik_senat
+        self.assertIsNotNone(build_geophysik_senat().parent)
+
+    def test_kki_geophysik_norm_builds(self):
+        from kki.geophysik_norm import build_geophysik_norm
+        self.assertIsNotNone(build_geophysik_norm())
+
+    def test_kki_geophysik_norm_normen_count(self):
+        from kki.geophysik_norm import build_geophysik_norm
+        self.assertEqual(len(build_geophysik_norm().normen), 5)
+
+    def test_kki_geophysik_norm_weight_positive(self):
+        from kki.geophysik_norm import build_geophysik_norm
+        for e in build_geophysik_norm().normen:
+            self.assertGreaterEqual(e.geophysik_norm_weight, 0.0)
+
+    def test_kki_geophysik_norm_gesperrt_schutz_norm(self):
+        from kki.geophysik_norm import build_geophysik_norm, GeophysikNormGeltung
+        self.assertIn(GeophysikNormGeltung.GESPERRT, [e.geltung for e in build_geophysik_norm().normen])
+
+    def test_kki_geophysik_norm_tier_sequence(self):
+        from kki.geophysik_norm import build_geophysik_norm
+        tiers = [e.geophysik_norm_tier for e in build_geophysik_norm().normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_geophysik_norm_ids_not_empty(self):
+        from kki.geophysik_norm import build_geophysik_norm
+        for e in build_geophysik_norm().normen:
+            self.assertTrue(len(e.geophysik_norm_ids) > 0)
+
+    def test_kki_geophysik_norm_tags_contain_domain(self):
+        from kki.geophysik_norm import build_geophysik_norm
+        for e in build_geophysik_norm().normen:
+            self.assertIn("geophysik", e.geophysik_norm_tags)
+
+    def test_kki_geophysik_norm_builds_parent_chain(self):
+        from kki.geophysik_norm import build_geophysik_norm
+        self.assertIsNotNone(build_geophysik_norm().parent)
+
+    def test_kki_erdkern_charta_builds(self):
+        from kki.erdkern_charta import build_erdkern_charta
+        self.assertIsNotNone(build_erdkern_charta())
+
+    def test_kki_erdkern_charta_normen_count(self):
+        from kki.erdkern_charta import build_erdkern_charta
+        self.assertEqual(len(build_erdkern_charta().normen), 5)
+
+    def test_kki_erdkern_charta_weight_positive(self):
+        from kki.erdkern_charta import build_erdkern_charta
+        for n in build_erdkern_charta().normen:
+            self.assertGreaterEqual(n.geophysik_weight, 0.0)
+
+    def test_kki_erdkern_charta_gesperrt_schutz_norm(self):
+        from kki.erdkern_charta import build_erdkern_charta, ErdkernChartaGeltung
+        self.assertIn(ErdkernChartaGeltung.GESPERRT, [n.geltung for n in build_erdkern_charta().normen])
+
+    def test_kki_erdkern_charta_tier_sequence(self):
+        from kki.erdkern_charta import build_erdkern_charta
+        tiers = [n.geophysik_tier for n in build_erdkern_charta().normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_erdkern_charta_ids_not_empty(self):
+        from kki.erdkern_charta import build_erdkern_charta
+        for n in build_erdkern_charta().normen:
+            self.assertTrue(len(n.geophysik_ids) > 0)
+
+    def test_kki_erdkern_charta_tags_contain_domain(self):
+        from kki.erdkern_charta import build_erdkern_charta
+        for n in build_erdkern_charta().normen:
+            self.assertIn("geophysik", n.geophysik_tags)
+
+    def test_kki_erdkern_charta_builds_parent_chain(self):
+        from kki.erdkern_charta import build_erdkern_charta
+        self.assertIsNotNone(build_erdkern_charta().parent)
+
+    def test_kki_geophysik_verfassung_builds(self):
+        from kki.geophysik_verfassung import build_geophysik_verfassung
+        self.assertIsNotNone(build_geophysik_verfassung())
+
+    def test_kki_geophysik_verfassung_normen_count(self):
+        from kki.geophysik_verfassung import build_geophysik_verfassung
+        self.assertEqual(len(build_geophysik_verfassung().normen), 5)
+
+    def test_kki_geophysik_verfassung_gesperrt_schutz_norm(self):
+        from kki.geophysik_verfassung import build_geophysik_verfassung, GeophysikVerfassungGeltung
+        self.assertIn(GeophysikVerfassungGeltung.GESPERRT, [n.geltung for n in build_geophysik_verfassung().normen])
+
+    def test_kki_geophysik_verfassung_aggregates_verfassung_signal(self):
+        from kki.geophysik_verfassung import build_geophysik_verfassung
+        sig = build_geophysik_verfassung().aggregates_verfassung_signal()
+        self.assertEqual(sig["verfassung_id"], "geophysik-verfassung-810")
+        self.assertGreater(sig["total_weight"], 0)
+        self.assertEqual(sig["norm_count"], 5)
+
+    def test_kki_geophysik_verfassung_tier_sequence(self):
+        from kki.geophysik_verfassung import build_geophysik_verfassung
+        tiers = [n.geophysik_tier for n in build_geophysik_verfassung().normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_geophysik_verfassung_ids_not_empty(self):
+        from kki.geophysik_verfassung import build_geophysik_verfassung
+        for n in build_geophysik_verfassung().normen:
+            self.assertTrue(len(n.geophysik_ids) > 0)
+
+    def test_kki_geophysik_verfassung_tags_contain_domain(self):
+        from kki.geophysik_verfassung import build_geophysik_verfassung
+        for n in build_geophysik_verfassung().normen:
+            self.assertIn("geophysik", n.geophysik_tags)
+
+    def test_kki_geophysik_verfassung_builds_parent_chain(self):
+        from kki.geophysik_verfassung import build_geophysik_verfassung
+        self.assertIsNotNone(build_geophysik_verfassung().parent)

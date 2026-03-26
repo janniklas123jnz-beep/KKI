@@ -3606,6 +3606,47 @@ from .ozean_verfassung import (
     OzeanVerfassungGeltung, OzeanVerfassungsNorm, OzeanVerfassungTyp, OzeanVerfassungProzedur,
     OzeanVerfassung, build_ozean_verfassung,
 )
+# Block #801–810: Geophysik & Seismologie
+from .geophysik_feld import (
+    GeophysikFeldGeltung, GeophysikFeldNorm, GeophysikFeldTyp, GeophysikFeldProzedur,
+    GeophysikFeld, build_geophysik_feld,
+)
+from .seismologie_register import (
+    SeismologieRegisterGeltung, SeismologieRegisterEintrag, SeismologieRegisterTyp, SeismologieRegisterProzedur,
+    SeismologieRegister, build_seismologie_register,
+)
+from .tektonik_charta import (
+    TektonikChartaGeltung, TektonikChartaNorm, TektonikChartaTyp, TektonikChartaProzedur,
+    TektonikCharta, build_tektonik_charta,
+)
+from .gravitationsfeld_kodex import (
+    GravitationsfeldKodexGeltung, GravitationsfeldKodexEintrag, GravitationsfeldKodexTyp, GravitationsfeldKodexProzedur,
+    GravitationsfeldKodex, build_gravitationsfeld_kodex,
+)
+from .geomagnetismus_manifest import (
+    GeomagnetismusManifestGeltung, GeomagnetismusManifestNorm, GeomagnetismusManifestTyp, GeomagnetismusManifestProzedur,
+    GeomagnetismusManifest, build_geomagnetismus_manifest,
+)
+from .vulkanismus_pakt import (
+    VulkanismusPaktGeltung, VulkanismusPaktEintrag, VulkanismusPaktTyp, VulkanismusPaktProzedur,
+    VulkanismusPakt, build_vulkanismus_pakt,
+)
+from .geophysik_senat import (
+    GeophysikSenatGeltung, GeophysikSenatNorm, GeophysikSenatTyp, GeophysikSenatProzedur,
+    GeophysikSenat, build_geophysik_senat,
+)
+from .geophysik_norm import (
+    GeophysikNormGeltung, GeophysikNormEintrag, GeophysikNormTyp, GeophysikNormProzedur,
+    GeophysikNormSatz, build_geophysik_norm,
+)
+from .erdkern_charta import (
+    ErdkernChartaGeltung, ErdkernChartaNorm, ErdkernChartaTyp, ErdkernChartaProzedur,
+    ErdkernCharta, build_erdkern_charta,
+)
+from .geophysik_verfassung import (
+    GeophysikVerfassungGeltung, GeophysikVerfassungsNorm, GeophysikVerfassungTyp, GeophysikVerfassungProzedur,
+    GeophysikVerfassung, build_geophysik_verfassung,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -5785,4 +5826,25 @@ __all__ = [
     "MeeresforschungCharta", "build_meeresforschung_charta",
     "OzeanVerfassungGeltung", "OzeanVerfassungsNorm", "OzeanVerfassungTyp", "OzeanVerfassungProzedur",
     "OzeanVerfassung", "build_ozean_verfassung",
+    # Block #801–810: Geophysik & Seismologie
+    "GeophysikFeldGeltung", "GeophysikFeldNorm", "GeophysikFeldTyp", "GeophysikFeldProzedur",
+    "GeophysikFeld", "build_geophysik_feld",
+    "SeismologieRegisterGeltung", "SeismologieRegisterEintrag", "SeismologieRegisterTyp", "SeismologieRegisterProzedur",
+    "SeismologieRegister", "build_seismologie_register",
+    "TektonikChartaGeltung", "TektonikChartaNorm", "TektonikChartaTyp", "TektonikChartaProzedur",
+    "TektonikCharta", "build_tektonik_charta",
+    "GravitationsfeldKodexGeltung", "GravitationsfeldKodexEintrag", "GravitationsfeldKodexTyp", "GravitationsfeldKodexProzedur",
+    "GravitationsfeldKodex", "build_gravitationsfeld_kodex",
+    "GeomagnetismusManifestGeltung", "GeomagnetismusManifestNorm", "GeomagnetismusManifestTyp", "GeomagnetismusManifestProzedur",
+    "GeomagnetismusManifest", "build_geomagnetismus_manifest",
+    "VulkanismusPaktGeltung", "VulkanismusPaktEintrag", "VulkanismusPaktTyp", "VulkanismusPaktProzedur",
+    "VulkanismusPakt", "build_vulkanismus_pakt",
+    "GeophysikSenatGeltung", "GeophysikSenatNorm", "GeophysikSenatTyp", "GeophysikSenatProzedur",
+    "GeophysikSenat", "build_geophysik_senat",
+    "GeophysikNormGeltung", "GeophysikNormEintrag", "GeophysikNormTyp", "GeophysikNormProzedur",
+    "GeophysikNormSatz", "build_geophysik_norm",
+    "ErdkernChartaGeltung", "ErdkernChartaNorm", "ErdkernChartaTyp", "ErdkernChartaProzedur",
+    "ErdkernCharta", "build_erdkern_charta",
+    "GeophysikVerfassungGeltung", "GeophysikVerfassungsNorm", "GeophysikVerfassungTyp", "GeophysikVerfassungProzedur",
+    "GeophysikVerfassung", "build_geophysik_verfassung",
 ]

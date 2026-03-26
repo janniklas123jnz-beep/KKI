@@ -35383,3 +35383,168 @@ class SmokeTests(unittest.TestCase):
         sig = v.aggregates_verfassung_signal()
         self.assertIn("verfassung_id", sig)
         self.assertIn("normen_count", sig)
+
+    # === Block #951–960: Energietechnologie & Nachhaltigkeit ===
+
+    def test_951_energie_feld_builds_instanz(self):
+        from kki.energie_feld import build_energie_feld
+        self.assertIsNotNone(build_energie_feld())
+
+    def test_951_energie_feld_count(self):
+        from kki.energie_feld import build_energie_feld
+        self.assertEqual(len(build_energie_feld().normen), 5)
+
+    def test_951_energie_feld_canonical(self):
+        from kki.energie_feld import build_energie_feld
+        self.assertIsInstance(build_energie_feld().canonical, str)
+
+    def test_951_energie_feld_weight_positive(self):
+        from kki.energie_feld import build_energie_feld
+        self.assertTrue(all(n.energie_weight >= 0 for n in build_energie_feld().normen))
+
+    def test_952_solarenergie_register_builds_instanz(self):
+        from kki.solarenergie_register import build_solarenergie_register
+        self.assertIsNotNone(build_solarenergie_register())
+
+    def test_952_solarenergie_register_count(self):
+        from kki.solarenergie_register import build_solarenergie_register
+        self.assertEqual(len(build_solarenergie_register().eintraege), 5)
+
+    def test_952_solarenergie_register_canonical(self):
+        from kki.solarenergie_register import build_solarenergie_register
+        self.assertIsInstance(build_solarenergie_register().canonical, str)
+
+    def test_952_solarenergie_register_weight_positive(self):
+        from kki.solarenergie_register import build_solarenergie_register
+        self.assertTrue(all(e.energie_weight >= 0 for e in build_solarenergie_register().eintraege))
+
+    def test_953_windenergie_charta_builds_instanz(self):
+        from kki.windenergie_charta import build_windenergie_charta
+        self.assertIsNotNone(build_windenergie_charta())
+
+    def test_953_windenergie_charta_count(self):
+        from kki.windenergie_charta import build_windenergie_charta
+        self.assertEqual(len(build_windenergie_charta().normen), 5)
+
+    def test_953_windenergie_charta_canonical(self):
+        from kki.windenergie_charta import build_windenergie_charta
+        self.assertIsInstance(build_windenergie_charta().canonical, str)
+
+    def test_953_windenergie_charta_weight_positive(self):
+        from kki.windenergie_charta import build_windenergie_charta
+        self.assertTrue(all(n.energie_weight >= 0 for n in build_windenergie_charta().normen))
+
+    def test_954_fusionsenergie_kodex_builds_instanz(self):
+        from kki.fusionsenergie_kodex import build_fusionsenergie_kodex
+        self.assertIsNotNone(build_fusionsenergie_kodex())
+
+    def test_954_fusionsenergie_kodex_count(self):
+        from kki.fusionsenergie_kodex import build_fusionsenergie_kodex
+        self.assertEqual(len(build_fusionsenergie_kodex().eintraege), 5)
+
+    def test_954_fusionsenergie_kodex_canonical(self):
+        from kki.fusionsenergie_kodex import build_fusionsenergie_kodex
+        self.assertIsInstance(build_fusionsenergie_kodex().canonical, str)
+
+    def test_954_fusionsenergie_kodex_weight_positive(self):
+        from kki.fusionsenergie_kodex import build_fusionsenergie_kodex
+        self.assertTrue(all(e.energie_weight >= 0 for e in build_fusionsenergie_kodex().eintraege))
+
+    def test_955_wasserstoff_manifest_builds_instanz(self):
+        from kki.wasserstoff_manifest import build_wasserstoff_manifest
+        self.assertIsNotNone(build_wasserstoff_manifest())
+
+    def test_955_wasserstoff_manifest_count(self):
+        from kki.wasserstoff_manifest import build_wasserstoff_manifest
+        self.assertEqual(len(build_wasserstoff_manifest().normen), 5)
+
+    def test_955_wasserstoff_manifest_canonical(self):
+        from kki.wasserstoff_manifest import build_wasserstoff_manifest
+        self.assertIsInstance(build_wasserstoff_manifest().canonical, str)
+
+    def test_955_wasserstoff_manifest_weight_positive(self):
+        from kki.wasserstoff_manifest import build_wasserstoff_manifest
+        self.assertTrue(all(n.energie_weight >= 0 for n in build_wasserstoff_manifest().normen))
+
+    def test_956_batterietechnologie_pakt_builds_instanz(self):
+        from kki.batterietechnologie_pakt import build_batterietechnologie_pakt
+        self.assertIsNotNone(build_batterietechnologie_pakt())
+
+    def test_956_batterietechnologie_pakt_count(self):
+        from kki.batterietechnologie_pakt import build_batterietechnologie_pakt
+        self.assertEqual(len(build_batterietechnologie_pakt().eintraege), 5)
+
+    def test_956_batterietechnologie_pakt_canonical(self):
+        from kki.batterietechnologie_pakt import build_batterietechnologie_pakt
+        self.assertIsInstance(build_batterietechnologie_pakt().canonical, str)
+
+    def test_956_batterietechnologie_pakt_weight_positive(self):
+        from kki.batterietechnologie_pakt import build_batterietechnologie_pakt
+        self.assertTrue(all(e.energie_weight >= 0 for e in build_batterietechnologie_pakt().eintraege))
+
+    def test_957_smart_grid_senat_builds_instanz(self):
+        from kki.smart_grid_senat import build_smart_grid_senat
+        self.assertIsNotNone(build_smart_grid_senat())
+
+    def test_957_smart_grid_senat_count(self):
+        from kki.smart_grid_senat import build_smart_grid_senat
+        self.assertEqual(len(build_smart_grid_senat().normen), 5)
+
+    def test_957_smart_grid_senat_canonical(self):
+        from kki.smart_grid_senat import build_smart_grid_senat
+        self.assertIsInstance(build_smart_grid_senat().canonical, str)
+
+    def test_957_smart_grid_senat_weight_positive(self):
+        from kki.smart_grid_senat import build_smart_grid_senat
+        self.assertTrue(all(n.energie_weight >= 0 for n in build_smart_grid_senat().normen))
+
+    def test_958_energie_norm_builds_instanz(self):
+        from kki.energie_norm import build_energie_norm
+        self.assertIsNotNone(build_energie_norm())
+
+    def test_958_energie_norm_count(self):
+        from kki.energie_norm import build_energie_norm
+        self.assertEqual(len(build_energie_norm().normen), 5)
+
+    def test_958_energie_norm_eintrag_has_norm_weight(self):
+        from kki.energie_norm import build_energie_norm
+        self.assertTrue(all(e.energie_norm_weight >= 0 for e in build_energie_norm().normen))
+
+    def test_958_energie_norm_weight_positive(self):
+        from kki.energie_norm import build_energie_norm
+        self.assertTrue(all(e.energie_norm_tier >= 1 for e in build_energie_norm().normen))
+
+    def test_959_kreislaufwirtschaft_charta_builds_instanz(self):
+        from kki.kreislaufwirtschaft_charta import build_kreislaufwirtschaft_charta
+        self.assertIsNotNone(build_kreislaufwirtschaft_charta())
+
+    def test_959_kreislaufwirtschaft_charta_count(self):
+        from kki.kreislaufwirtschaft_charta import build_kreislaufwirtschaft_charta
+        self.assertEqual(len(build_kreislaufwirtschaft_charta().normen), 5)
+
+    def test_959_kreislaufwirtschaft_charta_canonical(self):
+        from kki.kreislaufwirtschaft_charta import build_kreislaufwirtschaft_charta
+        self.assertIsInstance(build_kreislaufwirtschaft_charta().canonical, str)
+
+    def test_959_kreislaufwirtschaft_charta_weight_positive(self):
+        from kki.kreislaufwirtschaft_charta import build_kreislaufwirtschaft_charta
+        self.assertTrue(all(n.energie_weight >= 0 for n in build_kreislaufwirtschaft_charta().normen))
+
+    def test_960_energie_verfassung_builds_instanz(self):
+        from kki.energie_verfassung import build_energie_verfassung
+        self.assertIsNotNone(build_energie_verfassung())
+
+    def test_960_energie_verfassung_count(self):
+        from kki.energie_verfassung import build_energie_verfassung
+        self.assertEqual(len(build_energie_verfassung().normen), 5)
+
+    def test_960_energie_verfassung_canonical(self):
+        from kki.energie_verfassung import build_energie_verfassung
+        self.assertIsInstance(build_energie_verfassung().canonical, str)
+
+    def test_960_energie_verfassung_aggregates_signal(self):
+        from kki.energie_verfassung import build_energie_verfassung
+        v = build_energie_verfassung()
+        sig = v.aggregates_verfassung_signal()
+        self.assertIn("verfassung_id", sig)
+        self.assertIn("normen_count", sig)

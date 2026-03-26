@@ -6646,3 +6646,75 @@ from .biotechnologie_verfassung import (
     BiotechnologieVerfassung,
     build_biotechnologie_verfassung,
 )
+
+# === Block #951–960: Energietechnologie & Nachhaltigkeit ===
+from .energie_feld import (
+    EnergieFeldTyp,
+    EnergieFeldProzedur,
+    EnergieFeldNorm,
+    EnergieFeld,
+    build_energie_feld,
+)
+from .solarenergie_register import (
+    SolarenergieRegisterTyp,
+    SolarenergieRegisterProzedur,
+    SolarenergieRegisterEintrag,
+    SolarenergieRegister,
+    build_solarenergie_register,
+)
+from .windenergie_charta import (
+    WindenergieChartaTyp,
+    WindenergieChartaProzedur,
+    WindenergieChartaNorm,
+    WindenergieCharta,
+    build_windenergie_charta,
+)
+from .fusionsenergie_kodex import (
+    FusionsenergieKodexTyp,
+    FusionsenergieKodexProzedur,
+    FusionsenergieKodexEintrag,
+    FusionsenergieKodex,
+    build_fusionsenergie_kodex,
+)
+from .wasserstoff_manifest import (
+    WasserstoffManifestTyp,
+    WasserstoffManifestProzedur,
+    WasserstoffManifestNorm,
+    WasserstoffManifest,
+    build_wasserstoff_manifest,
+)
+from .batterietechnologie_pakt import (
+    BatterietechnologiePaktTyp,
+    BatterietechnologiePaktProzedur,
+    BatterietechnologiePaktEintrag,
+    BatterietechnologiePakt,
+    build_batterietechnologie_pakt,
+)
+from .smart_grid_senat import (
+    SmartGridSenatTyp,
+    SmartGridSenatProzedur,
+    SmartGridSenatNorm,
+    SmartGridSenat,
+    build_smart_grid_senat,
+)
+from .energie_norm import (
+    EnergieNormTyp,
+    EnergieNormProzedur,
+    EnergieNormEintrag,
+    EnergieNorm,
+    build_energie_norm,
+)
+from .kreislaufwirtschaft_charta import (
+    KreislaufwirtschaftChartaTyp,
+    KreislaufwirtschaftChartaProzedur,
+    KreislaufwirtschaftChartaNorm,
+    KreislaufwirtschaftCharta,
+    build_kreislaufwirtschaft_charta,
+)
+from .energie_verfassung import (
+    EnergieVerfassungTyp,
+    EnergieVerfassungProzedur,
+    EnergieVerfassungNorm,
+    EnergieVerfassung,
+    build_energie_verfassung,
+)

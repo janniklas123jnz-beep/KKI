@@ -34713,3 +34713,178 @@ class SmokeTests(unittest.TestCase):
         sig = obj.aggregates_verfassung_signal()
         self.assertIn("verfassung_id", sig)
         self.assertEqual(sig["verfassung_id"], "maschinenlernen-verfassung-910")
+
+    # ═══════════════════════════════════════════════════════
+    # Block #911–#920 — Robotik & Autonome Systeme
+    # ═══════════════════════════════════════════════════════
+
+    # --- #911 RobotikFeld ---
+    def test_kki_robotik_feld_builds_instanz(self):
+        from kki.robotik_feld import build_robotik_feld, RobotikFeld
+        self.assertIsInstance(build_robotik_feld(), RobotikFeld)
+
+    def test_kki_robotik_feld_normen_count(self):
+        from kki.robotik_feld import build_robotik_feld
+        self.assertEqual(len(build_robotik_feld().normen), 5)
+
+    def test_kki_robotik_feld_canonical(self):
+        from kki.robotik_feld import build_robotik_feld
+        self.assertTrue(build_robotik_feld().canonical)
+
+    def test_kki_robotik_feld_weight_positive(self):
+        from kki.robotik_feld import build_robotik_feld
+        self.assertGreater(build_robotik_feld().normen[0].robotik_weight, 0)
+
+    # --- #912 KinematikRegister ---
+    def test_kki_kinematik_register_builds_instanz(self):
+        from kki.kinematik_register import build_kinematik_register, KinematikRegister
+        self.assertIsInstance(build_kinematik_register(), KinematikRegister)
+
+    def test_kki_kinematik_register_eintraege_count(self):
+        from kki.kinematik_register import build_kinematik_register
+        self.assertEqual(len(build_kinematik_register().eintraege), 5)
+
+    def test_kki_kinematik_register_canonical(self):
+        from kki.kinematik_register import build_kinematik_register
+        self.assertTrue(build_kinematik_register().canonical)
+
+    def test_kki_kinematik_register_weight_positive(self):
+        from kki.kinematik_register import build_kinematik_register
+        self.assertGreater(build_kinematik_register().eintraege[0].robotik_weight, 0)
+
+    # --- #913 SensorikCharta ---
+    def test_kki_sensorik_charta_builds_instanz(self):
+        from kki.sensorik_charta import build_sensorik_charta, SensorikCharta
+        self.assertIsInstance(build_sensorik_charta(), SensorikCharta)
+
+    def test_kki_sensorik_charta_normen_count(self):
+        from kki.sensorik_charta import build_sensorik_charta
+        self.assertEqual(len(build_sensorik_charta().normen), 5)
+
+    def test_kki_sensorik_charta_canonical(self):
+        from kki.sensorik_charta import build_sensorik_charta
+        self.assertTrue(build_sensorik_charta().canonical)
+
+    def test_kki_sensorik_charta_weight_positive(self):
+        from kki.sensorik_charta import build_sensorik_charta
+        self.assertGreater(build_sensorik_charta().normen[0].robotik_weight, 0)
+
+    # --- #914 AktorikKodex ---
+    def test_kki_aktorik_kodex_builds_instanz(self):
+        from kki.aktorik_kodex import build_aktorik_kodex, AktorikKodex
+        self.assertIsInstance(build_aktorik_kodex(), AktorikKodex)
+
+    def test_kki_aktorik_kodex_eintraege_count(self):
+        from kki.aktorik_kodex import build_aktorik_kodex
+        self.assertEqual(len(build_aktorik_kodex().eintraege), 5)
+
+    def test_kki_aktorik_kodex_canonical(self):
+        from kki.aktorik_kodex import build_aktorik_kodex
+        self.assertTrue(build_aktorik_kodex().canonical)
+
+    def test_kki_aktorik_kodex_weight_positive(self):
+        from kki.aktorik_kodex import build_aktorik_kodex
+        self.assertGreater(build_aktorik_kodex().eintraege[0].robotik_weight, 0)
+
+    # --- #915 NavigationsManifest ---
+    def test_kki_navigations_manifest_builds_instanz(self):
+        from kki.navigations_manifest import build_navigations_manifest, NavigationsManifest
+        self.assertIsInstance(build_navigations_manifest(), NavigationsManifest)
+
+    def test_kki_navigations_manifest_normen_count(self):
+        from kki.navigations_manifest import build_navigations_manifest
+        self.assertEqual(len(build_navigations_manifest().normen), 5)
+
+    def test_kki_navigations_manifest_canonical(self):
+        from kki.navigations_manifest import build_navigations_manifest
+        self.assertTrue(build_navigations_manifest().canonical)
+
+    def test_kki_navigations_manifest_weight_positive(self):
+        from kki.navigations_manifest import build_navigations_manifest
+        self.assertGreater(build_navigations_manifest().normen[0].robotik_weight, 0)
+
+    # --- #916 MenschRobotPakt ---
+    def test_kki_mensch_robot_pakt_builds_instanz(self):
+        from kki.mensch_robot_pakt import build_mensch_robot_pakt, MenschRobotPakt
+        self.assertIsInstance(build_mensch_robot_pakt(), MenschRobotPakt)
+
+    def test_kki_mensch_robot_pakt_eintraege_count(self):
+        from kki.mensch_robot_pakt import build_mensch_robot_pakt
+        self.assertEqual(len(build_mensch_robot_pakt().eintraege), 5)
+
+    def test_kki_mensch_robot_pakt_canonical(self):
+        from kki.mensch_robot_pakt import build_mensch_robot_pakt
+        self.assertTrue(build_mensch_robot_pakt().canonical)
+
+    def test_kki_mensch_robot_pakt_weight_positive(self):
+        from kki.mensch_robot_pakt import build_mensch_robot_pakt
+        self.assertGreater(build_mensch_robot_pakt().eintraege[0].robotik_weight, 0)
+
+    # --- #917 SchwarmRobotikSenat ---
+    def test_kki_schwarm_robotik_senat_builds_instanz(self):
+        from kki.schwarm_robotik_senat import build_schwarm_robotik_senat, SchwarmRobotikSenat
+        self.assertIsInstance(build_schwarm_robotik_senat(), SchwarmRobotikSenat)
+
+    def test_kki_schwarm_robotik_senat_normen_count(self):
+        from kki.schwarm_robotik_senat import build_schwarm_robotik_senat
+        self.assertEqual(len(build_schwarm_robotik_senat().normen), 5)
+
+    def test_kki_schwarm_robotik_senat_canonical(self):
+        from kki.schwarm_robotik_senat import build_schwarm_robotik_senat
+        self.assertTrue(build_schwarm_robotik_senat().canonical)
+
+    def test_kki_schwarm_robotik_senat_weight_positive(self):
+        from kki.schwarm_robotik_senat import build_schwarm_robotik_senat
+        self.assertGreater(build_schwarm_robotik_senat().normen[0].robotik_weight, 0)
+
+    # --- #918 RobotikNorm ---
+    def test_kki_robotik_norm_builds_instanz(self):
+        from kki.robotik_norm import build_robotik_norm, RobotikNorm
+        self.assertIsInstance(build_robotik_norm(), RobotikNorm)
+
+    def test_kki_robotik_norm_normen_count(self):
+        from kki.robotik_norm import build_robotik_norm
+        self.assertEqual(len(build_robotik_norm().normen), 5)
+
+    def test_kki_robotik_norm_canonical(self):
+        from kki.robotik_norm import build_robotik_norm
+        self.assertTrue(build_robotik_norm().canonical)
+
+    def test_kki_robotik_norm_eintrag_has_norm_weight(self):
+        from kki.robotik_norm import build_robotik_norm
+        self.assertGreater(build_robotik_norm().normen[0].robotik_norm_weight, 0)
+
+    # --- #919 AutonomieCharta ---
+    def test_kki_autonomie_charta_builds_instanz(self):
+        from kki.autonomie_charta import build_autonomie_charta, AutonomieCharta
+        self.assertIsInstance(build_autonomie_charta(), AutonomieCharta)
+
+    def test_kki_autonomie_charta_normen_count(self):
+        from kki.autonomie_charta import build_autonomie_charta
+        self.assertEqual(len(build_autonomie_charta().normen), 5)
+
+    def test_kki_autonomie_charta_canonical(self):
+        from kki.autonomie_charta import build_autonomie_charta
+        self.assertTrue(build_autonomie_charta().canonical)
+
+    def test_kki_autonomie_charta_weight_positive(self):
+        from kki.autonomie_charta import build_autonomie_charta
+        self.assertGreater(build_autonomie_charta().normen[0].robotik_weight, 0)
+
+    # --- #920 RobotikVerfassung ⭐ ---
+    def test_kki_robotik_verfassung_builds_instanz(self):
+        from kki.robotik_verfassung import build_robotik_verfassung, RobotikVerfassung
+        self.assertIsInstance(build_robotik_verfassung(), RobotikVerfassung)
+
+    def test_kki_robotik_verfassung_normen_count(self):
+        from kki.robotik_verfassung import build_robotik_verfassung
+        self.assertEqual(len(build_robotik_verfassung().normen), 5)
+
+    def test_kki_robotik_verfassung_canonical(self):
+        from kki.robotik_verfassung import build_robotik_verfassung
+        self.assertTrue(build_robotik_verfassung().canonical)
+
+    def test_kki_robotik_verfassung_aggregates_signal(self):
+        from kki.robotik_verfassung import build_robotik_verfassung
+        sig = build_robotik_verfassung().aggregates_verfassung_signal()
+        self.assertEqual(sig["verfassung_id"], "robotik-verfassung-920")

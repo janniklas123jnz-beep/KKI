@@ -3280,7 +3280,7 @@ from .informatik_verfassung import (
 )
 # Block #721–730: Wirtschaft & Ökonomik
 from .wirtschaft_feld import (
-    WirtschaftFeldGeltung, WirtschaftFeldNorm, WirtschaftFeldTyp, WirtschaftFeldProzedur,
+    WirtschaftFeldNorm, WirtschaftFeldTyp, WirtschaftFeldProzedur,
     WirtschaftFeld, build_wirtschaft_feld,
 )
 from .mikrooekonomie_register import (
@@ -6019,7 +6019,7 @@ __all__ = [
     "InformatikVerfassungGeltung", "InformatikVerfassungsNorm", "InformatikVerfassungTyp", "InformatikVerfassungProzedur",
     "InformatikVerfassung", "build_informatik_verfassung",
     # Block #721–730: Wirtschaft & Ökonomik
-    "WirtschaftFeldGeltung", "WirtschaftFeldNorm", "WirtschaftFeldTyp", "WirtschaftFeldProzedur",
+    "WirtschaftFeldNorm", "WirtschaftFeldTyp", "WirtschaftFeldProzedur",
     "WirtschaftFeld", "build_wirtschaft_feld",
     "MikrooekonomieRegisterGeltung", "MikrooekonomieRegisterEintrag", "MikrooekonomieRegisterTyp", "MikrooekonomieRegisterProzedur",
     "MikrooekonomieRegister", "build_mikrooekonomie_register",

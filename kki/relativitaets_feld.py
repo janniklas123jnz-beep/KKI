@@ -4,7 +4,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from enum import Enum
 
-from .quanten_verfassung import (
+from .quantenfelder_verfassung import (
     QuantenVerfassung,
     QuantenVerfassungsGeltung,
     QuantenVerfassungsNorm,

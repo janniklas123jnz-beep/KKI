@@ -31856,3 +31856,428 @@ class SmokeTests(unittest.TestCase):
     def test_kki_meteorologie_verfassung_builds_parent_chain(self):
         from kki.meteorologie_verfassung import build_meteorologie_verfassung
         self.assertIsNotNone(build_meteorologie_verfassung().parent)
+
+    # --- Block #841–850: Paläontologie & Erdgeschichte ---
+
+    def test_kki_palaeontologie_feld_builds(self):
+        from kki.palaeontologie_feld import build_palaeontologie_feld
+        obj = build_palaeontologie_feld()
+        self.assertEqual(len(obj.normen), 5)
+
+    def test_kki_palaeontologie_feld_weight_positive(self):
+        from kki.palaeontologie_feld import build_palaeontologie_feld
+        obj = build_palaeontologie_feld()
+        self.assertTrue(all(n.palaeontologie_weight > 0 for n in obj.normen if n.geltung.name != "GESPERRT"))
+
+    def test_kki_palaeontologie_feld_canonical(self):
+        from kki.palaeontologie_feld import build_palaeontologie_feld
+        obj = build_palaeontologie_feld()
+        self.assertTrue(all(n.canonical for n in obj.normen))
+
+    def test_kki_palaeontologie_feld_tier_sequence(self):
+        from kki.palaeontologie_feld import build_palaeontologie_feld
+        obj = build_palaeontologie_feld()
+        tiers = [n.palaeontologie_tier for n in obj.normen]
+        self.assertEqual(tiers, list(range(1, 6)))
+
+    def test_kki_palaeontologie_feld_ids_nonempty(self):
+        from kki.palaeontologie_feld import build_palaeontologie_feld
+        obj = build_palaeontologie_feld()
+        self.assertTrue(all(len(n.palaeontologie_ids) > 0 for n in obj.normen))
+
+    def test_kki_palaeontologie_feld_tags_contain_domain(self):
+        from kki.palaeontologie_feld import build_palaeontologie_feld
+        obj = build_palaeontologie_feld()
+        self.assertTrue(all("palaeontologie" in n.palaeontologie_tags for n in obj.normen))
+
+    def test_kki_palaeontologie_feld_parent_set(self):
+        from kki.palaeontologie_feld import build_palaeontologie_feld
+        obj = build_palaeontologie_feld()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_palaeontologie_feld_frozen(self):
+        from kki.palaeontologie_feld import build_palaeontologie_feld
+        obj = build_palaeontologie_feld()
+        with self.assertRaises(Exception):
+            obj.normen = ()
+
+    def test_kki_fossilien_register_builds(self):
+        from kki.fossilien_register import build_fossilien_register
+        obj = build_fossilien_register()
+        self.assertEqual(len(obj.eintraege), 5)
+
+    def test_kki_fossilien_register_weight_positive(self):
+        from kki.fossilien_register import build_fossilien_register
+        obj = build_fossilien_register()
+        self.assertTrue(all(e.palaeontologie_weight > 0 for e in obj.eintraege if e.geltung.name != "GESPERRT"))
+
+    def test_kki_fossilien_register_canonical(self):
+        from kki.fossilien_register import build_fossilien_register
+        obj = build_fossilien_register()
+        self.assertTrue(all(e.canonical for e in obj.eintraege))
+
+    def test_kki_fossilien_register_tier_sequence(self):
+        from kki.fossilien_register import build_fossilien_register
+        obj = build_fossilien_register()
+        tiers = [e.palaeontologie_tier for e in obj.eintraege]
+        self.assertEqual(tiers, list(range(1, 6)))
+
+    def test_kki_fossilien_register_ids_nonempty(self):
+        from kki.fossilien_register import build_fossilien_register
+        obj = build_fossilien_register()
+        self.assertTrue(all(len(e.palaeontologie_ids) > 0 for e in obj.eintraege))
+
+    def test_kki_fossilien_register_tags_contain_domain(self):
+        from kki.fossilien_register import build_fossilien_register
+        obj = build_fossilien_register()
+        self.assertTrue(all("palaeontologie" in e.palaeontologie_tags for e in obj.eintraege))
+
+    def test_kki_fossilien_register_parent_set(self):
+        from kki.fossilien_register import build_fossilien_register
+        obj = build_fossilien_register()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_fossilien_register_frozen(self):
+        from kki.fossilien_register import build_fossilien_register
+        obj = build_fossilien_register()
+        with self.assertRaises(Exception):
+            obj.eintraege = ()
+
+    def test_kki_stratigraphie_charta_builds(self):
+        from kki.stratigraphie_charta import build_stratigraphie_charta
+        obj = build_stratigraphie_charta()
+        self.assertEqual(len(obj.normen), 5)
+
+    def test_kki_stratigraphie_charta_weight_positive(self):
+        from kki.stratigraphie_charta import build_stratigraphie_charta
+        obj = build_stratigraphie_charta()
+        self.assertTrue(all(n.palaeontologie_weight > 0 for n in obj.normen if n.geltung.name != "GESPERRT"))
+
+    def test_kki_stratigraphie_charta_canonical(self):
+        from kki.stratigraphie_charta import build_stratigraphie_charta
+        obj = build_stratigraphie_charta()
+        self.assertTrue(all(n.canonical for n in obj.normen))
+
+    def test_kki_stratigraphie_charta_tier_sequence(self):
+        from kki.stratigraphie_charta import build_stratigraphie_charta
+        obj = build_stratigraphie_charta()
+        tiers = [n.palaeontologie_tier for n in obj.normen]
+        self.assertEqual(tiers, list(range(1, 6)))
+
+    def test_kki_stratigraphie_charta_ids_nonempty(self):
+        from kki.stratigraphie_charta import build_stratigraphie_charta
+        obj = build_stratigraphie_charta()
+        self.assertTrue(all(len(n.palaeontologie_ids) > 0 for n in obj.normen))
+
+    def test_kki_stratigraphie_charta_tags_contain_domain(self):
+        from kki.stratigraphie_charta import build_stratigraphie_charta
+        obj = build_stratigraphie_charta()
+        self.assertTrue(all("palaeontologie" in n.palaeontologie_tags for n in obj.normen))
+
+    def test_kki_stratigraphie_charta_parent_set(self):
+        from kki.stratigraphie_charta import build_stratigraphie_charta
+        obj = build_stratigraphie_charta()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_stratigraphie_charta_frozen(self):
+        from kki.stratigraphie_charta import build_stratigraphie_charta
+        obj = build_stratigraphie_charta()
+        with self.assertRaises(Exception):
+            obj.normen = ()
+
+    def test_kki_palaeoklimatologie_kodex_builds(self):
+        from kki.palaeoklimatologie_kodex import build_palaeoklimatologie_kodex
+        obj = build_palaeoklimatologie_kodex()
+        self.assertEqual(len(obj.eintraege), 5)
+
+    def test_kki_palaeoklimatologie_kodex_weight_positive(self):
+        from kki.palaeoklimatologie_kodex import build_palaeoklimatologie_kodex
+        obj = build_palaeoklimatologie_kodex()
+        self.assertTrue(all(e.palaeontologie_weight > 0 for e in obj.eintraege if e.geltung.name != "GESPERRT"))
+
+    def test_kki_palaeoklimatologie_kodex_canonical(self):
+        from kki.palaeoklimatologie_kodex import build_palaeoklimatologie_kodex
+        obj = build_palaeoklimatologie_kodex()
+        self.assertTrue(all(e.canonical for e in obj.eintraege))
+
+    def test_kki_palaeoklimatologie_kodex_tier_sequence(self):
+        from kki.palaeoklimatologie_kodex import build_palaeoklimatologie_kodex
+        obj = build_palaeoklimatologie_kodex()
+        tiers = [e.palaeontologie_tier for e in obj.eintraege]
+        self.assertEqual(tiers, list(range(1, 6)))
+
+    def test_kki_palaeoklimatologie_kodex_ids_nonempty(self):
+        from kki.palaeoklimatologie_kodex import build_palaeoklimatologie_kodex
+        obj = build_palaeoklimatologie_kodex()
+        self.assertTrue(all(len(e.palaeontologie_ids) > 0 for e in obj.eintraege))
+
+    def test_kki_palaeoklimatologie_kodex_tags_contain_domain(self):
+        from kki.palaeoklimatologie_kodex import build_palaeoklimatologie_kodex
+        obj = build_palaeoklimatologie_kodex()
+        self.assertTrue(all("palaeontologie" in e.palaeontologie_tags for e in obj.eintraege))
+
+    def test_kki_palaeoklimatologie_kodex_parent_set(self):
+        from kki.palaeoklimatologie_kodex import build_palaeoklimatologie_kodex
+        obj = build_palaeoklimatologie_kodex()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_palaeoklimatologie_kodex_frozen(self):
+        from kki.palaeoklimatologie_kodex import build_palaeoklimatologie_kodex
+        obj = build_palaeoklimatologie_kodex()
+        with self.assertRaises(Exception):
+            obj.eintraege = ()
+
+    def test_kki_massenaussterben_manifest_builds(self):
+        from kki.massenaussterben_manifest import build_massenaussterben_manifest
+        obj = build_massenaussterben_manifest()
+        self.assertEqual(len(obj.normen), 5)
+
+    def test_kki_massenaussterben_manifest_weight_positive(self):
+        from kki.massenaussterben_manifest import build_massenaussterben_manifest
+        obj = build_massenaussterben_manifest()
+        self.assertTrue(all(n.palaeontologie_weight > 0 for n in obj.normen if n.geltung.name != "GESPERRT"))
+
+    def test_kki_massenaussterben_manifest_canonical(self):
+        from kki.massenaussterben_manifest import build_massenaussterben_manifest
+        obj = build_massenaussterben_manifest()
+        self.assertTrue(all(n.canonical for n in obj.normen))
+
+    def test_kki_massenaussterben_manifest_tier_sequence(self):
+        from kki.massenaussterben_manifest import build_massenaussterben_manifest
+        obj = build_massenaussterben_manifest()
+        tiers = [n.palaeontologie_tier for n in obj.normen]
+        self.assertEqual(tiers, list(range(1, 6)))
+
+    def test_kki_massenaussterben_manifest_ids_nonempty(self):
+        from kki.massenaussterben_manifest import build_massenaussterben_manifest
+        obj = build_massenaussterben_manifest()
+        self.assertTrue(all(len(n.palaeontologie_ids) > 0 for n in obj.normen))
+
+    def test_kki_massenaussterben_manifest_tags_contain_domain(self):
+        from kki.massenaussterben_manifest import build_massenaussterben_manifest
+        obj = build_massenaussterben_manifest()
+        self.assertTrue(all("palaeontologie" in n.palaeontologie_tags for n in obj.normen))
+
+    def test_kki_massenaussterben_manifest_parent_set(self):
+        from kki.massenaussterben_manifest import build_massenaussterben_manifest
+        obj = build_massenaussterben_manifest()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_massenaussterben_manifest_frozen(self):
+        from kki.massenaussterben_manifest import build_massenaussterben_manifest
+        obj = build_massenaussterben_manifest()
+        with self.assertRaises(Exception):
+            obj.normen = ()
+
+    def test_kki_erdzeitalter_pakt_builds(self):
+        from kki.erdzeitalter_pakt import build_erdzeitalter_pakt
+        obj = build_erdzeitalter_pakt()
+        self.assertEqual(len(obj.eintraege), 5)
+
+    def test_kki_erdzeitalter_pakt_weight_positive(self):
+        from kki.erdzeitalter_pakt import build_erdzeitalter_pakt
+        obj = build_erdzeitalter_pakt()
+        self.assertTrue(all(e.palaeontologie_weight > 0 for e in obj.eintraege if e.geltung.name != "GESPERRT"))
+
+    def test_kki_erdzeitalter_pakt_canonical(self):
+        from kki.erdzeitalter_pakt import build_erdzeitalter_pakt
+        obj = build_erdzeitalter_pakt()
+        self.assertTrue(all(e.canonical for e in obj.eintraege))
+
+    def test_kki_erdzeitalter_pakt_tier_sequence(self):
+        from kki.erdzeitalter_pakt import build_erdzeitalter_pakt
+        obj = build_erdzeitalter_pakt()
+        tiers = [e.palaeontologie_tier for e in obj.eintraege]
+        self.assertEqual(tiers, list(range(1, 6)))
+
+    def test_kki_erdzeitalter_pakt_ids_nonempty(self):
+        from kki.erdzeitalter_pakt import build_erdzeitalter_pakt
+        obj = build_erdzeitalter_pakt()
+        self.assertTrue(all(len(e.palaeontologie_ids) > 0 for e in obj.eintraege))
+
+    def test_kki_erdzeitalter_pakt_tags_contain_domain(self):
+        from kki.erdzeitalter_pakt import build_erdzeitalter_pakt
+        obj = build_erdzeitalter_pakt()
+        self.assertTrue(all("palaeontologie" in e.palaeontologie_tags for e in obj.eintraege))
+
+    def test_kki_erdzeitalter_pakt_parent_set(self):
+        from kki.erdzeitalter_pakt import build_erdzeitalter_pakt
+        obj = build_erdzeitalter_pakt()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_erdzeitalter_pakt_frozen(self):
+        from kki.erdzeitalter_pakt import build_erdzeitalter_pakt
+        obj = build_erdzeitalter_pakt()
+        with self.assertRaises(Exception):
+            obj.eintraege = ()
+
+    def test_kki_palaeontologie_senat_builds(self):
+        from kki.palaeontologie_senat import build_palaeontologie_senat
+        obj = build_palaeontologie_senat()
+        self.assertEqual(len(obj.normen), 5)
+
+    def test_kki_palaeontologie_senat_weight_positive(self):
+        from kki.palaeontologie_senat import build_palaeontologie_senat
+        obj = build_palaeontologie_senat()
+        self.assertTrue(all(n.palaeontologie_weight > 0 for n in obj.normen if n.geltung.name != "GESPERRT"))
+
+    def test_kki_palaeontologie_senat_canonical(self):
+        from kki.palaeontologie_senat import build_palaeontologie_senat
+        obj = build_palaeontologie_senat()
+        self.assertTrue(all(n.canonical for n in obj.normen))
+
+    def test_kki_palaeontologie_senat_tier_sequence(self):
+        from kki.palaeontologie_senat import build_palaeontologie_senat
+        obj = build_palaeontologie_senat()
+        tiers = [n.palaeontologie_tier for n in obj.normen]
+        self.assertEqual(tiers, list(range(1, 6)))
+
+    def test_kki_palaeontologie_senat_ids_nonempty(self):
+        from kki.palaeontologie_senat import build_palaeontologie_senat
+        obj = build_palaeontologie_senat()
+        self.assertTrue(all(len(n.palaeontologie_ids) > 0 for n in obj.normen))
+
+    def test_kki_palaeontologie_senat_tags_contain_domain(self):
+        from kki.palaeontologie_senat import build_palaeontologie_senat
+        obj = build_palaeontologie_senat()
+        self.assertTrue(all("palaeontologie" in n.palaeontologie_tags for n in obj.normen))
+
+    def test_kki_palaeontologie_senat_parent_set(self):
+        from kki.palaeontologie_senat import build_palaeontologie_senat
+        obj = build_palaeontologie_senat()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_palaeontologie_senat_frozen(self):
+        from kki.palaeontologie_senat import build_palaeontologie_senat
+        obj = build_palaeontologie_senat()
+        with self.assertRaises(Exception):
+            obj.normen = ()
+
+    def test_kki_palaeontologie_norm_builds(self):
+        from kki.palaeontologie_norm import build_palaeontologie_norm
+        obj = build_palaeontologie_norm()
+        self.assertEqual(len(obj.normen), 5)
+
+    def test_kki_palaeontologie_norm_weight_positive(self):
+        from kki.palaeontologie_norm import build_palaeontologie_norm
+        obj = build_palaeontologie_norm()
+        self.assertTrue(all(e.palaeontologie_norm_weight > 0 for e in obj.normen if e.geltung.name != "GESPERRT"))
+
+    def test_kki_palaeontologie_norm_canonical(self):
+        from kki.palaeontologie_norm import build_palaeontologie_norm
+        obj = build_palaeontologie_norm()
+        self.assertTrue(all(e.canonical for e in obj.normen))
+
+    def test_kki_palaeontologie_norm_tier_sequence(self):
+        from kki.palaeontologie_norm import build_palaeontologie_norm
+        obj = build_palaeontologie_norm()
+        tiers = [e.palaeontologie_norm_tier for e in obj.normen]
+        self.assertEqual(tiers, list(range(1, 6)))
+
+    def test_kki_palaeontologie_norm_ids_nonempty(self):
+        from kki.palaeontologie_norm import build_palaeontologie_norm
+        obj = build_palaeontologie_norm()
+        self.assertTrue(all(len(e.palaeontologie_norm_ids) > 0 for e in obj.normen))
+
+    def test_kki_palaeontologie_norm_tags_contain_domain(self):
+        from kki.palaeontologie_norm import build_palaeontologie_norm
+        obj = build_palaeontologie_norm()
+        self.assertTrue(all("palaeontologie" in e.palaeontologie_norm_tags for e in obj.normen))
+
+    def test_kki_palaeontologie_norm_parent_set(self):
+        from kki.palaeontologie_norm import build_palaeontologie_norm
+        obj = build_palaeontologie_norm()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_palaeontologie_norm_frozen(self):
+        from kki.palaeontologie_norm import build_palaeontologie_norm
+        obj = build_palaeontologie_norm()
+        with self.assertRaises(Exception):
+            obj.normen = ()
+
+    def test_kki_taphonomie_charta_builds(self):
+        from kki.taphonomie_charta import build_taphonomie_charta
+        obj = build_taphonomie_charta()
+        self.assertEqual(len(obj.normen), 5)
+
+    def test_kki_taphonomie_charta_weight_positive(self):
+        from kki.taphonomie_charta import build_taphonomie_charta
+        obj = build_taphonomie_charta()
+        self.assertTrue(all(n.palaeontologie_weight > 0 for n in obj.normen if n.geltung.name != "GESPERRT"))
+
+    def test_kki_taphonomie_charta_canonical(self):
+        from kki.taphonomie_charta import build_taphonomie_charta
+        obj = build_taphonomie_charta()
+        self.assertTrue(all(n.canonical for n in obj.normen))
+
+    def test_kki_taphonomie_charta_tier_increases(self):
+        from kki.taphonomie_charta import build_taphonomie_charta
+        obj = build_taphonomie_charta()
+        tiers = [n.palaeontologie_tier for n in obj.normen]
+        self.assertTrue(all(tiers[i] < tiers[i+1] for i in range(len(tiers)-1)))
+
+    def test_kki_taphonomie_charta_ids_nonempty(self):
+        from kki.taphonomie_charta import build_taphonomie_charta
+        obj = build_taphonomie_charta()
+        self.assertTrue(all(len(n.palaeontologie_ids) > 0 for n in obj.normen))
+
+    def test_kki_taphonomie_charta_tags_contain_domain(self):
+        from kki.taphonomie_charta import build_taphonomie_charta
+        obj = build_taphonomie_charta()
+        self.assertTrue(all("palaeontologie" in n.palaeontologie_tags for n in obj.normen))
+
+    def test_kki_taphonomie_charta_parent_set(self):
+        from kki.taphonomie_charta import build_taphonomie_charta
+        obj = build_taphonomie_charta()
+        self.assertIsNotNone(obj.parent)
+
+    def test_kki_taphonomie_charta_frozen(self):
+        from kki.taphonomie_charta import build_taphonomie_charta
+        obj = build_taphonomie_charta()
+        with self.assertRaises(Exception):
+            obj.normen = ()
+
+    def test_kki_palaeontologie_verfassung_builds(self):
+        from kki.palaeontologie_verfassung import build_palaeontologie_verfassung
+        obj = build_palaeontologie_verfassung()
+        self.assertEqual(len(obj.normen), 5)
+
+    def test_kki_palaeontologie_verfassung_weight_positive(self):
+        from kki.palaeontologie_verfassung import build_palaeontologie_verfassung
+        obj = build_palaeontologie_verfassung()
+        self.assertTrue(all(n.palaeontologie_weight > 0 for n in obj.normen if n.geltung.name != "GESPERRT"))
+
+    def test_kki_palaeontologie_verfassung_canonical(self):
+        from kki.palaeontologie_verfassung import build_palaeontologie_verfassung
+        obj = build_palaeontologie_verfassung()
+        self.assertTrue(all(n.canonical for n in obj.normen))
+
+    def test_kki_palaeontologie_verfassung_tier_increases(self):
+        from kki.palaeontologie_verfassung import build_palaeontologie_verfassung
+        obj = build_palaeontologie_verfassung()
+        tiers = [n.palaeontologie_tier for n in obj.normen]
+        self.assertTrue(all(tiers[i] < tiers[i+1] for i in range(len(tiers)-1)))
+
+    def test_kki_palaeontologie_verfassung_ids_nonempty(self):
+        from kki.palaeontologie_verfassung import build_palaeontologie_verfassung
+        obj = build_palaeontologie_verfassung()
+        self.assertTrue(all(len(n.palaeontologie_ids) > 0 for n in obj.normen))
+
+    def test_kki_palaeontologie_verfassung_tags_contain_domain(self):
+        from kki.palaeontologie_verfassung import build_palaeontologie_verfassung
+        obj = build_palaeontologie_verfassung()
+        self.assertTrue(all("palaeontologie" in n.palaeontologie_tags for n in obj.normen))
+
+    def test_kki_palaeontologie_verfassung_aggregates_verfassung_signal(self):
+        from kki.palaeontologie_verfassung import build_palaeontologie_verfassung
+        obj = build_palaeontologie_verfassung()
+        sig = obj.aggregates_verfassung_signal()
+        self.assertEqual(sig["verfassung_id"], "palaeontologie-verfassung-850")
+        self.assertIn("total_weight", sig)
+        self.assertEqual(sig["norm_count"], 5)
+
+    def test_kki_palaeontologie_verfassung_frozen(self):
+        from kki.palaeontologie_verfassung import build_palaeontologie_verfassung
+        obj = build_palaeontologie_verfassung()
+        with self.assertRaises(Exception):
+            obj.normen = ()

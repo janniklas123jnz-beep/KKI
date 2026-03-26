@@ -3767,6 +3767,46 @@ from .meteorologie_verfassung import (
     MeteorologieVerfassungGeltung, MeteorologieVerfassungsNorm, MeteorologieVerfassungTyp, MeteorologieVerfassungProzedur,
     MeteorologieVerfassung, build_meteorologie_verfassung,
 )
+from .palaeontologie_feld import (
+    PalaeontologieFeldGeltung, PalaeontologieFeldNorm, PalaeontologieFeldTyp, PalaeontologieFeldProzedur,
+    PalaeontologieFeld, build_palaeontologie_feld,
+)
+from .fossilien_register import (
+    FossilienRegisterGeltung, FossilienRegisterEintrag, FossilienRegisterTyp, FossilienRegisterProzedur,
+    FossilienRegister, build_fossilien_register,
+)
+from .stratigraphie_charta import (
+    StratigraphieChartaGeltung, StratigraphieChartaNorm, StratigraphieChartaTyp, StratigraphieChartaProzedur,
+    StratigraphieCharta, build_stratigraphie_charta,
+)
+from .palaeoklimatologie_kodex import (
+    PalaeoklimatologieKodexGeltung, PalaeoklimatologieKodexEintrag, PalaeoklimatologieKodexTyp, PalaeoklimatologieKodexProzedur,
+    PalaeoklimatologieKodex, build_palaeoklimatologie_kodex,
+)
+from .massenaussterben_manifest import (
+    MassenaussterbenManifestGeltung, MassenaussterbenManifestNorm, MassenaussterbenManifestTyp, MassenaussterbenManifestProzedur,
+    MassenaussterbenManifest, build_massenaussterben_manifest,
+)
+from .erdzeitalter_pakt import (
+    ErdzeitalterPaktGeltung, ErdzeitalterPaktEintrag, ErdzeitalterPaktTyp, ErdzeitalterPaktProzedur,
+    ErdzeitalterPakt, build_erdzeitalter_pakt,
+)
+from .palaeontologie_senat import (
+    PalaeontologieSenatGeltung, PalaeontologieSenatNorm, PalaeontologieSenatTyp, PalaeontologieSenatProzedur,
+    PalaeontologieSenat, build_palaeontologie_senat,
+)
+from .palaeontologie_norm import (
+    PalaeontologieNormGeltung, PalaeontologieNormEintrag, PalaeontologieNormTyp, PalaeontologieNormProzedur,
+    PalaeontologieNormSatz, build_palaeontologie_norm,
+)
+from .taphonomie_charta import (
+    TaphonomieChartaGeltung, TaphonomieChartaNorm, TaphonomieChartaTyp, TaphonomieChartaProzedur,
+    TaphonomieCharta, build_taphonomie_charta,
+)
+from .palaeontologie_verfassung import (
+    PalaeontologieVerfassungGeltung, PalaeontologieVerfassungsNorm, PalaeontologieVerfassungTyp, PalaeontologieVerfassungProzedur,
+    PalaeontologieVerfassung, build_palaeontologie_verfassung,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -6030,4 +6070,24 @@ __all__ = [
     "WettervorhersageCharta", "build_wettervorhersage_charta",
     "MeteorologieVerfassungGeltung", "MeteorologieVerfassungsNorm", "MeteorologieVerfassungTyp", "MeteorologieVerfassungProzedur",
     "MeteorologieVerfassung", "build_meteorologie_verfassung",
+    "PalaeontologieFeldGeltung", "PalaeontologieFeldNorm", "PalaeontologieFeldTyp", "PalaeontologieFeldProzedur",
+    "PalaeontologieFeld", "build_palaeontologie_feld",
+    "FossilienRegisterGeltung", "FossilienRegisterEintrag", "FossilienRegisterTyp", "FossilienRegisterProzedur",
+    "FossilienRegister", "build_fossilien_register",
+    "StratigraphieChartaGeltung", "StratigraphieChartaNorm", "StratigraphieChartaTyp", "StratigraphieChartaProzedur",
+    "StratigraphieCharta", "build_stratigraphie_charta",
+    "PalaeoklimatologieKodexGeltung", "PalaeoklimatologieKodexEintrag", "PalaeoklimatologieKodexTyp", "PalaeoklimatologieKodexProzedur",
+    "PalaeoklimatologieKodex", "build_palaeoklimatologie_kodex",
+    "MassenaussterbenManifestGeltung", "MassenaussterbenManifestNorm", "MassenaussterbenManifestTyp", "MassenaussterbenManifestProzedur",
+    "MassenaussterbenManifest", "build_massenaussterben_manifest",
+    "ErdzeitalterPaktGeltung", "ErdzeitalterPaktEintrag", "ErdzeitalterPaktTyp", "ErdzeitalterPaktProzedur",
+    "ErdzeitalterPakt", "build_erdzeitalter_pakt",
+    "PalaeontologieSenatGeltung", "PalaeontologieSenatNorm", "PalaeontologieSenatTyp", "PalaeontologieSenatProzedur",
+    "PalaeontologieSenat", "build_palaeontologie_senat",
+    "PalaeontologieNormGeltung", "PalaeontologieNormEintrag", "PalaeontologieNormTyp", "PalaeontologieNormProzedur",
+    "PalaeontologieNormSatz", "build_palaeontologie_norm",
+    "TaphonomieChartaGeltung", "TaphonomieChartaNorm", "TaphonomieChartaTyp", "TaphonomieChartaProzedur",
+    "TaphonomieCharta", "build_taphonomie_charta",
+    "PalaeontologieVerfassungGeltung", "PalaeontologieVerfassungsNorm", "PalaeontologieVerfassungTyp", "PalaeontologieVerfassungProzedur",
+    "PalaeontologieVerfassung", "build_palaeontologie_verfassung",
 ]

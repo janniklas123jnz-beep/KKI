@@ -3927,6 +3927,86 @@ from .geochronologie_verfassung import (
     GeochronologieVerfassungTyp, GeochronologieVerfassungProzedur,
     GeochronologieVerfassungNorm, GeochronologieVerfassung, build_geochronologie_verfassung,
 )
+from .petrographie_feld import (
+    PetrographieFeldTyp, PetrographieFeldProzedur,
+    PetrographieFeldNorm, PetrographieFeld, build_petrographie_feld,
+)
+from .mineral_register import (
+    MineralRegisterTyp, MineralRegisterProzedur,
+    MineralRegisterEintrag, MineralRegister, build_mineral_register,
+)
+from .gefuege_charta import (
+    GefuegeChartaTyp, GefuegeChartaProzedur,
+    GefuegeChartaNorm, GefuegeCharta, build_gefuege_charta,
+)
+from .metamorphose_kodex import (
+    MetamorphoseKodexTyp, MetamorphoseKodexProzedur,
+    MetamorphoseKodexEintrag, MetamorphoseKodex, build_metamorphose_kodex,
+)
+from .magmatit_manifest import (
+    MagmatitManifestTyp, MagmatitManifestProzedur,
+    MagmatitManifestNorm, MagmatitManifest, build_magmatit_manifest,
+)
+from .sedimentit_pakt import (
+    SedimentitPaktTyp, SedimentitPaktProzedur,
+    SedimentitPaktEintrag, SedimentitPakt, build_sedimentit_pakt,
+)
+from .petrographie_senat import (
+    PetrographieSenatTyp, PetrographieSenatProzedur,
+    PetrographieSenatNorm, PetrographieSenat, build_petrographie_senat,
+)
+from .petrographie_norm import (
+    PetrographieNormTyp, PetrographieNormProzedur,
+    PetrographieNormEintrag, PetrographieNorm, build_petrographie_norm,
+)
+from .gesteinsanalyse_charta import (
+    GesteinsanalyseChartaTyp, GesteinsanalyseChartaProzedur,
+    GesteinsanalyseChartaNorm, GesteinsanalyseCharta, build_gesteinsanalyse_charta,
+)
+from .petrographie_verfassung import (
+    PetrographieVerfassungTyp, PetrographieVerfassungProzedur,
+    PetrographieVerfassungNorm, PetrographieVerfassung, build_petrographie_verfassung,
+)
+from .glaziologie_feld import (
+    GlaziologieFeldTyp, GlaziologieFeldProzedur,
+    GlaziologieFeldNorm, GlaziologieFeld, build_glaziologie_feld,
+)
+from .gletscher_register import (
+    GletscherRegisterTyp, GletscherRegisterProzedur,
+    GletscherRegisterEintrag, GletscherRegister, build_gletscher_register,
+)
+from .eisdecken_charta import (
+    EisdeckenChartaTyp, EisdeckenChartaProzedur,
+    EisdeckenChartaNorm, EisdeckenCharta, build_eisdecken_charta,
+)
+from .permafrost_kodex import (
+    PermafrostKodexTyp, PermafrostKodexProzedur,
+    PermafrostKodexEintrag, PermafrostKodex, build_permafrost_kodex,
+)
+from .eisdynamik_manifest import (
+    EisdynamikManifestTyp, EisdynamikManifestProzedur,
+    EisdynamikManifestNorm, EisdynamikManifest, build_eisdynamik_manifest,
+)
+from .meereis_pakt import (
+    MeereisPaktTyp, MeereisPaktProzedur,
+    MeereisPaktEintrag, MeereisPakt, build_meereis_pakt,
+)
+from .glaziologie_senat import (
+    GlaziologieSenatTyp, GlaziologieSenatProzedur,
+    GlaziologieSenatNorm, GlaziologieSenat, build_glaziologie_senat,
+)
+from .glaziologie_norm import (
+    GlaziologieNormTyp, GlaziologieNormProzedur,
+    GlaziologieNormEintrag, GlaziologieNorm, build_glaziologie_norm,
+)
+from .kryosphaere_charta import (
+    KryosphaereChartaTyp, KryosphaereChartaProzedur,
+    KryosphaereChartaNorm, KryosphaereCharta, build_kryosphaere_charta,
+)
+from .glaziologie_verfassung import (
+    GlaziologieVerfassungTyp, GlaziologieVerfassungProzedur,
+    GlaziologieVerfassungNorm, GlaziologieVerfassung, build_glaziologie_verfassung,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -6270,4 +6350,44 @@ __all__ = [
     "AltersbestimmungChartaNorm", "AltersbestimmungCharta", "build_altersbestimmung_charta",
     "GeochronologieVerfassungTyp", "GeochronologieVerfassungProzedur",
     "GeochronologieVerfassungNorm", "GeochronologieVerfassung", "build_geochronologie_verfassung",
+    "PetrographieFeldTyp", "PetrographieFeldProzedur",
+    "PetrographieFeldNorm", "PetrographieFeld", "build_petrographie_feld",
+    "MineralRegisterTyp", "MineralRegisterProzedur",
+    "MineralRegisterEintrag", "MineralRegister", "build_mineral_register",
+    "GefuegeChartaTyp", "GefuegeChartaProzedur",
+    "GefuegeChartaNorm", "GefuegeCharta", "build_gefuege_charta",
+    "MetamorphoseKodexTyp", "MetamorphoseKodexProzedur",
+    "MetamorphoseKodexEintrag", "MetamorphoseKodex", "build_metamorphose_kodex",
+    "MagmatitManifestTyp", "MagmatitManifestProzedur",
+    "MagmatitManifestNorm", "MagmatitManifest", "build_magmatit_manifest",
+    "SedimentitPaktTyp", "SedimentitPaktProzedur",
+    "SedimentitPaktEintrag", "SedimentitPakt", "build_sedimentit_pakt",
+    "PetrographieSenatTyp", "PetrographieSenatProzedur",
+    "PetrographieSenatNorm", "PetrographieSenat", "build_petrographie_senat",
+    "PetrographieNormTyp", "PetrographieNormProzedur",
+    "PetrographieNormEintrag", "PetrographieNorm", "build_petrographie_norm",
+    "GesteinsanalyseChartaTyp", "GesteinsanalyseChartaProzedur",
+    "GesteinsanalyseChartaNorm", "GesteinsanalyseCharta", "build_gesteinsanalyse_charta",
+    "PetrographieVerfassungTyp", "PetrographieVerfassungProzedur",
+    "PetrographieVerfassungNorm", "PetrographieVerfassung", "build_petrographie_verfassung",
+    "GlaziologieFeldTyp", "GlaziologieFeldProzedur",
+    "GlaziologieFeldNorm", "GlaziologieFeld", "build_glaziologie_feld",
+    "GletscherRegisterTyp", "GletscherRegisterProzedur",
+    "GletscherRegisterEintrag", "GletscherRegister", "build_gletscher_register",
+    "EisdeckenChartaTyp", "EisdeckenChartaProzedur",
+    "EisdeckenChartaNorm", "EisdeckenCharta", "build_eisdecken_charta",
+    "PermafrostKodexTyp", "PermafrostKodexProzedur",
+    "PermafrostKodexEintrag", "PermafrostKodex", "build_permafrost_kodex",
+    "EisdynamikManifestTyp", "EisdynamikManifestProzedur",
+    "EisdynamikManifestNorm", "EisdynamikManifest", "build_eisdynamik_manifest",
+    "MeereisPaktTyp", "MeereisPaktProzedur",
+    "MeereisPaktEintrag", "MeereisPakt", "build_meereis_pakt",
+    "GlaziologieSenatTyp", "GlaziologieSenatProzedur",
+    "GlaziologieSenatNorm", "GlaziologieSenat", "build_glaziologie_senat",
+    "GlaziologieNormTyp", "GlaziologieNormProzedur",
+    "GlaziologieNormEintrag", "GlaziologieNorm", "build_glaziologie_norm",
+    "KryosphaereChartaTyp", "KryosphaereChartaProzedur",
+    "KryosphaereChartaNorm", "KryosphaereCharta", "build_kryosphaere_charta",
+    "GlaziologieVerfassungTyp", "GlaziologieVerfassungProzedur",
+    "GlaziologieVerfassungNorm", "GlaziologieVerfassung", "build_glaziologie_verfassung",
 ]

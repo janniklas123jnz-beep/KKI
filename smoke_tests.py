@@ -35899,3 +35899,187 @@ def test_980_matwiss_verfassung_aggregates_signal():
 def test_980_matwiss_verfassung_weight_positive():
     from kki.matwiss_verfassung import build_matwiss_verfassung
     assert all(n.material_weight > 0 for n in build_matwiss_verfassung().normen)
+
+# ---------------------------------------------------------------------------
+# Block #981–990 — Luft- & Raumfahrt & Weltraumforschung 🚀
+# ---------------------------------------------------------------------------
+
+
+def test_981_raumfahrt_feld_builds_instanz():
+    from kki.raumfahrt_feld import build_raumfahrt
+    assert build_raumfahrt() is not None
+
+def test_981_raumfahrt_feld_count():
+    from kki.raumfahrt_feld import build_raumfahrt
+    assert len(build_raumfahrt().normen) == 5
+
+def test_981_raumfahrt_feld_canonical():
+    from kki.raumfahrt_feld import build_raumfahrt
+    m = build_raumfahrt()
+    assert any('Raumfahrt' in n.name or 'Orbital' in n.name or 'Grundlagen' in n.name for n in m.normen)
+
+def test_981_raumfahrt_feld_weight_positive():
+    from kki.raumfahrt_feld import build_raumfahrt
+    assert all(n.raumfahrt_weight > 0 for n in build_raumfahrt().normen)
+
+
+def test_982_satellit_register_builds_instanz():
+    from kki.satellit_register import build_satellit_register
+    assert build_satellit_register() is not None
+
+def test_982_satellit_register_count():
+    from kki.satellit_register import build_satellit_register
+    assert len(build_satellit_register().eintraege) == 5
+
+def test_982_satellit_register_canonical():
+    from kki.satellit_register import build_satellit_register
+    m = build_satellit_register()
+    assert any('Satellit' in e.name or 'Kommunikation' in e.name for e in m.eintraege)
+
+def test_982_satellit_register_weight_positive():
+    from kki.satellit_register import build_satellit_register
+    assert all(e.raumfahrt_weight > 0 for e in build_satellit_register().eintraege)
+
+
+def test_983_triebwerk_charta_builds_instanz():
+    from kki.triebwerk_charta import build_triebwerk
+    assert build_triebwerk() is not None
+
+def test_983_triebwerk_charta_count():
+    from kki.triebwerk_charta import build_triebwerk
+    assert len(build_triebwerk().normen) == 5
+
+def test_983_triebwerk_charta_canonical():
+    from kki.triebwerk_charta import build_triebwerk
+    m = build_triebwerk()
+    assert any('Triebwerk' in n.name or 'Antrieb' in n.name or 'Ionen' in n.name for n in m.normen)
+
+def test_983_triebwerk_charta_weight_positive():
+    from kki.triebwerk_charta import build_triebwerk
+    assert all(n.raumfahrt_weight > 0 for n in build_triebwerk().normen)
+
+
+def test_984_orbit_kodex_builds_instanz():
+    from kki.orbit_kodex import build_orbit_kodex
+    assert build_orbit_kodex() is not None
+
+def test_984_orbit_kodex_count():
+    from kki.orbit_kodex import build_orbit_kodex
+    assert len(build_orbit_kodex().eintraege) == 5
+
+def test_984_orbit_kodex_canonical():
+    from kki.orbit_kodex import build_orbit_kodex
+    m = build_orbit_kodex()
+    assert any('LEO' in e.name or 'GEO' in e.name or 'Orbit' in e.name or 'Umlaufbahn' in e.name for e in m.eintraege)
+
+def test_984_orbit_kodex_weight_positive():
+    from kki.orbit_kodex import build_orbit_kodex
+    assert all(e.raumfahrt_weight > 0 for e in build_orbit_kodex().eintraege)
+
+
+def test_985_raumstation_manifest_builds_instanz():
+    from kki.raumstation_manifest import build_raumstation
+    assert build_raumstation() is not None
+
+def test_985_raumstation_manifest_count():
+    from kki.raumstation_manifest import build_raumstation
+    assert len(build_raumstation().normen) == 5
+
+def test_985_raumstation_manifest_canonical():
+    from kki.raumstation_manifest import build_raumstation
+    m = build_raumstation()
+    assert any('Modul' in n.name or 'Solar' in n.name or 'Andock' in n.name for n in m.normen)
+
+def test_985_raumstation_manifest_weight_positive():
+    from kki.raumstation_manifest import build_raumstation
+    assert all(n.raumfahrt_weight > 0 for n in build_raumstation().normen)
+
+
+def test_986_mondmission_pakt_builds_instanz():
+    from kki.mondmission_pakt import build_mondmission_pakt
+    assert build_mondmission_pakt() is not None
+
+def test_986_mondmission_pakt_count():
+    from kki.mondmission_pakt import build_mondmission_pakt
+    assert len(build_mondmission_pakt().eintraege) == 5
+
+def test_986_mondmission_pakt_canonical():
+    from kki.mondmission_pakt import build_mondmission_pakt
+    m = build_mondmission_pakt()
+    assert any('Artemis' in e.name or 'Mond' in e.name or 'Apollo' in e.name for e in m.eintraege)
+
+def test_986_mondmission_pakt_weight_positive():
+    from kki.mondmission_pakt import build_mondmission_pakt
+    assert all(e.raumfahrt_weight > 0 for e in build_mondmission_pakt().eintraege)
+
+
+def test_987_mars_senat_builds_instanz():
+    from kki.mars_senat import build_mars
+    assert build_mars() is not None
+
+def test_987_mars_senat_count():
+    from kki.mars_senat import build_mars
+    assert len(build_mars().normen) == 5
+
+def test_987_mars_senat_canonical():
+    from kki.mars_senat import build_mars
+    m = build_mars()
+    assert any('Mars' in n.name or 'Terraforming' in n.name or 'Kolonie' in n.name for n in m.normen)
+
+def test_987_mars_senat_weight_positive():
+    from kki.mars_senat import build_mars
+    assert all(n.raumfahrt_weight > 0 for n in build_mars().normen)
+
+
+def test_988_raumfahrt_norm_builds_instanz():
+    from kki.raumfahrt_norm import build_raumfahrt_norm
+    assert build_raumfahrt_norm() is not None
+
+def test_988_raumfahrt_norm_count():
+    from kki.raumfahrt_norm import build_raumfahrt_norm
+    assert len(build_raumfahrt_norm().eintraege) == 5
+
+def test_988_raumfahrt_norm_eintrag_has_norm_weight():
+    from kki.raumfahrt_norm import build_raumfahrt_norm
+    m = build_raumfahrt_norm()
+    assert all(hasattr(e, 'raumfahrt_norm_weight') for e in m.eintraege)
+
+def test_988_raumfahrt_norm_weight_positive():
+    from kki.raumfahrt_norm import build_raumfahrt_norm
+    assert all(e.raumfahrt_norm_weight > 0 for e in build_raumfahrt_norm().eintraege)
+
+
+def test_989_weltraum_charta_builds_instanz():
+    from kki.weltraum_charta import build_weltraum
+    assert build_weltraum() is not None
+
+def test_989_weltraum_charta_count():
+    from kki.weltraum_charta import build_weltraum
+    assert len(build_weltraum().normen) == 5
+
+def test_989_weltraum_charta_canonical():
+    from kki.weltraum_charta import build_weltraum
+    m = build_weltraum()
+    assert any('Exoplanet' in n.name or 'Interstellar' in n.name or 'Kosmologie' in n.name or 'Dunkel' in n.name for n in m.normen)
+
+def test_989_weltraum_charta_weight_positive():
+    from kki.weltraum_charta import build_weltraum
+    assert all(n.raumfahrt_weight > 0 for n in build_weltraum().normen)
+
+
+def test_990_raumfahrt_verfassung_builds_instanz():
+    from kki.raumfahrt_verfassung import build_raumfahrt_verfassung
+    assert build_raumfahrt_verfassung() is not None
+
+def test_990_raumfahrt_verfassung_count():
+    from kki.raumfahrt_verfassung import build_raumfahrt_verfassung
+    assert len(build_raumfahrt_verfassung().normen) == 5
+
+def test_990_raumfahrt_verfassung_aggregates_signal():
+    from kki.raumfahrt_verfassung import build_raumfahrt_verfassung
+    m = build_raumfahrt_verfassung()
+    assert sum(n.raumfahrt_weight for n in m.normen) > 0
+
+def test_990_raumfahrt_verfassung_weight_positive():
+    from kki.raumfahrt_verfassung import build_raumfahrt_verfassung
+    assert all(n.raumfahrt_weight > 0 for n in build_raumfahrt_verfassung().normen)

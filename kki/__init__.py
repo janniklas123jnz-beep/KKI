@@ -6860,3 +6860,73 @@ from .matwiss_verfassung import (
     MatwissVerfassung,
     build_matwiss_verfassung,
 )
+from .raumfahrt_feld import (
+    RaumfahrtTyp,
+    RaumfahrtProzedur,
+    RaumfahrtNorm,
+    Raumfahrt,
+    build_raumfahrt,
+)
+from .satellit_register import (
+    SatellitTyp,
+    SatellitProzedur,
+    SatellitEintrag,
+    SatellitRegister,
+    build_satellit_register,
+)
+from .triebwerk_charta import (
+    TriebwerkTyp,
+    TriebwerkProzedur,
+    TriebwerkNorm,
+    Triebwerk,
+    build_triebwerk,
+)
+from .orbit_kodex import (
+    OrbitTyp,
+    OrbitProzedur,
+    OrbitEintrag,
+    OrbitKodex,
+    build_orbit_kodex,
+)
+from .raumstation_manifest import (
+    RaumstationTyp,
+    RaumstationProzedur,
+    RaumstationNorm,
+    Raumstation,
+    build_raumstation,
+)
+from .mondmission_pakt import (
+    MondmissionTyp,
+    MondmissionProzedur,
+    MondmissionEintrag,
+    MondmissionPakt,
+    build_mondmission_pakt,
+)
+from .mars_senat import (
+    MarsTyp,
+    MarsProzedur,
+    MarsNorm,
+    Mars,
+    build_mars,
+)
+from .raumfahrt_norm import (
+    RaumfahrtNormTyp,
+    RaumfahrtNormProzedur,
+    RaumfahrtNormEintrag,
+    RaumfahrtNorm,
+    build_raumfahrt_norm,
+)
+from .weltraum_charta import (
+    WeltraumTyp,
+    WeltraumProzedur,
+    WeltraumNorm,
+    Weltraum,
+    build_weltraum,
+)
+from .raumfahrt_verfassung import (
+    RaumfahrtVerfassungTyp,
+    RaumfahrtVerfassungProzedur,
+    RaumfahrtVerfassungNorm,
+    RaumfahrtVerfassung,
+    build_raumfahrt_verfassung,
+)

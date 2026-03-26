@@ -3727,6 +3727,46 @@ from .mineralogie_verfassung import (
     MineralogieVerfassungGeltung, MineralogieVerfassungsNorm, MineralogieVerfassungTyp, MineralogieVerfassungProzedur,
     MineralogieVerfassung, build_mineralogie_verfassung,
 )
+from .meteorologie_feld import (
+    MeteorologieFeldGeltung, MeteorologieFeldNorm, MeteorologieFeldTyp, MeteorologieFeldProzedur,
+    MeteorologieFeld, build_meteorologie_feld,
+)
+from .atmosphaere_dynamik_register import (
+    AtmosphaereDynamikRegisterGeltung, AtmosphaereDynamikRegisterEintrag, AtmosphaereDynamikRegisterTyp, AtmosphaereDynamikRegisterProzedur,
+    AtmosphaereDynamikRegister, build_atmosphaere_dynamik_register,
+)
+from .wolkenphysik_charta import (
+    WolkenphysikChartaGeltung, WolkenphysikChartaNorm, WolkenphysikChartaTyp, WolkenphysikChartaProzedur,
+    WolkenphysikCharta, build_wolkenphysik_charta,
+)
+from .niederschlags_kodex import (
+    NiederschlagsKodexGeltung, NiederschlagsKodexEintrag, NiederschlagsKodexTyp, NiederschlagsKodexProzedur,
+    NiederschlagsKodex, build_niederschlags_kodex,
+)
+from .sturm_manifest import (
+    SturmManifestGeltung, SturmManifestNorm, SturmManifestTyp, SturmManifestProzedur,
+    SturmManifest, build_sturm_manifest,
+)
+from .klimamuster_pakt import (
+    KlimamusterPaktGeltung, KlimamusterPaktEintrag, KlimamusterPaktTyp, KlimamusterPaktProzedur,
+    KlimamusterPakt, build_klimamuster_pakt,
+)
+from .meteorologie_senat import (
+    MeteorologieSenatGeltung, MeteorologieSenatNorm, MeteorologieSenatTyp, MeteorologieSenatProzedur,
+    MeteorologieSenat, build_meteorologie_senat,
+)
+from .meteorologie_norm import (
+    MeteorologieNormGeltung, MeteorologieNormEintrag, MeteorologieNormTyp, MeteorologieNormProzedur,
+    MeteorologieNormSatz, build_meteorologie_norm,
+)
+from .wettervorhersage_charta import (
+    WettervorhersageChartaGeltung, WettervorhersageChartaNorm, WettervorhersageChartaTyp, WettervorhersageChartaProzedur,
+    WettervorhersageCharta, build_wettervorhersage_charta,
+)
+from .meteorologie_verfassung import (
+    MeteorologieVerfassungGeltung, MeteorologieVerfassungsNorm, MeteorologieVerfassungTyp, MeteorologieVerfassungProzedur,
+    MeteorologieVerfassung, build_meteorologie_verfassung,
+)
 from .federation_coordination import (
     FederationAlignmentStatus,
     FederationCell,
@@ -5969,4 +6009,25 @@ __all__ = [
     "EdelmineralCharta", "build_edelmineral_charta",
     "MineralogieVerfassungGeltung", "MineralogieVerfassungsNorm", "MineralogieVerfassungTyp", "MineralogieVerfassungProzedur",
     "MineralogieVerfassung", "build_mineralogie_verfassung",
+    # Block #831–840: Meteorologie & Atmosphärendynamik
+    "MeteorologieFeldGeltung", "MeteorologieFeldNorm", "MeteorologieFeldTyp", "MeteorologieFeldProzedur",
+    "MeteorologieFeld", "build_meteorologie_feld",
+    "AtmosphaereDynamikRegisterGeltung", "AtmosphaereDynamikRegisterEintrag", "AtmosphaereDynamikRegisterTyp", "AtmosphaereDynamikRegisterProzedur",
+    "AtmosphaereDynamikRegister", "build_atmosphaere_dynamik_register",
+    "WolkenphysikChartaGeltung", "WolkenphysikChartaNorm", "WolkenphysikChartaTyp", "WolkenphysikChartaProzedur",
+    "WolkenphysikCharta", "build_wolkenphysik_charta",
+    "NiederschlagsKodexGeltung", "NiederschlagsKodexEintrag", "NiederschlagsKodexTyp", "NiederschlagsKodexProzedur",
+    "NiederschlagsKodex", "build_niederschlags_kodex",
+    "SturmManifestGeltung", "SturmManifestNorm", "SturmManifestTyp", "SturmManifestProzedur",
+    "SturmManifest", "build_sturm_manifest",
+    "KlimamusterPaktGeltung", "KlimamusterPaktEintrag", "KlimamusterPaktTyp", "KlimamusterPaktProzedur",
+    "KlimamusterPakt", "build_klimamuster_pakt",
+    "MeteorologieSenatGeltung", "MeteorologieSenatNorm", "MeteorologieSenatTyp", "MeteorologieSenatProzedur",
+    "MeteorologieSenat", "build_meteorologie_senat",
+    "MeteorologieNormGeltung", "MeteorologieNormEintrag", "MeteorologieNormTyp", "MeteorologieNormProzedur",
+    "MeteorologieNormSatz", "build_meteorologie_norm",
+    "WettervorhersageChartaGeltung", "WettervorhersageChartaNorm", "WettervorhersageChartaTyp", "WettervorhersageChartaProzedur",
+    "WettervorhersageCharta", "build_wettervorhersage_charta",
+    "MeteorologieVerfassungGeltung", "MeteorologieVerfassungsNorm", "MeteorologieVerfassungTyp", "MeteorologieVerfassungProzedur",
+    "MeteorologieVerfassung", "build_meteorologie_verfassung",
 ]

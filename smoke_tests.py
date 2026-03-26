@@ -31492,3 +31492,367 @@ class SmokeTests(unittest.TestCase):
     def test_kki_mineralogie_verfassung_builds_parent_chain(self):
         from kki.mineralogie_verfassung import build_mineralogie_verfassung
         self.assertIsNotNone(build_mineralogie_verfassung().parent)
+
+    # ── Block #831–840: Meteorologie & Atmosphärendynamik ────────────────────
+
+    def test_kki_meteorologie_feld_builds(self):
+        from kki.meteorologie_feld import build_meteorologie_feld
+        self.assertIsNotNone(build_meteorologie_feld())
+
+    def test_kki_meteorologie_feld_normen_count(self):
+        from kki.meteorologie_feld import build_meteorologie_feld
+        self.assertEqual(len(build_meteorologie_feld().normen), 5)
+
+    def test_kki_meteorologie_feld_weight_positive(self):
+        from kki.meteorologie_feld import build_meteorologie_feld
+        for n in build_meteorologie_feld().normen:
+            self.assertGreaterEqual(n.meteorologie_weight, 0)
+
+    def test_kki_meteorologie_feld_gesperrt_schutz_norm(self):
+        from kki.meteorologie_feld import build_meteorologie_feld, MeteorologieFeldGeltung
+        self.assertEqual(build_meteorologie_feld().normen[0].geltung, MeteorologieFeldGeltung.GESPERRT)
+
+    def test_kki_meteorologie_feld_tier_sequence(self):
+        from kki.meteorologie_feld import build_meteorologie_feld
+        tiers = [n.meteorologie_tier for n in build_meteorologie_feld().normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_meteorologie_feld_ids_not_empty(self):
+        from kki.meteorologie_feld import build_meteorologie_feld
+        for n in build_meteorologie_feld().normen:
+            self.assertTrue(len(n.meteorologie_ids) > 0)
+
+    def test_kki_meteorologie_feld_tags_contain_domain(self):
+        from kki.meteorologie_feld import build_meteorologie_feld
+        for n in build_meteorologie_feld().normen:
+            self.assertIn("meteorologie", n.meteorologie_tags)
+
+    def test_kki_meteorologie_feld_builds_parent_chain(self):
+        from kki.meteorologie_feld import build_meteorologie_feld
+        self.assertIsNotNone(build_meteorologie_feld().parent)
+
+    def test_kki_atmosphaere_dynamik_register_builds(self):
+        from kki.atmosphaere_dynamik_register import build_atmosphaere_dynamik_register
+        self.assertIsNotNone(build_atmosphaere_dynamik_register())
+
+    def test_kki_atmosphaere_dynamik_register_eintraege_count(self):
+        from kki.atmosphaere_dynamik_register import build_atmosphaere_dynamik_register
+        self.assertEqual(len(build_atmosphaere_dynamik_register().eintraege), 5)
+
+    def test_kki_atmosphaere_dynamik_register_weight_positive(self):
+        from kki.atmosphaere_dynamik_register import build_atmosphaere_dynamik_register
+        for e in build_atmosphaere_dynamik_register().eintraege:
+            self.assertGreaterEqual(e.meteorologie_weight, 0)
+
+    def test_kki_atmosphaere_dynamik_register_gesperrt_schutz_norm(self):
+        from kki.atmosphaere_dynamik_register import build_atmosphaere_dynamik_register, AtmosphaereDynamikRegisterGeltung
+        self.assertEqual(build_atmosphaere_dynamik_register().eintraege[0].geltung, AtmosphaereDynamikRegisterGeltung.GESPERRT)
+
+    def test_kki_atmosphaere_dynamik_register_tier_sequence(self):
+        from kki.atmosphaere_dynamik_register import build_atmosphaere_dynamik_register
+        tiers = [e.meteorologie_tier for e in build_atmosphaere_dynamik_register().eintraege]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_atmosphaere_dynamik_register_ids_not_empty(self):
+        from kki.atmosphaere_dynamik_register import build_atmosphaere_dynamik_register
+        for e in build_atmosphaere_dynamik_register().eintraege:
+            self.assertTrue(len(e.meteorologie_ids) > 0)
+
+    def test_kki_atmosphaere_dynamik_register_tags_contain_domain(self):
+        from kki.atmosphaere_dynamik_register import build_atmosphaere_dynamik_register
+        for e in build_atmosphaere_dynamik_register().eintraege:
+            self.assertIn("meteorologie", e.meteorologie_tags)
+
+    def test_kki_atmosphaere_dynamik_register_builds_parent_chain(self):
+        from kki.atmosphaere_dynamik_register import build_atmosphaere_dynamik_register
+        self.assertIsNotNone(build_atmosphaere_dynamik_register().parent)
+
+    def test_kki_wolkenphysik_charta_builds(self):
+        from kki.wolkenphysik_charta import build_wolkenphysik_charta
+        self.assertIsNotNone(build_wolkenphysik_charta())
+
+    def test_kki_wolkenphysik_charta_normen_count(self):
+        from kki.wolkenphysik_charta import build_wolkenphysik_charta
+        self.assertEqual(len(build_wolkenphysik_charta().normen), 5)
+
+    def test_kki_wolkenphysik_charta_weight_positive(self):
+        from kki.wolkenphysik_charta import build_wolkenphysik_charta
+        for n in build_wolkenphysik_charta().normen:
+            self.assertGreaterEqual(n.meteorologie_weight, 0)
+
+    def test_kki_wolkenphysik_charta_gesperrt_schutz_norm(self):
+        from kki.wolkenphysik_charta import build_wolkenphysik_charta, WolkenphysikChartaGeltung
+        self.assertEqual(build_wolkenphysik_charta().normen[0].geltung, WolkenphysikChartaGeltung.GESPERRT)
+
+    def test_kki_wolkenphysik_charta_tier_sequence(self):
+        from kki.wolkenphysik_charta import build_wolkenphysik_charta
+        tiers = [n.meteorologie_tier for n in build_wolkenphysik_charta().normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_wolkenphysik_charta_ids_not_empty(self):
+        from kki.wolkenphysik_charta import build_wolkenphysik_charta
+        for n in build_wolkenphysik_charta().normen:
+            self.assertTrue(len(n.meteorologie_ids) > 0)
+
+    def test_kki_wolkenphysik_charta_tags_contain_domain(self):
+        from kki.wolkenphysik_charta import build_wolkenphysik_charta
+        for n in build_wolkenphysik_charta().normen:
+            self.assertIn("meteorologie", n.meteorologie_tags)
+
+    def test_kki_wolkenphysik_charta_builds_parent_chain(self):
+        from kki.wolkenphysik_charta import build_wolkenphysik_charta
+        self.assertIsNotNone(build_wolkenphysik_charta().parent)
+
+    def test_kki_niederschlags_kodex_builds(self):
+        from kki.niederschlags_kodex import build_niederschlags_kodex
+        self.assertIsNotNone(build_niederschlags_kodex())
+
+    def test_kki_niederschlags_kodex_eintraege_count(self):
+        from kki.niederschlags_kodex import build_niederschlags_kodex
+        self.assertEqual(len(build_niederschlags_kodex().eintraege), 5)
+
+    def test_kki_niederschlags_kodex_weight_positive(self):
+        from kki.niederschlags_kodex import build_niederschlags_kodex
+        for e in build_niederschlags_kodex().eintraege:
+            self.assertGreaterEqual(e.meteorologie_weight, 0)
+
+    def test_kki_niederschlags_kodex_gesperrt_schutz_norm(self):
+        from kki.niederschlags_kodex import build_niederschlags_kodex, NiederschlagsKodexGeltung
+        self.assertEqual(build_niederschlags_kodex().eintraege[0].geltung, NiederschlagsKodexGeltung.GESPERRT)
+
+    def test_kki_niederschlags_kodex_tier_sequence(self):
+        from kki.niederschlags_kodex import build_niederschlags_kodex
+        tiers = [e.meteorologie_tier for e in build_niederschlags_kodex().eintraege]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_niederschlags_kodex_ids_not_empty(self):
+        from kki.niederschlags_kodex import build_niederschlags_kodex
+        for e in build_niederschlags_kodex().eintraege:
+            self.assertTrue(len(e.meteorologie_ids) > 0)
+
+    def test_kki_niederschlags_kodex_tags_contain_domain(self):
+        from kki.niederschlags_kodex import build_niederschlags_kodex
+        for e in build_niederschlags_kodex().eintraege:
+            self.assertIn("meteorologie", e.meteorologie_tags)
+
+    def test_kki_niederschlags_kodex_builds_parent_chain(self):
+        from kki.niederschlags_kodex import build_niederschlags_kodex
+        self.assertIsNotNone(build_niederschlags_kodex().parent)
+
+    def test_kki_sturm_manifest_builds(self):
+        from kki.sturm_manifest import build_sturm_manifest
+        self.assertIsNotNone(build_sturm_manifest())
+
+    def test_kki_sturm_manifest_normen_count(self):
+        from kki.sturm_manifest import build_sturm_manifest
+        self.assertEqual(len(build_sturm_manifest().normen), 5)
+
+    def test_kki_sturm_manifest_weight_positive(self):
+        from kki.sturm_manifest import build_sturm_manifest
+        for n in build_sturm_manifest().normen:
+            self.assertGreaterEqual(n.meteorologie_weight, 0)
+
+    def test_kki_sturm_manifest_gesperrt_schutz_norm(self):
+        from kki.sturm_manifest import build_sturm_manifest, SturmManifestGeltung
+        self.assertEqual(build_sturm_manifest().normen[0].geltung, SturmManifestGeltung.GESPERRT)
+
+    def test_kki_sturm_manifest_tier_sequence(self):
+        from kki.sturm_manifest import build_sturm_manifest
+        tiers = [n.meteorologie_tier for n in build_sturm_manifest().normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_sturm_manifest_ids_not_empty(self):
+        from kki.sturm_manifest import build_sturm_manifest
+        for n in build_sturm_manifest().normen:
+            self.assertTrue(len(n.meteorologie_ids) > 0)
+
+    def test_kki_sturm_manifest_tags_contain_domain(self):
+        from kki.sturm_manifest import build_sturm_manifest
+        for n in build_sturm_manifest().normen:
+            self.assertIn("meteorologie", n.meteorologie_tags)
+
+    def test_kki_sturm_manifest_builds_parent_chain(self):
+        from kki.sturm_manifest import build_sturm_manifest
+        self.assertIsNotNone(build_sturm_manifest().parent)
+
+    def test_kki_klimamuster_pakt_builds(self):
+        from kki.klimamuster_pakt import build_klimamuster_pakt
+        self.assertIsNotNone(build_klimamuster_pakt())
+
+    def test_kki_klimamuster_pakt_eintraege_count(self):
+        from kki.klimamuster_pakt import build_klimamuster_pakt
+        self.assertEqual(len(build_klimamuster_pakt().eintraege), 5)
+
+    def test_kki_klimamuster_pakt_weight_positive(self):
+        from kki.klimamuster_pakt import build_klimamuster_pakt
+        for e in build_klimamuster_pakt().eintraege:
+            self.assertGreaterEqual(e.meteorologie_weight, 0)
+
+    def test_kki_klimamuster_pakt_gesperrt_schutz_norm(self):
+        from kki.klimamuster_pakt import build_klimamuster_pakt, KlimamusterPaktGeltung
+        self.assertEqual(build_klimamuster_pakt().eintraege[0].geltung, KlimamusterPaktGeltung.GESPERRT)
+
+    def test_kki_klimamuster_pakt_tier_sequence(self):
+        from kki.klimamuster_pakt import build_klimamuster_pakt
+        tiers = [e.meteorologie_tier for e in build_klimamuster_pakt().eintraege]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_klimamuster_pakt_ids_not_empty(self):
+        from kki.klimamuster_pakt import build_klimamuster_pakt
+        for e in build_klimamuster_pakt().eintraege:
+            self.assertTrue(len(e.meteorologie_ids) > 0)
+
+    def test_kki_klimamuster_pakt_tags_contain_domain(self):
+        from kki.klimamuster_pakt import build_klimamuster_pakt
+        for e in build_klimamuster_pakt().eintraege:
+            self.assertIn("meteorologie", e.meteorologie_tags)
+
+    def test_kki_klimamuster_pakt_builds_parent_chain(self):
+        from kki.klimamuster_pakt import build_klimamuster_pakt
+        self.assertIsNotNone(build_klimamuster_pakt().parent)
+
+    def test_kki_meteorologie_senat_builds(self):
+        from kki.meteorologie_senat import build_meteorologie_senat
+        self.assertIsNotNone(build_meteorologie_senat())
+
+    def test_kki_meteorologie_senat_normen_count(self):
+        from kki.meteorologie_senat import build_meteorologie_senat
+        self.assertEqual(len(build_meteorologie_senat().normen), 5)
+
+    def test_kki_meteorologie_senat_weight_positive(self):
+        from kki.meteorologie_senat import build_meteorologie_senat
+        for n in build_meteorologie_senat().normen:
+            self.assertGreaterEqual(n.meteorologie_weight, 0)
+
+    def test_kki_meteorologie_senat_gesperrt_schutz_norm(self):
+        from kki.meteorologie_senat import build_meteorologie_senat, MeteorologieSenatGeltung
+        self.assertEqual(build_meteorologie_senat().normen[0].geltung, MeteorologieSenatGeltung.GESPERRT)
+
+    def test_kki_meteorologie_senat_tier_sequence(self):
+        from kki.meteorologie_senat import build_meteorologie_senat
+        tiers = [n.meteorologie_tier for n in build_meteorologie_senat().normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_meteorologie_senat_ids_not_empty(self):
+        from kki.meteorologie_senat import build_meteorologie_senat
+        for n in build_meteorologie_senat().normen:
+            self.assertTrue(len(n.meteorologie_ids) > 0)
+
+    def test_kki_meteorologie_senat_tags_contain_domain(self):
+        from kki.meteorologie_senat import build_meteorologie_senat
+        for n in build_meteorologie_senat().normen:
+            self.assertIn("meteorologie", n.meteorologie_tags)
+
+    def test_kki_meteorologie_senat_builds_parent_chain(self):
+        from kki.meteorologie_senat import build_meteorologie_senat
+        self.assertIsNotNone(build_meteorologie_senat().parent)
+
+    def test_kki_meteorologie_norm_builds(self):
+        from kki.meteorologie_norm import build_meteorologie_norm
+        self.assertIsNotNone(build_meteorologie_norm())
+
+    def test_kki_meteorologie_norm_normen_count(self):
+        from kki.meteorologie_norm import build_meteorologie_norm
+        self.assertEqual(len(build_meteorologie_norm().normen), 5)
+
+    def test_kki_meteorologie_norm_weight_positive(self):
+        from kki.meteorologie_norm import build_meteorologie_norm
+        for e in build_meteorologie_norm().normen:
+            self.assertGreaterEqual(e.meteorologie_norm_weight, 0)
+
+    def test_kki_meteorologie_norm_gesperrt_schutz_norm(self):
+        from kki.meteorologie_norm import build_meteorologie_norm, MeteorologieNormGeltung
+        self.assertEqual(build_meteorologie_norm().normen[0].geltung, MeteorologieNormGeltung.GESPERRT)
+
+    def test_kki_meteorologie_norm_tier_sequence(self):
+        from kki.meteorologie_norm import build_meteorologie_norm
+        tiers = [e.meteorologie_norm_tier for e in build_meteorologie_norm().normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_meteorologie_norm_ids_not_empty(self):
+        from kki.meteorologie_norm import build_meteorologie_norm
+        for e in build_meteorologie_norm().normen:
+            self.assertTrue(len(e.meteorologie_norm_ids) > 0)
+
+    def test_kki_meteorologie_norm_tags_contain_domain(self):
+        from kki.meteorologie_norm import build_meteorologie_norm
+        for e in build_meteorologie_norm().normen:
+            self.assertIn("meteorologie", e.meteorologie_norm_tags)
+
+    def test_kki_meteorologie_norm_builds_parent_chain(self):
+        from kki.meteorologie_norm import build_meteorologie_norm
+        self.assertIsNotNone(build_meteorologie_norm().parent)
+
+    def test_kki_wettervorhersage_charta_builds(self):
+        from kki.wettervorhersage_charta import build_wettervorhersage_charta
+        self.assertIsNotNone(build_wettervorhersage_charta())
+
+    def test_kki_wettervorhersage_charta_normen_count(self):
+        from kki.wettervorhersage_charta import build_wettervorhersage_charta
+        self.assertEqual(len(build_wettervorhersage_charta().normen), 5)
+
+    def test_kki_wettervorhersage_charta_weight_positive(self):
+        from kki.wettervorhersage_charta import build_wettervorhersage_charta
+        for n in build_wettervorhersage_charta().normen:
+            self.assertGreaterEqual(n.meteorologie_weight, 0)
+
+    def test_kki_wettervorhersage_charta_gesperrt_schutz_norm(self):
+        from kki.wettervorhersage_charta import build_wettervorhersage_charta, WettervorhersageChartaGeltung
+        self.assertEqual(build_wettervorhersage_charta().normen[0].geltung, WettervorhersageChartaGeltung.GESPERRT)
+
+    def test_kki_wettervorhersage_charta_tier_sequence(self):
+        from kki.wettervorhersage_charta import build_wettervorhersage_charta
+        tiers = [n.meteorologie_tier for n in build_wettervorhersage_charta().normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_wettervorhersage_charta_ids_not_empty(self):
+        from kki.wettervorhersage_charta import build_wettervorhersage_charta
+        for n in build_wettervorhersage_charta().normen:
+            self.assertTrue(len(n.meteorologie_ids) > 0)
+
+    def test_kki_wettervorhersage_charta_tags_contain_domain(self):
+        from kki.wettervorhersage_charta import build_wettervorhersage_charta
+        for n in build_wettervorhersage_charta().normen:
+            self.assertIn("meteorologie", n.meteorologie_tags)
+
+    def test_kki_wettervorhersage_charta_builds_parent_chain(self):
+        from kki.wettervorhersage_charta import build_wettervorhersage_charta
+        self.assertIsNotNone(build_wettervorhersage_charta().parent)
+
+    def test_kki_meteorologie_verfassung_builds(self):
+        from kki.meteorologie_verfassung import build_meteorologie_verfassung
+        self.assertIsNotNone(build_meteorologie_verfassung())
+
+    def test_kki_meteorologie_verfassung_normen_count(self):
+        from kki.meteorologie_verfassung import build_meteorologie_verfassung
+        self.assertEqual(len(build_meteorologie_verfassung().normen), 5)
+
+    def test_kki_meteorologie_verfassung_gesperrt_schutz_norm(self):
+        from kki.meteorologie_verfassung import build_meteorologie_verfassung, MeteorologieVerfassungGeltung
+        self.assertEqual(build_meteorologie_verfassung().normen[0].geltung, MeteorologieVerfassungGeltung.GESPERRT)
+
+    def test_kki_meteorologie_verfassung_aggregates_verfassung_signal(self):
+        from kki.meteorologie_verfassung import build_meteorologie_verfassung
+        sig = build_meteorologie_verfassung().aggregates_verfassung_signal()
+        self.assertEqual(sig["verfassung_id"], "meteorologie-verfassung-840")
+        self.assertGreater(sig["total_weight"], 0)
+        self.assertEqual(sig["norm_count"], 5)
+
+    def test_kki_meteorologie_verfassung_tier_sequence(self):
+        from kki.meteorologie_verfassung import build_meteorologie_verfassung
+        tiers = [n.meteorologie_tier for n in build_meteorologie_verfassung().normen]
+        self.assertEqual(tiers, sorted(tiers))
+
+    def test_kki_meteorologie_verfassung_ids_not_empty(self):
+        from kki.meteorologie_verfassung import build_meteorologie_verfassung
+        for n in build_meteorologie_verfassung().normen:
+            self.assertTrue(len(n.meteorologie_ids) > 0)
+
+    def test_kki_meteorologie_verfassung_tags_contain_domain(self):
+        from kki.meteorologie_verfassung import build_meteorologie_verfassung
+        for n in build_meteorologie_verfassung().normen:
+            self.assertIn("meteorologie", n.meteorologie_tags)
+
+    def test_kki_meteorologie_verfassung_builds_parent_chain(self):
+        from kki.meteorologie_verfassung import build_meteorologie_verfassung
+        self.assertIsNotNone(build_meteorologie_verfassung().parent)

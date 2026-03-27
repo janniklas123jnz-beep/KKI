@@ -66,6 +66,31 @@ def main():
             )
         else:
             print("Noch kein Trading-Log. Erst 'demo' oder 'auto' ausführen!")
+    elif cmd == "live-test":
+        # Verbindung testen
+        from trading.live_engine import test_connection
+        test_connection()
+
+    elif cmd == "live-status":
+        # Echtes Kraken-Portfolio anzeigen
+        from trading.live_engine import status_live
+        status_live()
+
+    elif cmd == "live-dry":
+        # Dry-Run: zeigt was getan würde, kein echter Trade
+        from trading.live_engine import run_live_cycle
+        run_live_cycle(max_trade_eur=2.0, dry_run=True)
+
+    elif cmd == "live-go":
+        # ECHTER Trade! Nur nach Paper-Trading Erfolg!
+        print("⚠️  ECHTER TRADE mit echtem Geld!")
+        confirm = input("Bestätigen mit 'JA': ")
+        if confirm == "JA":
+            from trading.live_engine import run_live_cycle
+            run_live_cycle(max_trade_eur=2.0, dry_run=False)
+        else:
+            print("Abgebrochen.")
+
     else:
         print(__doc__)
 

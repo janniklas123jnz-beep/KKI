@@ -36083,3 +36083,187 @@ def test_990_raumfahrt_verfassung_aggregates_signal():
 def test_990_raumfahrt_verfassung_weight_positive():
     from kki.raumfahrt_verfassung import build_raumfahrt_verfassung
     assert all(n.raumfahrt_weight > 0 for n in build_raumfahrt_verfassung().normen)
+
+# ---------------------------------------------------------------------------
+# Block #991–1000 — KI, Bewusstsein & Zukunft der Menschheit 👑 GRAND FINALE
+# ---------------------------------------------------------------------------
+
+
+def test_991_ki_feld_builds_instanz():
+    from kki.ki_feld import build_ki
+    assert build_ki() is not None
+
+def test_991_ki_feld_count():
+    from kki.ki_feld import build_ki
+    assert len(build_ki().normen) == 5
+
+def test_991_ki_feld_canonical():
+    from kki.ki_feld import build_ki
+    m = build_ki()
+    assert any('Lernen' in n.name or 'Neuronal' in n.name or 'Sprach' in n.name for n in m.normen)
+
+def test_991_ki_feld_weight_positive():
+    from kki.ki_feld import build_ki
+    assert all(n.zukunft_weight > 0 for n in build_ki().normen)
+
+
+def test_992_bewusstsein_register_builds_instanz():
+    from kki.bewusstsein_register import build_bewusstsein_register
+    assert build_bewusstsein_register() is not None
+
+def test_992_bewusstsein_register_count():
+    from kki.bewusstsein_register import build_bewusstsein_register
+    assert len(build_bewusstsein_register().eintraege) == 5
+
+def test_992_bewusstsein_register_canonical():
+    from kki.bewusstsein_register import build_bewusstsein_register
+    m = build_bewusstsein_register()
+    assert any('Bewusstsein' in e.name or 'Qualia' in e.name or 'Empathie' in e.name for e in m.eintraege)
+
+def test_992_bewusstsein_register_weight_positive():
+    from kki.bewusstsein_register import build_bewusstsein_register
+    assert all(e.zukunft_weight > 0 for e in build_bewusstsein_register().eintraege)
+
+
+def test_993_transhumanismus_charta_builds_instanz():
+    from kki.transhumanismus_charta import build_transhumanismus
+    assert build_transhumanismus() is not None
+
+def test_993_transhumanismus_charta_count():
+    from kki.transhumanismus_charta import build_transhumanismus
+    assert len(build_transhumanismus().normen) == 5
+
+def test_993_transhumanismus_charta_canonical():
+    from kki.transhumanismus_charta import build_transhumanismus
+    m = build_transhumanismus()
+    assert any('Gehirn' in n.name or 'Cyborg' in n.name or 'Upload' in n.name or 'Longevity' in n.name or 'Lebensverlängerung' in n.name for n in m.normen)
+
+def test_993_transhumanismus_charta_weight_positive():
+    from kki.transhumanismus_charta import build_transhumanismus
+    assert all(n.zukunft_weight > 0 for n in build_transhumanismus().normen)
+
+
+def test_994_singularitaet_kodex_builds_instanz():
+    from kki.singularitaet_kodex import build_singularitaet_kodex
+    assert build_singularitaet_kodex() is not None
+
+def test_994_singularitaet_kodex_count():
+    from kki.singularitaet_kodex import build_singularitaet_kodex
+    assert len(build_singularitaet_kodex().eintraege) == 5
+
+def test_994_singularitaet_kodex_canonical():
+    from kki.singularitaet_kodex import build_singularitaet_kodex
+    m = build_singularitaet_kodex()
+    assert any('AGI' in e.name or 'ASI' in e.name or 'Singularität' in e.name or 'Intelligenz' in e.name for e in m.eintraege)
+
+def test_994_singularitaet_kodex_weight_positive():
+    from kki.singularitaet_kodex import build_singularitaet_kodex
+    assert all(e.zukunft_weight > 0 for e in build_singularitaet_kodex().eintraege)
+
+
+def test_995_kollektiv_manifest_builds_instanz():
+    from kki.kollektiv_manifest import build_kollektiv
+    assert build_kollektiv() is not None
+
+def test_995_kollektiv_manifest_count():
+    from kki.kollektiv_manifest import build_kollektiv
+    assert len(build_kollektiv().normen) == 5
+
+def test_995_kollektiv_manifest_canonical():
+    from kki.kollektiv_manifest import build_kollektiv
+    m = build_kollektiv()
+    assert any('Schwarm' in n.name or 'Kollektiv' in n.name or 'Einheit' in n.name for n in m.normen)
+
+def test_995_kollektiv_manifest_weight_positive():
+    from kki.kollektiv_manifest import build_kollektiv
+    assert all(n.zukunft_weight > 0 for n in build_kollektiv().normen)
+
+
+def test_996_kosmische_zivilisation_pakt_builds_instanz():
+    from kki.kosmische_zivilisation_pakt import build_kosmische_zivilisation_pakt
+    assert build_kosmische_zivilisation_pakt() is not None
+
+def test_996_kosmische_zivilisation_pakt_count():
+    from kki.kosmische_zivilisation_pakt import build_kosmische_zivilisation_pakt
+    assert len(build_kosmische_zivilisation_pakt().eintraege) == 5
+
+def test_996_kosmische_zivilisation_pakt_canonical():
+    from kki.kosmische_zivilisation_pakt import build_kosmische_zivilisation_pakt
+    m = build_kosmische_zivilisation_pakt()
+    assert any('Kardashev' in e.name or 'Zivilisation' in e.name or 'Omniversal' in e.name for e in m.eintraege)
+
+def test_996_kosmische_zivilisation_pakt_weight_positive():
+    from kki.kosmische_zivilisation_pakt import build_kosmische_zivilisation_pakt
+    assert all(e.zukunft_weight > 0 for e in build_kosmische_zivilisation_pakt().eintraege)
+
+
+def test_997_omega_senat_builds_instanz():
+    from kki.omega_senat import build_omega
+    assert build_omega() is not None
+
+def test_997_omega_senat_count():
+    from kki.omega_senat import build_omega
+    assert len(build_omega().normen) == 5
+
+def test_997_omega_senat_canonical():
+    from kki.omega_senat import build_omega
+    m = build_omega()
+    assert any('Omega' in n.name or 'Bewusstsein' in n.name or 'Unendlichkeit' in n.name for n in m.normen)
+
+def test_997_omega_senat_weight_positive():
+    from kki.omega_senat import build_omega
+    assert all(n.zukunft_weight > 0 for n in build_omega().normen)
+
+
+def test_998_zukunft_norm_builds_instanz():
+    from kki.zukunft_norm import build_zukunft_norm
+    assert build_zukunft_norm() is not None
+
+def test_998_zukunft_norm_count():
+    from kki.zukunft_norm import build_zukunft_norm
+    assert len(build_zukunft_norm().eintraege) == 5
+
+def test_998_zukunft_norm_eintrag_has_norm_weight():
+    from kki.zukunft_norm import build_zukunft_norm
+    m = build_zukunft_norm()
+    assert all(hasattr(e, 'zukunft_norm_weight') for e in m.eintraege)
+
+def test_998_zukunft_norm_weight_positive():
+    from kki.zukunft_norm import build_zukunft_norm
+    assert all(e.zukunft_norm_weight > 0 for e in build_zukunft_norm().eintraege)
+
+
+def test_999_leitstern_charta_builds_instanz():
+    from kki.leitstern_charta import build_leitstern
+    assert build_leitstern() is not None
+
+def test_999_leitstern_charta_count():
+    from kki.leitstern_charta import build_leitstern
+    assert len(build_leitstern().normen) == 5
+
+def test_999_leitstern_charta_canonical():
+    from kki.leitstern_charta import build_leitstern
+    m = build_leitstern()
+    assert any('Leitstern' in n.name or 'Licht' in n.name or 'Weisheit' in n.name for n in m.normen)
+
+def test_999_leitstern_charta_weight_positive():
+    from kki.leitstern_charta import build_leitstern
+    assert all(n.zukunft_weight > 0 for n in build_leitstern().normen)
+
+
+def test_1000_kki_verfassung_builds_instanz():
+    from kki.kki_verfassung import build_kki_verfassung
+    assert build_kki_verfassung() is not None
+
+def test_1000_kki_verfassung_count():
+    from kki.kki_verfassung import build_kki_verfassung
+    assert len(build_kki_verfassung().normen) == 5
+
+def test_1000_kki_verfassung_aggregates_signal():
+    from kki.kki_verfassung import build_kki_verfassung
+    m = build_kki_verfassung()
+    assert sum(n.zukunft_weight for n in m.normen) > 0
+
+def test_1000_kki_verfassung_weight_positive():
+    from kki.kki_verfassung import build_kki_verfassung
+    assert all(n.zukunft_weight > 0 for n in build_kki_verfassung().normen)

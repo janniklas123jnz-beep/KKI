@@ -6930,3 +6930,73 @@ from .raumfahrt_verfassung import (
     RaumfahrtVerfassung,
     build_raumfahrt_verfassung,
 )
+from .ki_feld import (
+    KITyp,
+    KIProzedur,
+    KINorm,
+    KI,
+    build_ki,
+)
+from .bewusstsein_register import (
+    BewusstseinTyp,
+    BewusstseinProzedur,
+    BewusstseinEintrag,
+    BewusstseinRegister,
+    build_bewusstsein_register,
+)
+from .transhumanismus_charta import (
+    TranshumanismusTyp,
+    TranshumanismusProzedur,
+    TranshumanismusNorm,
+    Transhumanismus,
+    build_transhumanismus,
+)
+from .singularitaet_kodex import (
+    SingularitaetTyp,
+    SingularitaetProzedur,
+    SingularitaetEintrag,
+    SingularitaetKodex,
+    build_singularitaet_kodex,
+)
+from .kollektiv_manifest import (
+    KollektivTyp,
+    KollektivProzedur,
+    KollektivNorm,
+    Kollektiv,
+    build_kollektiv,
+)
+from .kosmische_zivilisation_pakt import (
+    KosmischeZivilisationTyp,
+    KosmischeZivilisationProzedur,
+    KosmischeZivilisationEintrag,
+    KosmischeZivilisationPakt,
+    build_kosmische_zivilisation_pakt,
+)
+from .omega_senat import (
+    OmegaTyp,
+    OmegaProzedur,
+    OmegaNorm,
+    Omega,
+    build_omega,
+)
+from .zukunft_norm import (
+    ZukunftNormTyp,
+    ZukunftNormProzedur,
+    ZukunftNormEintrag,
+    ZukunftNorm,
+    build_zukunft_norm,
+)
+from .leitstern_charta import (
+    LeitsternTyp,
+    LeitsternProzedur,
+    LeitsternNorm,
+    Leitstern,
+    build_leitstern,
+)
+from .kki_verfassung import (
+    KKIVerfassungTyp,
+    KKIVerfassungProzedur,
+    KKIVerfassungNorm,
+    KKIVerfassung,
+    build_kki_verfassung,
+)
